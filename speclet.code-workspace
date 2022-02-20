@@ -1,0 +1,97 @@
+{
+	"folders": [
+        {
+            "path": "."
+        }
+    ],
+	"extensions": {
+        "recommendations": [
+            "ms-vscode.cmake-tools",
+            "twxs.cmake",
+            "ms-vscode.cpptools",
+            "llvm-vs-code-extensions.vscode-clangd",
+            "vadimcn.vscode-lldb"
+        ]
+    },
+	"settings": {
+        "C_Cpp.intelliSenseEngine": "Disabled",
+        "C_Cpp.default.cppStandard": "c++17",
+        "cmake.buildDirectory": "${workspaceFolder}/build",
+        "git.ignoreLimitWarning": true,
+        "clangd.arguments": [
+            "--log=info",
+            "--pretty",
+            "--clang-tidy",
+            "--completion-style=detailed",
+            "--background-index",
+            "--compile-commands-dir=./build",
+            "--header-insertion=iwyu",
+            "--query-driver=\"/usr/bin/clang++\""
+        ],
+        "cmake.ctestArgs": [
+            "--verbose"
+        ],
+        "cmake.configureArgs": [
+            // if you want to build AAX, set PATH for SDK here.
+            //  "-DAAX_SDK_PATH="
+            // if you want to build AudioPluginHost to Test VST Plugin, uncomment this.
+            "-DJUCE_BUILD_EXTRAS=ON"
+        ],
+        "cmake.preferredGenerators": [
+           "Ninja",
+           "Unix Makefiles"
+        ],
+		"cSpell.words": [
+            "bugprone",
+            "Constexpr",
+            "cppcoreguidelines",
+            "jassert",
+            "jassertfalse",
+            "jmap",
+            "jmin",
+            "juce",
+            "Struct"
+        ],
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true
+        },
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "modifications",
+        "clang-format.style": "file",
+        "clang-format.language.c.enable": true,
+        "[c]": {
+            "editor.defaultFormatter": "xaver.clang-format",
+            "editor.wordBasedSuggestions": false,
+            "editor.suggest.insertMode": "replace",
+            "editor.semanticHighlighting.enabled": true
+        },
+        // "Clang-Tidy" extension by notskm:
+        // "clang-tidy.buildPath": "${workspaceFolder}/build",
+        // "clang-tidy.blacklist": [
+        //     ".*\/build\/.*",
+        //     ".*\/lib\/.*"
+        // ],
+        // clang-tidy settings included in Microsoft C++ Extension:
+        "C_Cpp.codeAnalysis.clangTidy.enabled": true
+	},
+	"launch": {
+        "configurations": [
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "Standalone",
+                "program": "${command:cmake.launchTargetPath}",
+                "args": [],
+                "cwd": "${workspaceFolder}"
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "VST3 AudioPluginHost",
+                "program": "${workspaceFolder}/build/lib/JUCE/extras/AudioPluginHost/AudioPluginHost_artefacts/Debug/AudioPluginHost.app/Contents/MacOS/AudioPluginHost",
+                "args": ["JuceAudioPluginHost.filtergraph"],
+                "cwd": "${workspaceFolder}"
+            },
+        ]
+    }
+}
