@@ -100,24 +100,18 @@ juce_add_plugin(Speclet
 
 juce_generate_juce_header(Speclet)
 
+# Get all source files in the src directory and store them in the speclet_sources variable.
+FILE(GLOB_RECURSE speclet_sources "src/*.cpp")
+#message(STATUS "Sources in ${CMAKE_CURRENT_SOURCE_DIR}/src:")
+#foreach(source ${speclet_sources})
+#    message(STATUS "'${source}'")
+#endforeach()
+
 # `target_sources` adds source files to a target. We pass the target that needs the sources as the
 # first argument, then a visibility parameter for the sources which should normally be PRIVATE.
 # Finally, we supply a list of source files that will be built into the target. This is a standard
 # CMake command.
-
-target_sources(Speclet
-    PRIVATE
-        src/ui/SpectronMainUI.cpp
-        src/PluginProcessor.cpp
-        src/dsp/transformations/Transformation.cpp
-        src/dsp/transformations/AbstractWaveletTransformation.cpp
-        src/dsp/transformations/FourierTransformation.cpp
-        src/dsp/transformations/WaveletTransformation.cpp
-        src/dsp/transformations/WaveletPacketTransformation.cpp
-        src/dsp/transformations/WaveletPacketBestBasisTransformation.cpp
-        src/dsp/SignalGenerator.cpp
-        src/dsp/WindowFunctions.cpp
-)
+target_sources(Speclet PRIVATE ${speclet_sources})
 
 # Import fftw3 api headers like fftw3.h:
 if (fftw_ADDED)
