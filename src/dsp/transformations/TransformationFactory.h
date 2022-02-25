@@ -15,42 +15,47 @@
 */
 #pragma once
 
-#include "Transformation.h"
-#include "FourierTransformation.h"
-#include "WaveletTransformation.h"
-#include "WaveletPacketTransformation.h"
-#include "WaveletPacketBestBasisTransformation.h"
 #include "../../dsp/WindowFunctions.h"
 #include "../../plugin/SpectronParameters.h"
+#include "FourierTransformation.h"
+#include "Transformation.h"
+#include "WaveletPacketBestBasisTransformation.h"
+#include "WaveletPacketTransformation.h"
+#include "WaveletTransformation.h"
+
 
 //This special factory-variant does not only create different types of "Transformation"-implementing-objects by ID,
 //it is also a singleton and therefore made to exists only once.
 //Furthermore it holds a pointer to the transformation, that had been created the last time
 class TransformationFactory {
 public:
-	static TransformationFactory* getSingletonInstance();
-	void destruct();
+    static auto getSingletonInstance() -> TransformationFactory &;
 
-	Transformation* createTransformation(
-		int transformationTypeNr, 
-		double samplingRate, 
-		long resolution, 
-		int windowFunction		= SpectronParameters::WINDOWING_DEFAULT,
-		int waveletBaseTypeNr	= SpectronParameters::WAVELET_DEFAULT,
-		int resolutionRatioDWPT	= SpectronParameters::RESOLUTION_RATIO_DEFAULT
-	);
-	Transformation* getCurrentTransformation (void) {return transformation;};
-	void registerForTransformationResults(TransformationListener*	value) {listenerToHandOverToEveryNewTransformation = value;};
+    // No copy-and move-constructor and assignment operator are defined, because this class is a singleton.
+    TransformationFactory(TransformationFactory const &) = delete;
+    TransformationFactory(TransformationFactory &&) = delete;
+    auto operator=(TransformationFactory const &) -> TransformationFactory & = delete;
+    auto operator=(TransformationFactory const &&) -> TransformationFactory & = delete;
+
+    void destruct();
+
+    Transformation *createTransformation(
+            int transformationTypeNr,
+            double samplingRate,
+            long resolution,
+            int windowFunction = SpectronParameters::WINDOWING_DEFAULT,
+            int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT,
+            int resolutionRatioDWPT = SpectronParameters::RESOLUTION_RATIO_DEFAULT);
+    Transformation *getCurrentTransformation(void) { return transformation; };
+    void registerForTransformationResults(TransformationListener *value) { listenerToHandOverToEveryNewTransformation = value; };
 
 private:
-	static TransformationFactory* singletonInstance;
-	
-	Transformation*			transformation;
-	TransformationListener*	listenerToHandOverToEveryNewTransformation;
-	int transformationType;
+    TransformationFactory();
+    ~TransformationFactory();
 
-	TransformationFactory(void);
-	~TransformationFactory(void);
-	TransformationFactory(const TransformationFactory&);
-	void deleteTransformation(void);
+    Transformation *transformation = nullptr;
+    TransformationListener *listenerToHandOverToEveryNewTransformation = nullptr;
+    int transformationType = SpectronParameters::TRANSFORM_OFF;
+
+    void deleteTransformation();
 };

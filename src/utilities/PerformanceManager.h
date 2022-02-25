@@ -45,9 +45,9 @@ public:
     void start(const juce::String &name, int runsPerPrintout = 100, const juce::File &loggingFile = juce::File());
     void stop(const juce::String &name);
 
-    PerformanceManager(PerformanceManager const &) = default;
-    PerformanceManager(PerformanceManager &&) = default;
-    auto operator=(PerformanceManager const &) -> PerformanceManager & = default;
+    PerformanceManager(PerformanceManager const &) = delete;
+    PerformanceManager(PerformanceManager &&) = delete;
+    auto operator=(PerformanceManager const &) -> PerformanceManager & = delete;
 
 private:
     PerformanceManager() = default;
