@@ -14,7 +14,7 @@
   ==============================================================================
 */
 #pragma once
-#include "..\..\libs\juce\JuceLibraryCode\JuceHeader.h"
+#include <JuceHeader.h>
 #define PARAMETERS SpectronParameters::getSingletonInstance()
 
 
@@ -56,17 +56,17 @@ public:
 		COLORMODES_NumOptions,
 		COLORMODE_DEFAULT		= COLORMODE_BLUE
 	};
-	static enum OptionsGenerator {
-		GENERATOR_SINE			= 1,
-		GENERATOR_TRANGLE			,
-		GENERATOR_RAMP				,
-		GENERATOR_SQUARE			,
-		GENERATOR_NOISE			,
+    static enum OptionsGenerator {
+        GENERATOR_SINE = 1,
+        GENERATOR_TRIANGLE,
+        GENERATOR_RAMP,
+        GENERATOR_SQUARE,
+        GENERATOR_NOISE,
 
-		GENERATORS_NumOptions,
-		GENERATOR_DEFAULT		= GENERATOR_SINE
-	};
-	static enum OptionsPlotAxis {
+        GENERATORS_NumOptions,
+        GENERATOR_DEFAULT = GENERATOR_SINE
+    };
+    static enum OptionsPlotAxis {
 		PLOT_AXIS_LINEAR = 1,
 		PLOT_AXIS_LOGARITHMIC,
 		
@@ -193,9 +193,9 @@ public:
 	void	setParameter(int index, float newValue);
 	void	setParameter(juce::String name, float newValue);
 	float	getParameter(int index);
-	float	getParameter(juce::String name);	
-	juce::String getParameterName(int index);
-	int	getParameterIndex(juce::String name);	
+	float	getParameter(juce::String name);
+    const juce::String getParameterName(int index);
+    int	getParameterIndex(juce::String name);	
 
 	int	getColorMode()				{return (int)getParameter(PARAMETER_INDEX_ColorMode);}
 	int	getGenerator()				{return (int)getParameter(PARAMETER_INDEX_Generator);}
@@ -215,7 +215,7 @@ public:
 	void removeListener	(juce::ValueTree::Listener* listener);
 	//read and write to XML
 	void					readFromXML(const XmlElement &xml);
-	juce::XmlElement*	writeToXML() const {return properties->createXml();};
+    std::unique_ptr<juce::XmlElement> writeToXML() const { return properties->createXml(); };
 
 private:
 	SpectronParameters(void);

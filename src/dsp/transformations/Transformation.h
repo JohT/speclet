@@ -25,13 +25,13 @@
 
 class TransformationListener;
 
-class Transformation abstract {
-friend class TransformationFactory;
+class Transformation {
 public:
-	static enum Constants {
-		TIME_RESOLUTION_LIMIT = 8
-	};
-	Transformation(double samplingRate, long resolution, int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
+    friend class TransformationFactory;
+    enum Constants {
+        TIME_RESOLUTION_LIMIT = 8
+    };
+    Transformation(double samplingRate, long resolution, int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
 	virtual ~Transformation(void);
 
 	void						setWindowFunction		(int windowFunctionNr);
@@ -74,8 +74,7 @@ protected:
 	WindowFunction*			mWindowFunction; //Windowfunction-Interface for hanning, hamming, kaiser,...
 };
 
-class TransformationListener abstract
-{
+class TransformationListener {
 public:
 	virtual void onTransformationEvent(Transformation* value) = 0;	//abstract
 };

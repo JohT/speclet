@@ -14,8 +14,8 @@
   ==============================================================================
 */
 #pragma once
+#include "../../plugin/SpectronParameters.h"
 #include "TransformationFactory.h"
-#include "..\..\plugin\SpectronParameters.h"
 #include "fftw3.h"
 
 class FourierTransformation : public Transformation {
