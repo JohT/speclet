@@ -15,13 +15,14 @@
 */
 #pragma once
 
+#include "../../data/SpectralDataBuffer.h"
+#include "../../data/SpectralDataInfo.h"
+#include "../../plugin/SpectronParameters.h"
+#include "../WindowFunctions.h"
 #include <assert.h>
 #include <queue>
 #include <vector>
-#include "../../data/SpectralDataInfo.h"
-#include "../../data/SpectralDataBuffer.h" 
-#include "../WindowFunctions.h"
-#include "../../plugin/SpectronParameters.h"
+
 
 class TransformationListener;
 
@@ -31,50 +32,50 @@ public:
     enum Constants {
         TIME_RESOLUTION_LIMIT = 8
     };
+    Transformation() = delete;                //No default contructor
+    Transformation(Transformation &) = delete;//No copy contructor
     Transformation(double samplingRate, long resolution, int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
-	virtual ~Transformation(void);
+    virtual ~Transformation();
 
-	void						setWindowFunction		(int windowFunctionNr);
-	void						setNextInputSample	(double sample);
-	bool						isOutputAvailable		(void);	
-	SpectralDataBuffer*	getSpectralDataBuffer(void);
-	SpectralDataInfo*		getSpectralDataInfo	(void) {return mSpectralDataInfo;};
-	int						getTransformationNr	(void) {return mTransformTypeNr;};
-	void						setTransformationNr	(int transformTypeNr) {mTransformTypeNr = transformTypeNr;};
-	void						setTransformResultListener	(TransformationListener* value);
+    void setWindowFunction(int windowFunctionNr);
+    void setNextInputSample(double sample);
+    auto isOutputAvailable() -> bool;
+    auto getSpectralDataBuffer() -> SpectralDataBuffer *;
+    auto getSpectralDataInfo() -> SpectralDataInfo * { return mSpectralDataInfo; };
+    auto getTransformationNr() const -> int { return mTransformTypeNr; }
+    void setTransformationNr(int transformTypeNr) { mTransformTypeNr = transformTypeNr; };
+    void setTransformResultListener(TransformationListener *value);
 
-	void getNextSpectrum (SpectralDataBuffer::ItemType* item);
-	SpectralDataBuffer::ItemStatisticsType	getSpectrumStatistics (SpectralDataBuffer::ItemType* item);
+    void getNextSpectrum(SpectralDataBuffer::ItemType *item);
+    auto getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType;
 
 private:
-	void	informListenersAboutTransformResults();
-	void	calculationFrame();
+    void informListenersAboutTransformResults();
+    void calculationFrame();
 
-	Transformation(void);					//No default contructor
-	Transformation(Transformation &);	//No copy contructor
-	TransformationListener*	mTransformResultsListener;
-	juce::CriticalSection	criticalSection;
-	juce::WaitableEvent*		waitForDestruction;
+    TransformationListener *mTransformResultsListener;
+    juce::CriticalSection criticalSection;
+    juce::WaitableEvent *waitForDestruction;
 
 protected:
-	virtual void calculate()= 0;			//abstract: must be implemented by inherited class!
+    virtual void calculate() = 0;//abstract: must be implemented by inherited class!
 
-	long			mResolution;
-	long			mFrequencyResolution;
-	long			mTimeResolution;
-	double		mSamplingRate;
-	int			mTransformTypeNr;
+    long mResolution;
+    long mFrequencyResolution;
+    long mTimeResolution;
+    double mSamplingRate;
+    int mTransformTypeNr;
 
-	bool			ready;				//Signalizes internally "ready for new calculation"
-	bool			calculated;			//Signalizes internally "calculation finished"
-	
-	std::queue<double>*		mInputQueue;
-	SpectralDataBuffer*		mOutputBuffer;
-	SpectralDataInfo*			mSpectralDataInfo;
-	WindowFunction*			mWindowFunction; //Windowfunction-Interface for hanning, hamming, kaiser,...
+    bool ready;     //Signalizes internally "ready for new calculation"
+    bool calculated;//Signalizes internally "calculation finished"
+
+    std::queue<double> *mInputQueue;
+    SpectralDataBuffer *mOutputBuffer;
+    SpectralDataInfo *mSpectralDataInfo;
+    WindowFunction *mWindowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
 };
 
 class TransformationListener {
 public:
-	virtual void onTransformationEvent(Transformation* value) = 0;	//abstract
+    virtual void onTransformationEvent(Transformation *value) = 0;//abstract
 };

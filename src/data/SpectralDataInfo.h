@@ -17,39 +17,38 @@
 #include <vector>
 
 class SpectralDataInfo {
-public: 
-	SpectralDataInfo(
-		double	samplingRate, 
-		long		resolution, 
-		long		frequencyResolution = 0, 
-		long		timeResolution = 1,
-		double	frequencyPartitionRatio = 0.0
-	);
-	~SpectralDataInfo(void);
-	bool operator == (SpectralDataInfo& compareObject);
+public:
+    SpectralDataInfo(
+            double samplingRate,
+            long resolution,
+            long frequencyResolution = 0,
+            long timeResolution = 1,
+            double frequencyPartitionRatio = 0.0);
+    ~SpectralDataInfo();
+    auto operator==(SpectralDataInfo &compareObject) -> bool;
 
-	double	getSamplingFrequency(void);
-	double	getMaxFrequency(void);
-	long		getResolution(void);
-	long		getFrequencyResolution(void);				//spectral line count within mSamplingFrequency/2 Hz ("vertical resolution")
-	long		getTimeResolution(void);					//spectral line count within 1/mResolution ms ("horizontal resolution")
-	double	getTimeResolutionMs(void);					//time resolution in ms (best resolution in case of non lin time res.)
-	double	getFrequencyPartitionSize(void);			//(e.g. 1/32 -> partition [Hz] = mSamplingFrequency/2 split into 1/32)	
-	double	getSpectralLineFrequencyPartitionSize (long spectralLineNr);	
+    auto getSamplingFrequency() -> double;
+    auto getMaxFrequency() -> double;
+    auto getResolution() -> long;
+    auto getFrequencyResolution() -> long;     //spectral line count within mSamplingFrequency/2 Hz ("vertical resolution")
+    auto getTimeResolution() -> long;          //spectral line count within 1/mResolution ms ("horizontal resolution")
+    auto getTimeResolutionMs() -> double;      //time resolution in ms (best resolution in case of non lin time res.)
+    auto getFrequencyPartitionSize() -> double;//(e.g. 1/32 -> partition [Hz] = mSamplingFrequency/2 split into 1/32)
+    auto getSpectralLineFrequencyPartitionSize(long spectralLineNr) -> double;
 
 private:
-	SpectralDataInfo(const SpectralDataInfo&);						// no copy constructor
-	SpectralDataInfo& operator = (const SpectralDataInfo&);		// no assign operator
-	SpectralDataInfo(void) {};												// no default constructor
-	
-	double	mSamplingFrequency;
-	long		mResolution;
-	long		mFrequencyResolution;	
-	long		mTimeResolution;				
-	//fields for non constant frequency partitions
-	double	mFrequencyPartitionSize;	
-	//calculated fields
-	double	mMaxFrequency;
-	double	mTimeResolutionMs;	
-};
+    SpectralDataInfo(const SpectralDataInfo &) = default;                    // no copy constructor
+	auto operator=(const SpectralDataInfo &) -> SpectralDataInfo & = default; // no assignment operator
+	SpectralDataInfo(SpectralDataInfo &&) = default;                         // no move constructor
+    SpectralDataInfo() = default;                                            // no default constructor
 
+    double samplingFrequency;
+    long resolution;
+    long frequencyResolution;
+    long timeResolution;
+    //fields for non constant frequency partitions
+    double frequencyPartitionSize;
+    //calculated fields
+    double maxFrequency;
+    double timeResolutionMs;
+};

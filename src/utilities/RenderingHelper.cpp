@@ -1,7 +1,6 @@
 #include "RenderingHelper.h"
-#include "../../source/user interface/ColourGradients.h"
+#include "../ui/ColourGradients.h"
 #include "../utilities/PerformanceManager.h"
-#include <assert.h>
 
 
 using namespace std;
@@ -22,8 +21,8 @@ void RenderingHelper::renderVerticalPoints(
     PerformanceManager::getSingletonInstance().start("renderVerticalPoints");
 
     // --- inputdata check
-    assert(transformation);
-    assert(spectralImage);
+    jassert(transformation);
+    jassert(spectralImage);
     SpectralDataBuffer *buffer = transformation->getSpectralDataBuffer();
     if (!buffer) {
         DBG("RenderingHelper::renderVerticalPoints(..image): buffer is null!!");
@@ -47,7 +46,7 @@ void RenderingHelper::renderVerticalPoints(
 
     // --- get info about spectral data (frequency/time-resolution...)
     SpectralDataInfo *spectralDataInfo = transformation->getSpectralDataInfo();
-    if (!spectralDataInfo) {
+    if (spectralDataInfo == nullptr) {
         DBG("RenderingHelper::renderVerticalPoints: spectralDataInfo null!");
         return;
     }
@@ -76,11 +75,11 @@ void RenderingHelper::renderVerticalPoints(
     PerformanceManager::getSingletonInstance().stop("renderVerticalPoints");
 }
 
-double RenderingHelper::getColorAmount(
+auto RenderingHelper::getColorAmount(
         double magnitude,
         double minMagnitude,
         double maxMagnitude,
-        bool logMagnitude) {
+        bool logMagnitude) -> double {
     if (logMagnitude) {
         maxMagnitude = 20 * log(maxMagnitude);
         minMagnitude = 20 * log(minMagnitude);
@@ -93,14 +92,14 @@ double RenderingHelper::getColorAmount(
     return amplitudeColorIndex;
 }
 
-long RenderingHelper::pixelToIndex(
+auto RenderingHelper::pixelToIndex(
         int pixel,
         int height,
         SpectralDataInfo *spectralDataInfo,
-        bool logFrequency) {
+        bool logFrequency) -> long {
     if (pixel <= 0) return 0;//DC in spectrum always on index = 0
-    assert(height > 0);
-    assert(pixel <= height);
+    jassert(height > 0);
+    jassert(pixel <= height);
     //assert(spectralDataInfo);
 
     double frequencyResolution = spectralDataInfo->getFrequencyResolution();
@@ -125,7 +124,7 @@ long RenderingHelper::pixelToIndex(
     return index;
 }
 
-double RenderingHelper::assureBorders(const juce::String &paramName, double value, double min, double max) {
+auto RenderingHelper::assureBorders(const juce::String &paramName, double value, double min, double max) -> double {
     if (value < min) {
         //DBG(T("RenderingHelper::assureBorders: <")
         //	+ paramName					+ T(">")
@@ -143,6 +142,6 @@ double RenderingHelper::assureBorders(const juce::String &paramName, double valu
     return value;
 }
 
-int RenderingHelper::roundToInt(double d) {
+auto RenderingHelper::roundToInt(double d) -> int {
     return d < 0 ? d - 0.5F : d + 0.5F;
 }

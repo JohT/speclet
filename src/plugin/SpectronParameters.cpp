@@ -114,7 +114,7 @@ auto SpectronParameters::getParameterIndex(juce::String name) -> int {
     return properties->indexOf(child);
 }
 
-auto SpectronParameters::getParameterName(int index) -> juce::String {
+auto SpectronParameters::getParameterName(int index) -> const juce::String {
     juce::ValueTree child = properties->getChild(index);
     if (!child.isValid()) {
         return {};
