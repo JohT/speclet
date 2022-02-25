@@ -147,7 +147,7 @@ BinTreeComplete<CONTENTYPE>::BinTreeComplete(integer MAXLEVEL,
   maxlevel(MAXLEVEL)
 {
   assert(maxlevel>0);
-  SetConst(&root, maxlevel, c);
+  SetConst(&BinTree<CONTENTYPE>::root, maxlevel, c);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ template <class CONTENTYPE>
 BinTreeComplete<CONTENTYPE>::BinTreeComplete(
 				  const BinTreeComplete<CONTENTYPE> &Rhs)
 {
-  BinTree<CONTENTYPE>::CopyTree(Rhs.root, root);
+    BinTree<CONTENTYPE>::CopyTree(Rhs.root, BinTree<CONTENTYPE>::root);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -173,7 +173,7 @@ Node<CONTENTYPE> *BinTreeComplete<CONTENTYPE>::block(const integer &L,
 						    const integer &B)
 {
   assert( 0<=L && L<=maxlevel && 0<=B && B<=(1<<L) );
-  return blockHelp(root, L, B);
+  return blockHelp(BinTree<CONTENTYPE>::root, L, B);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
