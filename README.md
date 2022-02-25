@@ -50,3 +50,4 @@ GNU Lesser General Public License v2.1
 
 [Example using CPM package manager with JUCE](https://github.com/robbert-vdh/diopser/blob/master/CMakeLists.txt)
 [C++ Singleton](https://stackoverflow.com/questions/1008019/c-singleton-design-pattern)
+[10 Cmake Tips & Tricks](https://medium.com/codex/10-cmake-tips-tricks-7f00d407923d)
