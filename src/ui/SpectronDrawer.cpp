@@ -93,20 +93,20 @@ void SpectronDrawer::paint (Graphics& g)
 	 //[UserPaint] Add your own custom painting code here..
 
 	 //draw spectrum ----------------
-	 PerformanceManager::getSingletonInstance()->start("imageDraw", 2000);
-	 g.drawImageAt(spectrumImage, 0, 0);
-	 PerformanceManager::getSingletonInstance()->stop("imageDraw");	 
+     PerformanceManager::getSingletonInstance().start("imageDraw", 2000);
+     g.drawImageAt(spectrumImage, 0, 0);
+     PerformanceManager::getSingletonInstance().stop("imageDraw");
 
-	 //draw red position cursor ----------------
+     //draw red position cursor ----------------
 	 g.setColour(Colours::red);
 	 g.drawLine(currentCursorXPos, 0, currentCursorXPos, sizeY, 1.0);
 
 	 //draw frequency and time axis ----------------
-	 PerformanceManager::getSingletonInstance()->start(T("drawAxis"), 2000);
-	 g.drawImageAt(axisImage, 0, 0);
-	 PerformanceManager::getSingletonInstance()->stop(T("drawAxis"));
+     PerformanceManager::getSingletonInstance().start("drawAxis"), 2000;
+     g.drawImageAt(axisImage, 0, 0);
+     PerformanceManager::getSingletonInstance().stop("drawAxis");
 
-	 //[/UserPaint]
+     //[/UserPaint]
 }
 
 void SpectronDrawer::resized()

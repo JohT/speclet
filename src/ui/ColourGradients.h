@@ -14,30 +14,29 @@
   ==============================================================================
 */
 #pragma once
-#include "..\..\libs\juce\JuceLibraryCode\JuceHeader.h"
-#define COLOURGRADIENT		ColourGradients::getSingletonInstance()
-#define GRADIENT_BLUE		ColourGradients::getSingletonInstance()->getBlue()
-#define GRADIENT_GREEN		ColourGradients::getSingletonInstance()->getGreen()
-#define GRADIENT_FIRE		ColourGradients::getSingletonInstance()->getFire()
-#define GRADIENT_RAINBOW	ColourGradients::getSingletonInstance()->getRainbow()
+#include "JuceHeader.h"
+#define COLOURGRADIENT ColourGradients::getSingletonInstance()
+#define GRADIENT_BLUE ColourGradients::getSingletonInstance()->getBlue()
+#define GRADIENT_GREEN ColourGradients::getSingletonInstance()->getGreen()
+#define GRADIENT_FIRE ColourGradients::getSingletonInstance()->getFire()
+#define GRADIENT_RAINBOW ColourGradients::getSingletonInstance()->getRainbow()
 
 class ColourGradients {
 public:
-	static ColourGradients* getSingletonInstance();
-	void destruct();
-	
-	juce::ColourGradient get(int index);
+    static ColourGradients *getSingletonInstance();
+    void destruct();
 
-	juce::ColourGradient getBlue();
-	juce::ColourGradient getGreen();
-	juce::ColourGradient getFire();
-	juce::ColourGradient getRainbow();
+    juce::ColourGradient get(int index);
+
+    juce::ColourGradient getBlue();
+    juce::ColourGradient getGreen();
+    juce::ColourGradient getFire();
+    juce::ColourGradient getRainbow();
 
 private:
-	static ColourGradients* singletonInstance;
+    static ColourGradients *singletonInstance;
 
-	ColourGradients(void) {};
-	~ColourGradients(void) {};
-	ColourGradients(const ColourGradients&);
+    ColourGradients(void){};
+    ~ColourGradients(void){};
+    ColourGradients(const ColourGradients &);
 };
-
