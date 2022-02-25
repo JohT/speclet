@@ -15,55 +15,51 @@
 */
 #pragma once
 
-#include <list>
-#include "../../libs/juce/JuceLibraryCode/JuceHeader.h"
 #include "../data/SpectralDataInfo.h"
+#include <JuceHeader.h>
+#include <list>
 #include <vector>
-#include "assert.h"
+
 
 class SpectralDataBuffer {
 public:
-	static const long CAPACITY					= 5000;	//50000
-	static const int	MAXHISTORYELEMENTS	= 50;
-	static const int	SIZECHECKCOUNT			= 500;
+    static const long CAPACITY = 5000;//50000
+    static const int MAXHISTORYELEMENTS = 50;
+    static const int SIZECHECKCOUNT = 500;
 
-	typedef std::vector<float>					ItemType;
-	typedef std::vector<float>::size_type	ItemSizeType;
-	typedef std::vector<float>::iterator	ItemIteratorType;
+    using ItemType = std::vector<float>;
+    using ItemSizeType = std::vector<float>::size_type;
+    using ItemIteratorType = std::vector<float>::iterator;
 
-	//types for per spectrum statistic
-	typedef struct {
-		float min;
-		float max;
-		float avg;
-	} ItemStatisticsType;
+    //types for per spectrum statistic
+    using ItemStatisticsType = struct {
+        float min;
+        float max;
+        float avg;
+    };
 
-public:
-	SpectralDataBuffer();
-	~SpectralDataBuffer();
+    SpectralDataBuffer();
+    ~SpectralDataBuffer();
+    SpectralDataBuffer(const SpectralDataBuffer &) = default;
+    auto operator=(const SpectralDataBuffer &) -> SpectralDataBuffer & = default;
 
-	void						write(ItemType item);
-	void						read(ItemType* pItem);	
+    void write(ItemType item);
+    void read(ItemType *pItem);
 
-	ItemSizeType			size(void);
-	ItemSizeType			unread(void);
+    auto size() -> ItemSizeType;
+    auto unread() -> ItemSizeType;
 
-	ItemStatisticsType	getStatistics(ItemType* pItem);
+    auto getStatistics(ItemType *pItem) -> ItemStatisticsType;
 
 private:
-	SpectralDataBuffer(const SpectralDataBuffer&);					// no copy constructor
-	SpectralDataBuffer& operator = (const SpectralDataBuffer&); // no assign operator
+#if __USE_BOOST
+    Bounded_Buffer<ItemType> *buffer;
+#else
+    std::list<ItemType> *buffer;
+    //CriticalSection			criticalSection;
+#endif
 
-	#if __USE_BOOST
-		Bounded_Buffer<ItemType>*	buffer;
-	#else
-		std::list<ItemType>*		buffer;
-		//CriticalSection			criticalSection;
-	#endif
-	
-	ItemSizeType					mItemSize;
-	bool								mWriteAccess;
-	int								sizeCheckCounter;
+    ItemSizeType mItemSize;
+    bool mWriteAccess;
+    int sizeCheckCounter;
 };
-
-

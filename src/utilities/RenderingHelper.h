@@ -16,7 +16,7 @@
 #pragma once
 #include "../data/SpectralDataBuffer.h"
 #include "../dsp/transformations/Transformation.h"
-#include "../../libs/juce/JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 #include <vector>
 
 class RenderingHelper {
@@ -53,11 +53,11 @@ public:
 //Normally, this method would be defined as "privat". 
 //But since it is directly adressed in a unit-test, it remains 
 //(until the test gets deprecated) "public"
-	long RenderingHelper::pixelToIndex (
-		int		pixel, 
-		int		height, 
-		SpectralDataInfo*	spectralDataInfo,
-		bool		logFrequency);
+    long pixelToIndex(
+            int pixel,
+            int height,
+            SpectralDataInfo *spectralDataInfo,
+            bool logFrequency);
 
 private:
 	std::vector<juce::Colour>	mColorTable;	//color table

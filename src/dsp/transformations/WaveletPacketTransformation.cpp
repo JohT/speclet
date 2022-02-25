@@ -1,5 +1,5 @@
 #include "WaveletPacketTransformation.h"
-#include "../../libs/juce/JuceLibraryCode/JuceHeader.h"
+#include "JuceHeader.h"
 
 WaveletPacketTransformation::WaveletPacketTransformation(
 	double samplingRate, 
@@ -13,22 +13,21 @@ WaveletPacketTransformation::WaveletPacketTransformation(
 	setResolutionRatioDWPT(resolutionRatioDWPT);
 	updateConstantLevelsHedge(mDWPT_ResultTreeLevel);
 
-	DBG(T("Wavelet initialize: N=")										+ 
-								juce::String(mResolution)					+
-		T(",fres=")			+ juce::String(mFrequencyResolution)	+
-		T(",tres=")			+ juce::String(mTimeResolution)			+
-		T(",fs=")			+ juce::String(mSamplingRate)				+
-		T(",maxLevel=")	+ juce::String(mDWT_maxLevel)				+
-		T(",resultTree=")	+ juce::String(mDWPT_ResultTreeLevel)		
-	);
+    DBG("Wavelet initialize: N=" +
+        juce::String(mResolution) +
+        ",fres=" + juce::String(mFrequencyResolution) +
+        ",tres=" + juce::String(mTimeResolution) +
+        ",fs=" + juce::String(mSamplingRate) +
+        ",maxLevel=" + juce::String(mDwtMaxLevel) +
+        ",resultTree=" + juce::String(mDWPT_ResultTreeLevel));
 
-	ready			= true;
-	calculated	= true;
+    ready = true;
+    calculated = true;
 };
 
 WaveletPacketTransformation::~WaveletPacketTransformation() {
 	ready	= false;
-	DBG(T("WaveletPacketTransformation destructed"));
+    DBG("WaveletPacketTransformation destructed");
 }
 
 int WaveletPacketTransformation::getFrequencyResolution (int waveletPacketResultTreeLevel) {
@@ -36,7 +35,7 @@ int WaveletPacketTransformation::getFrequencyResolution (int waveletPacketResult
 }
 
 int WaveletPacketTransformation::getTimeResolution() {
-	return 1<<(mDWT_maxLevel - mDWPT_ResultTreeLevel);
+    return 1 << (mDwtMaxLevel - mDWPT_ResultTreeLevel);
 }
 
 int WaveletPacketTransformation::getWaveletPacketResultTreeLevel (int maxLevel, int resolutionRatioDWPT) {
@@ -60,17 +59,17 @@ int WaveletPacketTransformation::getWaveletPacketResultTreeLevel (int maxLevel, 
 }
 
 void WaveletPacketTransformation::setResolutionRatioDWPT	(int resolutionRatioDWPT) {
-	DBG(T("WaveletPacketTransformation::setResolutionRatioDWPT started"));
+    DBG("WaveletPacketTransformation::setResolutionRatioDWPT started");
 
-	mResolutionRatioDWPT		= resolutionRatioDWPT;
+    mResolutionRatioDWPT		= resolutionRatioDWPT;
 	//since value 0 is no more allowed as enum, the new to "equal" corresponding value will be set manually to zero  
 	if (mResolutionRatioDWPT == SpectronParameters::RESOLUTION_RATIO_Equal) mResolutionRatioDWPT = 0;
 
-	mDWPT_ResultTreeLevel	= getWaveletPacketResultTreeLevel(mDWT_maxLevel, mResolutionRatioDWPT);
-	mFrequencyResolution		= getFrequencyResolution(mDWPT_ResultTreeLevel);
-	mTimeResolution			= getTimeResolution();	
+    mDWPT_ResultTreeLevel = getWaveletPacketResultTreeLevel(mDwtMaxLevel, mResolutionRatioDWPT);
+    mFrequencyResolution = getFrequencyResolution(mDWPT_ResultTreeLevel);
+    mTimeResolution = getTimeResolution();
 
-	deleteAndZero(mSpectralDataInfo);
+    deleteAndZero(mSpectralDataInfo);
 	mSpectralDataInfo = new SpectralDataInfo(mSamplingRate, mResolution, mFrequencyResolution, mTimeResolution);
 	assert(mSpectralDataInfo);
 }
@@ -78,21 +77,21 @@ void WaveletPacketTransformation::setResolutionRatioDWPT	(int resolutionRatioDWP
 void WaveletPacketTransformation::calculate() {
 	fillDWTInput();
 
-	if (!mDWT_Input) {
-		DBG(T("WaveletPacketTransformation::calculate: mDWT_Input = null!"));
-		return;
-	}
+    if (!mDwtInput) {
+        DBG("WaveletPacketTransformation::calculate: mDWT_Input = null!");
+        return;
+    }
 
-	//to hold the result of the wavelet packet transformation (=DWPT coeffs)
-	ArrayTreePer out_DWPT(mDWT_maxLevel);
-	//DBG(T("WaveletPacketTransformation::calculate before with mDWT_maxLevel= ")	+ 
-	//							  juce::String(mDWT_maxLevel)			+
-	//	T(",inLen=")		+ juce::String(mDWT_Input->length)	+
-	//	T(",outDim=")		+ juce::String(out_DWPT.dim)
-	//);
+    //to hold the result of the wavelet packet transformation (=DWPT coeffs)
+    ArrayTreePer out_DWPT(mDwtMaxLevel);
+    //DBG("WaveletPacketTransformation::calculate before with mDWT_maxLevel= "	+
+    //							  juce::String(mDWT_maxLevel)			+
+    //	",inLen="		+ juce::String(mDWT_Input->length)	+
+    //	",outDim="		+ juce::String(out_DWPT.dim)
+    //);
 
-	//DWPT (discrete wavelet packet transform), periodic
-	Analysis(*mDWT_Input, out_DWPT, mDWT_filter_H, mDWT_filter_G, ConvDecPer);
-	sortDWPTTreeByScaleDescending(out_DWPT);
-	extractSpectrum(out_DWPT, *mConstantLevelsHedge);
+    //DWPT (discrete wavelet packet transform), periodic
+    Analysis(*mDwtInput, out_DWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
+    sortDWPTTreeByScaleDescending(out_DWPT);
+    extractSpectrum(out_DWPT, *mConstantLevelsHedge);
 }

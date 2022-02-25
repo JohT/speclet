@@ -16,44 +16,50 @@
 #pragma once
 
 #if _DEBUG
-	#define _PERFORMACETEST 1
+#define _PERFORMACETEST 1
 #endif
 #if _LOGTOFILE
-	#define LOG(logtext) {JUCE_NAMESPACE::String tempLogBuf; tempLogBuf << logtext; JUCE_NAMESPACE::Logger::writeToLog(tempLogBuf);}
-#else	 
-	#define LOG(logtext)
+#define LOG(logtext)                                    \
+    {                                                   \
+        JUCE_NAMESPACE::String tempLogBuf;              \
+        tempLogBuf << logtext;                          \
+        JUCE_NAMESPACE::Logger::writeToLog(tempLogBuf); \
+    }
+#else
+#define LOG(logtext)
 #endif
 
-#include "..\..\libs\juce\JuceLibraryCode\JuceHeader.h"
+#include "JuceHeader.h"
 #include <map>
 
 /*
 The class PerformanceManager is a global container for juce::PerformanceCounter-objects.
-It's ment to be an easy way to start and stop performance measures without bothering about
+It's meant to be an easy way to start and stop performance measures without bothering about
 creation and scope of the PerformanceCounter. 
 Internally, every new PerformanceCounter is added to a std::map.
 */
 class PerformanceManager {
 public:
-	static PerformanceManager* getSingletonInstance();
-	void destruct();
-	void start(juce::String name, int runsPerPrintout = 100, const juce::File &loggingFile = juce::File::nonexistent);
-	void stop(juce::String name);
+    static auto getSingletonInstance() -> PerformanceManager &;
+
+    void start(const juce::String &name, int runsPerPrintout = 100, const juce::File &loggingFile = juce::File());
+    void stop(const juce::String &name);
+
+    PerformanceManager(PerformanceManager const &) = default;
+    PerformanceManager(PerformanceManager &&) = default;
+    auto operator=(PerformanceManager const &) -> PerformanceManager & = default;
 
 private:
-	typedef std::map	<juce::String, juce::PerformanceCounter*>							TMap;
-	typedef std::map	<juce::String, juce::PerformanceCounter*>::const_iterator	TIterator;
-	typedef std::pair	<juce::String, juce::PerformanceCounter*>							TKeyValue;
+    PerformanceManager() = default;
+    ~PerformanceManager() = default;
 
-	static PerformanceManager* singletonInstance;
-	TMap map; 
+    using TMap = std::map<juce::String, juce::PerformanceCounter &>;
+    using TIterator = std::map<juce::String, juce::PerformanceCounter &>::const_iterator;
+    using TKeyValue = std::pair<juce::String, juce::PerformanceCounter &>;
+    TMap map;
 
-	PerformanceManager(void) {};
-	~PerformanceManager(void) {};
-	PerformanceManager(const PerformanceManager&);
+    void add(const juce::String &name, int runsPerPrintout = 100, const juce::File &loggingFile = juce::File());
+    auto get(const juce::String &name) -> juce::PerformanceCounter &;
 
-	void add(juce::String name, int runsPerPrintout = 100, const juce::File &loggingFile = juce::File::nonexistent);
-	juce::PerformanceCounter* get(juce::String name);
-
-	void deletePerformanceManager();
+    void deletePerformanceManager();
 };

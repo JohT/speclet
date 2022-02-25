@@ -14,51 +14,51 @@
   ==============================================================================
 */
 #pragma once
+#include "../../../lib/wave++/includes/libw.h"//TODO include with cmake
+#include "../../plugin/SpectronParameters.h"
+#include "../../utilities/RenderingHelper.h"
 #include "Transformation.h"
-#include "..\..\plugin\SpectronParameters.h"
-#include "..\..\utilities\RenderingHelper.h"
-#include "libw.h"
+
 
 class AbstractWaveletTransformation : public Transformation {
 public:
-	AbstractWaveletTransformation(
-		double samplingRate, 
-		long resolution, 
-		int windowFunctionNr		= SpectronParameters::WINDOWING_DEFAULT,
-		int waveletBaseTypeNr	= SpectronParameters::WAVELET_DEFAULT
-	);
-	virtual ~AbstractWaveletTransformation(void);
+    AbstractWaveletTransformation(
+            double samplingRate,
+            long resolution,
+            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
+            int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);
+    ~AbstractWaveletTransformation() override;
 
-	void	setWaveletBase(int waveletBasNr);
+    void setWaveletBase(int waveletBasNr);
 
 protected:
-	virtual int		getMaxLevel								(int dimension);
-	virtual int		getMinLevel								(const HedgePer &bestBasis);
-	virtual void	fillDWTInput							(void); 
-	virtual void	sortDWPTTreeByScaleDescending		(const ArrayTreePer &tree);
-	virtual void	swapDWPTTreeChilds					(const ArrayTreePer &tree, const integer &L, const integer &B);
+    virtual int getMaxLevel(int dimension);
+    virtual int getMinLevel(const HedgePer &bestBasis);
+    virtual void fillDWTInput(void);
+    virtual void sortDWPTTreeByScaleDescending(const ArrayTreePer &tree);
+    virtual void swapDWPTTreeChilds(const ArrayTreePer &tree, const integer &L, const integer &B);
 
-	virtual void	extractSpectrum(const Interval &out_DWT);
-	virtual void	extractSpectrum(const ArrayTreePer &out_DWPT, const HedgePer &levelsHedge);
-	virtual void	updateConstantLevelsHedge			(int resolutionRatioDWPT = 0);
-	virtual void	updateDWTLevelsHedge					(void);
+    virtual void extractSpectrum(const Interval &out_DWT);
+    virtual void extractSpectrum(const ArrayTreePer &out_DWPT, const HedgePer &levelsHedge);
+    virtual void updateConstantLevelsHedge(int resolutionRatioDWPT = 0);
+    virtual void updateDWTLevelsHedge(void);
 
-	int			mWaveletBaseTypeNr;	//Waveletbase-type, see enum WAVELET_BASE_NR
-	int			mDWT_maxLevel;			//Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
-	PQMF			mDWT_filter_H;			//DWT/DWPT lowpass filter coeffs (result=scaling function);
-	PQMF			mDWT_filter_G;			//DWT/DWPT hipass  filter coeffs (result=wavelet function);
-	Interval*	mDWT_Input;				//Pointer to wave++'s wavelet transformation input data
+    int mWaveletBaseTypeNr;//Waveletbase-type, see enum WAVELET_BASE_NR
+    int mDwtMaxLevel;      //Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
+    PQMF mDwtFilterH;      //DWT/DWPT lowpass filter coeffs (result=scaling function);
+    PQMF mDwtFilterG;      //DWT/DWPT hipass  filter coeffs (result=wavelet function);
+    Interval *mDwtInput;   //Pointer to wave++'s wavelet transformation input data
 
-	HedgePer*	mConstantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
-	HedgePer*	mDWTLevelsHedge;		//Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)  
-	RenderingHelper renderingHelper;
+    HedgePer *mConstantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
+    HedgePer *mDWTLevelsHedge;     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
+    RenderingHelper renderingHelper;
 
 private:
-	static enum TRANSFORM_RESULT_CLASS {
-		TRANSFORM_RESULT_CLASS_INTERVAL =	0,
-		TRANSFORM_RESULT_CLASS_ARRAYTREE
-	};
-	void		extractSpectrum(int transformResultClass, real_DWT* origin, const HedgePer &bestBasis);
-	float		getValue(int transformResultClass, real_DWT* origin, int level, int blocknr, int blockpos);
-	float		getAvgValue(int transformResultClass, real_DWT* origin, int level, int blocknr, int blockpos_start, int blockpos_end);
+    enum TRANSFORM_RESULT_CLASS {
+        TRANSFORM_RESULT_CLASS_INTERVAL = 0,
+        TRANSFORM_RESULT_CLASS_ARRAYTREE
+    };
+    void extractSpectrum(int transformResultClass, real_DWT *origin, const HedgePer &bestBasis);
+    float getValue(int transformResultClass, real_DWT *origin, int level, int blocknr, int blockpos);
+    float getAvgValue(int transformResultClass, real_DWT *origin, int level, int blocknr, int blockpos_start, int blockpos_end);
 };

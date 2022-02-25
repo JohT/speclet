@@ -14,31 +14,32 @@
   ==============================================================================
 */
 #pragma once
-#include "..\plugin\SpectronParameters.h"
+#include "../plugin/SpectronParameters.h"
+#include <random>
 
 class SignalGenerator {
 public:
-	SignalGenerator(
-		short signalType = SpectronParameters::GENERATOR_DEFAULT, 
-		double signalFrequency = 441.0, 
-		double samplingFrequency = 44100.0
-	);
-	~SignalGenerator(void);
-	
-	double	getNextSample(void);
+    SignalGenerator(
+            short signalType = SpectronParameters::GENERATOR_DEFAULT,
+            double signalFrequency = 441.0,
+            double samplingFrequency = 44100.0);
+    ~SignalGenerator();
+
+    auto getNextSample() -> double;
 
 private:
-	double	generateSine		(void);
-	double	generateTriangle	(void);
-	double	generateRamp		(void);
-	double	generateSquare		(void);
-	double	generateNoise		(void);
+    auto generateSine() -> double;
+    auto generateTriangle() -> double;
+    auto generateRamp() -> double;
+    auto generateSquare() -> double;
+    auto generateNoise() -> double;
 
-private:
-	double	mLastSignalGeneratorArgument;
-	double	mLastSignalGeneratorSample;
-	int		mSignalType;
-	double	mSignalFrequency;
-	double	mSamplingFrequency;
+    double mLastSignalGeneratorArgument;
+    double mLastSignalGeneratorSample;
+    int mSignalType;
+    double mSignalFrequency;
+    double mSamplingFrequency;
+
+    std::mt19937 randomMersenneTwisterEngine;
+    std::uniform_real_distribution<double> randomDistribution;
 };
-
