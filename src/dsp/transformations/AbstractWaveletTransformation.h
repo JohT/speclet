@@ -32,9 +32,9 @@ public:
     void setWaveletBase(int waveletBasNr);
 
 protected:
-    virtual int getMaxLevel(int dimension);
-    virtual int getMinLevel(const HedgePer &bestBasis);
-    virtual void fillDWTInput(void);
+    virtual auto getMaxLevel(int dimension) -> int;
+    virtual auto getMinLevel(const HedgePer &bestBasis) -> int;
+    virtual void fillDWTInput();
     virtual void sortDWPTTreeByScaleDescending(const ArrayTreePer &tree);
     virtual void swapDWPTTreeChilds(const ArrayTreePer &tree, const integer &L, const integer &B);
 
@@ -59,6 +59,6 @@ private:
         TRANSFORM_RESULT_CLASS_ARRAYTREE
     };
     void extractSpectrum(int transformResultClass, real_DWT *origin, const HedgePer &bestBasis);
-    float getValue(int transformResultClass, real_DWT *origin, int level, int blocknr, int blockpos);
-    float getAvgValue(int transformResultClass, real_DWT *origin, int level, int blocknr, int blockpos_start, int blockpos_end);
+    auto getValue(int transformResultClass, real_DWT *origin, int level, int blocknr, int blockpos) -> float;
+    auto getAvgValue(int transformResultClass, real_DWT *origin, int level, int blocknr, int blockposStart, int blockposEnd) -> float;
 };

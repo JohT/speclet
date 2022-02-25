@@ -15,23 +15,24 @@
 */
 #pragma once
 #include "../../plugin/SpectronParameters.h"
+#include "Transformation.h"
 #include "TransformationFactory.h"
 #include "fftw3.h"
 
+
 class FourierTransformation : public Transformation {
 public:
-	FourierTransformation(
-		double samplingRate, 
-		long resolution, 
-		int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT
-	);
-	virtual ~FourierTransformation(void);
+    FourierTransformation(
+            double samplingRate,
+            long resolution,
+            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
+    ~FourierTransformation() override;
 
 protected:
-	virtual void	calculate();		
+    void calculate() override;
 
 private:
-	fftw_plan		plan;			//Plan holds prepared (optimized) fft
-	double			*in;			//Pointer to input data
-	fftw_complex	*out;			//Pointer to output data
+    fftw_plan plan;   //Plan holds prepared (optimized) fft
+    double *in;       //Pointer to input data
+    fftw_complex *out;//Pointer to output data
 };

@@ -56,7 +56,7 @@ SpectronAudioProcessor::~SpectronAudioProcessor() {
     currentTransformation = NULL;
     parameters = NULL;
 
-    TransformationFactory::getSingletonInstance()->destruct();
+    TransformationFactory::getSingletonInstance().destruct();
     WindowFunctionsFactory::getSingletonInstance()->destruct();
     ColourGradients::getSingletonInstance()->destruct();
     SpectronParameters::getSingletonInstance()->destruct();
@@ -371,7 +371,7 @@ void SpectronAudioProcessor::updateTransformation() {
     currentTransformation = nullptr;
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
 
-    TransformationFactory::getSingletonInstance()->createTransformation(
+    TransformationFactory::getSingletonInstance().createTransformation(
             parameters->getTransformation(),
             sampleRate,
             parameters->getResolution(),
@@ -380,7 +380,7 @@ void SpectronAudioProcessor::updateTransformation() {
             parameters->getWaveletPaketBase());
 
     parameters->unblockParameterChanges();
-    currentTransformation = TransformationFactory::getSingletonInstance()->getCurrentTransformation();
+    currentTransformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
 }
 
 void SpectronAudioProcessor::updateSignalGenerator() {

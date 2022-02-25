@@ -1,5 +1,5 @@
 #include "ColourGradients.h"
-#include "../../source/plugin/SpectronParameters.h"
+#include "../plugin/SpectronParameters.h"
 
 // Singleton instance variable (only one instance of this class) 
 ColourGradients* ColourGradients::singletonInstance = 0;
@@ -32,8 +32,8 @@ juce::ColourGradient ColourGradients::get(int index) {
 		return getRainbow();
 	}
 
-	DBG(T("juce::ColourGradient ColourGradients::get(): index not found (replaced by blue)! i=") + juce::String(index));
-	return getBlue();
+    DBG("juce::ColourGradient ColourGradients::get(): index not found (replaced by blue)! i=" + juce::String(index));
+    return getBlue();
 }
 
 juce::ColourGradient ColourGradients::getBlue() {
