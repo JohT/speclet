@@ -508,7 +508,7 @@ void SpectronAnalyzerComponent::fillComboBoxes() {
     comboBoxTransformation->addItem("FWT", SpectronParameters::TRANSFORM_FWT);
     comboBoxTransformation->addItem("WPT", SpectronParameters::TRANSFORM_FWPT);
     comboBoxTransformation->addItem("WPT BestBase", SpectronParameters::TRANSFORM_FWPT_BB);
-    comboBoxTransformation->addItem("Deaktiviert", SpectronParameters::TRANSFORM_OFF);
+    comboBoxTransformation->addItem("Off", SpectronParameters::TRANSFORM_OFF);
 
     comboBoxWindowing->addItem("Barlett", SpectronParameters::WINDOWING_BARTLETT);
     comboBoxWindowing->addItem("Blackman", SpectronParameters::WINDOWING_BLACKMAN);
@@ -566,7 +566,7 @@ void SpectronAnalyzerComponent::fillComboBoxes() {
     comboBoxColorMode->addItem("Regenbogen", SpectronParameters::COLORMODE_RAINBOW);
 }
 
-void SpectronAnalyzerComponent::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) {
+void SpectronAnalyzerComponent::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier & /*property*/) {
     const ScopedLock myScopedLock(criticalSection);
 
     updateComboBox(SpectronParameters::PARAMETER_COLORMODE, comboBoxColorMode, treeWhosePropertyHasChanged);
@@ -584,30 +584,34 @@ void SpectronAnalyzerComponent::valueTreePropertyChanged(ValueTree &treeWhosePro
 
 //This method updates a combobox-index within an parameter-change-event
 void SpectronAnalyzerComponent::updateComboBox(
-        juce::String parameterName,
+        const juce::String &parameterName,
         juce::ComboBox *comboBox,
         const ValueTree &treeWhosePropertyHasChanged) {
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
     juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpectronParameters::PROPERTY_VALUE);
 
-    if (!changedParameterName.equalsIgnoreCase(parameterName)) return;
+    if (!changedParameterName.equalsIgnoreCase(parameterName)) {
+        return;
+    }
 
-    assert(comboBox);
+    jassert(comboBox);
     comboBox->setSelectedId((int) changedParameterValue, true);
 }
 
 //This method updates a slider-value within an parameter-change-event
 void SpectronAnalyzerComponent::updateSlider(
-        juce::String parameterName,
+        const juce::String &parameterName,
         juce::Slider *slider,
         const ValueTree &treeWhosePropertyHasChanged) {
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
     juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpectronParameters::PROPERTY_VALUE);
 
-    if (!changedParameterName.equalsIgnoreCase(parameterName)) return;
+    if (!changedParameterName.equalsIgnoreCase(parameterName)) {
+        return;
+    }
 
-    assert(slider);
-    slider->setValue(changedParameterValue, false);
+    jassert(slider);
+    slider->setValue(changedParameterValue, dontSendNotification);
 }
 
 //[/MiscUserCode]

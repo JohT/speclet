@@ -18,9 +18,7 @@
 
   ==============================================================================
 */
-
-#ifndef __JUCER_HEADER_SPECTRONANALYZERCOMPONENT_SPECTRONANALYZERCOMPONENT_BA2D5B48__
-#define __JUCER_HEADER_SPECTRONANALYZERCOMPONENT_SPECTRONANALYZERCOMPONENT_BA2D5B48__
+#pragma once
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../dsp/transformations/Transformation.h"
@@ -46,23 +44,23 @@ class SpectronAnalyzerComponent : public Component,
 public:
     //==============================================================================
     SpectronAnalyzerComponent();
-    ~SpectronAnalyzerComponent();
+    ~SpectronAnalyzerComponent() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
     //[/UserMethods]
 
-    void paint(Graphics &g);
-    void resized();
-    void comboBoxChanged(ComboBox *comboBoxThatHasChanged);
-    void sliderValueChanged(Slider *sliderThatWasMoved);
-    void visibilityChanged();
-    void parentSizeChanged();
-    void broughtToFront();
-    void childrenChanged();
-    void enablementChanged();
-    void mouseMove(const MouseEvent &e);
-    void mouseDown(const MouseEvent &e);
+    void paint(Graphics &g) override;
+    void resized() override;
+    void comboBoxChanged(ComboBox *comboBoxThatHasChanged) override;
+    void sliderValueChanged(Slider *sliderThatWasMoved) override;
+    void visibilityChanged() override;
+    void parentSizeChanged() override;
+    void broughtToFront() override;
+    void childrenChanged() override;
+    void enablementChanged() override;
+    void mouseMove(const MouseEvent &e) override;
+    void mouseDown(const MouseEvent &e) override;
     void mouseWheelMove(const MouseEvent &e, float wheelIncrementX, float wheelIncrementY);
 
 
@@ -71,7 +69,7 @@ public:
 
             private :
         //[UserVariables]   -- You can add your own custom variables in this section.
-        static enum PopupMenuEntryIndizes {
+        enum PopupMenuEntryIndizes {
             POPUPMENU_INDEX_1_ABOUT = 1
         };
     SpectronParameters *parameters;
@@ -79,12 +77,12 @@ public:
     juce::PopupMenu popupMenu;
 
     void fillComboBoxes();
-    void valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property);
-    void valueTreeChildrenChanged(ValueTree &treeWhoseChildHasChanged){};
-    void valueTreeParentChanged(ValueTree &treeWhoseParentHasChanged){};
+    void valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) override;
+    void valueTreeChildrenChanged(ValueTree & /*unused*/) {}
+    void valueTreeParentChanged(ValueTree & /*treeWhoseParentHasChanged*/) override {}
 
-    void updateComboBox(juce::String parameterName, juce::ComboBox *comboBox, const ValueTree &treeWhosePropertyHasChanged);
-    void updateSlider(juce::String parameterName, juce::Slider *slider, const ValueTree &treeWhosePropertyHasChanged);
+    void updateComboBox(const juce::String &parameterName, juce::ComboBox *comboBox, const ValueTree &treeWhosePropertyHasChanged);
+    void updateSlider(const juce::String &parameterName, juce::Slider *slider, const ValueTree &treeWhosePropertyHasChanged);
 
     //[/UserVariables]
 
@@ -116,8 +114,5 @@ public:
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
     SpectronAnalyzerComponent(const SpectronAnalyzerComponent &);
-    const SpectronAnalyzerComponent &operator=(const SpectronAnalyzerComponent &);
+    auto operator=(const SpectronAnalyzerComponent &) -> const SpectronAnalyzerComponent &;
 };
-
-
-#endif// __JUCER_HEADER_SPECTRONANALYZERCOMPONENT_SPECTRONANALYZERCOMPONENT_BA2D5B48__
