@@ -5,8 +5,8 @@
 
 using namespace std;
 
-RenderingHelper::RenderingHelper(void) {
-    colourGradient = GRADIENT_BLUE;
+RenderingHelper::RenderingHelper() {
+    colourGradient = ColourGradients::getSingletonInstance().blue();
 }
 
 RenderingHelper::~RenderingHelper(void) {
@@ -24,7 +24,7 @@ void RenderingHelper::renderVerticalPoints(
     jassert(transformation);
     jassert(spectralImage);
     SpectralDataBuffer *buffer = transformation->getSpectralDataBuffer();
-    if (!buffer) {
+    if (buffer == nullptr) {
         DBG("RenderingHelper::renderVerticalPoints(..image): buffer is null!!");
         return;
     }
