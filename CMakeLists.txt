@@ -14,36 +14,9 @@ cmake_minimum_required(VERSION 3.15)
 # `project()` command. `project()` sets up some helpful variables that describe source/binary
 # directories, and the current project version. This is a standard CMake command.
 
-project(speclet VERSION 0.0.1 LANGUAGES CXX)
+project(speclet)
 
-# Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
-if (POLICY CMP0025)
-    cmake_policy(SET CMP0025 NEW)
-endif ()
-
-# Set C++ Language Standard to C++17
-set (CMAKE_CXX_STANDARD 17)
-
-# Generates a JSON file containing compile info like include paths, defines, etc.
-# Reference: https://stackoverflow.com/questions/39455090/clang-tidy-cant-find-my-header-files
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Enable diagnostic colors in CMake output
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  add_compile_options(-fdiagnostics-color=always)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  add_compile_options(-fcolor-diagnostics)
-endif()
-
-# Download "cpm", the setup-free CMake dependency management 
-# https://github.com/cpm-cmake/CPM.cmake
-set(CPM_DOWNLOAD_VERSION 0.35.0)
-set(CPM_DOWNLOAD_LOCATION "${CMAKE_BINARY_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
-    message(STATUS "Downloading CPM.cmake")
-    file(DOWNLOAD https://github.com/TheLartians/CPM.cmake/releases/download/v${CPM_DOWNLOAD_VERSION}/CPM.cmake ${CPM_DOWNLOAD_LOCATION})
-endif()
-include(${CPM_DOWNLOAD_LOCATION})
+include(Environment.cmake)
 
 # Import dependencies
 CPMAddPackage("gh:juce-framework/JUCE#6.1.5")
@@ -76,21 +49,23 @@ CPMAddPackage("gh:catchorg/Catch2@2.13.8")
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
 
 juce_add_plugin(Speclet
+    PRODUCT_NAME "Speclet"                      # The name of the final executable, which can differ from the target name
+    COMPANY_NAME "Johannes Troppacher"          # Specify the name of the plugin's author
     VERSION 0.9.0                               # Set this if the plugin version is different to the project version
+    FORMATS VST3 AU AUv3 Standalone             # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+
+    PLUGIN_MANUFACTURER_CODE JohT               # A four-character manufacturer id with at least one upper-case character
+    PLUGIN_CODE SpcJ                            # A unique four-character plugin id with exactly one upper-case character
+                                                # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
     # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
     # ICON_SMALL ...
-    COMPANY_NAME Johannes Troppacher            # Specify the name of the plugin's author
     IS_SYNTH FALSE                              # Is this a synth or an effect?
     NEEDS_MIDI_INPUT FALSE                      # Does the plugin need midi input?
     NEEDS_MIDI_OUTPUT FALSE                     # Does the plugin need midi output?
     IS_MIDI_EFFECT FALSE                        # Is this plugin a MIDI effect?
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE           # Does the editor need keyboard focus?
     # COPY_PLUGIN_AFTER_BUILD TRUE/FALSE        # Should the plugin be installed to a default location after building?
-    PLUGIN_MANUFACTURER_CODE JohT               # A four-character manufacturer id with at least one upper-case character
-    PLUGIN_CODE SpcJ                            # A unique four-character plugin id with exactly one upper-case character
-                                                # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
-    FORMATS VST3 Standalone                     # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-    PRODUCT_NAME "Speclet")          # The name of the final executable, which can differ from the target name
+)
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. This should be included with `#include <JuceHeader.h>`. The include path for
@@ -102,10 +77,10 @@ juce_generate_juce_header(Speclet)
 
 # Get all source files in the src directory and store them in the speclet_sources variable.
 FILE(GLOB_RECURSE speclet_sources "src/*.cpp")
-#message(STATUS "Sources in ${CMAKE_CURRENT_SOURCE_DIR}/src:")
-#foreach(source ${speclet_sources})
+# message(STATUS "Sources in ${CMAKE_CURRENT_SOURCE_DIR}/src:")
+# foreach(source ${speclet_sources})
 #    message(STATUS "'${source}'")
-#endforeach()
+# endforeach()
 
 # `target_sources` adds source files to a target. We pass the target that needs the sources as the
 # first argument, then a visibility parameter for the sources which should normally be PRIVATE.
@@ -124,18 +99,20 @@ if (fftw_ADDED)
     # endforeach()
 endif()
 
+# Add libraries to the target, that needed to be included inside the repository:
+add_subdirectory(lib/wave++)
+
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use
 # of compile definitions to switch certain features on/off, so if there's a particular feature you
 # need that's not on by default, check the module header for the correct flag to set here. These
 # definitions will be visible both to your code, and also the JUCE module code, so for new
 # definitions, pick unique names that are unlikely to collide! This is a standard CMake command.
-
 target_compile_definitions(Speclet
     PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
-        # JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
-        # JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
+        JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
+        JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
         JUCE_VST3_CAN_REPLACE_VST2=0)
 
 # If your target needs extra binary assets, you can add them here. The first argument is the name of
@@ -156,9 +133,12 @@ target_compile_definitions(Speclet
 target_link_libraries(Speclet
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
+        juce::juce_core
         juce::juce_dsp
         juce::juce_audio_utils
+        juce::juce_gui_basics
         fftw3
+        wave++
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
