@@ -6,37 +6,40 @@ auto PerformanceManager::getSingletonInstance() -> PerformanceManager & {
 }
 
 void PerformanceManager::start(const juce::String &name, int runsPerPrintout, const juce::File &loggingFile) {
-#if _PERFORMACETEST
-    auto iterator = map.find(name);
-#if _LOGTOFILE
-    if (iterator == map.end()) {
-        if (loggingFile == juce::File::nonexistent) {
-            add(name, runsPerPrintout, juce::File("c:/temp/speclet.log"));
-        } else {
-            add(name, runsPerPrintout, loggingFile);
-        }
-    }
-#else
-    if (iterator == map.end()) {
-        add(name, runsPerPrintout, loggingFile);
-    }
-#endif
-    get(name).start();
-#endif
+//TODO(johnny) compiler definition does not work
+// #if _PERFORMACETEST
+//     auto iterator = map.find(name);
+// #if _LOGTOFILE
+//     if (iterator == map.end()) {
+//         if (loggingFile == juce::File::nonexistent) {
+//             add(name, runsPerPrintout, juce::File("c:/temp/speclet.log"));
+//         } else {
+//             add(name, runsPerPrintout, loggingFile);
+//         }
+//     }
+// #else
+//     if (iterator == map.end()) {
+//         add(name, runsPerPrintout, loggingFile);
+//     }
+// #endif
+//     get(name).start();
+// #endif
 }
 
 void PerformanceManager::stop(const juce::String &name) {
-#if _PERFORMACETEST
-    auto iterator = map.find(name);
-    if (iterator == map.end()) {
-        DBG("PerformanceManager::stop(" + name + "): PerformanceCounter not found");
-        return;
-    }
-    get(name).stop();
-#endif
+//TODO(johnny) performance test fails on stop, compiler definition does not work
+// #if _PERFORMACETEST
+//     auto iterator = map.find(name);
+//     if (iterator == map.end()) {
+//         DBG("PerformanceManager::stop(" + name + "): PerformanceCounter not found");
+//         return;
+//     }
+//     get(name).stop();
+// #endif
 }
 
 void PerformanceManager::add(const juce::String &name, int runsPerPrintout, const juce::File &loggingFile) {
+#if _PERFORMACETEST
     auto iterator = map.find(name);
     if (iterator != map.end()) {
         return;
@@ -46,6 +49,7 @@ void PerformanceManager::add(const juce::String &name, int runsPerPrintout, cons
     //auto *performanceCounter = new PerformanceCounter(name, runsPerPrintout, loggingFile);
     TKeyValue keyValue(name, performanceCounter);
     map.insert(keyValue);
+#endif
 }
 
 auto PerformanceManager::get(const juce::String &name) -> juce::PerformanceCounter & {
