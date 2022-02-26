@@ -14,7 +14,7 @@
   ==============================================================================
 */
 #pragma once
-#include "../../../lib/wave++/includes/libw.h"//TODO include with cmake
+#include "../../../lib/wave++/source/libw.h"//TODO include with cmake
 #include "../../plugin/SpectronParameters.h"
 #include "../../utilities/RenderingHelper.h"
 #include "Transformation.h"
@@ -36,7 +36,7 @@ protected:
     virtual auto getMinLevel(const HedgePer &bestBasis) -> int;
     virtual void fillDWTInput();
     virtual void sortDWPTTreeByScaleDescending(const ArrayTreePer &tree);
-    virtual void swapDWPTTreeChilds(const ArrayTreePer &tree, const integer &L, const integer &B);
+    virtual void swapDWPTTreeChilds(const ArrayTreePer &tree, const integer_number &L, const integer_number &B);
 
     virtual void extractSpectrum(const Interval &out_DWT);
     virtual void extractSpectrum(const ArrayTreePer &out_DWPT, const HedgePer &levelsHedge);
@@ -58,7 +58,7 @@ private:
         TRANSFORM_RESULT_CLASS_INTERVAL = 0,
         TRANSFORM_RESULT_CLASS_ARRAYTREE
     };
-    void extractSpectrum(int transformResultClass, real_DWT *origin, const HedgePer &bestBasis);
-    auto getValue(int transformResultClass, real_DWT *origin, int level, int blocknr, int blockpos) -> float;
-    auto getAvgValue(int transformResultClass, real_DWT *origin, int level, int blocknr, int blockposStart, int blockposEnd) -> float;
+    void extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &bestBasis);
+    auto getValue(int transformResultClass, real_number *origin, int level, int blocknr, int blockpos) -> float;
+    auto getAvgValue(int transformResultClass, real_number *origin, int level, int blocknr, int blockposStart, int blockposEnd) -> float;
 };
