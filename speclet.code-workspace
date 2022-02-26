@@ -42,20 +42,22 @@
            "Unix Makefiles"
         ],
 		"cSpell.words": [
+            "Beylkin",
             "bugprone",
             "Constexpr",
             "cppcoreguidelines",
+            "Daubechies",
             "jassert",
             "jassertfalse",
             "jmap",
             "jmin",
             "juce",
-            "Struct"
+            "Struct",
+            "Vaidyanathan"
         ],
         "editor.codeActionsOnSave": {
             "source.fixAll": true
         },
-        "editor.formatOnSave": true,
         "editor.formatOnSaveMode": "modifications",
         "clang-format.style": "file",
         "clang-format.language.c.enable": true,
