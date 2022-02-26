@@ -19,12 +19,11 @@
 
 class SignalGenerator {
 public:
-    SignalGenerator(
+    explicit SignalGenerator(
             short signalType = SpectronParameters::GENERATOR_DEFAULT,
             double signalFrequency = 441.0,
             double samplingFrequency = 44100.0);
-    ~SignalGenerator();
-
+            
     auto getNextSample() -> double;
 
 private:
