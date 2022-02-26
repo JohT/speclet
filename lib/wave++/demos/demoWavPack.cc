@@ -17,7 +17,7 @@
 
 int MAXLEVEL= 10;
 int DIM = (1<<MAXLEVEL);//dimensionality of vector ("signal")
-real  Factor = (1.0+sqrt(2*log(MAXLEVEL*DIM)));//D&J Best Wavelet (BWB)
+real_number  Factor = (1.0+sqrt(2*log(MAXLEVEL*DIM)));//D&J Best Wavelet (BWB)
 //thresholding parameter (modified)
 
 #define  SNR  5.0//Signal to Noise Ratio
@@ -32,16 +32,16 @@ int main()
   setall(iseed1,(long) iseed2);
   
   int i, k;
-  real Noise_level = sqrt(1.0/(SNR*DIM));
+  real_number Noise_level = sqrt(1.0/(SNR*DIM));
   
   //variance of the Gaussian noise added
-  real variance = Noise_level*Noise_level;
+  real_number variance = Noise_level*Noise_level;
   
   
   int iterations = 17;//as many as wavelet filters
   
 
-  real bwbErrors[iterations]; //array of bwb errors found
+  real_number bwbErrors[iterations]; //array of bwb errors found
   
   Interval arrayOfIntervals[iterations];
   
@@ -111,7 +111,7 @@ int main()
       Interval Delta(0, DIM-1);//Delta values initialized to 0
       for(i=0; i<DIM; i++)//Threshold values a la Donoho
 	{
-	  real x = BB_temp.origin[i]*BB_temp.origin[i];
+	  real_number x = BB_temp.origin[i]*BB_temp.origin[i];
 	  if (x > variance*Factor*Factor) Delta[i]=1;
 	}
       for(i=0; i<DIM; i++)  BB_temp.origin[i] *= Delta[i];
@@ -122,7 +122,7 @@ int main()
       Synthesis(Temp, RecSignal, H[k], G[k], AdjConvDecPer);
       arrayOfIntervals[k] = RecSignal;
       
-      real BB_rms = RMS_error(CleanSignal,RecSignal);
+      real_number BB_rms = RMS_error(CleanSignal,RecSignal);
       bwbErrors[k] = BB_rms;
       
       cout <<"The levels for BB are: "<<endl;

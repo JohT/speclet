@@ -12,8 +12,8 @@
 #include "Interval.h"
 
 
-typedef real(*costFun)(const real *block, const integer &blocklength,
-		       const real &sigma, const integer &signaldim);
+typedef real_number(*costFun)(const real_number *block, const integer_number &blocklength,
+		       const real_number &sigma, const integer_number &signaldim);
 
 /**************************** Periodic case **********************************/
 
@@ -27,14 +27,14 @@ void SuperposeHedge(const HedgePer &H, ArrayTreePer &A);
         // superpose (add on)  hedge H onto array bin tree A,
         // assumption: both H and A previously completely defined.
            
-void GetCosts(const ArrayTreePer &A, Tree &B, costFun F, const real &sigma);
+void GetCosts(const ArrayTreePer &A, Tree &B, costFun F, const real_number &sigma);
         // using functional F  calculate costs from given tree A.
         // assumption: on input B is default empty tree
         // on output B filled up with costs and B.maxlevel=A.maxlevel
   
-void GetCostsHelp(const ArrayTreePer &A,  Node<real> **ptr,
-		  costFun F, const real &sigma,
-		  const integer &L, const integer &B );              
+void GetCostsHelp(const ArrayTreePer &A,  Node<real_number> **ptr,
+		  costFun F, const real_number &sigma,
+		  const integer_number &L, const integer_number &B );              
         // utility
 
 void BestBasis(HedgePer &H, const Tree &B);
@@ -43,8 +43,8 @@ void BestBasis(HedgePer &H, const Tree &B);
         // on output H.num_of_levels and H.levels are completely defined
         // but H.origin is still 0
 
-real BestBasisHelp(integer *Levs, integer &n, Node<real> *ptr, 
-		   const integer &L);   
+real_number BestBasisHelp(integer_number *Levs, integer_number &n, Node<real_number> *ptr, 
+		   const integer_number &L);   
          // utility
 
 void ExtractBestBasis(const ArrayTreePer &A, HedgePer &H, costFun F, 
@@ -67,14 +67,14 @@ void SuperposeHedge(const HedgeAper &H, ArrayTreeAper &A);
          // assumption: both H and A previously completely defined.
 
 void GetCosts(const ArrayTreeAper &A, Tree &B, costFun F, 
-	      const real &sigma);
+	      const real_number &sigma);
           // using functional F  calculate costs from a given array bin tree A
           // assumption : on input B is empty tree
           // on output B filled up with costs
                           
-void GetCostsHelp(const ArrayTreeAper &A,  Node<real> **ptr,
-		  costFun F, const real &sigma,
-		  const integer &L, const integer &B );              
+void GetCostsHelp(const ArrayTreeAper &A,  Node<real_number> **ptr,
+		  costFun F, const real_number &sigma,
+		  const integer_number &L, const integer_number &B );              
           // utility
 
 void BestBasis(HedgeAper &H, const Tree &B);

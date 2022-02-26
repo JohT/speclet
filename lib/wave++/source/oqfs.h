@@ -25,7 +25,7 @@
 
 /******************* Beylkin 18 ********************/
 
-static real
+static real_number
   b18soqf[18] = {
     9.93057653743539270E-02,
     4.24215360812961410E-01,
@@ -50,7 +50,7 @@ static int
   b18salpha = 0,
   b18somega = 17;
 
-static real
+static real_number
   b18doqf[18] = {
     6.40485328521245350E-04,
     2.73603162625860610E-03,
@@ -79,7 +79,7 @@ static int
 /******************* Coifman 6 ********************/
 
 
-static real
+static real_number
   c06soqf[6] = {
     ((SR15-3.0)/32.0)*M_SQRT2,	/*  3.85807777478867490E-02, */
     ((1.0-SR15)/32.0)*M_SQRT2,	/* -1.26969125396205200E-01, */
@@ -92,7 +92,7 @@ static int
   c06salpha = 0,
   c06somega = 5;
 
-static real
+static real_number
   c06doqf[6] = {
     ((9.0-SR15)/32.0)*M_SQRT2,	/*  2.26584265197068560E-01, */
     (-(SR15+13.0)/32.0)*M_SQRT2,	/* -7.45687558934434280E-01, */
@@ -107,7 +107,7 @@ static int
 
 /******************* Coifman 12 ********************/
 
-static real
+static real_number
   c12soqf[12] = {
     1.63873364631797850E-02,
     -4.14649367819664850E-02,
@@ -126,7 +126,7 @@ static int
   c12salpha = 0,
   c12somega = 11;
 
-static real
+static real_number
   c12doqf[12] = {
     -7.20549445368115120E-04,
     1.82320887091009920E-03,
@@ -147,7 +147,7 @@ static int
 
 /******************* Coifman 18 ********************/
 
-static real
+static real_number
   c18soqf[18] = {
     -3.79351286437787590E-03,
     7.78259642567078690E-03,
@@ -172,7 +172,7 @@ static int
   c18salpha = 0,
   c18somega = 17;
 
-static real
+static real_number
   c18doqf[18] = {
     -3.45997731974026950E-05,
     7.09833025057049280E-05,
@@ -199,7 +199,7 @@ static int
 
 /******************* Coifman 24 ********************/
 
-static real
+static real_number
   c24soqf[24] = {
     8.92313668220275710E-04,
     -1.62949201311084900E-03,
@@ -230,7 +230,7 @@ static int
   c24salpha = 0,
   c24somega = 23;
 
-static real
+static real_number
   c24doqf[24] = {
     -1.78498455869993380E-06,
     3.25968044485761290E-06,
@@ -263,7 +263,7 @@ static int
 
 /******************* Coifman 30 ********************/
 
-static real
+static real_number
   c30soqf[30] = {
     -2.12080863336306810E-04,
     3.58589677255698600E-04,
@@ -300,7 +300,7 @@ static int
   c30salpha = 0,
   c30somega = 29;
 
-static real
+static real_number
   c30doqf[30] = {
     -9.51579170468293560E-08,
     1.67408293749300630E-07,
@@ -338,7 +338,7 @@ static int
   c30domega = 29;
 
 /******************* Daubechies 2 ********************/
-static real
+static real_number
   d02soqf[2] = {
     (0.5)*M_SQRT2,			/* 0.707106781186547, */
     (0.5)*M_SQRT2,			/* 0.707106781186547  */
@@ -347,7 +347,7 @@ static int
   d02salpha = 0,
   d02somega = 1;
 
-static real
+static real_number
   d02doqf[2] = {
     (0.5)*M_SQRT2,			/* 0.707106781186547, */
     (-0.5)*M_SQRT2,			/* -0.707106781186547  */
@@ -358,7 +358,7 @@ static int
 
 /******************* Daubechies 4 ********************/
 
-static real
+static real_number
   d04soqf[4] = {
     (1.0+SR3)/(4.0*M_SQRT2),	/*  4.82962913144534160E-01, */
     (3.0+SR3)/(4.0*M_SQRT2),	/*  8.36516303737807940E-01, */
@@ -369,7 +369,7 @@ static int
   d04salpha = 0,
   d04somega = 3;
 
-static real
+static real_number
   d04doqf[4] = {
     (1.0-SR3)/(4.0*M_SQRT2),	/* -1.29409522551260370E-01, */
     (SR3-3.0)/(4.0*M_SQRT2),	/* -2.24143868042013390E-01, */
@@ -382,7 +382,7 @@ static int
 
 /******************* Daubechies 6 ********************/
 
-static real
+static real_number
   d06soqf[6] = {
     0.125*A,			/*   3.32670552950082630E-01, */
     0.125*(M_SQRT2+2.0*A-B),	/*   8.06891509311092550E-01, */
@@ -395,7 +395,7 @@ static int
   d06salpha = 0,
   d06somega = 5;
 
-static real
+static real_number
   d06doqf[6] = {
     0.125*B,			/*   3.52262918857095330E-02, */
     0.125*(A-M_SQRT2-2.0*B),	/*   8.54412738820266580E-02, */
@@ -410,7 +410,7 @@ static int
 
 /******************* Daubechies 8 ********************/
 
-static real
+static real_number
   d08soqf[8] = {
     2.30377813309000010E-01,
     7.14846570553000050E-01, /* Maximum absolute value */
@@ -425,7 +425,7 @@ static int
   d08salpha = 0,
   d08somega = 7;
 
-static real
+static real_number
   d08doqf[8] = {
     -1.05974017850000000E-02,
     -3.28830116670000010E-02,
@@ -442,7 +442,7 @@ static int
 
 /******************* Daubechies 10 ********************/
 
-static real
+static real_number
   d10soqf[10] = {
     1.60102397974000000E-01,
     6.03829269797000020E-01,
@@ -459,7 +459,7 @@ static int
   d10salpha = 0,
   d10somega = 9;
 
-static real
+static real_number
   d10doqf[10] = {
     3.33572528500000010E-03,
     1.25807519990000000E-02,
@@ -478,7 +478,7 @@ static int
 
 /******************* Daubechies 12 ********************/
 
-static real
+static real_number
   d12soqf[12] = {
     1.11540743350000000E-01,
     4.94623890397999980E-01,
@@ -497,7 +497,7 @@ static int
   d12salpha = 0,
   d12somega = 11;
 
-static real
+static real_number
   d12doqf[12] = {
     -1.07730108500000000E-03,
     -4.77725751100000020E-03,
@@ -518,7 +518,7 @@ static int
 
 /******************* Daubechies 14 ********************/
 
-static real
+static real_number
   d14soqf[14] = {
     7.78520540849999970E-02,
     3.96539319482000000E-01,
@@ -539,7 +539,7 @@ static int
   d14salpha = 0,
   d14somega = 13;
 
-static real
+static real_number
   d14doqf[14] = {
     3.53713800000000020E-04,
     1.80164070400000000E-03,
@@ -562,7 +562,7 @@ static int
 
 /******************* Daubechies 16 ********************/
 
-static real
+static real_number
   d16soqf[16] = {
     5.44158422430000010E-02,
     3.12871590914000020E-01,
@@ -585,7 +585,7 @@ static int
   d16salpha = 0,
   d16somega = 15;
 
-static real
+static real_number
   d16doqf[16] = {
     -1.17476784000000000E-04,
     -6.75449405999999950E-04,
@@ -610,7 +610,7 @@ static int
 
 /******************* Daubechies 18 ********************/
 
-static real
+static real_number
   d18soqf[18] = {
     3.80779473639999980E-02,
     2.43834674613000010E-01,
@@ -635,7 +635,7 @@ static int
   d18salpha = 0,
   d18somega = 17;
 
-static real
+static real_number
   d18doqf[18] = {
     3.93473200000000030E-05,
     2.51963189000000020E-04,
@@ -662,7 +662,7 @@ static int
 
 /******************* Daubechies 20 ********************/
 
-static real
+static real_number
   d20soqf[20] = {
     2.66700579010000010E-02,
     1.88176800078000000E-01,
@@ -689,7 +689,7 @@ static int
   d20salpha = 0,
   d20somega = 19;
 
-static real
+static real_number
   d20doqf[20] = {
     -1.32642030000000010E-05,
     -9.35886700000000050E-05,
@@ -718,7 +718,7 @@ static int
 
 /******************* Vaidyanathan 24 ********************/
 
-static real
+static real_number
   v24soqf[24] = {
     -6.29061181907475230E-05,
     3.43631904821029190E-04,
@@ -749,7 +749,7 @@ static int
   v24salpha = 0,
   v24somega = 23;
 
-static real
+static real_number
   v24doqf[24] = {
     4.57993341109767180E-02,
     -2.50184129504662180E-01,

@@ -3,12 +3,12 @@
 #include <stdio.h>
 //last parameter not used, needed only for compatibility and keep
 //the demo brief
-real OracCost( const real *data,  const integer &n,
-	       const real &sigma,const integer &k)
+real_number OracCost( const real_number *data,  const integer_number &n,
+	       const real_number &sigma,const integer_number &k)
 {
-  real cost=0;
-  real var=sigma*sigma;
-  real temp;
+  real_number cost=0;
+  real_number var=sigma*sigma;
+  real_number temp;
 
   for(int i=0;i<n;i++)
     {

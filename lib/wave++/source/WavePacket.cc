@@ -2,7 +2,7 @@
 // WavePacket.cc                      Implementations of analysis and synthesis
 //*****************************************************************************
 
-#include <iostream.h>
+#include <iostream>
 #include <assert.h>
 #include "WavePacket.h"
 
@@ -13,8 +13,8 @@ void Analysis(const Interval &In, ArrayTreePer &A,
 {
   assert(In.length == A.dim && A.origin);
   assert( (1<<(A.maxlevel)) == A.dim ); // check pow of 2 case
-  for(integer i=0; i<A.dim; i++) A.origin[i] = In.origin[In.beg+i]; 
-  integer L, B;
+  for(integer_number i=0; i<A.dim; i++) A.origin[i] = In.origin[In.beg+i]; 
+  integer_number L, B;
   for(L=0; L<A.maxlevel; L++)
     {
       for(B=0; B < (1<<L); B++)
@@ -33,7 +33,7 @@ void Synthesis(ArrayTreePer &A, Interval &Out,
 {
   assert(A.origin);
   assert( (1<<(A.maxlevel)) == A.dim ); // check pow of 2 case
-  integer L, B;
+  integer_number L, B;
   for(L=A.maxlevel - 1; L>=0; L--)       // go through all levels starting
     {                                    // from maxlevel-1 up to 0    
       for(B=0; B < (1<<L); B++)          // go through all blocks at level L
@@ -53,8 +53,8 @@ void Analysis(const Interval &In, ArrayTreePer &A,
 	      const GPQMF &H, const GPQMF &G, cdgpType con_dec)
 {
   assert(In.length == A.dim && A.origin);
-  for(integer i=0; i<A.dim; i++) A.origin[i] = In.origin[In.beg+i]; 
-  integer L, B;
+  for(integer_number i=0; i<A.dim; i++) A.origin[i] = In.origin[In.beg+i]; 
+  integer_number L, B;
   for(L=0; L<A.maxlevel; L++)
     {
       for(B=0; B < (1<<L); B++)
@@ -72,7 +72,7 @@ void Synthesis(ArrayTreePer &A, Interval &Out,
 	       const GPQMF &H, const GPQMF &G, cdgpType adj_con_dec)
 {
   assert(A.origin);
-  integer L, B;
+  integer_number L, B;
   for(L=A.maxlevel - 1; L>=0; L--)       // go through all levels starting
     {                                    // from maxlevel-1 up to 0    
       for(B=0; B < (1<<L); B++)          // go through all blocks at level L
@@ -93,8 +93,8 @@ void Analysis(const Interval &In, ArrayTreeAper &A,
 {
   assert(A.root);
   A.root[0] = In;                                  // copy In into O'th node
-  integer L, B;
-  integer alpha, omega;
+  integer_number L, B;
+  integer_number alpha, omega;
   for(L=0; L<A.maxlevel; L++)
     {
       for(B=0; B < (1<<L); B++)
@@ -117,7 +117,7 @@ void Synthesis(ArrayTreeAper &A, Interval &Out,
 	       const QMF &H, const QMF &G, cdaType adj_con_dec)
 {
   assert(A.root);
-  integer L, B;
+  integer_number L, B;
   for(L=A.maxlevel - 1; L>=0; L--)    // go through all levels from P-1 up to 0
     {
       for(B=0; B < (1<<L); B++)       // go through all blocks at level L

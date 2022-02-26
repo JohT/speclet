@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include "fft.h"
 
-#define fftbitrev(out,in,q)  bitrevd(out,in,q,sizeof(complex))
-#define fftbrinpl(x,q)       bitrevi(x,q,sizeof(complex))
+#define fftbitrev(out,in,q)  bitrevd(out,in,q,sizeof(complex_number))
+#define fftbrinpl(x,q)       bitrevi(x,q,sizeof(complex_number))
 
 extern "C" int
   br( 
@@ -80,13 +80,13 @@ extern "C" void
 
 extern "C" void
   fftproduct(                   /* Apply sparse matrix product. */
-	     complex *f,        /* Input and output vector.     */
+	     complex_number *f,        /* Input and output vector.     */
 	     int q,             /* Length of `f[]' is N=1<<q.   */
-	     const complex *W)	/* Exponentials: `Omega(N/2)' */
+	     const complex_number *W)	/* Exponentials: `Omega(N/2)' */
 {
   int b, j, k, N, N1, M;
-  complex  *fptr1, *fptr2, tmp;
-  const complex *Wptr;
+  complex_number  *fptr1, *fptr2, tmp;
+  const complex_number *Wptr;
 
   N  = 1<<q;
   for(k=q-1; k>=0; k--)
@@ -142,18 +142,18 @@ extern "C" void
   return;
 }
 
-extern "C" complex * 
+extern "C" complex_number * 
   fftomega(			/* Return exp(-M_PI*i*n/M), */
 	   int M)		/* for n=0,1,2,...,|M|-1. */
 {
-  complex *W;
+  complex_number *W;
   double factor, theta;
   int n;
 
   factor = -M_PI/(double)M;
 
   M = abs(M);
-  W = (complex *)malloc(M*sizeof(complex));
+  W = (complex_number *)malloc(M*sizeof(complex_number));
 
   theta = 0.0;
   for(n=0; n<M; n++)
@@ -167,7 +167,7 @@ extern "C" complex *
 
 extern "C" void
   fftnormal(			/* Multiply `f[n].Re' and     */
-	    complex *f,		/* `f[n].Im' by `1.0/sqrt(N), */
+	    complex_number *f,		/* `f[n].Im' by `1.0/sqrt(N), */
 	    int N )		/* for n=0,1,2,...,N.         */
 {
   double norm;
@@ -182,13 +182,13 @@ extern "C" void
   return;
 }
 
-extern "C" complex *
+extern "C" complex_number *
   dft(				/* Allocate, assign and return  */
-      const complex *f,		/* a complex vector, the (1<<q) */
+      const complex_number *f,		/* a complex vector, the (1<<q) */
       int q)			/* point DFT of the input `f[]' */
 {
   int N, inverse;
-  complex *W, *fhat;
+  complex_number *W, *fhat;
 
   /* If q<0, then the inverse DFT is to be computed: */
   inverse = 0;
@@ -200,7 +200,7 @@ extern "C" complex *
   N = 1<<q;			/* Compute length of `f[]'. */
 
   /* Allocate an output vector of same length, `N', as `f[]': */
-  fhat = (complex *)calloc(N, sizeof(complex));
+  fhat = (complex_number *)calloc(N, sizeof(complex_number));
   assert(fhat!=0);		/* Test `calloc()' success. */
 
   /* Compute two trivial cases directly: */

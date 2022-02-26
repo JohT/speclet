@@ -4,17 +4,18 @@
 #define PARTITION_H
 
 #include  "Interval.h"
+#include "common.h"
 
 class Partition
 {
  public:
-  Partition(integer dim, real a);
+  Partition(integer_number dim, real_number a);
 
   Interval s;     // scale
   Interval du; 
   Interval dv;
-  integer lmu, rmu;
-  real rmv;
+  integer_number lmu, rmu;
+  real_number rmv;
 };
 
 

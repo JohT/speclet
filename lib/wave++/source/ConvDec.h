@@ -8,8 +8,8 @@
 #include "QMF.h"
 #include "Interval.h"
 
-void ConvDecPer(const real *In, real *Out, integer q, const PQMF &F );
-void ConvDecPer(const real *In, real *Out, integer q, const GPQMF &F );
+void ConvDecPer(const real_number *In, real_number *Out, integer_number q, const PQMF &F );
+void ConvDecPer(const real_number *In, real_number *Out, integer_number q, const GPQMF &F );
   
   // Periodic convolution-decimation. Fast version.
   // It is assumed that F.beg <= 0 <= F.end.  Else use version 2.
@@ -17,8 +17,8 @@ void ConvDecPer(const real *In, real *Out, integer q, const GPQMF &F );
   // Out predefined so that Out[0].... Out[q/2-1] exist.
   // Output superimposed, so if assignment wanted all elts of Out should be 0's
 
-void ConvDecV2Per(const real *In, real *Out, integer q, const PQMF &F);
-void ConvDecV2Per(const real *In, real *Out, integer q, const GPQMF &F);
+void ConvDecV2Per(const real_number *In, real_number *Out, integer_number q, const PQMF &F);
+void ConvDecV2Per(const real_number *In, real_number *Out, integer_number q, const GPQMF &F);
 
   // Periodic convolution-decimation version 2.
   // It is NOT assumed that F.beg <= 0 <= F.end.  Slower algorithm.
@@ -26,8 +26,8 @@ void ConvDecV2Per(const real *In, real *Out, integer q, const GPQMF &F);
   // Out predefined so that Out[0].... Out[q/2-1] exist.
   // Output superimposed, so if assignment wanted all elts of Out should be 0's
 
-void AdjConvDecPer(const real *In, real *Out, integer q, const PQMF &F );
-void AdjConvDecPer(const real *In, real *Out, integer q, const GPQMF &F );
+void AdjConvDecPer(const real_number *In, real_number *Out, integer_number q, const PQMF &F );
+void AdjConvDecPer(const real_number *In, real_number *Out, integer_number q, const GPQMF &F );
   
   // Adjoint periodic convolution-decimation.  Fast version.
   // It is assumed that F.beg <= 0 <= F.end.  Else use version 2.
@@ -35,8 +35,8 @@ void AdjConvDecPer(const real *In, real *Out, integer q, const GPQMF &F );
   // Out  predefined so that Out[0].... Out[2*q-1] exist
   // Output superimposed, so if assignment wanted all elts of Out should be 0's
 
-void AdjConvDecV2Per(const real *In, real *Out, integer q, const PQMF &F );
-void AdjConvDecV2Per(const real *In, real *Out, integer q, const GPQMF &F );
+void AdjConvDecV2Per(const real_number *In, real_number *Out, integer_number q, const PQMF &F );
+void AdjConvDecV2Per(const real_number *In, real_number *Out, integer_number q, const GPQMF &F );
   
   // Adjoint periodic convolution-decimation.
   // It is NOT assumed that F.beg <= 0 <= F.end.  Slower algorithm.

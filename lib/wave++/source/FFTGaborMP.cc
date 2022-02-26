@@ -5,40 +5,40 @@
 
 // declare bunch of global variables. They get updated as you run
 // RunFFTGaborMP
-static real coef, product, a, b, a1, b1, v, phase, Pnorm2, Qnorm2, PprodQ;
+static real_number coef, product, a, b, a1, b1, v, phase, Pnorm2, Qnorm2, PprodQ;
 static RealGabor Gtemp;
-static integer s, u;
+static integer_number s, u;
 
-real RunFFTGaborMP(int max_iter, // maximal number of iterations 
-		     real epsilon, // desired precision | Rf | < epsilon
+real_number RunFFTGaborMP(int max_iter, // maximal number of iterations 
+		     real_number epsilon, // desired precision | Rf | < epsilon
 		     const Interval &f, // signal to be approximated
-		     // assumption : f sampled on integers starting with 0
+		     // assumption : f sampled on integer_numbers starting with 0
 		     // i.e.  f.beg must be 0. No constraints on f.length.
 		     Interval &f_approx, // MP approximation of f
 		     // f_approx is a linear combination of Gabors
 		     Interval &Rf, // final residual: Rf = f - f_approx
 		     // error which is returned equals | Rf |
-		     vector <RealGabor> &G, // vector of Gabors chosen for
+		     std::vector <RealGabor> &G, // vector of Gabors chosen for
 		     // f_approx
-		     vector <real> & Gcoef // coeficinets in the linear
+		     std::vector <real_number> & Gcoef // coeficinets in the linear
 		     // combination, corresponding to Gabors in G
 		     // f_approx = sum( Gcoef[i] * G[i] ), where number of i's
 		     // depends on epsilon and max_iter
 		    )
 {
-  integer dim = f.length;
+  integer_number dim = f.length;
   assert( f.beg == 0 && dim > 0 && is_pow_of_2(dim));
 
   Interval I(0, dim-1);
   for(int i=0; i<dim; i++) I.origin[i] = i;
   
   //declare some temporary objects to receive outputs from getOptimalShiftGabor
-  real error=0.0;
+  real_number error=0.0;
   
   // Initialize Rf and f_approx
   f_approx.Set(0, dim-1);
   Rf = f;    
-  real *Gptr, *fptr, *Rfptr;
+  real_number *Gptr, *fptr, *Rfptr;
   for(int iter=0; iter < max_iter; iter++)
 	{
 	  getOptimalFFTGabor(Rf); // this call sets Gtemp to G closest to Rf
@@ -52,7 +52,7 @@ real RunFFTGaborMP(int max_iter, // maximal number of iterations
 	  // also update Rf to new value: Rf = old Rf - Gtemp * coef
 	  // calculate error as | new Rf |
 	  error = 0;
-	  for(integer t=0; t<dim; t++)
+	  for(integer_number t=0; t<dim; t++)
 	    {
 	      *fptr += (*Gptr) * coef;
 	      (*Rfptr) -= (*Gptr) * coef;
@@ -62,8 +62,8 @@ real RunFFTGaborMP(int max_iter, // maximal number of iterations
 	  error = sqrt(error);
 	  if( error < epsilon )
 	    {
-	      cout << "Desired precision achieved in " << iter+1 
-	      << " iterations. " << endl;  
+	      std::cout << "Desired precision achieved in " << iter+1 
+	      << " iterations. " << std::endl;  
 	      break;
 	    }
 	}
@@ -73,9 +73,9 @@ real RunFFTGaborMP(int max_iter, // maximal number of iterations
 
 void getOptimalFFTGabor(const Interval &f)
 {
-  integer dim = f.length;
-  integer m = Log2(dim);
-  integer du;
+  integer_number dim = f.length;
+  integer_number m = Log2(dim);
+  integer_number du;
   coef = product = 0;
   // case 8s > dim, i.e. s=dim=2^m, s=2^(m-1) and s=2^(m-2)
   for(s = dim; s >= (1<<(m-2)); s>>=1)
@@ -109,26 +109,26 @@ void getOptimalFFTGabor(const Interval &f)
     }
 }
 ///////////////////////////////////////////////////////////////
-void proces1(const integer &N, const real *fptr) 
+void proces1(const integer_number &N, const real_number *fptr) 
 {
   Interval X(0, N-1), Y(0, N-1), U(0, N-1), V(0, N-1);
  
-  real temp;
-  real *Xptr = X.origin, *Yptr = Y.origin;
-  for(integer t=0; t < N; t++)
+  real_number temp;
+  real_number *Xptr = X.origin, *Yptr = Y.origin;
+  for(integer_number t=0; t < N; t++)
     {
-      temp = g((real)(t-u)/(real)s);
+      temp = g((real_number)(t-u)/(real_number)s);
       *Xptr++ = (*fptr++) * temp;
       *Yptr++ = temp * temp;
     }
 
-  complex *E1, *E2, *O1, *O2;
-  E1 = (complex *) calloc(N, sizeof(complex));
+  complex_number *E1, *E2, *O1, *O2;
+  E1 = (complex_number *) calloc(N, sizeof(complex_number));
   assert(E1);
-  E2 = (complex *) calloc(N, sizeof(complex));
+  E2 = (complex_number *) calloc(N, sizeof(complex_number));
   assert(E2);
   
-  for(integer t=0; t<N; t++)
+  for(integer_number t=0; t<N; t++)
     {
       E1[t].Re = X.origin[t];
       E1[t].Im = E2[t].Im = 0 ;
@@ -137,8 +137,8 @@ void proces1(const integer &N, const real *fptr)
   O1 = dft(E1, Log2(N));
   O2 = dft(E2, Log2(N));
   
-  real sq = sqrt(N);
-  for(integer t=0; t<N; t++)
+  real_number sq = sqrt(N);
+  for(integer_number t=0; t<N; t++)
     {
       X.origin[t] = O1[t].Re * sq;
       U.origin[t] = O1[t].Im * sq;
@@ -150,8 +150,8 @@ void proces1(const integer &N, const real *fptr)
   free(O1); free(O2);
   
    
-  real c = Y.origin[0];
-  for(integer k = 0; k < (N>>1); k++)
+  real_number c = Y.origin[0];
+  for(integer_number k = 0; k < (N>>1); k++)
     {
       Pnorm2 = (c + Y.origin[2*k]) / 2;
       Qnorm2 = (c - Y.origin[2*k]) / 2;
@@ -168,28 +168,28 @@ void proces1(const integer &N, const real *fptr)
     } 
 }
 /////////////////////////////////////////////////////////////////////////////
-void proces2(const integer &N, const integer &stop, const real *fptr)  
+void proces2(const integer_number &N, const integer_number &stop, const real_number *fptr)  
 {
   Interval X(0, N-1);
   Interval Y(0, N-1);
   Interval U(0, N-1), V(0, N-1);
-  real temp;
-  real *Xptr = X.origin, *Yptr = Y.origin;
-  integer d = u - 4*s;
-  for(integer t=0; t <= stop; t++)
+  real_number temp;
+  real_number *Xptr = X.origin, *Yptr = Y.origin;
+  integer_number d = u - 4*s;
+  for(integer_number t=0; t <= stop; t++)
     {
-      temp = g((real)(t-4*s)/(real)s);
+      temp = g((real_number)(t-4*s)/(real_number)s);
       *Xptr++ = (*fptr++) * temp;
       *Yptr++ = temp * temp;
     }
   
-  complex *E1, *E2, *O1, *O2;
-  E1 = (complex *) calloc(N, sizeof(complex));
+  complex_number *E1, *E2, *O1, *O2;
+  E1 = (complex_number *) calloc(N, sizeof(complex_number));
   assert(E1);
-  E2 = (complex *) calloc(N, sizeof(complex));
+  E2 = (complex_number *) calloc(N, sizeof(complex_number));
   assert(E2);
   
-  for(integer t=0; t<N; t++)
+  for(integer_number t=0; t<N; t++)
     {
       E1[t].Re = X.origin[t];
       E1[t].Im = E2[t].Im = 0 ;
@@ -198,8 +198,8 @@ void proces2(const integer &N, const integer &stop, const real *fptr)
   O1 = dft(E1, Log2(N));
   O2 = dft(E2, Log2(N));
   
-  real sq = sqrt(N);
-  for(integer t=0; t<N; t++)
+  real_number sq = sqrt(N);
+  for(integer_number t=0; t<N; t++)
     {
       X.origin[t] = O1[t].Re * sq;
       U.origin[t] = O1[t].Im * sq;
@@ -210,14 +210,14 @@ void proces2(const integer &N, const integer &stop, const real *fptr)
   free(E1);  free(E2);
   free(O1); free(O2);
   
-  real c = Y.origin[0];
-  real alpha = 2 * M_PI * d / N ;
-  real cosal, cos2al, sinal, sin2al;
+  real_number c = Y.origin[0];
+  real_number alpha = 2 * M_PI * d / N ;
+  real_number cosal, cos2al, sinal, sin2al;
   cosal = cos2al = 1;
   sinal = sin2al = 0;
-  real co = cos(alpha), si = sin(alpha);
-  real x, y, uu, vv;
-  for(integer k = 0; k < (N>>1); k++)
+  real_number co = cos(alpha), si = sin(alpha);
+  real_number x, y, uu, vv;
+  for(integer_number k = 0; k < (N>>1); k++)
     {
       y = Y.origin[2*k];  vv = V.origin[2*k];
       Pnorm2 = (c + y * cos2al + vv * sin2al) / 2;

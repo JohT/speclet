@@ -9,9 +9,9 @@
 #include "ConvDec.h"
 #include "ArrayTree.h"
 
-typedef void (*cdpType)(const real *, real*, integer, const PQMF&);   
+typedef void (*cdpType)(const real_number *, real_number*, integer_number, const PQMF&);   
             // cdpType is pointer to periodic conv-dec function
-typedef void (*cdgpType)(const real *, real*, integer, const GPQMF&);       
+typedef void (*cdgpType)(const real_number *, real_number*, integer_number, const GPQMF&);       
             // cdgpType is pointer to periodic conv-dec function
 typedef void (*cdaType)(const Interval &, Interval &, const QMF &);
             // cdaType is pointer to aperiodic conv-dec function

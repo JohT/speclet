@@ -3,11 +3,11 @@
 #include <math.h>
 #include "rms_error.h"
 
-real RMS_error(const Interval &input, const Interval &output )
+real_number RMS_error(const Interval &input, const Interval &output )
 {
   assert(input.beg==output.beg && input.end==output.end);
-  real error = 0, temp = 0;
-  real temp2;
+  real_number error = 0, temp = 0;
+  real_number temp2;
   for(int i=input.beg; i<=input.end; i++)
     {
       temp2 = input[i]-output[i];

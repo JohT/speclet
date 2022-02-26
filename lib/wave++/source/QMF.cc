@@ -4,7 +4,7 @@
 
 #include "QMF.h"
 #include "common.h"
-#include <iostream.h>
+#include <iostream>
 #include <assert.h>
 #include <stdlib.h>
 
@@ -12,7 +12,7 @@
 
 QMF::QMF() : beg(0), end(-1), center(0), dev(0), coef(0) { }
 
-QMF::QMF(const real *f, integer alpha, integer omega) 
+QMF::QMF(const real_number *f, integer_number alpha, integer_number omega) 
 {
  Set(f, alpha, omega);
 }
@@ -22,10 +22,10 @@ QMF::QMF(const QMF &Rhs) :
 {
   if(Rhs.coef)
     {
-      coef=new real [end-beg+1];
+      coef=new real_number [end-beg+1];
       assert(coef);
       coef -= beg;
-      for(integer i=beg; i<=end; i++) coef[i]=Rhs.coef[i];
+      for(integer_number i=beg; i<=end; i++) coef[i]=Rhs.coef[i];
     }
   else coef=0;
 }
@@ -36,21 +36,21 @@ QMF::~QMF()
   coef=0;
 }
 
-void QMF::Set(const real *f, integer alpha, integer omega)
+void QMF::Set(const real_number *f, integer_number alpha, integer_number omega)
 {
   if(alpha > 0 || omega < 0)
-    cout << "Standard convention QMF.beg <= 0 and QMF.end >= 0 not satisfied."
-	 << " Be sure to use the proper ConvDec algorithm " << endl;
+    std::cout << "Standard convention QMF.beg <= 0 and QMF.end >= 0 not satisfied."
+	 << " Be sure to use the proper ConvDec algorithm " << std::endl;
   center = dev = 0;
   coef = 0;
   beg = alpha;
   end = omega;
   assert ( (end-beg+1)>0 );
-  coef = new real [end-beg+1];
+  coef = new real_number [end-beg+1];
   assert(coef);
   coef -= beg;
-  real energy = 0;
-  for(integer i=beg; i<=end; i++) 
+  real_number energy = 0;
+  for(integer_number i=beg; i<=end; i++) 
     {
       coef[i] = f[i-beg];
       energy += coef[i]*coef[i];
@@ -60,10 +60,10 @@ void QMF::Set(const real *f, integer alpha, integer omega)
     {
       center /= energy;
       int sgn=-1;
-      for(integer j=1; j<=(end-beg)/2; j++)
+      for(integer_number j=1; j<=(end-beg)/2; j++)
 	{
-	  real y=0;
-	  for(integer k=j+beg; k<=end-j; k++) y += k*coef[k-j]*coef[k+j];
+	  real_number y=0;
+	  for(integer_number k=j+beg; k<=end-j; k++) y += k*coef[k-j]*coef[k+j];
 	  dev += sgn*y;
 	  sgn = -sgn;
 	}
@@ -79,7 +79,7 @@ GPQMF::GPQMF(): QMF()
   pcoef_size=0;
 }
 
-GPQMF::GPQMF(const real *f, integer alpha, integer omega) 
+GPQMF::GPQMF(const real_number *f, integer_number alpha, integer_number omega) 
 {
   Set(f, alpha, omega);
 }
@@ -91,18 +91,18 @@ GPQMF::GPQMF(const GPQMF &Rhs) : QMF::QMF(Rhs)
   pcoef_size = Rhs.pcoef_size;
   if(Rhs.pcoef)
     {
-      pcoef = new real*[Rhs.pcoef_size];
+      pcoef = new real_number*[Rhs.pcoef_size];
       assert(pcoef);
       for(int m = 0; m < pcoef_size-1; m++)
 	{
 	  int index = pcoef_size-1-m;
 	  N -= 2;
-	  pcoef[index] = new real[N];
+	  pcoef[index] = new real_number[N];
 	  assert(pcoef[index]);
 	  for(int i=0; i < N; i++)
 	    pcoef[index][i] = Rhs.pcoef[index][i];
 	}
-      pcoef[0] = new real[1];
+      pcoef[0] = new real_number[1];
       assert(pcoef[0]);
       pcoef[0][0] = Rhs.pcoef[0][0];
     }
@@ -122,32 +122,32 @@ GPQMF::~GPQMF()
   pcoef = 0;
 }
 
-void GPQMF::Set(const real *f, integer alpha, integer omega)
+void GPQMF::Set(const real_number *f, integer_number alpha, integer_number omega)
 {
   QMF::Set(f, alpha, omega);
-  real *fq;
+  real_number *fq;
   int N = end+1-beg;
   N = ( ( (N&1)==0 ) ? N : N+1 );   // make sure N is even
   pcoef_size = N/2;
-  pcoef = new real*[pcoef_size];
+  pcoef = new real_number*[pcoef_size];
   assert(pcoef);
   for(int m = 0; m < pcoef_size-1; m++)
     {
       N -= 2;
-      fq = new real [N];
+      fq = new real_number [N];
       assert(fq);
       periodize(fq, N);
       pcoef[pcoef_size-1-m] = fq;
     }
-  fq = new real [1];
+  fq = new real_number [1];
   assert(fq);
   periodize(fq,1);
   pcoef[0] = fq;
 }
 
-void GPQMF::periodize(real *fq, integer q)
+void GPQMF::periodize(real_number *fq, integer_number q)
 {
-  real *pointer;
+  real_number *pointer;
   int counter;
   int index = ( (beg%q + q)%q );
   int j = 0;
@@ -168,7 +168,7 @@ PQMF::PQMF(): QMF()
   pcoef_size=0;
 }
 
-PQMF::PQMF(const real *f, integer alpha, integer omega) 
+PQMF::PQMF(const real_number *f, integer_number alpha, integer_number omega) 
 {
   Set(f, alpha, omega);
 }
@@ -179,12 +179,12 @@ PQMF::PQMF(const PQMF &Rhs) : QMF::QMF(Rhs)
   pcoef_size = Rhs.pcoef_size;
   if(Rhs.pcoef)
     {
-      pcoef = new real*[Rhs.pcoef_size];
+      pcoef = new real_number*[Rhs.pcoef_size];
       assert(pcoef);
       for(int m = 0; m < pcoef_size; m++)
 	{
 	  N = 1 << m;
-	  pcoef[m] = new real[N];
+	  pcoef[m] = new real_number[N];
 	  assert(pcoef[m]);
 	  for(int i=0; i < N; i++)
 	    pcoef[m][i] = Rhs.pcoef[m][i];
@@ -206,31 +206,31 @@ PQMF::~PQMF()
   pcoef = 0;
 }
 
-void PQMF::Set(const real *f, integer alpha, integer omega) 
+void PQMF::Set(const real_number *f, integer_number alpha, integer_number omega) 
 {
   QMF::Set(f, alpha, omega);
-  real *fq;
+  real_number *fq;
   pcoef_size = 0;
   int N = end+1-beg;
   while( (1 << pcoef_size) < N ) pcoef_size++;
 
-  pcoef = new real*[pcoef_size];
+  pcoef = new real_number*[pcoef_size];
 
   assert(pcoef);
-  for(integer m=0; m < pcoef_size; m++)
+  for(integer_number m=0; m < pcoef_size; m++)
     {
       N = (1 << m);
-      fq = new real [N];
+      fq = new real_number [N];
       assert(fq);  
       periodize(fq, N);
       pcoef[m] = fq;
     }
 }
 
-void PQMF::periodize(real *fq, integer q)
+void PQMF::periodize(real_number *fq, integer_number q)
 {
 
-  real *pointer;
+  real_number *pointer;
   int counter;
   int index = ( (beg%q + q)%q );
 

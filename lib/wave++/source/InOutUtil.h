@@ -8,13 +8,14 @@
 #include "Interval.h"
 #include "Hedge.h"
 #include "ArrayTree.h"
+#include <iostream>
 
 /************************** Interval *****************************************/
 
-ostream &operator<<(ostream &, const Interval &);
+std::ostream &operator<<(std::ostream &, const Interval &);
      // output interval as a column
 
-istream &operator>>(istream &, Interval &);
+std::istream &operator>>(std::istream &, Interval &);
      // read into I from a stream
 
 void PrintToFile(const Interval &I, const char *filename);
@@ -26,10 +27,10 @@ void ReadFromFile(Interval &I, const char *filename);
                      
 /***************************** HedgePer *************************************/
 
-ostream &operator<<(ostream &output, const HedgePer &H);
+std::ostream &operator<<(std::ostream &output, const HedgePer &H);
      // output hedge's data as one long column
 
-istream &operator>>(istream &input, HedgePer &H);
+std::istream &operator>>(std::istream &input, HedgePer &H);
      // read into H from input stream
      // assumptions: Hedge completely allocated 
 
@@ -48,10 +49,10 @@ void PrintLevelsToFile(const HedgePer &H, const char *filename);
 
 /***************************** HedgeAper *************************************/
 
-ostream &operator<<(ostream &output, const HedgeAper &H);
+std::ostream &operator<<(std::ostream &output, const HedgeAper &H);
         // output hedge's data as one long column
 
-istream &operator>>(istream &input, HedgeAper &H);
+std::istream &operator>>(std::istream &input, HedgeAper &H);
      // read into H from input stream
      // assumptions: H completely allocated 
 
@@ -70,10 +71,10 @@ void PrintLevelsToFile(const HedgeAper &H, const char *filename);
 
 /***************************** ArrayTreePer **********************************/
 
-ostream &operator<<(ostream &output, const ArrayTreePer &A);
+std::ostream &operator<<(std::ostream &output, const ArrayTreePer &A);
      // output A as one long column, level after level
 
-istream &operator>>(istream &input, ArrayTreePer &A);
+std::istream &operator>>(std::istream &input, ArrayTreePer &A);
      // read into A from input stream, level after level
      // assumption: A completely allocated 
 
@@ -86,10 +87,10 @@ void ReadFromFile(ArrayTreePer &A, const char *filename);
 
 /***************************** ArrayTreeAper *********************************/
 
-ostream &operator<<(ostream &output, const ArrayTreeAper &A);
+std::ostream &operator<<(std::ostream &output, const ArrayTreeAper &A);
      // output A as one long column, level after level
 
-istream &operator>>(istream &input, ArrayTreeAper &A);
+std::istream &operator>>(std::istream &input, ArrayTreeAper &A);
      // read into A from input stream, level after level
      // assumptions: A completely allocated 
 

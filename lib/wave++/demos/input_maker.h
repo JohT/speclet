@@ -12,11 +12,11 @@ void Input_maker(int type, Interval &In);        // function for making 6 differ
                                          // In.length = desired length of the signal
                                           // on output In is filled up with a signal
 
-int signum(real x);    // utility
+int signum(real_number x);    // utility
 
-const real Pi = 3.141592654;
+const real_number Pi = 3.141592654;
 
-real funct(real x);   // utility
+real_number funct(real_number x);   // utility
 
 #endif
 

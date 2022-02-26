@@ -10,10 +10,10 @@
 #define CCMULRE(z1, z2)        ((z1).Re*(z2).Re-(z1).Im*(z2).Im)
 #define CCMULIM(z1, z2)        ((z1).Re*(z2).Im+(z1).Im*(z2).Re)
 
-typedef struct {
-  real Re;
-  real Im;
-} complex;
+using complex_number = struct {
+  real_number Re;
+  real_number Im;
+};
 
 extern "C" int
   br( 
@@ -36,22 +36,22 @@ extern "C" void
 
 extern "C" void
   fftproduct(                  /* Apply sparse matrix product. */
-	     complex *f,       /* Input and output vector.     */
+	     complex_number *f,       /* Input and output vector.     */
 	     int q,            /* Length of `f[]' is N=1<<q.   */
-	     const complex *W); /* Exponentials: `Omega(N/2)' */
+	     const complex_number *W); /* Exponentials: `Omega(N/2)' */
 
-extern "C" complex * 
+extern "C" complex_number * 
   fftomega(			/* Return exp(-PI*i*n/M), */
 	   int M);		/* for n=0,1,2,...,|M|-1. */
 
 extern "C" void
   fftnormal(			/* Multiply `f[n].Re' and     */
-	    complex *f,		/* `f[n].Im' by `1.0/sqrt(N), */
+	    complex_number *f,		/* `f[n].Im' by `1.0/sqrt(N), */
 	    int N );		/* for n=0,1,2,...,N.         */
 
-extern "C" complex *
+extern "C" complex_number *
   dft(				/* Allocate, assign and return  */
-      const complex *f,		/* a complex vector, the (1<<q) */
+      const complex_number *f,		/* a complex vector, the (1<<q) */
       int q);			/* point DFT of the input `f[]' */
 
 

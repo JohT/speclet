@@ -50,9 +50,9 @@ template <class CONTENTYPE>
 class BinTreeComplete : public BinTree<CONTENTYPE>
 {
  public:
-  BinTreeComplete() : maxlevel(0) { BinTree<CONTENTYPE>::BinTree(); }
+  BinTreeComplete() : maxlevel(0) { }
 
-  BinTreeComplete(integer MAXLEVEL, const CONTENTYPE &c);        
+  BinTreeComplete(integer_number MAXLEVEL, const CONTENTYPE &c);        
        // set maxlevel=MAXLEVEL and construct tree with contents of all
        // nodes equal c. 
 
@@ -60,20 +60,20 @@ class BinTreeComplete : public BinTree<CONTENTYPE>
 
   BinTreeComplete<CONTENTYPE>& operator=(const BinTreeComplete<CONTENTYPE> &); 
                                        
-  Node<CONTENTYPE> *block(const integer &L, const integer &B);
+  Node<CONTENTYPE> *block(const integer_number &L, const integer_number &B);
        // return pointer to B-th node at level L
 
  Node<CONTENTYPE> *blockHelp(Node<CONTENTYPE> *pos,
-			     const integer &L, const integer &B) const;   
+			     const integer_number &L, const integer_number &B) const;   
 
- void SetConst(Node<CONTENTYPE> **ptr, const integer &L, const CONTENTYPE &c);
+ void SetConst(Node<CONTENTYPE> **ptr, const integer_number &L, const CONTENTYPE &c);
        // attach to *ptr a tree with levels 0...L, filled up with constant c
 
- integer maxlevel;     // levels numbered from 0 to maxlevel                               
+ integer_number maxlevel;     // levels numbered from 0 to maxlevel                               
 };
 // end of BinTreeComplete class definition
 
-typedef BinTreeComplete<real> Tree;
+typedef BinTreeComplete<real_number> Tree;
 
 ///////////////////////////////////////////////////////////////////////////////
 /*********************** Implementation **************************************/
@@ -142,12 +142,12 @@ void BinTree<CONTENTYPE>::DestroyTreeHelp(Node<CONTENTYPE>* &ptr)
 
 ///////////////////////////////////////////////////////////////////////////////
 template <class CONTENTYPE>
-BinTreeComplete<CONTENTYPE>::BinTreeComplete(integer MAXLEVEL, 
+BinTreeComplete<CONTENTYPE>::BinTreeComplete(integer_number MAXLEVEL, 
 					     const CONTENTYPE &c) :
   maxlevel(MAXLEVEL)
 {
   assert(maxlevel>0);
-  SetConst(&root, maxlevel, c);
+  SetConst(&BinTree<CONTENTYPE>::root, maxlevel, c);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -155,7 +155,7 @@ template <class CONTENTYPE>
 BinTreeComplete<CONTENTYPE>::BinTreeComplete(
 				  const BinTreeComplete<CONTENTYPE> &Rhs)
 {
-  BinTree<CONTENTYPE>::CopyTree(Rhs.root, root);
+  BinTree<CONTENTYPE>::CopyTree(Rhs.root, BinTree<CONTENTYPE>::root);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -169,17 +169,17 @@ BinTreeComplete<CONTENTYPE>& BinTreeComplete<CONTENTYPE>::operator=
 
 ///////////////////////////////////////////////////////////////////////////////
 template <class CONTENTYPE>
-Node<CONTENTYPE> *BinTreeComplete<CONTENTYPE>::block(const integer &L,
-						    const integer &B)
+Node<CONTENTYPE> *BinTreeComplete<CONTENTYPE>::block(const integer_number &L,
+						    const integer_number &B)
 {
   assert( 0<=L && L<=maxlevel && 0<=B && B<=(1<<L) );
-  return blockHelp(root, L, B);
+  return blockHelp(BinTree<CONTENTYPE>::root, L, B);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 template <class CONTENTYPE>
 Node<CONTENTYPE> *BinTreeComplete<CONTENTYPE>::blockHelp(Node<CONTENTYPE> *pos,
-				     const  integer &L, const integer &B) const
+				     const  integer_number &L, const integer_number &B) const
 {
   Node<CONTENTYPE> *ptr;
   if( L && pos)
@@ -196,7 +196,7 @@ Node<CONTENTYPE> *BinTreeComplete<CONTENTYPE>::blockHelp(Node<CONTENTYPE> *pos,
 ///////////////////////////////////////////////////////////////////////////////
 template <class CONTENTYPE>
 void BinTreeComplete<CONTENTYPE>::SetConst(Node<CONTENTYPE> **ptr, 
-				   const integer &L, const CONTENTYPE &c)
+				   const integer_number &L, const CONTENTYPE &c)
 {
   if( L > 0 )
     {

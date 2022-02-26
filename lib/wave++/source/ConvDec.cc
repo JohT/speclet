@@ -4,17 +4,17 @@
 
 #include "ConvDec.h"
 #include "common.h"
-#include <iostream.h>
+#include <iostream>
 #include <assert.h>
 
-void ConvDecPer( const real *In, real *Out, integer q, const PQMF &F )
+void ConvDecPer( const real_number *In, real_number *Out, integer_number q, const PQMF &F )
 {
   int j, offset, i = 0;
-  real *In_end, *In_End, *Coef;
-  real *Initial = const_cast<real *>(In) - F.beg; // Input array offset to
+  real_number *In_end, *In_End, *Coef;
+  real_number *Initial = const_cast<real_number *>(In) - F.beg; // Input array offset to
                                               // match the coefficients
-  real *Final = const_cast<real *>(In) + q - 1; // End of the input array
-  real  *CoefBegin = F.coef + F.beg; // Actual beginning of coefficient array
+  real_number *Final = const_cast<real_number *>(In) + q - 1; // End of the input array
+  real_number  *CoefBegin = F.coef + F.beg; // Actual beginning of coefficient array
 
   if (q > (F.end - F.beg)) // Long input array
     {
@@ -79,7 +79,7 @@ void ConvDecPer( const real *In, real *Out, integer q, const PQMF &F )
 	{
 	  j = 0;
 	  Coef = F.pcoef[Q];
-	  In_end = const_cast<real *>(In) + i;
+	  In_end = const_cast<real_number *>(In) + i;
 	  
 	  while (j <= i)
 	    {
@@ -97,14 +97,14 @@ void ConvDecPer( const real *In, real *Out, integer q, const PQMF &F )
     }
 }
 ///////////////////////////////////////////////////////////////////
-void ConvDecPer( const real *In, real *Out, integer q, const GPQMF &F )
+void ConvDecPer( const real_number *In, real_number *Out, integer_number q, const GPQMF &F )
 {
   int j, offset, i = 0;
-  real *In_end, *In_End, *Coef;
-  real *Initial = const_cast<real *>(In) - F.beg; // Input array offset to match
+  real_number *In_end, *In_End, *Coef;
+  real_number *Initial = const_cast<real_number *>(In) - F.beg; // Input array offset to match
                                                 // the coefficients
-  real *Final = const_cast<real *>(In) + q - 1; // End of the input array
-  real  *CoefBegin = F.coef + F.beg; // Actual beginning of coefficient array
+  real_number *Final = const_cast<real_number *>(In) + q - 1; // End of the input array
+  real_number  *CoefBegin = F.coef + F.beg; // Actual beginning of coefficient array
 
   if (q > (F.end - F.beg)) // Long input array
     {
@@ -169,7 +169,7 @@ void ConvDecPer( const real *In, real *Out, integer q, const GPQMF &F )
 	{
 	  j = 0;
 	  Coef = F.pcoef[Q];
-	  In_end = const_cast<real *>(In) + i;
+	  In_end = const_cast<real_number *>(In) + i;
 	  
 	  while (j <= i)
 	    {
@@ -187,10 +187,10 @@ void ConvDecPer( const real *In, real *Out, integer q, const GPQMF &F )
     }
 }
 ///////////////////////////////////////////////////////////////////
-void ConvDecV2Per(const real* In, real* Out, integer q, const PQMF &F)
+void ConvDecV2Per(const real_number* In, real_number* Out, integer_number q, const PQMF &F)
 {
   int i, j, q1 = q-1, q2i;
-  real *Coef;
+  real_number *Coef;
 
   if( q > (F.end - F.beg) )
     {
@@ -225,10 +225,10 @@ void ConvDecV2Per(const real* In, real* Out, integer q, const PQMF &F)
     }
 }
 ///////////////////////////////////////////////////////////////////
-void ConvDecV2Per(const real* In, real* Out, integer q, const GPQMF &F)
+void ConvDecV2Per(const real_number* In, real_number* Out, integer_number q, const GPQMF &F)
 {
   int i, j, q1 = q-1, q2i;
-  real *Coef;
+  real_number *Coef;
 
   if( q > (F.end - F.beg) )
     {
@@ -264,13 +264,13 @@ void ConvDecV2Per(const real* In, real* Out, integer q, const GPQMF &F)
 }
 
 ///////////////////////////////////////////////////////////////
-void AdjConvDecPer( const real *In, real *Out, integer q2, const PQMF &F )
+void AdjConvDecPer( const real_number *In, real_number *Out, integer_number q2, const PQMF &F )
 {
   int j, offset, i = 0, q = 2*q2;
-  real *Out_end, *Out_End, *Coef;
-  real *Initial = Out - F.beg; // Output array offset to match the coefficients
-  real *Final = Out + q - 1; // End of the Output array
-  real  *CoefBegin = F.coef + F.beg; // Actual beginning of coefficient array
+  real_number *Out_end, *Out_End, *Coef;
+  real_number *Initial = Out - F.beg; // Output array offset to match the coefficients
+  real_number *Final = Out + q - 1; // End of the Output array
+  real_number  *CoefBegin = F.coef + F.beg; // Actual beginning of coefficient array
 
   if (q > (F.end - F.beg)) // Long input array
     {
@@ -353,13 +353,13 @@ void AdjConvDecPer( const real *In, real *Out, integer q2, const PQMF &F )
     }
 }
 ///////////////////////////////////////////////////////////////
-void AdjConvDecPer( const real *In, real *Out, integer q2, const GPQMF &F )
+void AdjConvDecPer( const real_number *In, real_number *Out, integer_number q2, const GPQMF &F )
 {
   int j, offset, i = 0, q = 2*q2;
-  real *Out_end, *Out_End, *Coef;
-  real *Initial = Out - F.beg; // Output array offset to match the coefficients
-  real *Final = Out + q - 1; // End of the Output array
-  real  *CoefBegin = F.coef + F.beg; // Actual beginning of coefficient array
+  real_number *Out_end, *Out_End, *Coef;
+  real_number *Initial = Out - F.beg; // Output array offset to match the coefficients
+  real_number *Final = Out + q - 1; // End of the Output array
+  real_number  *CoefBegin = F.coef + F.beg; // Actual beginning of coefficient array
 
   if (q > (F.end - F.beg)) // Long input array
     {
@@ -442,10 +442,10 @@ void AdjConvDecPer( const real *In, real *Out, integer q2, const GPQMF &F )
     }
 }
 ///////////////////////////////////////////////////////////////////
-void AdjConvDecV2Per(const real* In, real* Out, integer q2, const PQMF &F)
+void AdjConvDecV2Per(const real_number* In, real_number* Out, integer_number q2, const PQMF &F)
 {
   int i, j, q = 2*q2, q1 = q-1, q2i;
-  real *Coef;
+  real_number *Coef;
 
   if( q > (F.end - F.beg) )
     {
@@ -480,10 +480,10 @@ void AdjConvDecV2Per(const real* In, real* Out, integer q2, const PQMF &F)
     }
 }
 ///////////////////////////////////////////////////////////////////
-void AdjConvDecV2Per(const real* In, real* Out, integer q2, const GPQMF &F)
+void AdjConvDecV2Per(const real_number* In, real_number* Out, integer_number q2, const GPQMF &F)
 {
   int i, j, q = 2*q2, q1 = q-1, q2i;
-  real *Coef;
+  real_number *Coef;
 
   if( q > (F.end - F.beg) )
     {
@@ -520,11 +520,11 @@ void AdjConvDecV2Per(const real* In, real* Out, integer q2, const GPQMF &F)
 ///////////////////////////////////////////////////////////////
 void ConvDecAper(const Interval &In, Interval &Out, const QMF &F)
 {
-  integer alpha=ICH(In.beg + F.beg), omega=IFH(In.end + F.end);
+  integer_number alpha=ICH(In.beg + F.beg), omega=IFH(In.end + F.end);
   assert(Out.beg <= alpha);
   assert(Out.end >= omega );
-  integer i, Begin, End, j;
-  integer i2;
+  integer_number i, Begin, End, j;
+  integer_number i2;
   for(i=alpha; i<=omega; i++) 
     { 
       i2 = 2 * i;
@@ -537,7 +537,7 @@ void ConvDecAper(const Interval &In, Interval &Out, const QMF &F)
 //////////////////////////////////////////////////////////////////	
 void AdjConvDecAper(const Interval &In, Interval &Out, const QMF &F)
 {
-  integer j = Out.beg, Begin, End, i;
+  integer_number j = Out.beg, Begin, End, i;
   while(j <= Out.end)
     {
       Begin = maximum( In.beg, ICH(j+F.beg) );

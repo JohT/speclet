@@ -4,6 +4,6 @@
 #ifndef RMS_H
 #define RMS_H
 
-real RMS_error(const Interval &input, const Interval &output );
+real_number RMS_error(const Interval &input, const Interval &output );
 
 #endif

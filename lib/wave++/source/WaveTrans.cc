@@ -9,7 +9,7 @@
 #include "common.h"
 #include <stdlib.h>
 #include <assert.h>
-#include <iostream.h>
+#include <iostream>
 
 /*******************  Periodic case pow of 2 ********************************/
 
@@ -26,8 +26,8 @@ void WaveTrans(const Interval &In, Interval &Out, Interval &Work,
 {
   assert( In.beg == 0 && Out.beg <= 0 && Out.end >= In.end);
   assert( is_pow_of_2(In.length) );
-  real *in=In.origin, *out=Out.origin, *work=Work.origin;
-  integer k=In.length;
+  real_number *in=In.origin, *out=Out.origin, *work=Work.origin;
+  integer_number k=In.length;
   while( k > 1) 
     {
       con_dec(in, out + k/2, k, G);
@@ -52,11 +52,11 @@ void InvWaveTrans(const Interval &In, Interval &Out, Interval &Work,
 {
   assert( In.beg == 0 && Out.beg <= 0 && Out.end >= In.end);
   assert( is_pow_of_2(In.length) );
-  real *in=In.origin, *out=Out.origin, *work=Work.origin;
-  integer n=In.length;
+  real_number *in=In.origin, *out=Out.origin, *work=Work.origin;
+  integer_number n=In.length;
   if( n > 1 )
     {
-      integer k=1;
+      integer_number k=1;
       work += k;
       work[0] = in[0];
       in += 1;
@@ -76,7 +76,7 @@ void InvWaveTrans(const Interval &In, Interval &Out, Interval &Work,
 
 /****************************** Periodic case  m*2^L *************************/
 
-void WaveTrans(const Interval &In, Interval &Out, integer L,
+void WaveTrans(const Interval &In, Interval &Out, integer_number L,
 	       const GPQMF &H, const GPQMF &G, cdgpType con_dec)
 {
   Interval Work(0, In.beg);      // all elemnts of Work are 0's
@@ -84,13 +84,13 @@ void WaveTrans(const Interval &In, Interval &Out, integer L,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void WaveTrans(const Interval &In, Interval &Out, Interval &Work, integer L,
+void WaveTrans(const Interval &In, Interval &Out, Interval &Work, integer_number L,
 	       const GPQMF &H, const GPQMF &G, cdgpType con_dec)
 {
-  integer k=In.length;
+  integer_number k=In.length;
   assert( In.beg == 0 && Out.beg <= 0 && Out.end >= In.end);
   assert( ((k>>L)<<L) == k );
-  real *in=In.origin, *out=Out.origin, *work=Work.origin; 
+  real_number *in=In.origin, *out=Out.origin, *work=Work.origin; 
   while( L-- > 0 )
     {
       con_dec(in, out + k/2, k, G);
@@ -102,7 +102,7 @@ void WaveTrans(const Interval &In, Interval &Out, Interval &Work, integer L,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void InvWaveTrans(const Interval &In, Interval &Out, integer L,
+void InvWaveTrans(const Interval &In, Interval &Out, integer_number L,
 		  const GPQMF &H, const GPQMF &G, cdgpType adj_con_dec)
 {
   Interval Work(0, In.end);
@@ -110,19 +110,19 @@ void InvWaveTrans(const Interval &In, Interval &Out, integer L,
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void InvWaveTrans(const Interval &In, Interval &Out, Interval &Work, integer L,
+void InvWaveTrans(const Interval &In, Interval &Out, Interval &Work, integer_number L,
 		  const GPQMF &H, const GPQMF &G, cdgpType adj_con_dec)
 {
   assert(L>0);
-  integer k, n=In.length;
+  integer_number k, n=In.length;
   assert( In.beg == 0 && Out.beg <= 0 && Out.end >= In.end);
   assert( ((n>>L)<<L) == n );
-  real *in=In.origin, *out=Out.origin, *work=Work.origin; 
+  real_number *in=In.origin, *out=Out.origin, *work=Work.origin; 
   if( L > 0 )
     {
       k = n>>L;
       work += k;
-      for(integer j=0; j<k; j++)  work[j] = in [j];
+      for(integer_number j=0; j<k; j++)  work[j] = in [j];
       in += k;
       while( k < n/2 )
 	{
@@ -140,7 +140,7 @@ void InvWaveTrans(const Interval &In, Interval &Out, Interval &Work, integer L,
 
 /**************************  Aperiodic  **************************************/
 
-void WaveTrans(const Interval &In, Interval *Out, integer L,
+void WaveTrans(const Interval &In, Interval *Out, integer_number L,
 	       const QMF &H, const QMF &G, cdaType con_dec)
 {
   assert(L>0);
@@ -151,12 +151,12 @@ void WaveTrans(const Interval &In, Interval *Out, integer L,
 
 ///////////////////////////////////////////////////////////////////////////////
 void WaveTrans(const Interval &In, Interval *Out, Interval *Work,
-	       integer L, const QMF &H, const QMF &G, cdaType con_dec)
+	       integer_number L, const QMF &H, const QMF &G, cdaType con_dec)
 {
   assert(L > 0);
   Interval *Temp;
   Temp = const_cast<Interval *> (&In);
-  for(integer k=L-1; k>=0; k--)
+  for(integer_number k=L-1; k>=0; k--)
     {
       Work[k].Set(ICH((Temp->beg)+H.beg), IFH((Temp->end)+H.end));  // all 0's
       Out[k+1].Set(ICH((Temp->beg)+G.beg), IFH((Temp->end)+G.end));  // all 0's
@@ -168,7 +168,7 @@ void WaveTrans(const Interval &In, Interval *Out, Interval *Work,
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void InvWaveTrans(const Interval *In, Interval &Out, integer L,
+void InvWaveTrans(const Interval *In, Interval &Out, integer_number L,
 		  const QMF &H, const QMF &G, cdaType adj_con_dec)
 {
   assert(L>0);
@@ -179,12 +179,12 @@ void InvWaveTrans(const Interval *In, Interval &Out, integer L,
 
 ///////////////////////////////////////////////////////////////////////////////
 void InvWaveTrans(const Interval *In, Interval &Out, Interval *Work, 
-		  integer L, const QMF &H, const QMF &G, cdaType adj_con_dec)
+		  integer_number L, const QMF &H, const QMF &G, cdaType adj_con_dec)
 {
   assert(L>0);
   Work[0] = In[0];
-  integer alpha, omega;
-  for(integer k=1; k<L; k++)
+  integer_number alpha, omega;
+  for(integer_number k=1; k<L; k++)
     {
       alpha = minimum( LEAST(Work[k-1], H), LEAST(In[k], G) );
       omega = maximum( FINAL(Work[k-1], H), FINAL(In[k], G) ); 
