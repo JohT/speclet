@@ -59,7 +59,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
       labelColorMode(0),
       comboBoxColorMode(0) {
     addAndMakeVisible(comboBoxResolution = new ComboBox("comboBoxResolution"));
-    comboBoxResolution->setTooltip("Aufl\xf6sung");
+    comboBoxResolution->setTooltip("Resolution");
     comboBoxResolution->setEditableText(false);
     comboBoxResolution->setJustificationType(Justification::centredLeft);
     comboBoxResolution->setTextWhenNothingSelected(String());
@@ -71,7 +71,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     spectralviewport->setScrollBarThickness(10);
 
     addAndMakeVisible(labelResolution = new Label("labelResolution",
-                                                  "Aufl\xf6sung"));
+                                                  "Resolution"));
     labelResolution->setFont(Font(15.0000f, Font::plain));
     labelResolution->setJustificationType(Justification::centredLeft);
     labelResolution->setEditable(false, false, false);
@@ -101,7 +101,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelTransformation->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(comboBoxWindowing = new ComboBox("comboBoxWindowing"));
-    comboBoxWindowing->setTooltip("Fensterfunktion");
+    comboBoxWindowing->setTooltip("Window Function");
     comboBoxWindowing->setEditableText(false);
     comboBoxWindowing->setJustificationType(Justification::centredLeft);
     comboBoxWindowing->setTextWhenNothingSelected(String());
@@ -109,7 +109,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     comboBoxWindowing->addListener(this);
 
     addAndMakeVisible(labelWindowing = new Label("labelWindowing",
-                                                 "Fensterfunktion"));
+                                                 "Window Function"));
     labelWindowing->setFont(Font(15.0000f, Font::plain));
     labelWindowing->setJustificationType(Justification::centredLeft);
     labelWindowing->setEditable(false, false, false);
@@ -120,7 +120,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelWindowing->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(comboBoxWavelet = new ComboBox("comboBoxWavelet"));
-    comboBoxWavelet->setTooltip("Wavelet (+Filterordnung)");
+    comboBoxWavelet->setTooltip("Wavelet");
     comboBoxWavelet->setEditableText(false);
     comboBoxWavelet->setJustificationType(Justification::centredLeft);
     comboBoxWavelet->setTextWhenNothingSelected(String());
@@ -139,7 +139,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelWavelet->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(comboBoxWaveletPaketBasis = new ComboBox("comboBoxWaveletPaketBasis"));
-    comboBoxWaveletPaketBasis->setTooltip("Wavelet Paket Basis");
+    comboBoxWaveletPaketBasis->setTooltip("Wavelet Packet Base");
     comboBoxWaveletPaketBasis->setEditableText(false);
     comboBoxWaveletPaketBasis->setJustificationType(Justification::centredLeft);
     comboBoxWaveletPaketBasis->setTextWhenNothingSelected(String());
@@ -147,7 +147,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     comboBoxWaveletPaketBasis->addListener(this);
 
     addAndMakeVisible(labelWaveletPaketBasis = new Label("labelWaveletPaketBasis",
-                                                         "Wavelet Paketbasis"));
+                                                         "Wavelet Packet Base"));
     labelWaveletPaketBasis->setFont(Font(15.0000f, Font::plain));
     labelWaveletPaketBasis->setJustificationType(Justification::centredLeft);
     labelWaveletPaketBasis->setEditable(false, false, false);
@@ -158,7 +158,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelWaveletPaketBasis->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(comboBoxSignalgenerator = new ComboBox("comboBoxSignalgenerator"));
-    comboBoxSignalgenerator->setTooltip("Signalgenerator");
+    comboBoxSignalgenerator->setTooltip("Osciallator");
     comboBoxSignalgenerator->setEditableText(false);
     comboBoxSignalgenerator->setJustificationType(Justification::centredLeft);
     comboBoxSignalgenerator->setTextWhenNothingSelected(String());
@@ -166,7 +166,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     comboBoxSignalgenerator->addListener(this);
 
     addAndMakeVisible(labelSignalgenerator = new Label("labelSignalgenerator",
-                                                       "Signalgenerator"));
+                                                       "Oscillator"));
     labelSignalgenerator->setFont(Font(15.0000f, Font::plain));
     labelSignalgenerator->setJustificationType(Justification::centredLeft);
     labelSignalgenerator->setEditable(false, false, false);
@@ -177,7 +177,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelSignalgenerator->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(comboBoxSignalquelle = new ComboBox("comboBoxSignalquelle"));
-    comboBoxSignalquelle->setTooltip("Signalquelle");
+    comboBoxSignalquelle->setTooltip("Audio Source");
     comboBoxSignalquelle->setEditableText(false);
     comboBoxSignalquelle->setJustificationType(Justification::centredLeft);
     comboBoxSignalquelle->setTextWhenNothingSelected(String());
@@ -185,7 +185,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     comboBoxSignalquelle->addListener(this);
 
     addAndMakeVisible(labelSignalquelle = new Label("labelSignalquelle",
-                                                    "Signalquelle"));
+                                                    "Audio Source"));
     labelSignalquelle->setFont(Font(15.0000f, Font::plain));
     labelSignalquelle->setJustificationType(Justification::centredLeft);
     labelSignalquelle->setEditable(false, false, false);
@@ -196,7 +196,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelSignalquelle->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(labelGeneratorfrequenz = new Label("labelGeneratorfrequenz",
-                                                         "Generatorfrequenz"));
+                                                         "Oscillator Frequency"));
     labelGeneratorfrequenz->setFont(Font(15.0000f, Font::plain));
     labelGeneratorfrequenz->setJustificationType(Justification::centredLeft);
     labelGeneratorfrequenz->setEditable(false, false, false);
@@ -207,7 +207,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelGeneratorfrequenz->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(sliderGeneratorFrequenz = new Slider("sliderGeneratorFrequenz"));
-    sliderGeneratorFrequenz->setTooltip("Frequenz des Signalgenerators");
+    sliderGeneratorFrequenz->setTooltip("Oscillator Frequency");
     sliderGeneratorFrequenz->setExplicitFocusOrder(7);
     sliderGeneratorFrequenz->setRange(10, 22000, 1);
     sliderGeneratorFrequenz->setSliderStyle(Slider::LinearHorizontal);
@@ -215,7 +215,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     sliderGeneratorFrequenz->addListener(this);
 
     addAndMakeVisible(labelLogF = new Label("labelLogF",
-                                            "Frequenzachse"));
+                                            "Frequency Scale"));
     labelLogF->setFont(Font(15.0000f, Font::plain));
     labelLogF->setJustificationType(Justification::centredLeft);
     labelLogF->setEditable(false, false, false);
@@ -226,7 +226,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelLogF->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(labelLogA = new Label("labelLogA",
-                                            "Amplitudenachse"));
+                                            "Magnitude Scale"));
     labelLogA->setFont(Font(15.0000f, Font::plain));
     labelLogA->setJustificationType(Justification::centredLeft);
     labelLogA->setEditable(false, false, false);
@@ -237,7 +237,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelLogA->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(comboBoxLogF = new ComboBox("comboBoxLogF"));
-    comboBoxLogF->setTooltip("Frequenzachse");
+    comboBoxLogF->setTooltip("Frequency Scale");
     comboBoxLogF->setEditableText(false);
     comboBoxLogF->setJustificationType(Justification::centredLeft);
     comboBoxLogF->setTextWhenNothingSelected(String());
@@ -245,7 +245,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     comboBoxLogF->addListener(this);
 
     addAndMakeVisible(comboBoxLogA = new ComboBox("comboBoxLogA"));
-    comboBoxLogA->setTooltip("Logarithmische Amplitudenachse");
+    comboBoxLogA->setTooltip("Magnitude Scale");
     comboBoxLogA->setEditableText(false);
     comboBoxLogA->setJustificationType(Justification::centredLeft);
     comboBoxLogA->setTextWhenNothingSelected(String());
@@ -253,7 +253,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     comboBoxLogA->addListener(this);
 
     addAndMakeVisible(labelColorMode = new Label("labelColorMode",
-                                                 "Farbmodus"));
+                                                 "Color Mode"));
     labelColorMode->setFont(Font(15.0000f, Font::plain));
     labelColorMode->setJustificationType(Justification::centredLeft);
     labelColorMode->setEditable(false, false, false);
@@ -264,7 +264,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     labelColorMode->setColour(TextEditor::backgroundColourId, Colour(0x0));
 
     addAndMakeVisible(comboBoxColorMode = new ComboBox("comboBoxColorMode"));
-    comboBoxColorMode->setTooltip("Farbmodus");
+    comboBoxColorMode->setTooltip("Color Mode");
     comboBoxColorMode->setEditableText(false);
     comboBoxColorMode->setJustificationType(Justification::centredLeft);
     comboBoxColorMode->setTextWhenNothingSelected(String());
@@ -542,28 +542,28 @@ void SpectronAnalyzerComponent::fillComboBoxes() {
     comboBoxWaveletPaketBasis->addItem("time x2", SpectronParameters::RESOLUTION_RATIO_TimeX2);
     comboBoxWaveletPaketBasis->addItem("time x4", SpectronParameters::RESOLUTION_RATIO_TimeX4);
 
-    comboBoxSignalgenerator->addItem("Sinus", SpectronParameters::GENERATOR_SINE);
-    comboBoxSignalgenerator->addItem("Dreieck", SpectronParameters::GENERATOR_TRIANGLE);
-    comboBoxSignalgenerator->addItem("S\xe4gezahn", SpectronParameters::GENERATOR_RAMP);
-    comboBoxSignalgenerator->addItem("Rechteck", SpectronParameters::GENERATOR_SQUARE);
-    comboBoxSignalgenerator->addItem("Rauschen", SpectronParameters::GENERATOR_NOISE);
+    comboBoxSignalgenerator->addItem("Sine", SpectronParameters::GENERATOR_SINE);
+    comboBoxSignalgenerator->addItem("Triangle", SpectronParameters::GENERATOR_TRIANGLE);
+    comboBoxSignalgenerator->addItem("Sawtooth", SpectronParameters::GENERATOR_RAMP);
+    comboBoxSignalgenerator->addItem("Rectangle", SpectronParameters::GENERATOR_SQUARE);
+    comboBoxSignalgenerator->addItem("Noise", SpectronParameters::GENERATOR_NOISE);
 
-    comboBoxSignalquelle->addItem("Mitte", SpectronParameters::ROUTING_MID);
-    comboBoxSignalquelle->addItem("Seite", SpectronParameters::ROUTING_SIDE);
-    comboBoxSignalquelle->addItem("Links", SpectronParameters::ROUTING_L);
-    comboBoxSignalquelle->addItem("Rechts", SpectronParameters::ROUTING_R);
-    comboBoxSignalquelle->addItem("Signalgenerator", SpectronParameters::ROUTING_GENERATOR);
+    comboBoxSignalquelle->addItem("Mid", SpectronParameters::ROUTING_MID);
+    comboBoxSignalquelle->addItem("Side", SpectronParameters::ROUTING_SIDE);
+    comboBoxSignalquelle->addItem("Left", SpectronParameters::ROUTING_L);
+    comboBoxSignalquelle->addItem("Right", SpectronParameters::ROUTING_R);
+    comboBoxSignalquelle->addItem("Oscillator", SpectronParameters::ROUTING_GENERATOR);
 
     comboBoxLogF->addItem("linear", SpectronParameters::PLOT_AXIS_LINEAR);
-    comboBoxLogF->addItem("logarithmisch", SpectronParameters::PLOT_AXIS_LOGARITHMIC);
+    comboBoxLogF->addItem("logarithmic", SpectronParameters::PLOT_AXIS_LOGARITHMIC);
 
     comboBoxLogA->addItem("linear", SpectronParameters::PLOT_AXIS_LINEAR);
-    comboBoxLogA->addItem("logarithmisch", SpectronParameters::PLOT_AXIS_LOGARITHMIC);
+    comboBoxLogA->addItem("logarithmic", SpectronParameters::PLOT_AXIS_LOGARITHMIC);
 
-    comboBoxColorMode->addItem("Blau", SpectronParameters::COLORMODE_BLUE);
-    comboBoxColorMode->addItem("Gr\xfcn", SpectronParameters::COLORMODE_GREEN);
-    comboBoxColorMode->addItem("Feuer", SpectronParameters::COLORMODE_FIRE);
-    comboBoxColorMode->addItem("Regenbogen", SpectronParameters::COLORMODE_RAINBOW);
+    comboBoxColorMode->addItem("Blue", SpectronParameters::COLORMODE_BLUE);
+    comboBoxColorMode->addItem("Green", SpectronParameters::COLORMODE_GREEN);
+    comboBoxColorMode->addItem("Fire", SpectronParameters::COLORMODE_FIRE);
+    comboBoxColorMode->addItem("Rainbow", SpectronParameters::COLORMODE_RAINBOW);
 }
 
 void SpectronAnalyzerComponent::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier & /*property*/) {
