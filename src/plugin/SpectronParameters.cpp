@@ -2,6 +2,8 @@
 #include "../utilities/PerformanceManager.h"
 
 // Singleton instance variable (only one instance of this class)
+using juce::String;
+
 SpectronParameters *SpectronParameters::singletonInstance = nullptr;
 
 const juce::String SpectronParameters::PROPERTY_VALUE = "value";
@@ -22,22 +24,22 @@ SpectronParameters::SpectronParameters() {
 
     properties = new juce::ValueTree("SpectronParameters");
 
-    //add parameters as tree childs (must start with zero and use ascending indizes -> enum)
-    properties->addChild(juce::ValueTree(PARAMETER_ROUTING), PARAMETER_INDEX_Routing, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_TRANSFORMATION), PARAMETER_INDEX_Transformation, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_RESOLUTION), PARAMETER_INDEX_Resolution, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_WAVELETPAKETBASE), PARAMETER_INDEX_WaveletPaketBase, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_WINDOWING), PARAMETER_INDEX_Windowing, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_WAVELET), PARAMETER_INDEX_Wavelet, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_GENERATOR), PARAMETER_INDEX_Generator, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_GENERATORFREQUENCY), PARAMETER_INDEX_GeneratorFrequency, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_LOGFREQUENCY), PARAMETER_INDEX_LogFrequency, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_LOGMAGNITUDE), PARAMETER_INDEX_LogMagnitude, NULL);
-    properties->addChild(juce::ValueTree(PARAMETER_COLORMODE), PARAMETER_INDEX_ColorMode, NULL);
+    //add parameters as tree childs (must start with zero and use ascending indices -> enum)
+    properties->addChild(juce::ValueTree(PARAMETER_ROUTING), PARAMETER_INDEX_Routing, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_TRANSFORMATION), PARAMETER_INDEX_Transformation, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_RESOLUTION), PARAMETER_INDEX_Resolution, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_WAVELETPAKETBASE), PARAMETER_INDEX_WaveletPaketBase, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_WINDOWING), PARAMETER_INDEX_Windowing, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_WAVELET), PARAMETER_INDEX_Wavelet, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_GENERATOR), PARAMETER_INDEX_Generator, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_GENERATORFREQUENCY), PARAMETER_INDEX_GeneratorFrequency, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_LOGFREQUENCY), PARAMETER_INDEX_LogFrequency, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_LOGMAGNITUDE), PARAMETER_INDEX_LogMagnitude, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_COLORMODE), PARAMETER_INDEX_ColorMode, nullptr);
 
     //add value zero to every tree child's value property
     for (int i = 0; i < properties->getNumChildren(); i++) {
-        properties->getChild(i).setProperty(PROPERTY_VALUE, (float) 0, NULL);
+        properties->getChild(i).setProperty(PROPERTY_VALUE, static_cast<float>(0), nullptr);
     }
 
     waitForParameterChange = new juce::WaitableEvent(true);
@@ -70,10 +72,12 @@ float SpectronParameters::getParameter(int index) {
     return child.getProperty(PROPERTY_VALUE);
 }
 
-float SpectronParameters::getParameter(juce::String name) {
+auto SpectronParameters::getParameter(const juce::String &name) -> float {
     juce::ValueTree child = properties->getChildWithName(name);
-    if (!child.isValid()) return (float) 0;
-    return child.getProperty(PROPERTY_VALUE, (float) 0);
+    if (!child.isValid()) {
+        return 0.0F;
+    }
+    return child.getProperty(PROPERTY_VALUE, 0.0F);
 }
 
 void SpectronParameters::setParameter(int index, float newValue) {
@@ -82,14 +86,18 @@ void SpectronParameters::setParameter(int index, float newValue) {
     PerformanceManager::getSingletonInstance().start("waitForParameterChange");
     bool timeoutDuringWait = waitForParameterChange->wait(TIMEOUT_WAIT_BEFORE_SET);
     PerformanceManager::getSingletonInstance().stop("waitForParameterChange");
-    if (!timeoutDuringWait) DBG("SpectronParameters::setParameter: Timeout during wait!");
+    if (!timeoutDuringWait) {
+        DBG("SpectronParameters::setParameter: Timeout during wait!");
+    }
 
     juce::ValueTree child = properties->getChild(index);
-    if (!child.isValid()) return;
-    child.setProperty(PROPERTY_VALUE, newValue, NULL);
+    if (!child.isValid()) {
+        return;
+    }
+    child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
-void SpectronParameters::setParameter(juce::String name, float newValue) {
+void SpectronParameters::setParameter(const juce::String &name, float newValue) {
     const ScopedLock myScopedLock(criticalSection);
 
     PerformanceManager::getSingletonInstance().start("waitForParameterChange");
@@ -106,7 +114,7 @@ void SpectronParameters::setParameter(juce::String name, float newValue) {
     child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
-auto SpectronParameters::getParameterIndex(juce::String name) -> int {
+auto SpectronParameters::getParameterIndex(const String &name) -> int {
     juce::ValueTree child = properties->getChildWithName(name);
     if (!child.isValid()) {
         return -1;

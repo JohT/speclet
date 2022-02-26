@@ -191,11 +191,11 @@ public:
     void unblockParameterChanges() { waitForParameterChange->signal(); };
 
     void setParameter(int index, float newValue);
-    void setParameter(juce::String name, float newValue);
+    void setParameter(const juce::String& name, float newValue);
     auto getParameter(int index) -> float;
-    auto getParameter(juce::String name) -> float;
+    auto getParameter(const juce::String& name) -> float;
     auto getParameterName(int index) -> const juce::String;
-    auto getParameterIndex(juce::String name) -> int;
+    auto getParameterIndex(const juce::String& name) -> int;
 
     auto getColorMode() -> int { return (int) getParameter(PARAMETER_INDEX_ColorMode); }
     auto getGenerator() -> int { return (int) getParameter(PARAMETER_INDEX_Generator); }
