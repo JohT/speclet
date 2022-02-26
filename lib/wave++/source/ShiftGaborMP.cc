@@ -2,8 +2,8 @@
 #include "ShiftGaborMP.h"
 #include <math.h>
 
-real RunShiftGaborMP(int max_iter, // maximal number of iterations 
-		     real epsilon, // desired precision | Rf | < epsilon
+real_number RunShiftGaborMP(int max_iter, // maximal number of iterations 
+		     real_number epsilon, // desired precision | Rf | < epsilon
 		     const Interval &f, // signal to be approximated
 		     // assumption : f sampled on integers starting with 0
 		     // i.e.  f.beg must be 0. No constraints on f.length.
@@ -13,28 +13,28 @@ real RunShiftGaborMP(int max_iter, // maximal number of iterations
 		     // f_approx is a linear combination of Gabors
 		     Interval &Rf, // final residual: Rf = f - f_approx
 		     // error which is returned equals | Rf |
-		     vector <RealGabor> &G, // vector of Gabors chosen for
+		     std::vector <RealGabor> &G, // vector of Gabors chosen for
 		     // f_approx
-		     vector <real> & Gcoef // coeficinets in the linear
+		     std::vector <real_number> & Gcoef // coeficinets in the linear
 		     // combination, corresponding to Gabors in G
 		     // f_approx = sum( Gcoef[i] * G[i] ), where number of i's
 		     // depends on epsilon and max_iter
 		    )
 {
-  integer dim = f.length;
+  integer_number dim = f.length;
   assert( f.beg == 0 && dim > 0);
 
   Interval I(0, dim-1);
   for(int i=0; i<dim; i++) I.origin[i] = i;
   
   //declare some temporary objects to receive outputs from getOptimalShiftGabor
-  real coef=0.0, error=0.0;
+  real_number coef=0.0, error=0.0;
   RealGabor Gtemp;
   
   // Initialize Rf and f_approx
   f_approx.Set(0, dim-1);
   Rf = f;    
-  real *Gptr, *fptr, *Rfptr;
+  real_number *Gptr, *fptr, *Rfptr;
   for(int iter=0; iter < max_iter; iter++)
 	{
 	  getOptimalShiftGabor(Rf, Part, Gtemp, coef);
@@ -44,7 +44,7 @@ real RunShiftGaborMP(int max_iter, // maximal number of iterations
 	  Gptr = Gtemp.Sample.origin;  fptr = f_approx.origin; 
 	  Rfptr = Rf.origin;
 	  error = 0;
-	  for(integer t=0; t<dim; t++)
+	  for(integer_number t=0; t<dim; t++)
 	    {
 	      *fptr += (*Gptr) * coef;
 	      (*Rfptr) -= (*Gptr) * coef;
@@ -66,37 +66,37 @@ real RunShiftGaborMP(int max_iter, // maximal number of iterations
 void getOptimalShiftGabor(const Interval &f,  // signal
 			  const Partition &Part,
 			  RealGabor &G, // optimal Gabor, the one closest to f
-			  real &coef   // <f, G>		 
+			  real_number &coef   // <f, G>		 
 		     )
 {
-  integer dim = f.length;
-  integer c = dim / 2;  // midpoint or left midpoint of the interval [0, dim-1]
+  integer_number dim = f.length;
+  integer_number c = dim / 2;  // midpoint or left midpoint of the interval [0, dim-1]
                         // depending on whether dim is odd or even
-  integer t, ddu;  // ddu will hold (integer)du[j]
-  real ddv;        // ddv will hold dv[j]
-  integer lmshift = Part.lmu - c, rmshift = Part.rmu - c; // leftmost and rightmost
+  integer_number t, ddu;  // ddu will hold (integer)du[j]
+  real_number ddv;        // ddv will hold dv[j]
+  integer_number lmshift = Part.lmu - c, rmshift = Part.rmu - c; // leftmost and rightmost
   // shifts with respect to the central position c
-  real codv, sidv, covshift, sivshift; // codv will hold cos( ddv )
+  real_number codv, sidv, covshift, sivshift; // codv will hold cos( ddv )
                                        // covshift will hold cos( v * shift )
   Interval CO, SI; // CO[t] will hold cos( t * v )
 
-  integer  beg, end;
+  integer_number  beg, end;
   Interval P, Q;
-  real a, b, phase, Pnorm2, Qnorm2, PprodQ, a1, b1, product;
-  real atemp, btemp, Pnorm2temp, Qnorm2temp, PprodQtemp;
-  real *Pptr, *Qptr, *fptr, *COptr, *SIptr; 
-  real covlms, sivlms, covdu, sivdu, codvlms, sidvlms, codvdu, sidvdu, temp;
+  real_number a, b, phase, Pnorm2, Qnorm2, PprodQ, a1, b1, product;
+  real_number atemp, btemp, Pnorm2temp, Qnorm2temp, PprodQtemp;
+  real_number *Pptr, *Qptr, *fptr, *COptr, *SIptr; 
+  real_number covlms, sivlms, covdu, sivdu, codvlms, sidvlms, codvdu, sidvdu, temp;
   // covlms will hold cos(v * lmshift), codvlms will hold cos(ddv * lmshift)
   // covdu will hold cos( v * ddu ), codvdu will hold cos(ddv * ddu)
   coef = 0;
-  for( integer j = Part.s.beg; j <= Part.s.end; j++ )
+  for( integer_number j = Part.s.beg; j <= Part.s.end; j++ )
     {
       // set up
       ddv = Part.dv.origin[j];  
-      ddu = (integer)(Part.du.origin[j]); // effectively floor 
+      ddu = (integer_number)(Part.du.origin[j]); // effectively floor 
     
-      beg = maximum(c - 4 * (integer)(Part.s.origin[j]), c - dim);  
-      end = minimum(c + 4 * (integer)(Part.s.origin[j]), c + dim);
+      beg = maximum(c - 4 * (integer_number)(Part.s.origin[j]), c - dim);  
+      end = minimum(c + 4 * (integer_number)(Part.s.origin[j]), c + dim);
       P.Set(beg, end);
       Q.Set(beg, end);
       CO.Set(beg, end);   
@@ -105,11 +105,11 @@ void getOptimalShiftGabor(const Interval &f,  // signal
       Pptr = P.origin + beg; 
       COptr = CO.origin + beg;  SIptr = SI.origin + beg;
       // do first elements separately
-      *Pptr++ = g((real)(beg - c) / Part.s.origin[j]);
+      *Pptr++ = g((real_number)(beg - c) / Part.s.origin[j]);
       *COptr++ = cos( beg * ddv );    *SIptr++ = sin( beg * ddv );
       for(t = beg + 1; t <= end; t++) 
 	{
-	  *Pptr++ = g((real)(t - c)/Part.s.origin[j]);
+	  *Pptr++ = g((real_number)(t - c)/Part.s.origin[j]);
 	  *COptr = *(COptr - 1) * codv - *(SIptr - 1) * sidv;
 	  *SIptr = *(COptr - 1) * sidv + *(SIptr - 1) * codv;
 	  COptr++;  SIptr++;
@@ -119,7 +119,7 @@ void getOptimalShiftGabor(const Interval &f,  // signal
       covlms = covdu = 1;  sivlms = sivdu = 0; 
       // by now everything is set up for v=0
       // Now do v=0 separately 
-      for(integer shift = lmshift; shift <= rmshift; shift += ddu)
+      for(integer_number shift = lmshift; shift <= rmshift; shift += ddu)
 	{
 	  // covshift = cos(v*shift);  sivshift = sin(v*shift)
 	  beg = maximum(0, P.beg + shift);  
@@ -142,7 +142,7 @@ void getOptimalShiftGabor(const Interval &f,  // signal
 	    }
 	} // end of shift loop for case v = 0
       // Now do the rest of v's
-      for(real v=ddv; v < Part.rmv; v += ddv)
+      for(real_number v=ddv; v < Part.rmv; v += ddv)
 	{ 
 	  // update P, Q for this new value of v
 	  for( t = P.beg; t <= P.end; t++)
@@ -160,7 +160,7 @@ void getOptimalShiftGabor(const Interval &f,  // signal
 	  sivdu = temp * sidvdu + sivdu * codvdu;
 	  // initialize covshift with cos( v * lmshift )   
 	  covshift = covlms;  sivshift = sivlms;	
-	  for(integer shift = lmshift; shift <= rmshift; shift += ddu)
+	  for(integer_number shift = lmshift; shift <= rmshift; shift += ddu)
 	    {
 	      // covshift = cos(v*shift);  sivshift = sin(v*shift)
 	      beg = maximum(0, P.beg + shift);  

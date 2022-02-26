@@ -551,10 +551,10 @@ float genunf(float low,float high)
      float genunf(float low,float high)
                GeNerate Uniform Real between LOW and HIGH
                               Function
-     Generates a real uniformly distributed between LOW and HIGH.
+     Generates a real_number uniformly distributed between LOW and HIGH.
                               Arguments
      low --> Low bound (exclusive) on real value to be generated
-     high --> High bound (exclusive) on real value to be generated
+     high --> High bound (exclusive) on real_number value to be generated
 **********************************************************************
 */
 {
@@ -1175,10 +1175,10 @@ long ignuin(long low,long high)
      long ignuin(long low,long high)
                GeNerate Uniform INteger
                               Function
-     Generates an integer uniformly distributed between LOW and HIGH.
+     Generates an integer_number uniformly distributed between LOW and HIGH.
                               Arguments
      low --> Low bound (inclusive) on integer value to be generated
-     high --> High bound (inclusive) on integer value to be generated
+     high --> High bound (inclusive) on integer_number value to be generated
                               Note
      If (HIGH-LOW) > 2,147,483,561 prints error message on * unit and
      stops the program.

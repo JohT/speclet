@@ -50,15 +50,15 @@ void getsd(long *iseed1,long *iseed2)
 **********************************************************************
      void getsd(long *iseed1,long *iseed2)
                GET SeeD
-     Returns the value of two integer seeds of the current generator
+     Returns the value of two integer_number seeds of the current generator
      This  is   a  transcription from  Pascal   to  Fortran  of routine
      Get_State from the paper
      L'Ecuyer, P. and  Cote,  S. "Implementing a Random Number  Package
      with   Splitting Facilities."  ACM  Transactions   on Mathematical
      Software, 17:98-111 (1991)
                               Arguments
-     iseed1 <- First integer seed of generator G
-     iseed2 <- Second integer seed of generator G
+     iseed1 <- First integer_number seed of generator G
+     iseed2 <- Second integer_number seed of generator G
 **********************************************************************
 */
 {
@@ -87,7 +87,7 @@ long ignlgi(void)
 **********************************************************************
      long ignlgi(void)
                GeNerate LarGe Integer
-     Returns a random integer following a uniform distribution over
+     Returns a random integer_number following a uniform distribution over
      (1, 2147483562) using the current generator.
      This is a transcription from Pascal to Fortran of routine
      Random from the paper
@@ -252,8 +252,8 @@ void setall(long iseed1,long iseed2)
      with Splitting Facilities." ACM Transactions on Mathematical
      Software, 17:98-111 (1991)
                               Arguments
-     iseed1 -> First of two integer seeds
-     iseed2 -> Second of two integer seeds
+     iseed1 -> First of two integer_number seeds
+     iseed2 -> Second of two integer_number seeds
 **********************************************************************
 */
 {
@@ -343,8 +343,8 @@ void setsd(long iseed1,long iseed2)
      with Splitting Facilities." ACM Transactions on Mathematical
      Software, 17:98-111 (1991)
                               Arguments
-     iseed1 -> First integer seed
-     iseed2 -> Second integer seed
+     iseed1 -> First integer_number seed
+     iseed2 -> Second integer_number seed
 **********************************************************************
 */
 {

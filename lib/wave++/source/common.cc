@@ -1,10 +1,11 @@
 #include "common.h"
-#include <fstream.h>
+#include <fstream>
+#include <iostream>
 #include <assert.h>
 
-integer Log2(integer r)
+integer_number Log2(integer_number r)
 {
-  integer temp=0;
+  integer_number temp=0;
   r >>= 1;
   while(r > 0) 
     {
@@ -14,21 +15,21 @@ integer Log2(integer r)
   return temp;
 }
 //////////////////////////////////////////////////////////////////////////////
-bool is_pow_of_2( integer r )
+bool is_pow_of_2( integer_number r )
 {
   return ( ((r>>Log2(r))<<Log2(r)) == r );
 }
 ///////////////////////////////////////////////////////////////////////////////
-integer NumOfData(const char *filename)
+integer_number NumOfData(const char *filename)
 {
-  ifstream glug(filename);
+  std::ifstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open input file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open input file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
-  real x;
-  integer total=0;
+  real_number x;
+  integer_number total=0;
   while( !glug.eof() )
     { 
       glug >> x;

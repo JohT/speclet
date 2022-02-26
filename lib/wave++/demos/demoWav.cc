@@ -16,7 +16,7 @@
 
 int MAXLEVEL= 10;
 int DIM = (1<<MAXLEVEL);//dimensionality of vector ("signal")
-real  Factor = sqrt(2*log(DIM));//D&J thresholding parameter
+real_number  Factor = sqrt(2*log(DIM));//D&J thresholding parameter
 
 #define  SNR  5.0//Signal to Noise Ratio
 
@@ -30,10 +30,10 @@ int main()
   setall(iseed1,(long) iseed2);
   
   int i, k;
-  real Noise_level = sqrt(1.0/(SNR*DIM));
+  real_number Noise_level = sqrt(1.0/(SNR*DIM));
   
   //variance of the Gaussian noise added
-  real variance = Noise_level*Noise_level;
+  real_number variance = Noise_level*Noise_level;
   
   
   
@@ -61,7 +61,7 @@ int main()
   Interval Delta(0, DIM-1);//Delta values initialized to 0
   for(i=0; i<DIM; i++)//Threshold values a la Donoho
     {
-      real x = Out[i]*Out[i];
+      real_number x = Out[i]*Out[i];
       if (x > variance*Factor*Factor) Delta[i]=1;
     }
   for(i=0; i<DIM; i++)  Out[i] *= Delta[i];
@@ -71,7 +71,7 @@ int main()
       //Inverse wavelet transform applied to thresholded coeff.
   InvWaveTrans(Out, RecSignal, H, G, AdjConvDecPer); 
 
-  real rms = RMS_error(CleanSignal,RecSignal);
+  real_number rms = RMS_error(CleanSignal,RecSignal);
       
   
   

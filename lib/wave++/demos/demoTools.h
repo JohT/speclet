@@ -6,10 +6,10 @@
 #include "../source/libw.h"
 
 //defined in demoWavPack.cc
-extern real Factor;
+extern real_number Factor;
 
-real OracCost( const real *data,  const integer &n,
-	       const real &sigma,const integer &k);
+real_number OracCost( const real_number *data,  const integer_number &n,
+	       const real_number &sigma,const integer_number &k);
 void stop();
 #endif
 

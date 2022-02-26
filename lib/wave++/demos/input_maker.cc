@@ -7,10 +7,10 @@
 void Input_maker(int type, Interval &In)
 {
   int i,j;
-  real var, norm = 0;
-  const real t[11] = {.1, .13, .15, .23, .25, .40, .44, .65, .76, .78, .81};
-  const real h[11] = {4, -5, 3, -4, 5, -4.2, 2.1, 4.3, -3.1, 5.1, -7.2};
-  const real w[11] = {.005, .005, .006, .01, .01, .03, .01, .01, .005, .008, .005};
+  real_number var, norm = 0;
+  const real_number t[11] = {.1, .13, .15, .23, .25, .40, .44, .65, .76, .78, .81};
+  const real_number h[11] = {4, -5, 3, -4, 5, -4.2, 2.1, 4.3, -3.1, 5.1, -7.2};
+  const real_number w[11] = {.005, .005, .006, .01, .01, .03, .01, .01, .005, .008, .005};
   switch(type)
     {
     case 1:   /* Chirp */
@@ -108,14 +108,14 @@ void Input_maker(int type, Interval &In)
 }
 
 ////////////////////////////////////////////////////////
-int signum(real x)
+int signum(real_number x)
 {
   int j;
   j = (x>0 ? 1:(x<0 ? -1:0));
   return j;
 }
 //////////////////////////////////////////////////////////
-real funct(real x)
+real_number funct(real_number x)
 {	
   return  1.0/(1.0 + x*x*x*x);
 }

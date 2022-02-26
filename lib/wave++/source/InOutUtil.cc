@@ -3,47 +3,47 @@
 //****************************************************************************
 
 #include "InOutUtil.h"
-#include <iostream.h>
-#include <fstream.h>
+#include <iostream>
+#include <fstream>
 
-ostream &operator<<(ostream &output, const Interval &I)
+std::ostream &operator<<(std::ostream &output, const Interval &I)
 {
   if(I.origin)
     {
-      for(integer j=I.beg; j<=I.end; j++) output << I.origin[j]
+      for(integer_number j=I.beg; j<=I.end; j++) output << I.origin[j]
 					       << "\n";
     }
-  else cout << "Interval empty. No output produced." << endl;
+  else std::cout << "Interval empty. No output produced." << std::endl;
   return output;                                      // enables cout << x << y
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-istream &operator>>(istream &input, Interval &I)
+std::istream &operator>>(std::istream &input, Interval &I)
 {
   if(I.origin)
     {
-      for(integer j=I.beg; j<=I.end; j++) 
+      for(integer_number j=I.beg; j<=I.end; j++) 
 	{
 	  if(!input.eof()) input >> I.origin[j];
 	  else 
 	    {
-	  cout << "Cannot read into Interval: not enough data available."
-	       << "Exiting." << endl;
+	  std::cout << "Cannot read into Interval: not enough data available."
+	       << "Exiting." << std::endl;
 	  exit(1);
 	    }
 	}
     }
-  else cout << "cannot input into empty interval." << endl;
+  else std::cout << "cannot input into empty interval." << std::endl;
   return input;
 }                                                      // enables cin >> x >> y
 
 ///////////////////////////////////////////////////////////////////////////////
 void PrintToFile(const Interval &I, const char *filename)
 {
-  ofstream glug(filename);
+  std::ofstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open output file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open output file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug << I ;
@@ -52,37 +52,37 @@ void PrintToFile(const Interval &I, const char *filename)
 ///////////////////////////////////////////////////////////////////////////////
 void ReadFromFile(Interval &I, const char *filename)
 {
-  ifstream glug(filename);
+  std::ifstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open input file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open input file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug >> I;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-ostream &operator<<(ostream &output, const HedgePer &H)
+std::ostream &operator<<(std::ostream &output, const HedgePer &H)
 {
   if(H.origin)
     {
-      for(integer i=0; i < H.dim; i++)
-	output << H.origin[i] << endl;
+      for(integer_number i=0; i < H.dim; i++)
+	output << H.origin[i] << std::endl;
     }
-  else cout << "HedgePer empty. No output produced." << endl;
+  else std::cout << "HedgePer empty. No output produced." << std::endl;
   return output;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-istream &operator>>(istream &input, HedgePer &H)
+std::istream &operator>>(std::istream &input, HedgePer &H)
 {
-  for(integer j=0; j < H.dim; j++) 
+  for(integer_number j=0; j < H.dim; j++) 
     {
       if(!input.eof()) input >> H.origin[j];
       else 
 	{
-	  cout << "Cannot read into HedgePer: not enough data available."
-	       << "Exiting." << endl;
+	  std::cout << "Cannot read into HedgePer: not enough data available."
+	       << "Exiting." << std::endl;
 	  exit(1);
 	}
     }
@@ -92,10 +92,10 @@ istream &operator>>(istream &input, HedgePer &H)
 ///////////////////////////////////////////////////////////////////////////////
 void PrintToFile(const HedgePer &H, const char *filename)
 {
-  ofstream glug(filename);
+  std::ofstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open output file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open output file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug << H ;
@@ -104,10 +104,10 @@ void PrintToFile(const HedgePer &H, const char *filename)
 ///////////////////////////////////////////////////////////////////////////////
 void ReadFromFile(HedgePer &H, const char *filename)
 {
-  ifstream glug(filename);
+  std::ifstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open input file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open input file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug >> H;
@@ -117,7 +117,7 @@ void ReadFromFile(HedgePer &H, const char *filename)
 void coutLevels(const HedgePer &H)
 {
   if(H.levels) 
-    for(integer i=0; i<H.num_of_levels; i++) cout << H.levels[i] << endl;
+    for(integer_number i=0; i<H.num_of_levels; i++) std::cout << H.levels[i] << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -125,43 +125,43 @@ void PrintLevelsToFile(const HedgePer &H, const char *filename)
 {
   if(H.levels)
     {
-       ofstream glug(filename);
+       std::ofstream glug(filename);
        if( !glug )
 	 {
-	   cout << "Can't open input file " << filename << ".Exiting." << endl;
+	   std::cout << "Can't open input file " << filename << ".Exiting." << std::endl;
 	   exit(1);
 	 }
-       for(integer i=0; i<H.num_of_levels; i++) glug << H.levels[i] << endl;
+       for(integer_number i=0; i<H.num_of_levels; i++) glug << H.levels[i] << std::endl;
     }
-  else cout << "Hedge levels empty. No output produced." << endl;
+  else std::cout << "Hedge levels empty. No output produced." << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-ostream &operator<<(ostream &output, const HedgeAper &H)
+std::ostream &operator<<(std::ostream &output, const HedgeAper &H)
 {
   if(H.root)
     {
-      for(integer i=0; i < H.num_of_levels; i++)
+      for(integer_number i=0; i < H.num_of_levels; i++)
 	output << H.root[i];
     }
-  else cout << "HedgeAper empty. No output produced." << endl;
+  else std::cout << "HedgeAper empty. No output produced." << std::endl;
   return output;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-istream &operator>>(istream &input, HedgeAper &H)
+std::istream &operator>>(std::istream &input, HedgeAper &H)
 {
-  for(integer j=0; j < H.num_of_levels; j++) input >> H.root[j];
+  for(integer_number j=0; j < H.num_of_levels; j++) input >> H.root[j];
   return input;
 }                                                      // enables cin >> x >> y
 
 ///////////////////////////////////////////////////////////////////////////////
 void PrintToFile(const HedgeAper &H, const char *filename)
 {
-  ofstream glug(filename);
+  std::ofstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open output file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open output file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug << H ;
@@ -170,10 +170,10 @@ void PrintToFile(const HedgeAper &H, const char *filename)
 ///////////////////////////////////////////////////////////////////////////////
 void ReadFromFile(HedgeAper &H, const char *filename)
 {
-  ifstream glug(filename);
+  std::ifstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open input file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open input file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug >> H;
@@ -183,7 +183,7 @@ void ReadFromFile(HedgeAper &H, const char *filename)
 void coutLevels(const HedgeAper &H)
 {
   if(H.levels) 
-    for(integer i=0; i<H.num_of_levels; i++) cout << H.levels[i] << endl;
+    for(integer_number i=0; i<H.num_of_levels; i++) std::cout << H.levels[i] << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -191,39 +191,39 @@ void PrintLevelsToFile(const HedgeAper &H, const char *filename)
 {
   if(H.levels)
     {
-       ofstream glug(filename);
+       std::ofstream glug(filename);
        if( !glug )
 	 {
-	   cout << "Can't open input file " << filename << ".Exiting." << endl;
+	   std::cout << "Can't open input file " << filename << ".Exiting." << std::endl;
 	   exit(1);
 	 }
-       for(integer i=0; i<H.num_of_levels; i++) glug << H.levels[i] << endl;
+       for(integer_number i=0; i<H.num_of_levels; i++) glug << H.levels[i] << std::endl;
     }
-  else cout << "Hedge levels empty. No output produced." << endl;
+  else std::cout << "Hedge levels empty. No output produced." << std::endl;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-ostream &operator<<(ostream &output, const ArrayTreePer &A)
+std::ostream &operator<<(std::ostream &output, const ArrayTreePer &A)
 {
   if(A.origin)
     {
-      for(integer i=0; i < A.dim * (A.maxlevel+1); i++)
-	output << A.origin[i] << endl;
+      for(integer_number i=0; i < A.dim * (A.maxlevel+1); i++)
+	output << A.origin[i] << std::endl;
     }
-  else cout << "ArrayTreePer empty. No output produced." << endl;
+  else std::cout << "ArrayTreePer empty. No output produced." << std::endl;
   return output;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-istream &operator>>(istream &input, ArrayTreePer &A)
+std::istream &operator>>(std::istream &input, ArrayTreePer &A)
 {
-  for(integer j=0; j < A.dim * (A.maxlevel+1); j++) 
+  for(integer_number j=0; j < A.dim * (A.maxlevel+1); j++) 
     {
       if(!input.eof()) input >> A.origin[j];
       else 
 	{
-	  cout << "Cannot read into ArrayTreePer: not enough data available."
-	       << "Exiting." << endl;
+	  std::cout << "Cannot read into ArrayTreePer: not enough data available."
+	       << "Exiting." << std::endl;
 	  exit(1);
 	}
     }
@@ -233,10 +233,10 @@ istream &operator>>(istream &input, ArrayTreePer &A)
 ///////////////////////////////////////////////////////////////////////////////
 void PrintToFile(const ArrayTreePer &A, const char *filename)
 {
-  ofstream glug(filename);
+  std::ofstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open output file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open output file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug << A ;
@@ -245,41 +245,41 @@ void PrintToFile(const ArrayTreePer &A, const char *filename)
 ///////////////////////////////////////////////////////////////////////////////
 void ReadFromFile(ArrayTreePer &A, const char *filename)
 {
-  ifstream glug(filename);
+  std::ifstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open input file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open input file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug >> A;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-ostream &operator<<(ostream &output, const ArrayTreeAper &A)
+std::ostream &operator<<(std::ostream &output, const ArrayTreeAper &A)
 {
   if(A.root)
     {
-      for(integer i=0; i < A.size; i++)
+      for(integer_number i=0; i < A.size; i++)
 	output << A.root[i];
     }
-  else cout << "ArrayTreeAper empty. No output produced." << endl;
+  else std::cout << "ArrayTreeAper empty. No output produced." << std::endl;
   return output;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-istream &operator>>(istream &input, ArrayTreeAper &A)
+std::istream &operator>>(std::istream &input, ArrayTreeAper &A)
 {
-  for(integer j=0; j < A.size; j++) input >> A.root[j];
+  for(integer_number j=0; j < A.size; j++) input >> A.root[j];
   return input;
 }                                                      // enables cin >> x >> y
 
 ///////////////////////////////////////////////////////////////////////////////
 void PrintToFile(const ArrayTreeAper &A, const char *filename)
 {
-  ofstream glug(filename);
+  std::ofstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open output file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open output file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug << A ;
@@ -288,10 +288,10 @@ void PrintToFile(const ArrayTreeAper &A, const char *filename)
 ///////////////////////////////////////////////////////////////////////////////
 void ReadFromFile(ArrayTreeAper &A, const char *filename)
 {
-  ifstream glug(filename);
+  std::ifstream glug(filename);
   if( !glug )
     {
-      cout << "Can't open input file " << filename << ". Exiting." << endl;
+      std::cout << "Can't open input file " << filename << ". Exiting." << std::endl;
       exit(1);
     }
   glug >> A;
