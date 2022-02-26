@@ -142,22 +142,14 @@ void SpectronDrawer::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasCha
     juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpectronParameters::PROPERTY_VALUE);
 
     if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_LOGFREQUENCY)) {
-        if (changedParameterValue.equals(SpectronParameters::PLOT_AXIS_LOGARITHMIC)) {
-            settings.logFrequency = true;
-        } else {
-            settings.logFrequency = false;
-        }
+        settings.logFrequency = changedParameterValue.equals(SpectronParameters::PLOT_AXIS_LOGARITHMIC);
         updateFrequencyAxisImage();
     }
     if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_LOGMAGNITUDE)) {
-        if (changedParameterValue.equals(SpectronParameters::PLOT_AXIS_LOGARITHMIC)) {
-            settings.logMagnitude = true;
-        } else {
-            settings.logMagnitude = false;
-        }
+        settings.logMagnitude = changedParameterValue.equals(SpectronParameters::PLOT_AXIS_LOGARITHMIC);
     }
     if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_COLORMODE)) {
-        renderingHelper.setColourGradient(COLOURGRADIENT->get(changedParameterValue));
+        renderingHelper.setColourGradient(ColourGradients::forIndex(changedParameterValue));
     }
 
     updateTimeAxisImage();

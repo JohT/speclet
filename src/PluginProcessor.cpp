@@ -58,7 +58,6 @@ SpectronAudioProcessor::~SpectronAudioProcessor() {
 
     TransformationFactory::getSingletonInstance().destruct();
     WindowFunctionsFactory::getSingletonInstance()->destruct();
-    ColourGradients::getSingletonInstance()->destruct();
     SpectronParameters::getSingletonInstance()->destruct();
 
 #if _LOGTOFILE

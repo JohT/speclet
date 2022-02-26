@@ -61,5 +61,5 @@ public:
 
 private:
 	std::vector<juce::Colour>	mColorTable;	//color table
-	juce::ColourGradient			colourGradient;	//color gradient object
+	juce::ColourGradient		colourGradient;	//color gradient object
 };

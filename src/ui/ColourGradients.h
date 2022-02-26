@@ -15,28 +15,19 @@
 */
 #pragma once
 #include "JuceHeader.h"
-#define COLOURGRADIENT ColourGradients::getSingletonInstance()
-#define GRADIENT_BLUE ColourGradients::getSingletonInstance()->getBlue()
-#define GRADIENT_GREEN ColourGradients::getSingletonInstance()->getGreen()
-#define GRADIENT_FIRE ColourGradients::getSingletonInstance()->getFire()
-#define GRADIENT_RAINBOW ColourGradients::getSingletonInstance()->getRainbow()
-
 class ColourGradients {
 public:
-    static ColourGradients *getSingletonInstance();
-    void destruct();
+    static auto getSingletonInstance() -> ColourGradients &;
+    ~ColourGradients() = default;
 
-    juce::ColourGradient get(int index);
+    static auto forIndex(int index) -> const juce::ColourGradient;
 
-    juce::ColourGradient getBlue();
-    juce::ColourGradient getGreen();
-    juce::ColourGradient getFire();
-    juce::ColourGradient getRainbow();
+    static auto blue() -> const juce::ColourGradient;
+    static auto green() -> const juce::ColourGradient;
+    static auto fire() -> const juce::ColourGradient;
+    static auto rainbow() -> const juce::ColourGradient;
 
 private:
-    static ColourGradients *singletonInstance;
-
-    ColourGradients(void){};
-    ~ColourGradients(void){};
+    ColourGradients() = default;
     ColourGradients(const ColourGradients &);
 };
