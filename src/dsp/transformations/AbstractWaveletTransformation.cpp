@@ -185,14 +185,14 @@ void AbstractWaveletTransformation::sortDWPTTreeByScaleDescending(const ArrayTre
 }
 
 // swaps the right and the left child of a wavelet packet transform tree node ("block")
-void AbstractWaveletTransformation::swapDWPTTreeChilds(const ArrayTreePer &tree, const integer &L, const integer &B) {
+void AbstractWaveletTransformation::swapDWPTTreeChilds(const ArrayTreePer &tree, const integer_number &L, const integer_number &B) {
     assert(0 <= L && L < tree.maxlevel && 0 <= B && B < (1 << L));
 
-    real_DWT *leftChild = tree.left_child(L, B);
-    real_DWT *rightChild = tree.right_child(L, B);
+    real_number *leftChild = tree.left_child(L, B);
+    real_number *rightChild = tree.right_child(L, B);
 
-    real_DWT helper;
-    integer blocklength = tree.block_length(L + 1);
+    real_number helper;
+    integer_number blocklength = tree.block_length(L + 1);
 
     //swap child elements and underlying sublevel-elements
     for (int sublevel = 0; sublevel < tree.maxlevel - L; sublevel++) {
@@ -217,7 +217,7 @@ void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &out_DWPT
     extractSpectrum(TRANSFORM_RESULT_CLASS_ARRAYTREE, out_DWPT.origin, levelsHedge);
 }
 
-void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, real_DWT *origin, const HedgePer &levelsHedge) {
+void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &levelsHedge) {
     PerformanceManager::getSingletonInstance().start("waveletExtract");
 
     SpectralDataBuffer::ItemType spectrum;
@@ -270,7 +270,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
 //returns the average value of the specified result tree positions
 float AbstractWaveletTransformation::getAvgValue(
         int transformResultClass,
-        real_DWT *origin,
+        real_number *origin,
         int level,
         int blocknr,
         int blockpos_start,
@@ -280,7 +280,7 @@ float AbstractWaveletTransformation::getAvgValue(
     int stepSize = 2;//skips every nth value. no mathematically exact averaging, but necessary for performance
     int count = 0;
     double averageValue = 0.0;
-    real_DWT *values = NULL;
+    real_number *values = NULL;
 
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         values = origin + (level * mResolution + blocknr * ((mResolution) >> (level)));
@@ -298,7 +298,7 @@ float AbstractWaveletTransformation::getAvgValue(
 }
 
 //returns the value of the specified result tree position
-float AbstractWaveletTransformation::getValue(int transformResultClass, real_DWT *origin, int level, int blocknr, int blockpos) {
+float AbstractWaveletTransformation::getValue(int transformResultClass, real_number *origin, int level, int blocknr, int blockpos) {
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         return (origin) ? *(origin + (level * mResolution + blocknr * ((mResolution) >> (level))) + blockpos) : 0.0f;
     }
@@ -316,7 +316,7 @@ void AbstractWaveletTransformation::updateConstantLevelsHedge(int level) {
 
     long levelCount = (long) 1 << (level);
 
-    integer *levels = new integer[levelCount];
+    integer_number *levels = new integer_number[levelCount];
     for (int i = 0; i < levelCount; i++) {
         levels[i] = level;
     }
@@ -333,7 +333,7 @@ void AbstractWaveletTransformation::updateConstantLevelsHedge(int level) {
 
 //Updates/fills the member "mDWTLevelsHedge" with the levels, that are in use when a DWT is applied
 void AbstractWaveletTransformation::updateDWTLevelsHedge(void) {
-    integer *levels = new integer[mDwtMaxLevel + 1];
+    integer_number *levels = new integer_number[mDwtMaxLevel + 1];
 
     levels[0] = mDwtMaxLevel;
     for (int i = 0; i < mDwtMaxLevel; i++) {
