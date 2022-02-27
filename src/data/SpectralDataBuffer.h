@@ -43,13 +43,13 @@ public:
     SpectralDataBuffer(const SpectralDataBuffer &) = default;
     auto operator=(const SpectralDataBuffer &) -> SpectralDataBuffer & = default;
 
-    void write(ItemType item);
+    void write(const ItemType& item);
     void read(ItemType *pItem);
 
     auto size() -> ItemSizeType;
     auto unread() -> ItemSizeType;
 
-    auto getStatistics(ItemType *pItem) -> ItemStatisticsType;
+    static auto getStatistics(ItemType *pItem) -> ItemStatisticsType;
 
 private:
 #if __USE_BOOST
