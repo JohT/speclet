@@ -3,6 +3,7 @@
 #include "ui/ColourGradients.h"
 #include "ui/SpectronMainUI.h"
 #include "utilities/PerformanceManager.h"
+#include "dsp/windowing/WindowFunctionFactory.h"
 #include <memory>
 
 #define DEFAULT_SAMPLINGRATE 44100
@@ -57,7 +58,6 @@ SpectronAudioProcessor::~SpectronAudioProcessor() {
     parameters = NULL;
 
     TransformationFactory::getSingletonInstance().destruct();
-    WindowFunctionsFactory::getSingletonInstance()->destruct();
     SpectronParameters::getSingletonInstance()->destruct();
 
 #if _LOGTOFILE
@@ -332,7 +332,7 @@ void SpectronAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
     //oldParameters.state.writeToStream(memoryOutputStream);
 
     // Create an outer XML element..
-    unique_ptr<XmlElement> xml = parameters->writeToXML();
+    std::unique_ptr<XmlElement> xml = parameters->writeToXML();
 
     // then use this helper function to stuff it into the binary blob and return it..
     copyXmlToBinary(*xml, destData);
@@ -353,7 +353,7 @@ void SpectronAudioProcessor::setStateInformation(const void *data, int sizeInByt
     // whose contents will have been created by the getStateInformation() call.
 
     // This getXmlFromBinary() helper function retrieves our XML from the binary blob..
-    unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
     if (xmlState) {
         parameters->readFromXML(*xmlState);

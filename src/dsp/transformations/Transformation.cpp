@@ -1,12 +1,10 @@
 #include "Transformation.h"
 #include "../../utilities/PerformanceManager.h"
 #include "JuceHeader.h"
+#include "../windowing/WindowFunctionFactory.h"
 
 
 using namespace std;
-#ifndef __WINDOW_FACTORY__
-#define WINDOW_FACTORY WindowFunctionsFactory::getSingletonInstance()
-#endif
 
 Transformation::Transformation(double samplingRate, long resolution, int windowFunctionNr)
     : waitForDestruction(new juce::WaitableEvent(true)), mTransformTypeNr(0), mOutputBuffer(new SpectralDataBuffer()),
@@ -56,7 +54,7 @@ Transformation::~Transformation() {
 void Transformation::setWindowFunction(int windowFunctionNr) {
     ready = false;
 
-    mWindowFunction = WINDOW_FACTORY->createWindowFunction(windowFunctionNr, mResolution);
+    mWindowFunction = WindowFunctionFactory::getSingletonInstance().createWindowFunction(windowFunctionNr, mResolution);
     assert(mWindowFunction);
     DBG("Transformation::setWindowFunction done with windowFunctionNr=" + juce::String(windowFunctionNr));
 

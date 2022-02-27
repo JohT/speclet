@@ -18,7 +18,7 @@
 #include "../../data/SpectralDataBuffer.h"
 #include "../../data/SpectralDataInfo.h"
 #include "../../plugin/SpectronParameters.h"
-#include "../WindowFunctions.h"
+#include "../windowing/WindowFunctions.h"
 #include <assert.h>
 #include <queue>
 #include <vector>
