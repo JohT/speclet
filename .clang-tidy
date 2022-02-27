@@ -9,7 +9,9 @@ Checks: >
   -google-readability-namespace-comments,
   -google-runtime-int,
   -google-runtime-references,
-  -llvmlibc-*
+  -llvmlibc-*,
+  -hicpp-no-array-decay
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay
 FormatStyle: 'file'
 HeaderFilterRegex: '**/*\.(hpp|h)'
 CheckOptions:
@@ -28,7 +30,7 @@ CheckOptions:
     - { key: readability-identifier-naming.FunctionCase,           value: camelBack  }
     - { key: readability-identifier-naming.MemberCase,             value: camelBack  }
     - { key: readability-identifier-naming.ParameterCase,          value: camelBack  }
-    - { key: readability-identifier-naming.VariableCase,           value: camelBack  }
+    - { key: readability-identifier-naming.VariableCase,           value: camel_Snake_Case  }
     - { key: readability-identifier-naming.MacroDefinitionCase,    value: UPPER_CASE }
     - { key: readability-identifier-naming.EnumConstantCase,       value: Camel_Snake_Case }
     - { key: readability-identifier-naming.ConstexprVariableCase,  value: CamelCase  }
