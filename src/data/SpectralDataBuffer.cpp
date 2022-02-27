@@ -1,11 +1,8 @@
 #include "SpectralDataBuffer.h"
 #include "../utilities/PerformanceManager.h"
 
-SpectralDataBuffer::SpectralDataBuffer() {
-    mWriteAccess = false;
-    mItemSize = 0;
-    sizeCheckCounter = 0;
-    buffer = new std::list<ItemType>();
+SpectralDataBuffer::SpectralDataBuffer()
+    : buffer(new std::list<ItemType>()), mItemSize(0), mWriteAccess(false), sizeCheckCounter(0) {
 }
 
 SpectralDataBuffer::~SpectralDataBuffer() {
@@ -13,7 +10,7 @@ SpectralDataBuffer::~SpectralDataBuffer() {
     buffer = nullptr;
 }
 
-void SpectralDataBuffer::write(ItemType item) {
+void SpectralDataBuffer::write(const ItemType &item) {
     //	const ScopedLock myScopedLock (criticalSection);
     mWriteAccess = true;
     PerformanceManager::getSingletonInstance().start("bufferWrite");
@@ -59,22 +56,22 @@ void SpectralDataBuffer::read(ItemType *pItem) {
     PerformanceManager::getSingletonInstance().stop("bufferRead");
 }
 
-SpectralDataBuffer::ItemSizeType SpectralDataBuffer::size(void) {
+auto SpectralDataBuffer::size() -> SpectralDataBuffer::ItemSizeType {
     if (buffer == nullptr) {
         return 0;
     }
     return buffer->size();
 }
 
-SpectralDataBuffer::ItemSizeType SpectralDataBuffer::unread(void) {
+auto SpectralDataBuffer::unread() -> SpectralDataBuffer::ItemSizeType {
     if (buffer == nullptr) {
         return 0;
     }
     return buffer->size();
 }
 
-SpectralDataBuffer::ItemStatisticsType SpectralDataBuffer::getStatistics(ItemType *pItem) {
-    assert(pItem);
+auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> SpectralDataBuffer::ItemStatisticsType {
+    assert(pItem != nullptr);
     ItemStatisticsType statistics;
 
     double valueSum = 0.0;
@@ -95,8 +92,7 @@ SpectralDataBuffer::ItemStatisticsType SpectralDataBuffer::getStatistics(ItemTyp
 
         valueSum = valueSum + value;
     }
-    //TODO(johnny)
-    statistics.avg = static_cast<float>(valueSum / pItem->size());
+    statistics.avg = static_cast<float>(valueSum / static_cast<double>(pItem->size()));
 
     return statistics;
 }

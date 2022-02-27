@@ -5,7 +5,7 @@
 
 AbstractWaveletTransformation::AbstractWaveletTransformation(double samplingRate, long resolution, int windowFunctionNr, int waveletBaseTypeNr)
     : Transformation(samplingRate, resolution, windowFunctionNr),
-      mWaveletBaseTypeNr(waveletBaseTypeNr), mDwtMaxLevel(getMaxLevel(resolution)), mConstantLevelsHedge(NULL), mDWTLevelsHedge(NULL) {
+      mWaveletBaseTypeNr(waveletBaseTypeNr), mDwtMaxLevel(getMaxLevel(resolution)), mConstantLevelsHedge(nullptr), mDWTLevelsHedge(nullptr) {
 
 
     mDwtInput = new Interval(0, resolution - 1);//wavelet transformation input data
@@ -18,33 +18,36 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double samplingRate
 };
 
 AbstractWaveletTransformation::~AbstractWaveletTransformation() {
-    if (mDwtInput) delete (mDwtInput);
-    if (mConstantLevelsHedge) delete (mConstantLevelsHedge);
-    if (mDWTLevelsHedge) delete (mDWTLevelsHedge);
+    delete (mDwtInput);
+    delete (mConstantLevelsHedge);
+    delete (mDWTLevelsHedge);
 
-    mDwtInput = NULL;
-    mConstantLevelsHedge = NULL;
-    mDWTLevelsHedge = NULL;
+    mDwtInput = nullptr;
+    mConstantLevelsHedge = nullptr;
+    mDWTLevelsHedge = nullptr;
 
     DBG("AbstractWaveletTransformation destructed");
 }
 
-int AbstractWaveletTransformation::getMaxLevel(int dimension) {
-    int maxlevel = (int) (log((double) dimension) / log((double) 2.0));
+auto AbstractWaveletTransformation::getMaxLevel(int dimension) -> int {
+    int maxlevel = static_cast<int>(log(dimension) / log(2));
     //	DBG("AbstractWaveletTransformation::getMaxLevel calc: logDim/log(2)", log((double)dimension), log((double)2.0);
     //	DBG("AbstractWaveletTransformation::getMaxLevel result: dim/maxLevel=", dimension, maxlevel;
     return maxlevel;
 }
 
-int AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) {
-    if ((&bestBasis == NULL) || (bestBasis.num_of_levels <= 0)) return 1;
-    //return 1;
-
-    int minBestBasisLevel, level = 0;
+auto AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) -> int {
+    if (bestBasis.num_of_levels <= 0) {
+        return 1;
+    }
+    int minBestBasisLevel = 0;
+    int level = 0;
 
     for (int levelNr = 0; levelNr < bestBasis.num_of_levels; levelNr++) {
         level = bestBasis.levels[levelNr];
-        if (level == 1) return 1;
+        if (level == 1) {
+            return 1;
+        }
         if ((levelNr == 0) || (level < minBestBasisLevel)) {
             minBestBasisLevel = level;
         }
@@ -142,8 +145,8 @@ void AbstractWaveletTransformation::setWaveletBase(int waveletBaseNr) {
             break;
         }
         default: {
-            bool unbekanntes_wavelet = false;
-            assert(unbekanntes_wavelet);
+            bool unknownWavelet = false;
+            assert(unknownWavelet);
         }
     }
 
@@ -159,7 +162,7 @@ void AbstractWaveletTransformation::setWaveletBase(int waveletBaseNr) {
 
 //Copying every single sample from input-queue to wavelet input-array
 void AbstractWaveletTransformation::fillDWTInput() {
-    if (!mDwtInput) {
+    if (mDwtInput == nullptr) {
         DBG("AbstractWaveletTransformation::fillDWTInput: mDWT_Input = null !");
         return;
     }
