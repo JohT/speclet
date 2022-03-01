@@ -15,19 +15,16 @@
 */
 #pragma once
 #include "JuceHeader.h"
-class ColourGradients {
-public:
-    static auto getSingletonInstance() -> ColourGradients &;
-    ~ColourGradients() = default;
+namespace ColourGradients {
+    auto forIndex(int index) -> juce::ColourGradient;
 
-    static auto forIndex(int index) -> const juce::ColourGradient;
+    auto fadeToBlack(const Colour &colour) noexcept -> juce::ColourGradient;
+    auto fire() noexcept -> juce::ColourGradient;
+    auto rainbow() noexcept -> juce::ColourGradient;
 
-    static auto blue() -> const juce::ColourGradient;
-    static auto green() -> const juce::ColourGradient;
-    static auto fire() -> const juce::ColourGradient;
-    static auto rainbow() -> const juce::ColourGradient;
+    const juce::ColourGradient GREEN = fadeToBlack(Colour::fromRGB(45, 255, 45));
+    const juce::ColourGradient BLUE = fadeToBlack(Colour::fromRGB(45, 45, 255));
+    const juce::ColourGradient FIRE = fire();
+    const juce::ColourGradient RAINBOW = rainbow();
 
-private:
-    ColourGradients() = default;
-    ColourGradients(const ColourGradients &);
-};
+}
