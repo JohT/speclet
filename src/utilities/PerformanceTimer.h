@@ -23,7 +23,7 @@ class PerformanceTimer {
 
 public:
     PerformanceTimer(const juce::String &counterName,
-                     int runsPerPrintout = 100,
+                     int runsPerPrintout = 1000,
                      const juce::File &loggingFile = juce::File())
 #if _PERFORMACETEST
         : performanceCounter(juce::PerformanceCounter(counterName, runsPerPrintout, loggingFile))
