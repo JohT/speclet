@@ -1,17 +1,12 @@
 #include "ColourGradients.h"
 #include "../plugin/SpectronParameters.h"
 
-auto ColourGradients::getSingletonInstance() -> ColourGradients & {
-    static ColourGradients singletonInstance;// Guaranteed to be destroyed. Instantiated on first use.
-    return singletonInstance;
-}
-
-auto ColourGradients::forIndex(int index) -> const juce::ColourGradient {
+auto ColourGradients::forIndex(int index) -> juce::ColourGradient {
     if (index == SpectronParameters::COLORMODE_BLUE) {
-        return blue();
+        return BLUE;
     }
     if (index == SpectronParameters::COLORMODE_GREEN) {
-        return green();
+        return GREEN;
     }
     if (index == SpectronParameters::COLORMODE_FIRE) {
         return fire();
@@ -21,32 +16,10 @@ auto ColourGradients::forIndex(int index) -> const juce::ColourGradient {
     }
 
     DBG("juce::ColourGradient ColourGradients::get(): index not found (replaced by blue)! i=" + juce::String(index));
-    return blue();
+    return BLUE;
 }
 
-auto ColourGradients::blue() -> const juce::ColourGradient {
-    DBG("juce::ColourGradient ColourGradients::blue()");
-    juce::ColourGradient gradient = ColourGradient();
-
-    gradient.addColour(1.0F, Colour::fromRGB(45, 45, 255));
-    gradient.addColour(0.9F, Colour::fromRGB(40, 40, 255));
-    gradient.addColour(0.0F, juce::Colours::black);
-
-    return gradient;
-}
-
-auto ColourGradients::green() -> const juce::ColourGradient {
-	DBG("juce::ColourGradient ColourGradients::green()");
-    juce::ColourGradient gradient = ColourGradient();
-
-    gradient.addColour(1.0F, Colour::fromRGB(45, 255, 45));
-    gradient.addColour(0.9F, Colour::fromRGB(40, 255, 40));
-    gradient.addColour(0.0F, juce::Colours::black);
-
-    return gradient;
-}
-
-auto ColourGradients::fire() -> const juce::ColourGradient {
+auto ColourGradients::fire() noexcept -> juce::ColourGradient {
     DBG("juce::ColourGradient ColourGradients::fire()");
 	juce::ColourGradient gradient = ColourGradient();
 
@@ -59,7 +32,7 @@ auto ColourGradients::fire() -> const juce::ColourGradient {
     return gradient;
 }
 
-auto ColourGradients::rainbow() -> const juce::ColourGradient {
+auto ColourGradients::rainbow() noexcept -> juce::ColourGradient {
     DBG("juce::ColourGradient ColourGradients::rainbow()");
 	juce::ColourGradient gradient = ColourGradient();
 
@@ -70,5 +43,14 @@ auto ColourGradients::rainbow() -> const juce::ColourGradient {
     gradient.addColour(0.2F, juce::Colours::darkviolet);
     gradient.addColour(0.0F, juce::Colours::black);
 
+    return gradient;
+}
+
+auto ColourGradients::fadeToBlack(const Colour& colour) noexcept -> juce::ColourGradient {
+    DBG("juce::ColourGradient ColourGradients::blue()");
+    juce::ColourGradient gradient = ColourGradient();
+    gradient.addColour(1.0F, colour);
+    gradient.addColour(0.9F, colour.darker(0.1F));
+    gradient.addColour(0.0F, juce::Colours::black);
     return gradient;
 }
