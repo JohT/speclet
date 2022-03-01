@@ -1,8 +1,9 @@
 #include "SpectralDataBuffer.h"
-#include "../utilities/PerformanceManager.h"
 
 SpectralDataBuffer::SpectralDataBuffer()
-    : buffer(new std::list<ItemType>()), mItemSize(0), mWriteAccess(false), sizeCheckCounter(0) {
+    : buffer(new std::list<ItemType>()), bufferWriteTimer("SpectralDataBuffer::bufferWrite")
+    , bufferReadTimer(PerformanceTimer("SpectralDataBuffer::bufferRead"))
+    , mItemSize(0), mWriteAccess(false), sizeCheckCounter(0) {
 }
 
 SpectralDataBuffer::~SpectralDataBuffer() {
@@ -13,7 +14,7 @@ SpectralDataBuffer::~SpectralDataBuffer() {
 void SpectralDataBuffer::write(const ItemType &item) {
     //	const ScopedLock myScopedLock (criticalSection);
     mWriteAccess = true;
-    PerformanceManager::getSingletonInstance().start("bufferWrite");
+    bufferWriteTimer.start();
 
     //if there are too many buffer entries,
     //delete the old ones to avoid memory problems
@@ -32,14 +33,14 @@ void SpectralDataBuffer::write(const ItemType &item) {
     if (buffer != nullptr) {
         buffer->push_back(item);
     }
-    PerformanceManager::getSingletonInstance().stop("bufferWrite");
+    bufferWriteTimer.stop();
     mWriteAccess = false;
 }
 
 void SpectralDataBuffer::read(ItemType *pItem) {
-    PerformanceManager::getSingletonInstance().start("bufferRead");
+    bufferReadTimer.start();
 
-    assert(pItem);
+    jassert(pItem);
     if (mWriteAccess) {
         return;
     }
@@ -51,9 +52,8 @@ void SpectralDataBuffer::read(ItemType *pItem) {
     if (!buffer->empty()) {
         buffer->pop_front();
     }
-    //TODO faster buffer? threadsafe?
-
-    PerformanceManager::getSingletonInstance().stop("bufferRead");
+    //TODO(johnny) faster buffer? threadsafe?
+    bufferReadTimer.stop();
 }
 
 auto SpectralDataBuffer::size() -> SpectralDataBuffer::ItemSizeType {
@@ -71,7 +71,7 @@ auto SpectralDataBuffer::unread() -> SpectralDataBuffer::ItemSizeType {
 }
 
 auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> SpectralDataBuffer::ItemStatisticsType {
-    assert(pItem != nullptr);
+    jassert(pItem);
     ItemStatisticsType statistics;
 
     double valueSum = 0.0;

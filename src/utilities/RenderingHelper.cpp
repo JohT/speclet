@@ -1,15 +1,8 @@
 #include "RenderingHelper.h"
 #include "../ui/ColourGradients.h"
-#include "../utilities/PerformanceManager.h"
+#include "PerformanceTimer.h"
 
-
-using namespace std;
-
-RenderingHelper::RenderingHelper() {
-    colourGradient = ColourGradients::getSingletonInstance().blue();
-}
-
-RenderingHelper::~RenderingHelper(void) {
+RenderingHelper::RenderingHelper() : colourGradient(ColourGradients::BLUE), renderVerticalPointsTimer(PerformanceTimer("RenderingHelper::renderVerticalPointsTimer")) {
 }
 
 //method for rendering one column of spectral data
@@ -18,7 +11,7 @@ void RenderingHelper::renderVerticalPoints(
         TAnalyzerSettings settings,
         long currentXPos,
         juce::Image *spectralImage) {
-    PerformanceManager::getSingletonInstance().start("renderVerticalPoints");
+    renderVerticalPointsTimer.start();
 
     // --- inputdata check
     jassert(transformation);
@@ -72,7 +65,7 @@ void RenderingHelper::renderVerticalPoints(
         spectralImage->setPixelAt(currentXPos, (height - i), colour);
     }
 
-    PerformanceManager::getSingletonInstance().stop("renderVerticalPoints");
+    renderVerticalPointsTimer.stop();
 }
 
 auto RenderingHelper::getColorAmount(
@@ -97,13 +90,15 @@ auto RenderingHelper::pixelToIndex(
         int height,
         SpectralDataInfo *spectralDataInfo,
         bool logFrequency) -> long {
-    if (pixel <= 0) return 0;//DC in spectrum always on index = 0
+    if (pixel <= 0) {
+        return 0;//DC in spectrum always on index = 0
+    }
     jassert(height > 0);
     jassert(pixel <= height);
     //assert(spectralDataInfo);
 
     double frequencyResolution = spectralDataInfo->getFrequencyResolution();
-    double percentOfSpectrum = pixel / (double) height;
+    double percentOfSpectrum = pixel / static_cast<double>(height);
     double percentOfSpectrumPerIndex = spectralDataInfo->getFrequencyPartitionSize();
     percentOfSpectrumPerIndex = assureBorders("percentOfSpectrumPerIndex", percentOfSpectrumPerIndex, 0.0, 1.0);
 
@@ -118,8 +113,10 @@ auto RenderingHelper::pixelToIndex(
     percentOfSpectrum = assureBorders("percentOfSpectrum", percentOfSpectrum, 0.0, 1.0);
 
     int index = roundToInt(percentOfSpectrum / percentOfSpectrumPerIndex);
-    if (index > (int) (frequencyResolution - 1)) index = (int) (frequencyResolution - 1);
-    index = (int) assureBorders("index", (double) index, 0.0, (double) (frequencyResolution - 1));
+    if (index > static_cast<int>(frequencyResolution - 1)) {
+        index = static_cast<int>(frequencyResolution - 1);
+    }
+    index = static_cast<int>(assureBorders("index", static_cast<double>(index), 0.0, (frequencyResolution - 1)));
 
     return index;
 }
@@ -140,8 +137,4 @@ auto RenderingHelper::assureBorders(const juce::String &paramName, double value,
         return max;
     }
     return value;
-}
-
-auto RenderingHelper::roundToInt(double d) -> int {
-    return d < 0 ? d - 0.5F : d + 0.5F;
 }

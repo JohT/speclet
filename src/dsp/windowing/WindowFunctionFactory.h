@@ -27,7 +27,7 @@ class WindowFunctionFactory {
 public:
     static auto getSingletonInstance() -> WindowFunctionFactory &;
     
-    // No copy-and move-constructor and assignment operator are defined, because this class is a singleton.
+    // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
     WindowFunctionFactory(WindowFunctionFactory const &) = delete;
     WindowFunctionFactory(WindowFunctionFactory &&) = delete;
     auto operator=(WindowFunctionFactory const &) -> WindowFunctionFactory & = delete;

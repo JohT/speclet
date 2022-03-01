@@ -16,7 +16,10 @@
 #pragma once
 
 #include "../data/SpectralDataInfo.h"
+#include "../utilities/PerformanceTimer.h"
+
 #include <JuceHeader.h>
+
 #include <list>
 #include <vector>
 
@@ -40,10 +43,12 @@ public:
 
     SpectralDataBuffer();
     ~SpectralDataBuffer();
-    SpectralDataBuffer(const SpectralDataBuffer &) = default;
-    auto operator=(const SpectralDataBuffer &) -> SpectralDataBuffer & = default;
+    SpectralDataBuffer(const SpectralDataBuffer &) = delete;
+    SpectralDataBuffer(SpectralDataBuffer &&) = delete;
+    auto operator=(const SpectralDataBuffer &) -> SpectralDataBuffer & = delete;
+    auto operator=(SpectralDataBuffer &&) -> SpectralDataBuffer & = delete;
 
-    void write(const ItemType& item);
+    void write(const ItemType &item);
     void read(ItemType *pItem);
 
     auto size() -> ItemSizeType;
@@ -58,6 +63,7 @@ private:
     std::list<ItemType> *buffer;
     //CriticalSection			criticalSection;
 #endif
+    PerformanceTimer bufferWriteTimer, bufferReadTimer;
 
     ItemSizeType mItemSize;
     bool mWriteAccess;

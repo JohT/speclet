@@ -15,8 +15,9 @@
 */
 #pragma once
 #include <JuceHeader.h>
-#define PARAMETERS SpectronParameters::getSingletonInstance()
+#include "../utilities/PerformanceTimer.h"
 
+#define PARAMETERS SpectronParameters::getSingletonInstance()
 
 class SpectronParameters {
     // --------------- constants --------------- //
@@ -221,4 +222,6 @@ private:
     SpectronParameters();
     ~SpectronParameters();
     SpectronParameters(const SpectronParameters &);
+
+    PerformanceTimer waitForParameterChangeTimer;
 };

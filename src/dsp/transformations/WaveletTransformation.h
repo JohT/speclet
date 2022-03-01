@@ -17,17 +17,23 @@
 #include "../../plugin/SpectronParameters.h"
 #include "AbstractWaveletTransformation.h"
 
-
 class WaveletTransformation : public AbstractWaveletTransformation {
 public:
-	WaveletTransformation(
-		double samplingRate, 
-		long resolution, 
-		int windowFunctionNr		= SpectronParameters::WINDOWING_DEFAULT,
-		int waveletBaseTypeNr	= SpectronParameters::WAVELET_DEFAULT
-	);
-	virtual ~WaveletTransformation(void);
+    WaveletTransformation() = delete;//No default contructor
+    WaveletTransformation(
+            double samplingRate,
+            long resolution,
+            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
+            int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);
+    ~WaveletTransformation() override;
+    WaveletTransformation(WaveletTransformation &) = delete;                     //No copy contructor
+    WaveletTransformation(WaveletTransformation &&) = delete;                    //No move contructor
+    auto operator=(WaveletTransformation &) -> WaveletTransformation & = delete; //No copy assignment
+    auto operator=(WaveletTransformation &&) -> WaveletTransformation & = delete;//No move assignment
 
 protected:
-	virtual void calculate();		
+    void calculate() override;
+
+private:
+    PerformanceTimer fastWaveletTransformTimer;
 };

@@ -1,11 +1,11 @@
 #include "AbstractWaveletTransformation.h"
-#include "../../utilities/PerformanceManager.h"
 #include "JuceHeader.h"
 
 
 AbstractWaveletTransformation::AbstractWaveletTransformation(double samplingRate, long resolution, int windowFunctionNr, int waveletBaseTypeNr)
     : Transformation(samplingRate, resolution, windowFunctionNr),
-      mWaveletBaseTypeNr(waveletBaseTypeNr), mDwtMaxLevel(getMaxLevel(resolution)), mConstantLevelsHedge(nullptr), mDWTLevelsHedge(nullptr) {
+      mWaveletBaseTypeNr(waveletBaseTypeNr), mDwtMaxLevel(getMaxLevel(resolution)), mConstantLevelsHedge(nullptr), 
+      mDWTLevelsHedge(nullptr), extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
 
 
     mDwtInput = new Interval(0, resolution - 1);//wavelet transformation input data
@@ -221,7 +221,7 @@ void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &out_DWPT
 }
 
 void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &levelsHedge) {
-    PerformanceManager::getSingletonInstance().start("waveletExtract");
+    extractSpectrumTimer.start();
 
     SpectralDataBuffer::ItemType spectrum;
 
@@ -267,7 +267,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
         if (timeResolution > TIME_RESOLUTION_LIMIT) time += timeStepSize - 1;
     }
 
-    PerformanceManager::getSingletonInstance().stop("waveletExtract");
+    extractSpectrumTimer.stop();
 }
 
 //returns the average value of the specified result tree positions

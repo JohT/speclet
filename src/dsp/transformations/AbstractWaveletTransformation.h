@@ -18,7 +18,7 @@
 #include "../../plugin/SpectronParameters.h"
 #include "../../utilities/RenderingHelper.h"
 #include "Transformation.h"
-
+#include "../../utilities/PerformanceTimer.h"
 
 class AbstractWaveletTransformation : public Transformation {
 public:
@@ -58,6 +58,8 @@ private:
         TRANSFORM_RESULT_CLASS_INTERVAL = 0,
         TRANSFORM_RESULT_CLASS_ARRAYTREE
     };
+
+    PerformanceTimer extractSpectrumTimer;
     void extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &bestBasis);
     auto getValue(int transformResultClass, real_number *origin, int level, int blocknr, int blockpos) -> float;
     auto getAvgValue(int transformResultClass, real_number *origin, int level, int blocknr, int blockposStart, int blockposEnd) -> float;

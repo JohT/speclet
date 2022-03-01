@@ -1,5 +1,4 @@
 #include "SpectronParameters.h"
-#include "../utilities/PerformanceManager.h"
 
 // Singleton instance variable (only one instance of this class)
 using juce::String;
@@ -19,7 +18,7 @@ const juce::String SpectronParameters::PARAMETER_WAVELET = "wavelet";
 const juce::String SpectronParameters::PARAMETER_WAVELETPAKETBASE = "waveletpaketbase";
 const juce::String SpectronParameters::PARAMETER_WINDOWING = "windowing";
 
-SpectronParameters::SpectronParameters() {
+SpectronParameters::SpectronParameters() : waitForParameterChangeTimer(PerformanceTimer("SpectronParameters::waitForParameterChangeTimer")) {
     //create ValueTree object, which stores all parameters as childs in a tree structure
 
     properties = new juce::ValueTree("SpectronParameters");
@@ -83,9 +82,9 @@ auto SpectronParameters::getParameter(const juce::String &name) -> float {
 void SpectronParameters::setParameter(int index, float newValue) {
     const ScopedLock myScopedLock(criticalSection);
 
-    PerformanceManager::getSingletonInstance().start("waitForParameterChange");
+    waitForParameterChangeTimer.start();
     bool timeoutDuringWait = waitForParameterChange->wait(TIMEOUT_WAIT_BEFORE_SET);
-    PerformanceManager::getSingletonInstance().stop("waitForParameterChange");
+    waitForParameterChangeTimer.stop();
     if (!timeoutDuringWait) {
         DBG("SpectronParameters::setParameter: Timeout during wait!");
     }
@@ -100,9 +99,9 @@ void SpectronParameters::setParameter(int index, float newValue) {
 void SpectronParameters::setParameter(const juce::String &name, float newValue) {
     const ScopedLock myScopedLock(criticalSection);
 
-    PerformanceManager::getSingletonInstance().start("waitForParameterChange");
+    waitForParameterChangeTimer.start();
     bool timeoutDuringWait = waitForParameterChange->wait(TIMEOUT_WAIT_BEFORE_SET);
-    PerformanceManager::getSingletonInstance().stop("waitForParameterChange");
+    waitForParameterChangeTimer.stop();
     if (!timeoutDuringWait) {
         DBG("SpectronParameters::setParameter: Timeout during wait!");
     }

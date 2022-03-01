@@ -1,5 +1,4 @@
 #include "Transformation.h"
-#include "../../utilities/PerformanceManager.h"
 #include "JuceHeader.h"
 #include "../windowing/WindowFunctionFactory.h"
 
@@ -12,7 +11,10 @@ Transformation::Transformation(double samplingRate, long resolution, int windowF
       mResolution(resolution), mSamplingRate(samplingRate), ready(false), calculated(false),
       mInputQueue(new queue<double>()),
       mSpectralDataInfo(nullptr),
-      mWindowFunction(nullptr) {
+      mWindowFunction(nullptr),
+      calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
+      informListenersTimer(PerformanceTimer("Transformation::informListeners")),
+      waitForDestructionTimer(PerformanceTimer("Transformation::waitForDestruction")) {
 
     waitForDestruction->signal();
 
@@ -27,9 +29,9 @@ Transformation::Transformation(double samplingRate, long resolution, int windowF
 //destructor: waits, until a possibly within another thread currently running
 //calculation ends and deletes then all allocated objects
 Transformation::~Transformation() {
-    PerformanceManager::getSingletonInstance().start("waitForDestruction");
+    waitForDestructionTimer.start();
     bool timeoutDuringWait = waitForDestruction->wait(3000);
-    PerformanceManager::getSingletonInstance().stop("waitForDestruction");
+    waitForDestructionTimer.stop();
     if (!timeoutDuringWait) {
         DBG("Transformation destruction: Timeout during wait!");
     }
@@ -99,7 +101,7 @@ void Transformation::calculationFrame() {
 
     {
         //begin of critical section: only one thread per time ------------------------------
-        PerformanceManager::getSingletonInstance().start("calculationFrame");
+        calculationFrameTimer.start();
         const ScopedLock myScopedLock(criticalSection);
         waitForDestruction->reset();
 
@@ -110,7 +112,7 @@ void Transformation::calculationFrame() {
 
         calculated = true;
         waitForDestruction->signal();
-        PerformanceManager::getSingletonInstance().stop("calculationFrame");
+        calculationFrameTimer.stop();
         //end of critical section                          ---------------------------------
     }
 }
@@ -145,7 +147,7 @@ void Transformation::setTransformResultListener(TransformationListener *value) {
 
 //since there is just one listener, only one call has to be done
 void Transformation::informListenersAboutTransformResults() {
-    PerformanceManager::getSingletonInstance().start("informListeners");
+    informListenersTimer.start();
 
     if (!ready) {
         return;
@@ -154,5 +156,5 @@ void Transformation::informListenersAboutTransformResults() {
         mTransformResultsListener->onTransformationEvent(this);
     }
 
-    PerformanceManager::getSingletonInstance().stop("informListeners");
+    informListenersTimer.stop();
 }

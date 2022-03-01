@@ -1,8 +1,11 @@
 #include "FourierTransformation.h"
-#include "../../utilities/PerformanceManager.h"
 
 FourierTransformation::FourierTransformation(double samplingRate, long resolution, int windowFunctionNr)
-    : Transformation(samplingRate, resolution, windowFunctionNr) {
+    : Transformation(samplingRate, resolution, windowFunctionNr) 
+    , fftExecutePlanTimer(PerformanceTimer("FourierTransformation::calculate (fftw execute)")),
+      fftInputCopyTimer(PerformanceTimer("FourierTransformation::calculate (input copy)")),
+      fftOutputCopyTimer(PerformanceTimer("FourierTransformation::calculate (output copy)"))    
+    {
     long frequencyResolution = (long) ((mResolution / 2.0) + 1.0);
     mSpectralDataInfo = new SpectralDataInfo(samplingRate, resolution, frequencyResolution, 1);
 
@@ -36,17 +39,20 @@ FourierTransformation::~FourierTransformation() {
 
 void FourierTransformation::calculate() {
     //Loop for copying every single sample from input-queue to fft inputarray
+    fftInputCopyTimer.start();
     for (int i = 0; i < mResolution; i++) {
         double nextSamplePerChannel = mInputQueue->front();
         *(in + i) = nextSamplePerChannel * mWindowFunction->getFactor(i);
 
         mInputQueue->pop();
     }
+    fftInputCopyTimer.stop();
 
-    PerformanceManager::getSingletonInstance().start("fftw_execute");
+    fftExecutePlanTimer.start();
     fftw_execute(plan);
-    PerformanceManager::getSingletonInstance().stop("fftw_execute");
+    fftExecutePlanTimer.stop();
 
+    fftOutputCopyTimer.start();
     SpectralDataBuffer::ItemType spectrum;
 
     for (int i = 0; i < ((mResolution / 2) + 1); i++) {
@@ -57,4 +63,5 @@ void FourierTransformation::calculate() {
         spectrum.push_back(magnitude);
     }
     getSpectralDataBuffer()->write(spectrum);
+    fftOutputCopyTimer.stop();
 }

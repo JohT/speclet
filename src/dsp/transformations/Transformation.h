@@ -23,7 +23,6 @@
 #include <queue>
 #include <vector>
 
-
 class TransformationListener;
 
 class Transformation {
@@ -34,6 +33,10 @@ public:
     };
     Transformation() = delete;                //No default contructor
     Transformation(Transformation &) = delete;//No copy contructor
+    Transformation(Transformation &&) = delete;//No move contructor
+    auto operator=(Transformation &) -> Transformation & = delete;//No copy assignment
+    auto operator=(Transformation &&) -> Transformation & = delete;//No move assignment
+
     Transformation(double samplingRate, long resolution, int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
     virtual ~Transformation();
 
@@ -48,14 +51,6 @@ public:
 
     void getNextSpectrum(SpectralDataBuffer::ItemType *item);
     auto getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType;
-
-private:
-    void informListenersAboutTransformResults();
-    void calculationFrame();
-
-    TransformationListener *mTransformResultsListener;
-    juce::CriticalSection criticalSection;
-    juce::WaitableEvent *waitForDestruction;
 
 protected:
     virtual void calculate() = 0;//abstract: must be implemented by inherited class!
@@ -73,6 +68,16 @@ protected:
     SpectralDataBuffer *mOutputBuffer;
     SpectralDataInfo *mSpectralDataInfo;
     WindowFunction *mWindowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
+
+private:
+    void informListenersAboutTransformResults();
+    void calculationFrame();
+
+    TransformationListener *mTransformResultsListener;
+    juce::CriticalSection criticalSection;
+    juce::WaitableEvent *waitForDestruction;
+
+    PerformanceTimer calculationFrameTimer, informListenersTimer, waitForDestructionTimer;
 };
 
 class TransformationListener {
