@@ -28,6 +28,11 @@ public:
     SpectralDataInfo() = delete; // no default constructor
     ~SpectralDataInfo() = default;// default destructor
 
+    SpectralDataInfo(const SpectralDataInfo &) = delete;                    // no copy constructor
+    auto operator=(const SpectralDataInfo &) -> SpectralDataInfo & = delete;// no assignment operator
+    SpectralDataInfo(SpectralDataInfo &&) = delete;                         // no move constructor
+    auto operator=(SpectralDataInfo &&) -> SpectralDataInfo & = delete;     // no move assignment operator
+
     auto operator==(SpectralDataInfo &compareObject) -> bool;
 
     [[nodiscard]] auto getSamplingFrequency() const -> double {
@@ -61,11 +66,6 @@ public:
     auto getSpectralLineFrequencyPartitionSize(long spectralLineNr) -> const double;
 
 private:
-    SpectralDataInfo(const SpectralDataInfo &) = default;                    // no copy constructor
-    auto operator=(const SpectralDataInfo &) -> SpectralDataInfo & = default;// no assignment operator
-    SpectralDataInfo(SpectralDataInfo &&) = default;                         // no move constructor
-    auto operator=(SpectralDataInfo &&) -> SpectralDataInfo & = default;     // no move assignment operator
-
     double samplingFrequency;
     long resolution;
     long frequencyResolution;
