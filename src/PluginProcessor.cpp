@@ -2,7 +2,6 @@
 #include "dsp/transformations/TransformationFactory.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpectronMainUI.h"
-#include "utilities/PerformanceManager.h"
 #include "dsp/windowing/WindowFunctionFactory.h"
 #include <memory>
 

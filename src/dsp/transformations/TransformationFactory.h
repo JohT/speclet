@@ -31,7 +31,7 @@ class TransformationFactory {
 public:
     static auto getSingletonInstance() -> TransformationFactory &;
 
-    // No copy-and move-constructor and assignment operator are defined, because this class is a singleton.
+    // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
     TransformationFactory(TransformationFactory const &) = delete;
     TransformationFactory(TransformationFactory &&) = delete;
     auto operator=(TransformationFactory const &) -> TransformationFactory & = delete;

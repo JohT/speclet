@@ -21,7 +21,6 @@
 
 //[Headers] You can add your own extra header files here...
 #include "../dsp/transformations/TransformationFactory.h"
-#include "../utilities/PerformanceManager.h"
 #include "ColourGradients.h"
 //[/Headers]
 
@@ -34,7 +33,8 @@ const juce::Colour SpectronDrawer::AXIS_COLOR(0xffffffc0);
 //[/MiscUserDefs]
 
 //==============================================================================
-SpectronDrawer::SpectronDrawer() {
+SpectronDrawer::SpectronDrawer() : 
+    imageDrawingTimer(PerformanceTimer("imageDrawingTimer")), axisDrawingTimer(PerformanceTimer("axisDrawingTimer")){
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -90,18 +90,18 @@ void SpectronDrawer::paint(Graphics &g) {
     //[UserPaint] Add your own custom painting code here..
 
     //draw spectrum ----------------
-    PerformanceManager::getSingletonInstance().start("imageDraw", 2000);
+    imageDrawingTimer.start();
     g.drawImageAt(spectrumImage, 0, 0);
-    PerformanceManager::getSingletonInstance().stop("imageDraw");
+    imageDrawingTimer.stop();
 
     //draw red position cursor ----------------
     g.setColour(Colours::red);
     g.drawLine(currentCursorXPos, 0, currentCursorXPos, sizeY, 1.0);
 
     //draw frequency and time axis ----------------
-    PerformanceManager::getSingletonInstance().start("drawAxis"), 2000;
+    axisDrawingTimer.start();
     g.drawImageAt(axisImage, 0, 0);
-    PerformanceManager::getSingletonInstance().stop("drawAxis");
+    axisDrawingTimer.stop();
 
     //[/UserPaint]
 }

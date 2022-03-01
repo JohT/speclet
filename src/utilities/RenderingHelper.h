@@ -17,49 +17,51 @@
 #include "../data/SpectralDataBuffer.h"
 #include "../dsp/transformations/Transformation.h"
 #include "JuceHeader.h"
+#include "PerformanceTimer.h"
 #include <vector>
 
 class RenderingHelper {
 public:
-	typedef std::vector<long> TVerticalColorIndizes;
-	typedef struct {
-		bool		logFrequency;	//false=lin, true=log
-		bool		logMagnitude;	//false=lin, true=log
-	} TAnalyzerSettings;
+    using TVerticalColorIndices = std::vector<long>;
+    using TAnalyzerSettings = struct {
+        bool logFrequency;//false=lin, true=log
+        bool logMagnitude;//false=lin, true=log
+    };
 
-	RenderingHelper(void);
-	~RenderingHelper(void);
+    RenderingHelper();
+    ~RenderingHelper() = default;
 
-	void setColourGradient(juce::ColourGradient value) {colourGradient = value;};
+    void setColourGradient(juce::ColourGradient value) { colourGradient = value; };
 
-	void renderVerticalPoints(
-		Transformation*									transformation,		
-		TAnalyzerSettings									settings,
-		long													currentXPos,
-		juce::Image*										spectralImage
-	);				
+    void renderVerticalPoints(
+            Transformation *transformation,
+            TAnalyzerSettings settings,
+            long currentXPos,
+            juce::Image *spectralImage);
 
 private:
-	double getColorAmount(
-		double	magnitude, 
-		double	minMagnitude, 
-		double	maxMagnitude, 
-		bool		logMagnitude
-	);
-	double assureBorders(const juce::String &paramName, double value, double min, double max);
-	int roundToInt(double d);
+    auto getColorAmount(
+            double magnitude,
+            double minMagnitude,
+            double maxMagnitude,
+            bool logMagnitude) -> double;
+    auto assureBorders(const juce::String &paramName, double value, double min, double max) -> double;
+    static auto roundToInt(double value) -> int {
+        return value < 0 ? value - 0.5F : value + 0.5F;
+    }
 
 public:
-//Normally, this method would be defined as "privat". 
-//But since it is directly adressed in a unit-test, it remains 
-//(until the test gets deprecated) "public"
-    long pixelToIndex(
+    //Normally, this method would be defined as "privat".
+    //But since it is directly adressed in a unit-test, it remains
+    //(until the test gets deprecated) "public"
+    auto pixelToIndex(
             int pixel,
             int height,
             SpectralDataInfo *spectralDataInfo,
-            bool logFrequency);
+            bool logFrequency) -> long;
 
 private:
-	std::vector<juce::Colour>	mColorTable;	//color table
-	juce::ColourGradient		colourGradient;	//color gradient object
+    std::vector<juce::Colour> mColorTable;//color table
+    juce::ColourGradient colourGradient;  //color gradient object
+	PerformanceTimer renderVerticalPointsTimer;
 };

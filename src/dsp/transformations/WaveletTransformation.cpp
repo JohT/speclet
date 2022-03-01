@@ -1,13 +1,14 @@
 #pragma once
 #include "WaveletTransformation.h"
-#include "../../utilities/PerformanceManager.h"
 
 WaveletTransformation::WaveletTransformation(
         double samplingRate,
         long resolution,
         int windowFunctionNr,
         int waveletBaseTypeNr)
-    : AbstractWaveletTransformation(samplingRate, resolution, windowFunctionNr, waveletBaseTypeNr) {
+    : AbstractWaveletTransformation(samplingRate, resolution, windowFunctionNr, waveletBaseTypeNr),
+      fastWaveletTransformTimer(PerformanceTimer("Fast Wavelet Transform")) {
+
     mFrequencyResolution = resolution;
     mTimeResolution = resolution / 2;
     mSpectralDataInfo = new SpectralDataInfo(samplingRate, resolution, mFrequencyResolution, mTimeResolution);
@@ -16,7 +17,7 @@ WaveletTransformation::WaveletTransformation(
 
     ready = true;
     calculated = true;
-};
+}
 
 WaveletTransformation::~WaveletTransformation() {
     ready = false;
@@ -29,9 +30,9 @@ void WaveletTransformation::calculate() {
     //output data container to hold the result of the wavelet transformation ("coefficients")
     Interval outDWT(0, mResolution - 1);
     //fast wavelet transform
-    PerformanceManager::getSingletonInstance().start("fwt");
+    fastWaveletTransformTimer.start();
     WaveTrans(*mDwtInput, outDWT, mDwtFilterH, mDwtFilterG, ConvDecPer);
-    PerformanceManager::getSingletonInstance().stop("fwt");
+    fastWaveletTransformTimer.stop();
     //fills the outputQueue with the spectral data (in a ready to draw order)
     extractSpectrum(outDWT);
 }

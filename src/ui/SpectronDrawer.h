@@ -45,7 +45,7 @@ class SpectronDrawer : public Component,
 public:
     //==============================================================================
     SpectronDrawer();
-    ~SpectronDrawer();
+    ~SpectronDrawer() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -70,9 +70,9 @@ public:
     //==============================================================================
     juce_UseDebuggingNewOperator
 
-            private :
-        //[UserVariables]   -- You can add your own custom variables in this section.
-        static const juce::Colour AXIS_COLOR;
+private :
+    //[UserVariables]   -- You can add your own custom variables in this section.
+    static const juce::Colour AXIS_COLOR;
 
     void updateFrequencyAxisImage();
     void updateTimeAxisImage();
@@ -96,6 +96,8 @@ public:
     // (prevent copy constructor and operator= being generated..)
     SpectronDrawer(const SpectronDrawer &);
     const SpectronDrawer &operator=(const SpectronDrawer &);
+
+    PerformanceTimer imageDrawingTimer, axisDrawingTimer;
 };
 
 
