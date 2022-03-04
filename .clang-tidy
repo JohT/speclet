@@ -10,7 +10,7 @@ Checks: >
   -google-runtime-int,
   -google-runtime-references,
   -llvmlibc-*,
-  -hicpp-no-array-decay
+  -hicpp-no-array-decay,
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay
 FormatStyle: 'file'
 HeaderFilterRegex: '**/*\.(hpp|h)'
