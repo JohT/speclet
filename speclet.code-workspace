@@ -47,6 +47,7 @@
             "Constexpr",
             "cppcoreguidelines",
             "Daubechies",
+            "HANN",
             "jassert",
             "jassertfalse",
             "jmap",
