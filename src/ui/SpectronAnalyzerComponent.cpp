@@ -513,9 +513,10 @@ void SpectronAnalyzerComponent::fillComboBoxes() {
     comboBoxWindowing->addItem("Blackman", SpectronParameters::WINDOWING_BLACKMAN);
     comboBoxWindowing->addItem("Blackman-Harris", SpectronParameters::WINDOWING_BLACKMAN_HARRIS);
     comboBoxWindowing->addItem("Hamming", SpectronParameters::WINDOWING_HAMMING);
+    comboBoxWindowing->addItem("Hann", SpectronParameters::WINDOWING_HANN);
     comboBoxWindowing->addItem("Welch", SpectronParameters::WINDOWING_WELCH);
     comboBoxWindowing->addItem("Parzen", SpectronParameters::WINDOWING_PARZEN);
-    comboBoxWindowing->addItem("Square", SpectronParameters::WINDOWING_SQUARE);
+    comboBoxWindowing->addItem("Rectangular", SpectronParameters::WINDOWING_RECTANGULAR);
 
     comboBoxWavelet->addItem("Haar (2)", SpectronParameters::WAVELET_HAAR);
     comboBoxWavelet->addItem("Daubechies (4)", SpectronParameters::WAVELET_DAUBECHIES_04);

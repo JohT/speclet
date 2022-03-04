@@ -56,7 +56,7 @@ Transformation::~Transformation() {
 void Transformation::setWindowFunction(int windowFunctionNr) {
     ready = false;
 
-    mWindowFunction = WindowFunctionFactory::getSingletonInstance().createWindowFunction(windowFunctionNr, mResolution);
+    mWindowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(static_cast<WindowFunctionFactory::Method>(windowFunctionNr), mResolution);
     assert(mWindowFunction);
     DBG("Transformation::setWindowFunction done with windowFunctionNr=" + juce::String(windowFunctionNr));
 

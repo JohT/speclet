@@ -21,28 +21,31 @@
 //------------------------------------------------------------------------------------//
 // Interface as abstract class                                                        //
 //------------------------------------------------------------------------------------//
+#include <vector>
 class WindowFunction {
 public:
-    WindowFunction() = delete;//explicit no default contructor;
-    explicit WindowFunction(long resolution);
-    ~WindowFunction();
+    explicit WindowFunction(unsigned long resolution);
 
-    auto getFactor(int index) -> double;
+    virtual ~WindowFunction() = default;
+    WindowFunction() = delete;                                          //explicit no default contructor;
+    WindowFunction(const WindowFunction &) = default;                    //no copy contructor;
+    WindowFunction(WindowFunction &&) = delete;                         //no move contructor;
+    auto operator=(const WindowFunction &) -> WindowFunction & = default;//no copy assignment;
+    auto operator=(WindowFunction &&) -> WindowFunction & = delete;     //no move assignment;
+
+    auto getFactor(unsigned long index) -> double;
     auto getWindow() -> double *;
-    virtual auto getName() -> char * = 0;
-
-    constexpr static const double PIx2 = 6.283185307179586476925286766559;
+    virtual auto getName() -> const char * = 0;
 
 protected:
-    virtual auto calculateFactor(int index) -> double = 0;//will be redefined by the derived windowing function
-    auto getWindowSize() -> double;
-    double *windowFunctionFactors;
+    constexpr static const double PIx2 = 6.283185307179586476925286766559;
+    
+    virtual auto calculateFactor(unsigned long int index) -> double = 0;//will be redefined by the derived windowing function
+    [[nodiscard]] auto getWindowSize() const -> double {
+        return static_cast<double>(resolution - 1);
+    }
 
 private:
-    WindowFunction(const WindowFunction &) = default;                    //default copy contructor;
-    WindowFunction(WindowFunction &&) = default;                         //default move contructor;
-    auto operator=(const WindowFunction &) -> WindowFunction & = default;//default copy assignment;
-    auto operator=(WindowFunction &&) -> WindowFunction & = default;     //default move assignment;
-
-    long resolution;//also known as N or FFT-size or length of signal piece array
+    unsigned long resolution;//also known as N or FFT-size or length of signal piece array or (window size + 1)
+    std::vector<double> factors;
 };

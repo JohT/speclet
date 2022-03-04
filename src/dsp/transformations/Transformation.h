@@ -20,6 +20,7 @@
 #include "../../plugin/SpectronParameters.h"
 #include "../windowing/WindowFunctions.h"
 #include <assert.h>
+#include <memory>
 #include <queue>
 #include <vector>
 
@@ -67,7 +68,7 @@ protected:
     std::queue<double> *mInputQueue;
     SpectralDataBuffer *mOutputBuffer;
     SpectralDataInfo *mSpectralDataInfo;
-    WindowFunction *mWindowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
+    std::shared_ptr<WindowFunction> mWindowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
 
 private:
     void informListenersAboutTransformResults();

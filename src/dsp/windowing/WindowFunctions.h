@@ -23,58 +23,58 @@
 //------------------------------------------------------------------------------------//
 // Interface implementations                                                          //
 //------------------------------------------------------------------------------------//
-class WindowBartlett : WindowFunction {
+class WindowBartlett : public WindowFunction {
 public:
-    explicit WindowBartlett(long newResolution) : WindowFunction(newResolution) {}
-    auto calculateFactor(int index) -> double override;//bartlett windowing function
-    auto getName() -> char * override { return "Barlett"; }
+    explicit WindowBartlett(unsigned long newResolution) : WindowFunction(newResolution) {}
+    auto calculateFactor(unsigned long index) -> double override;//bartlett windowing function
+    auto getName() -> const char * override { return "Barlett"; }
 };
 
-class WindowBlackman : WindowFunction {
+class WindowBlackman : public WindowFunction {
 public:
-    explicit WindowBlackman(long newResolution) : WindowFunction(newResolution) {}
-    auto calculateFactor(int index) -> double override;//blackman windowing function
-    auto getName() -> char * override { return "Blackman"; }
+    explicit WindowBlackman(unsigned long newResolution) : WindowFunction(newResolution) {}
+    auto calculateFactor(unsigned long index) -> double override;//blackman windowing function
+    auto getName() -> const char * override { return "Blackman"; }
 };
 
-class WindowBlackmanHarris : WindowFunction {
+class WindowBlackmanHarris : public WindowFunction {
 public:
-    explicit WindowBlackmanHarris(long newResolution) : WindowFunction(newResolution) {}
-    auto calculateFactor(int index) -> double override;//blackman_harris windowing function
-    auto getName() -> char * override { return "Blackman Harris"; }
+    explicit WindowBlackmanHarris(unsigned long newResolution) : WindowFunction(newResolution) {}
+    auto calculateFactor(unsigned long index) -> double override;//blackman_harris windowing function
+    auto getName() -> const char * override { return "Blackman Harris"; }
 };
 
-class WindowHamming : WindowFunction {
+class WindowHamming : public WindowFunction {
 public:
-    explicit WindowHamming(long newResolution) : WindowFunction(newResolution) {}
-    auto calculateFactor(int index) -> double override;//hamming windowing function
-    auto getName() -> char * override { return "Hamming"; }
+    explicit WindowHamming(unsigned long newResolution) : WindowFunction(newResolution) {}
+    auto calculateFactor(unsigned long index) -> double override;//hamming windowing function
+    auto getName() -> const char * override { return "Hamming"; }
 };
 
-class WindowHanning : WindowFunction {
+class WindowHann : public WindowFunction {
 public:
-    explicit WindowHanning(long newResolution) : WindowFunction(newResolution) {}
-    auto calculateFactor(int index) -> double override;//hanning windowing function
-    auto getName() -> char * override { return "Hanning"; }
+    explicit WindowHann(unsigned long newResolution) : WindowFunction(newResolution) {}
+    auto calculateFactor(unsigned long index) -> double override;//hanning windowing function
+    auto getName() -> const char * override { return "Hann"; }
 };
 
-class WindowParzen : WindowFunction {
+class WindowParzen : public WindowFunction {
 public:
-    explicit WindowParzen(long newResolution) : WindowFunction(newResolution) {}
-    auto calculateFactor(int index) -> double override;//parzen windowing function
-    auto getName() -> char * override { return "Parzen"; }
+    explicit WindowParzen(unsigned long newResolution) : WindowFunction(newResolution) {}
+    auto calculateFactor(unsigned long index) -> double override;//parzen windowing function
+    auto getName() -> const char * override { return "Parzen"; }
 };
 
-class WindowSquare : WindowFunction {
+class WindowRectangular : public WindowFunction {
 public:
-    explicit WindowSquare(long newResolution) : WindowFunction(newResolution){};
-    auto calculateFactor(int index) -> double override;//square windowing function
-    auto getName() -> char * override { return "Square"; };
+    explicit WindowRectangular(unsigned long newResolution) : WindowFunction(newResolution){};
+    auto calculateFactor(unsigned long index) -> double override;//square windowing function
+    auto getName() -> const char * override { return "Rectangular"; };
 };
 
-class WindowWelch : WindowFunction {
+class WindowWelch : public WindowFunction {
 public:
-    explicit WindowWelch(long resnewResolutionolution) : WindowFunction(resnewResolutionolution) {}
-    auto calculateFactor(int index) -> double override;//welch windowing function
-    auto getName() -> char * override { return "Welch"; }
+    explicit WindowWelch(unsigned long newResolution) : WindowFunction(newResolution) {}
+    auto calculateFactor(unsigned long index) -> double override;//welch windowing function
+    auto getName() -> const char * override { return "Welch"; }
 };

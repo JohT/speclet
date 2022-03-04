@@ -3,34 +3,22 @@
 #include "WindowFunction.h"
 #include <cassert>
 
-WindowFunction::WindowFunction(long newResolution) : resolution(newResolution), windowFunctionFactors(nullptr) {
-    
+WindowFunction::WindowFunction(unsigned long newResolution) : resolution(newResolution) {
 }
 
-WindowFunction::~WindowFunction() {
-    if (windowFunctionFactors != nullptr) {
-        free(windowFunctionFactors);
-    }
-}
-
-double WindowFunction::getFactor(int index) {
+auto WindowFunction::getFactor(unsigned long index) -> double {
     assert(index >= 0);
     assert(index < resolution);
-
-    return getWindow()[index];
+    getWindow();
+    return factors[index];
 }
 
 auto WindowFunction::getWindow() -> double * {
-    if (windowFunctionFactors == nullptr) {
-        windowFunctionFactors = static_cast<double *>(malloc(sizeof(double) * resolution));
-
-        for (int i = 0; i < resolution; i++) {
-            windowFunctionFactors[i] = calculateFactor(i);
+    if (factors.empty()) {
+        factors.reserve(resolution);
+        for (unsigned long i = 0; i < resolution; i++) {
+            factors.push_back(calculateFactor(i));
         }
     }
-    return windowFunctionFactors;
-}
-
-auto WindowFunction::getWindowSize() -> double {
-    return static_cast<double>(resolution - 1);
+    return factors.data();
 }
