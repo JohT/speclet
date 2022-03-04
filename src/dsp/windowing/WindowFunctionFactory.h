@@ -19,12 +19,31 @@
 #pragma once
 #include "WindowFunction.h"
 #include <map>
+#include <memory>
+#include <tuple>
 
-//------------------------------------------------------------------------------------//
-// Factory                                                                            //
-//------------------------------------------------------------------------------------//
+/**
+ * @brief Factory class for window functions
+ */
 class WindowFunctionFactory {
 public:
+    /**
+     * @brief Available windowing functions
+     */
+    enum Method {
+        BARLETT = 1,
+        BLACKMAN,
+        BLACKMAN_HARRIS,
+        HAMMING,
+        HANN,
+        PARZEN,
+        WELCH,
+        RECTANGULAR,
+
+        NUMBER_OF_OPTIONS,
+        DEFAULT = BLACKMAN_HARRIS
+    };
+
     static auto getSingletonInstance() -> WindowFunctionFactory &;
     
     // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
@@ -33,22 +52,22 @@ public:
     auto operator=(WindowFunctionFactory const &) -> WindowFunctionFactory & = delete;
     auto operator=(WindowFunctionFactory const &&) -> WindowFunctionFactory & = delete;
 
-    auto createWindowFunction(int windowFunctionNr, long resolution) -> WindowFunction *;
+    auto getWindow(const Method &method, unsigned long resolution) -> std::shared_ptr<WindowFunction>;
 
 private:
     WindowFunctionFactory() = default;
-    ~WindowFunctionFactory();
+    ~WindowFunctionFactory() = default;
 
-    using TResolutionsMap = std::map<long, WindowFunction *>;
-    using TResolutionsMapIterator = std::map<long, WindowFunction *>::const_iterator;
-    using TResolutionsKeyValue = std::pair<long, WindowFunction *>;
-    using TWindowFunctionsMap = std::map<int, TResolutionsMap>;
-    using TWindowFunctionsMapIterator = std::map<int, TResolutionsMap>::const_iterator;
-    using TWindowFunctionsKeyValue = std::pair<int, TResolutionsMap>;
+    struct Key {
+        Method method;
+        unsigned long resolution;
+        auto operator < (const Key& other) const -> bool {
+            return std::tie(method, resolution) < std::tie(other.method, other.resolution);
+        }
+    };
 
-    TWindowFunctionsMap windowingFunctions;
+    using WindowFunctionMapType = std::map<Key, std::shared_ptr<WindowFunction>>;
+    WindowFunctionMapType windowFunctionsCache;
 
-    auto readWindowFunctionFromMap(int windowFunctionNr, long resolution) -> WindowFunction *;
-    void writeWindowFunctionIntoMap(int windowFunctionNr, long resolution, WindowFunction *pWindowFunction);
-    void deleteWindowFunctionsMap();
+    static auto createWindow(const Method& method, unsigned long resolution) -> std::shared_ptr<WindowFunction>;
 };

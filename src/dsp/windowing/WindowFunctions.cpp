@@ -4,7 +4,7 @@
 #include "../../plugin/SpectronParameters.h"
 
 /* See Oppenheim & Schafer, Digital Signal Processing, p. 241 (1st ed.) */
-auto WindowBartlett::calculateFactor(int index) -> double {
+auto WindowBartlett::calculateFactor(unsigned long index) -> double {
     double a = 2.0 / getWindowSize();
     double w = index * a;
     if (w > 1.0) {
@@ -14,7 +14,7 @@ auto WindowBartlett::calculateFactor(int index) -> double {
 };
 
 /* See Oppenheim & Schafer, Digital Signal Processing, p. 242 (1st ed.) */
-auto WindowBlackman::calculateFactor(int index) -> double {
+auto WindowBlackman::calculateFactor(unsigned long index) -> double {
     double a = PIx2 / getWindowSize();
     double w = 0.42 - 0.5 * cos(a * index) + 0.08 * cos(2 * a * index);
     return (w);
@@ -22,14 +22,14 @@ auto WindowBlackman::calculateFactor(int index) -> double {
 
 /* See Harris, F.J., "On the use of windows for harmonic analysis with the
 discrete Fourier transform", Proc. IEEE, Jan. 1978 */
-auto WindowBlackmanHarris::calculateFactor(int index) -> double {
+auto WindowBlackmanHarris::calculateFactor(unsigned long index) -> double {
     double a = PIx2 / getWindowSize();
     double w = 0.35875 - 0.48829 * cos(a * index) + 0.14128 * cos(2 * a * index) - 0.01168 * cos(3 * a * index);
     return (w);
 };
 
 /* See Oppenheim & Schafer, Digital Signal Processing, p. 242 (1st ed.) */
-auto WindowHamming::calculateFactor(int index) -> double {
+auto WindowHamming::calculateFactor(unsigned long index) -> double {
     double a = PIx2 / getWindowSize();
     double w = 0.54 - 0.46 * cos(a * index);
     return (w);
@@ -37,7 +37,7 @@ auto WindowHamming::calculateFactor(int index) -> double {
 
 /* See Oppenheim & Schafer, Digital Signal Processing, p. 242 (1st ed.)
 The second edition of Numerical Recipes calls this the "Hann" window. */
-auto WindowHanning::calculateFactor(int index) -> double {
+auto WindowHann::calculateFactor(unsigned long index) -> double {
     double a = PIx2 / getWindowSize();
     double w = 0.5 - 0.5 * cos(a * index);
     return (w);
@@ -45,7 +45,7 @@ auto WindowHanning::calculateFactor(int index) -> double {
 
 /* See Press, Flannery, Teukolsky, & Vetterling, Numerical Recipes in C,
 p. 442 (1st ed.) */
-auto WindowParzen::calculateFactor(int index) -> double {
+auto WindowParzen::calculateFactor(unsigned long index) -> double {
     double a = getWindowSize() / 2.0;
     double w = (index - a) / (a + 1);
     if (w > 0.0) {
@@ -57,13 +57,13 @@ auto WindowParzen::calculateFactor(int index) -> double {
 };
 
 /* See any of the above references. */
-auto WindowSquare::calculateFactor(int index) -> double {
+auto WindowRectangular::calculateFactor(unsigned long index) -> double {
     return (1.0);
 };
 
 /* See Press, Flannery, Teukolsky, & Vetterling, Numerical Recipes in C,
 p. 442 (1st ed.) or p. 554 (2nd ed.) */
-auto WindowWelch::calculateFactor(int index) -> double {
+auto WindowWelch::calculateFactor(unsigned long index) -> double {
     double a = getWindowSize() / 2.0, w;
 
     w = (index - a) / (a + 1);
