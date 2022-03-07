@@ -14,24 +14,27 @@
   ==============================================================================
 */
 #pragma once
-#include <vector>
+
+#include <string>
 
 class SpectralDataInfo {
 public:
-    SpectralDataInfo(
-            double samplingRate,
-            long resolution,
-            long frequencyResolution = 0,
-            long timeResolution = 1,
-            double frequencyPartitionRatio = 0.0);
+    using ResolutionType = unsigned long;
 
-    SpectralDataInfo() = delete; // no default constructor
+    SpectralDataInfo(
+            double newSamplingRate,
+            ResolutionType newResolution,
+            ResolutionType newFrequencyResolution = 0,
+            ResolutionType newTimeResolution = 1,
+            double newFrequencyPartitionSize = 0.0);
+
+    SpectralDataInfo() = delete;  // no default constructor
     ~SpectralDataInfo() = default;// default destructor
 
-    SpectralDataInfo(const SpectralDataInfo &) = delete;                    // no copy constructor
-    auto operator=(const SpectralDataInfo &) -> SpectralDataInfo & = delete;// no assignment operator
-    SpectralDataInfo(SpectralDataInfo &&) = delete;                         // no move constructor
-    auto operator=(SpectralDataInfo &&) -> SpectralDataInfo & = delete;     // no move assignment operator
+    SpectralDataInfo(const SpectralDataInfo &) = default;                    // default copy constructor
+    auto operator=(const SpectralDataInfo &) -> SpectralDataInfo & = default;// default assignment operator
+    SpectralDataInfo(SpectralDataInfo &&) = default;                         // default move constructor
+    auto operator=(SpectralDataInfo &&) -> SpectralDataInfo & = default;     // default move assignment operator
 
     auto operator==(SpectralDataInfo &compareObject) -> bool;
 
@@ -41,15 +44,15 @@ public:
     [[nodiscard]] auto getMaxFrequency() const -> double {
         return maxFrequency;
     }
-    [[nodiscard]] auto getResolution() const -> long {
+    [[nodiscard]] auto getResolution() const -> ResolutionType {
         return resolution;
     }
     //Gets the spectral line count within mSamplingFrequency/2 Hz ("vertical resolution")
-    [[nodiscard]] auto getFrequencyResolution() const -> long {
+    [[nodiscard]] auto getFrequencyResolution() const -> ResolutionType {
         return frequencyResolution;
     }
     //Gets the spectral line count within 1/mResolution ms ("horizontal resolution")
-    [[nodiscard]] auto getTimeResolution() const -> long {
+    [[nodiscard]] auto getTimeResolution() const -> ResolutionType {
         return timeResolution;
     }
     //Gets the time resolution in ms (best resolution in case of non linear time resolution)
@@ -60,16 +63,18 @@ public:
     [[nodiscard]] auto getFrequencyPartitionSize() const -> double {
         return frequencyPartitionSize;
     }
-    //Gets the relative frequency partition size for the specified spectral line number.
+    //TODO (JohT) Gets the relative frequency partition size for the specified spectral line number.
     //Example 1: Fast Fourier Transformation FFT: mFrequencyPartitionSize=1/16: 1/16, 1/16, 1/16....
     //Example 2: Discrete (Decimated) Wavelet Transform DWT: mFrequencyPartitionSize=1/16, Progression=2: 1/16, 1/16, 1/8, 1/4, 1/2
-    auto getSpectralLineFrequencyPartitionSize(long spectralLineNr) -> const double;
+    [[nodiscard]] auto constgetSpectralLineFrequencyPartitionSize(ResolutionType spectralLineNr) const -> double;
+
+    [[nodiscard]] auto toString() const -> std::string;
 
 private:
     double samplingFrequency;
-    long resolution;
-    long frequencyResolution;
-    long timeResolution;
+    ResolutionType resolution;
+    ResolutionType frequencyResolution;
+    ResolutionType timeResolution;
     //fields for non constant frequency partitions
     double frequencyPartitionSize;
     //calculated fields
