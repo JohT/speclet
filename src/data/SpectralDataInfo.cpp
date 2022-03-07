@@ -4,9 +4,9 @@
 
 SpectralDataInfo::SpectralDataInfo(
         double newSamplingRate,
-        long newResolution,
-        long newFrequencyResolution,
-        long newTimeResolution,
+        ResolutionType newResolution,
+        ResolutionType newFrequencyResolution,
+        ResolutionType newTimeResolution,
         double newFrequencyPartitionSize)
 
     : samplingFrequency(newSamplingRate),
@@ -16,9 +16,10 @@ SpectralDataInfo::SpectralDataInfo(
       frequencyPartitionSize(newFrequencyPartitionSize),
       maxFrequency(newSamplingRate / 2.0),
       timeResolutionMs(static_cast<double>(newResolution) / static_cast<double>(newTimeResolution) / samplingFrequency * 1000) {
+
     if (newFrequencyResolution == 0) {
         //default for frequencyResolution (fits for FFT)
-        frequencyResolution = lrint((newSamplingRate / 2.0) + 1.0);
+        frequencyResolution = static_cast<ResolutionType>(lrint((newSamplingRate / 2.0) + 1.0));
     }
     if (newFrequencyPartitionSize == 0) {
         //default for frequencyResolution (fits for FFT)
@@ -29,18 +30,23 @@ SpectralDataInfo::SpectralDataInfo(
     }
     const auto minFrequencyPartitionSize = 0.0000001;
 
-    jassert(newSamplingRate > 100);
-    jassert(newFrequencyResolution >= 1);
-    jassert(frequencyPartitionSize > minFrequencyPartitionSize);
+    assert(newSamplingRate > 100);
+    assert(resolution > 0);
+    assert(newFrequencyResolution >= 1);
+    assert(frequencyPartitionSize > minFrequencyPartitionSize);
 
-    DBG("SpectralDataInfo constructed with resolution=" +
-        juce::String(newResolution) +
-        ",frequency resolution=" + juce::String(newFrequencyResolution) +
-        ",time resolution=" + juce::String(newTimeResolution) +
-        ",partition size=" + juce::String(frequencyPartitionSize));
+    DBG("SpectralDataInfo constructed" + toString());
 }
 
-auto SpectralDataInfo::getSpectralLineFrequencyPartitionSize(long spectralLineNr) -> const double {
-    jassert(spectralLineNr >= 0);
+//TODO (JohT) Gets the relative frequency partition size for the specified spectral line number.
+auto SpectralDataInfo::constgetSpectralLineFrequencyPartitionSize(ResolutionType /*spectralLineNr*/) const -> double {
     return frequencyPartitionSize;
+}
+
+auto SpectralDataInfo::toString() const -> std::string {
+    return "SpectralDataInfo(samplingFrequency=" + std::to_string(samplingFrequency) +
+        ",resolution=" + std::to_string(resolution) +
+        ",frequency resolution=" + std::to_string(frequencyResolution) +
+        ",time resolution=" + std::to_string(timeResolution) +
+        ",partition size=" + std::to_string(frequencyPartitionSize) + ")";
 }
