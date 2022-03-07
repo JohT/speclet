@@ -22,7 +22,7 @@ class WaveletPacketTransformation : public AbstractWaveletTransformation {
 public:
 	WaveletPacketTransformation(
 		double samplingRate, 
-		long resolution, 
+		ResolutionType newResolution, 
 		int windowFunctionNr		= SpectronParameters::WINDOWING_DEFAULT,
 		int waveletBaseTypeNr	= SpectronParameters::WAVELET_DEFAULT, 
 		int resolutionRatioDWPT = SpectronParameters::RESOLUTION_RATIO_DEFAULT

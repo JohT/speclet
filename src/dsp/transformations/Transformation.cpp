@@ -5,10 +5,10 @@
 
 using namespace std;
 
-Transformation::Transformation(double samplingRate, long resolution, int windowFunctionNr)
+Transformation::Transformation(double samplingRate, ResolutionType newResolution, int windowFunctionNr)
     : waitForDestruction(new juce::WaitableEvent(true)), mTransformTypeNr(0), mOutputBuffer(new SpectralDataBuffer()),
       mTransformResultsListener(nullptr),
-      mResolution(resolution), mSamplingRate(samplingRate), ready(false), calculated(false),
+      resolution(newResolution), mSamplingRate(samplingRate), ready(false), calculated(false),
       mInputQueue(new queue<double>()),
       mSpectralDataInfo(nullptr),
       mWindowFunction(nullptr),
@@ -22,7 +22,7 @@ Transformation::Transformation(double samplingRate, long resolution, int windowF
 
     DBG("Transformation::initialize done with fs=" +
         juce::String(mSamplingRate) +
-        ",res=" + juce::String(mResolution) +
+        ",res=" + juce::String(newResolution) +
         ",fres=" + juce::String(mFrequencyResolution));
 }
 
@@ -56,7 +56,7 @@ Transformation::~Transformation() {
 void Transformation::setWindowFunction(int windowFunctionNr) {
     ready = false;
 
-    mWindowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(static_cast<WindowFunctionFactory::Method>(windowFunctionNr), mResolution);
+    mWindowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(static_cast<WindowFunctionFactory::Method>(windowFunctionNr), resolution);
     assert(mWindowFunction);
     DBG("Transformation::setWindowFunction done with windowFunctionNr=" + juce::String(windowFunctionNr));
 
@@ -89,8 +89,8 @@ void Transformation::setNextInputSample(double sample) {
 void Transformation::calculationFrame() {
     calculated = false;
 
-    jassert(mResolution > 0);
-    if (mInputQueue->size() < static_cast<unsigned long>(mResolution)) {
+    assert(resolution > 0);
+    if (mInputQueue->size() < static_cast<unsigned long>(resolution)) {
         //Calculation only with at least N samples possible
         calculated = true;
         return;

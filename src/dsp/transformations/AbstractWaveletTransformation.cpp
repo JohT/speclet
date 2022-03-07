@@ -2,13 +2,13 @@
 #include "JuceHeader.h"
 
 
-AbstractWaveletTransformation::AbstractWaveletTransformation(double samplingRate, long resolution, int windowFunctionNr, int waveletBaseTypeNr)
-    : Transformation(samplingRate, resolution, windowFunctionNr),
-      mWaveletBaseTypeNr(waveletBaseTypeNr), mDwtMaxLevel(getMaxLevel(resolution)), mConstantLevelsHedge(nullptr), 
+AbstractWaveletTransformation::AbstractWaveletTransformation(double samplingRate, ResolutionType newResolution, int windowFunctionNr, int waveletBaseTypeNr)
+    : Transformation(samplingRate, newResolution, windowFunctionNr),
+      mWaveletBaseTypeNr(waveletBaseTypeNr), mDwtMaxLevel(getMaxLevel(newResolution)), mConstantLevelsHedge(nullptr), 
       mDWTLevelsHedge(nullptr), extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
 
 
-    mDwtInput = new Interval(0, resolution - 1);//wavelet transformation input data
+    mDwtInput = new Interval(0, newResolution - 1);//wavelet transformation input data
 
     setWaveletBase(mWaveletBaseTypeNr);
     updateConstantLevelsHedge(mDwtMaxLevel / 2);
@@ -166,7 +166,7 @@ void AbstractWaveletTransformation::fillDWTInput() {
         DBG("AbstractWaveletTransformation::fillDWTInput: mDWT_Input = null !");
         return;
     }
-    for (long i = 0; i < mResolution; i++) {
+    for (long i = 0; i < getResolution(); i++) {
         double nextSample = mInputQueue->front();
         (*mDwtInput)[i] = nextSample * mWindowFunction->getFactor(i);
         mInputQueue->pop();
@@ -235,7 +235,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
     long timeResolution = (long) 1 << (mDwtMaxLevel - minBestBasisLevel);
     int timeStepSize = timeResolution / TIME_RESOLUTION_LIMIT;
     float value = 0.0;
-    float realToFullResolution = (float) mFrequencyResolution / (float) mResolution;
+    float realToFullResolution = (float) mFrequencyResolution / (float) getResolution();
 
     for (int time = 0; time < timeResolution; time++) {
         basisPos = 0;
@@ -286,7 +286,8 @@ float AbstractWaveletTransformation::getAvgValue(
     real_number *values = NULL;
 
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
-        values = origin + (level * mResolution + blocknr * ((mResolution) >> (level)));
+        auto resolution = getResolution();
+        values = origin + (level * resolution + blocknr * ((resolution) >> (level)));
     }
     if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
         values = origin + (1 << (mDwtMaxLevel - level)) + (blocknr - 1);
@@ -303,7 +304,8 @@ float AbstractWaveletTransformation::getAvgValue(
 //returns the value of the specified result tree position
 float AbstractWaveletTransformation::getValue(int transformResultClass, real_number *origin, int level, int blocknr, int blockpos) {
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
-        return (origin) ? *(origin + (level * mResolution + blocknr * ((mResolution) >> (level))) + blockpos) : 0.0f;
+        auto resolution = getResolution();
+        return (origin) ? *(origin + (level * resolution + blocknr * ((resolution) >> (level))) + blockpos) : 0.0f;
     }
     if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
         return (origin) ? *(origin + (1 << (mDwtMaxLevel - level)) + (blocknr - 1) + blockpos) : 0.0f;
@@ -325,7 +327,7 @@ void AbstractWaveletTransformation::updateConstantLevelsHedge(int level) {
     }
 
     if (mConstantLevelsHedge) delete (mConstantLevelsHedge);
-    mConstantLevelsHedge = new HedgePer(mResolution, levelCount, levels);
+    mConstantLevelsHedge = new HedgePer(getResolution(), levelCount, levels);
     assert(mConstantLevelsHedge);
 
     delete[](levels);
@@ -344,7 +346,7 @@ void AbstractWaveletTransformation::updateDWTLevelsHedge(void) {
     }
 
     if (mDWTLevelsHedge) delete (mDWTLevelsHedge);
-    mDWTLevelsHedge = new HedgePer(mResolution, mDwtMaxLevel + 1, levels);
+    mDWTLevelsHedge = new HedgePer(getResolution(), mDwtMaxLevel + 1, levels);
     assert(mDWTLevelsHedge);
 
     delete[](levels);
