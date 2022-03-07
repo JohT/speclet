@@ -62,13 +62,13 @@ protected:
         return resolution;
     }
 
+    void setReady(bool value = true) { ready = value; }
+    void setCalculated(bool value = true) { calculated = value; }
+
     long mFrequencyResolution;
     long mTimeResolution;
     double mSamplingRate;
     int mTransformTypeNr;
-
-    bool ready;     //Signalizes internally "ready for new calculation"
-    bool calculated;//Signalizes internally "calculation finished"
 
     std::queue<double> *mInputQueue;
     SpectralDataBuffer *mOutputBuffer;
@@ -77,6 +77,8 @@ protected:
 
 private:
     ResolutionType resolution;
+    bool ready;     //Signalizes internally "ready for new calculation"
+    bool calculated;//Signalizes internally "calculation finished"
 
     void informListenersAboutTransformResults();
     void calculationFrame();
