@@ -43,7 +43,7 @@ void FourierTransformation::calculate() {
     auto resolution = getResolution();
     for (int i = 0; i < resolution; i++) {
         double nextSamplePerChannel = mInputQueue->front();
-        *(in + i) = nextSamplePerChannel * mWindowFunction->getFactor(i);
+        *(in + i) = nextSamplePerChannel * getWindowFunction()->getFactor(i);
 
         mInputQueue->pop();
     }
