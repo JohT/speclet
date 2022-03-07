@@ -17,12 +17,12 @@ FourierTransformation::FourierTransformation(double samplingRate, ResolutionType
 
     DBG("FourierTransformation::initialize done with fs/res=" + juce::String(mSamplingRate) + ",resolution=" + juce::String(newResolution));
 
-    ready = true;
-    calculated = true;
+    setReady();
+    setCalculated();
 };
 
 FourierTransformation::~FourierTransformation() {
-    ready = false;
+    setReady(false);
 
     if (in != nullptr) {
         fftw_free(in);

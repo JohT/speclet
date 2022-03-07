@@ -21,12 +21,12 @@ WaveletPacketTransformation::WaveletPacketTransformation(
         ",maxLevel=" + juce::String(mDwtMaxLevel) +
         ",resultTree=" + juce::String(mDWPT_ResultTreeLevel));
 
-    ready = true;
-    calculated = true;
+    setReady();
+    setCalculated();
 };
 
 WaveletPacketTransformation::~WaveletPacketTransformation() {
-	ready	= false;
+    setReady(false);
     DBG("WaveletPacketTransformation destructed");
 }
 

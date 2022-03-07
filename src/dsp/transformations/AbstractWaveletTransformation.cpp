@@ -56,7 +56,7 @@ auto AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) -> in
 }
 
 void AbstractWaveletTransformation::setWaveletBase(int waveletBaseNr) {
-    ready = false;
+    setReady(false);
 
     switch (waveletBaseNr) {
         case SpectronParameters::WAVELET_DAUBECHIES_02: {
@@ -153,7 +153,7 @@ void AbstractWaveletTransformation::setWaveletBase(int waveletBaseNr) {
     DBG("AbstractWaveletTransformation::setWaveletBase done with waveletBaseNr=" +
         juce::String(waveletBaseNr) + ",coeffSize=" + juce::String(mDwtFilterG.pcoef_size));
 
-    ready = true;
+    setReady(true);
 }
 
 //--------------------------------------------------------------------//

@@ -15,12 +15,12 @@ WaveletTransformation::WaveletTransformation(
 
     DBG("WaveletTransformation::initialize done with fs=" + juce::String(mSamplingRate) + ",res=" + juce::String(newResolution));
 
-    ready = true;
-    calculated = true;
+    setReady();
+    setCalculated();
 }
 
 WaveletTransformation::~WaveletTransformation() {
-    ready = false;
+    setReady(false);
     DBG("WaveletTransformation destructed");
 }
 

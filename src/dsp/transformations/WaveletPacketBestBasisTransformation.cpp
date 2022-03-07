@@ -23,12 +23,12 @@ WaveletPacketBestBasisTransformation::WaveletPacketBestBasisTransformation(
         ",fs=" + juce::String(mSamplingRate) +
         ",res=" + juce::String(newResolution));
 
-    ready = true;
-    calculated = true;
+    setReady();
+    setCalculated();
 };
 
 WaveletPacketBestBasisTransformation::~WaveletPacketBestBasisTransformation() {
-    ready = false;
+    setReady(false);
     DBG("WaveletPacketBestBasisTransformation destructed");
 }
 
