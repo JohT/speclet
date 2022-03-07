@@ -24,7 +24,7 @@ class FourierTransformation : public Transformation {
 public:
     FourierTransformation(
             double samplingRate,
-            long resolution,
+            ResolutionType newResolution,
             int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
     ~FourierTransformation() override;
 

@@ -6,22 +6,22 @@
 
 WaveletPacketBestBasisTransformation::WaveletPacketBestBasisTransformation(
         double samplingRate,
-        long resolution,
+        ResolutionType newResolution,
         int windowFunctionNr,
         int waveletBaseTypeNr)
-    : AbstractWaveletTransformation(samplingRate, resolution, windowFunctionNr, waveletBaseTypeNr) {
+    : AbstractWaveletTransformation(samplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr) {
     DBG("WaveletPacketBestBasisTransformation constructor started");
 
     mSpectralDataInfo = NULL;
-    mFrequencyResolution = resolution;//can not be estimated, since it changes dynamically. set to best possible resolution
-    mTimeResolution = resolution / 2; //can not be estimated, since it changes dynamically. set to best possible resolution
-    mSpectralDataInfo = new SpectralDataInfo(samplingRate, resolution, mFrequencyResolution, mTimeResolution);
+    mFrequencyResolution = newResolution;//can not be estimated, since it changes dynamically. set to best possible resolution
+    mTimeResolution = newResolution / 2; //can not be estimated, since it changes dynamically. set to best possible resolution
+    mSpectralDataInfo = new SpectralDataInfo(samplingRate, newResolution, mFrequencyResolution, mTimeResolution);
 
     DBG("WaveletPacketBestBasisTransformation constructor freqResolution=" +
         juce::String(mFrequencyResolution) +
         ",tres=" + juce::String(mTimeResolution) +
         ",fs=" + juce::String(mSamplingRate) +
-        ",res=" + juce::String(mResolution));
+        ",res=" + juce::String(newResolution));
 
     ready = true;
     calculated = true;
@@ -44,8 +44,9 @@ void WaveletPacketBestBasisTransformation::calculate() {
 
     //calculate noise level for a chosen SNR //TODO should be provided in a better way e.g. by measurement...
     int signalToNoiseRatioInDecibel = 48;
-    double noiseLevel = sqrt(1.0 / (signalToNoiseRatioInDecibel * mResolution));
-    const double oracCostFactor = (1.0 + sqrt((double) 2 * log((double) mDwtMaxLevel * mResolution)));//D&J Best Wavelet (BWB)
+    auto resolution = getResolution();
+    double noiseLevel = sqrt(1.0 / (signalToNoiseRatioInDecibel * resolution));
+    const double oracCostFactor = (1.0 + sqrt((double) 2 * log((double) mDwtMaxLevel * resolution)));//D&J Best Wavelet (BWB)
 
     //Find the best basis
     HedgePer bestBasis;

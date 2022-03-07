@@ -21,7 +21,7 @@ class WaveletPacketBestBasisTransformation : public AbstractWaveletTransformatio
 public:
     WaveletPacketBestBasisTransformation(
             double samplingRate,
-            long resolution,
+            ResolutionType newResolution,
             int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
             int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);
     ~WaveletPacketBestBasisTransformation() override;

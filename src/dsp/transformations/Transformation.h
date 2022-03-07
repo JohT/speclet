@@ -28,17 +28,19 @@ class TransformationListener;
 
 class Transformation {
 public:
-    friend class TransformationFactory;
     enum Constants {
         TIME_RESOLUTION_LIMIT = 8
     };
-    Transformation() = delete;                //No default contructor
-    Transformation(Transformation &) = delete;//No copy contructor
-    Transformation(Transformation &&) = delete;//No move contructor
-    auto operator=(Transformation &) -> Transformation & = delete;//No copy assignment
+
+    using ResolutionType = unsigned long;
+    
+    Transformation() = delete;                                     //No default contructor
+    Transformation(Transformation &) = delete;                     //No copy contructor
+    Transformation(Transformation &&) = delete;                    //No move contructor
+    auto operator=(Transformation &) -> Transformation & = delete; //No copy assignment
     auto operator=(Transformation &&) -> Transformation & = delete;//No move assignment
 
-    Transformation(double samplingRate, long resolution, int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
+    Transformation(double samplingRate, ResolutionType resolution, int windowFunctionNr);
     virtual ~Transformation();
 
     void setWindowFunction(int windowFunctionNr);
@@ -56,7 +58,10 @@ public:
 protected:
     virtual void calculate() = 0;//abstract: must be implemented by inherited class!
 
-    long mResolution;
+    auto getResolution() const -> ResolutionType {
+        return resolution;
+    }
+
     long mFrequencyResolution;
     long mTimeResolution;
     double mSamplingRate;
@@ -71,6 +76,8 @@ protected:
     std::shared_ptr<WindowFunction> mWindowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
 
 private:
+    ResolutionType resolution;
+
     void informListenersAboutTransformResults();
     void calculationFrame();
 

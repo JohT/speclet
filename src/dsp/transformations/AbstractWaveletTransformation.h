@@ -24,7 +24,7 @@ class AbstractWaveletTransformation : public Transformation {
 public:
     AbstractWaveletTransformation(
             double samplingRate,
-            long resolution,
+            ResolutionType newResolution,
             int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
             int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);
     ~AbstractWaveletTransformation() override;

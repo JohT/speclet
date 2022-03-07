@@ -3,18 +3,18 @@
 
 WaveletPacketTransformation::WaveletPacketTransformation(
 	double samplingRate, 
-	long resolution, 
+	ResolutionType newResolution, 
 	int windowFunctionNr,
 	int waveletBaseTypeNr, 
 	int resolutionRatioDWPT) 
-	: AbstractWaveletTransformation(samplingRate, resolution, windowFunctionNr, waveletBaseTypeNr) 
+	: AbstractWaveletTransformation(samplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr) 
 {
 	mSpectralDataInfo	= NULL;
 	setResolutionRatioDWPT(resolutionRatioDWPT);
 	updateConstantLevelsHedge(mDWPT_ResultTreeLevel);
 
     DBG("Wavelet initialize: N=" +
-        juce::String(mResolution) +
+        juce::String(newResolution) +
         ",fres=" + juce::String(mFrequencyResolution) +
         ",tres=" + juce::String(mTimeResolution) +
         ",fs=" + juce::String(mSamplingRate) +
@@ -70,7 +70,7 @@ void WaveletPacketTransformation::setResolutionRatioDWPT	(int resolutionRatioDWP
     mTimeResolution = getTimeResolution();
 
     deleteAndZero(mSpectralDataInfo);
-	mSpectralDataInfo = new SpectralDataInfo(mSamplingRate, mResolution, mFrequencyResolution, mTimeResolution);
+	mSpectralDataInfo = new SpectralDataInfo(mSamplingRate, getResolution(), mFrequencyResolution, mTimeResolution);
 	assert(mSpectralDataInfo);
 }
 

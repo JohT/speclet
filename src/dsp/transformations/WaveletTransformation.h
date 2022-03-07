@@ -22,7 +22,7 @@ public:
     WaveletTransformation() = delete;//No default contructor
     WaveletTransformation(
             double samplingRate,
-            long resolution,
+            ResolutionType newResolution,
             int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
             int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);
     ~WaveletTransformation() override;
