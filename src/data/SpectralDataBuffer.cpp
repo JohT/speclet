@@ -52,7 +52,7 @@ void SpectralDataBuffer::read(ItemType *pItem) {
     if (!buffer->empty()) {
         buffer->pop_front();
     }
-    //TODO(johnny) faster buffer? threadsafe?
+    //TODO(JohT) faster buffer? threadsafe?
     bufferReadTimer.stop();
 }
 
@@ -70,8 +70,8 @@ auto SpectralDataBuffer::unread() -> SpectralDataBuffer::ItemSizeType {
     return buffer->size();
 }
 
-auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> SpectralDataBuffer::ItemStatisticsType {
-    jassert(pItem);
+auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> const SpectralDataBuffer::ItemStatisticsType & {
+    assert(pItem);
     ItemStatisticsType statistics;
 
     double valueSum = 0.0;
