@@ -5,20 +5,19 @@
 
 using namespace std;
 
-Transformation::Transformation(double samplingRate, ResolutionType newResolution, int windowFunctionNr)
+Transformation::Transformation(double samplingRate, ResolutionType newResolution, int newWindowFunctionNr)
     : waitForDestruction(new juce::WaitableEvent(true)), mTransformTypeNr(0), mOutputBuffer(new SpectralDataBuffer()),
       mTransformResultsListener(nullptr),
       resolution(newResolution), mSamplingRate(samplingRate), ready(false), calculated(false),
       mInputQueue(new queue<double>()),
       mSpectralDataInfo(nullptr),
-      mWindowFunction(nullptr),
       calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
       informListenersTimer(PerformanceTimer("Transformation::informListeners")),
       waitForDestructionTimer(PerformanceTimer("Transformation::waitForDestruction")) {
 
     waitForDestruction->signal();
 
-    setWindowFunction(windowFunctionNr);
+    setWindowFunction(newWindowFunctionNr);
 
     DBG("Transformation::initialize done with fs=" +
         juce::String(mSamplingRate) +
@@ -52,15 +51,17 @@ Transformation::~Transformation() {
     DBG("Transform destructed");
 }
 
+auto Transformation::getWindowFunction() const -> WindowFunction * {
+    return windowFunction.get();
+}
+
 //loads or replaces the window function with the given number (see class WindowFunctionsFactory)
 void Transformation::setWindowFunction(int windowFunctionNr) {
-    ready = false;
-
-    mWindowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(static_cast<WindowFunctionFactory::Method>(windowFunctionNr), resolution);
-    assert(mWindowFunction);
+    setReady(false);
+    windowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(static_cast<WindowFunctionFactory::Method>(windowFunctionNr), resolution);
+    assert(windowFunction);
     DBG("Transformation::setWindowFunction done with windowFunctionNr=" + juce::String(windowFunctionNr));
-
-    ready = true;
+    setReady(true);
 }
 
 //reads the next input sample
@@ -73,7 +74,7 @@ void Transformation::setNextInputSample(double sample) {
     }
     mInputQueue->push(sample);
 
-    if (mWindowFunction == nullptr) {
+    if (windowFunction == nullptr) {
         return;
     }
     if (!calculated) {

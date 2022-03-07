@@ -43,6 +43,7 @@ public:
     Transformation(double samplingRate, ResolutionType resolution, int windowFunctionNr);
     virtual ~Transformation();
 
+    auto getWindowFunction() const -> WindowFunction *;
     void setWindowFunction(int windowFunctionNr);
     void setNextInputSample(double sample);
     auto isOutputAvailable() -> bool;
@@ -73,9 +74,9 @@ protected:
     std::queue<double> *mInputQueue;
     SpectralDataBuffer *mOutputBuffer;
     SpectralDataInfo *mSpectralDataInfo;
-    std::shared_ptr<WindowFunction> mWindowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
 
 private:
+    std::shared_ptr<WindowFunction> windowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
     ResolutionType resolution;
     bool ready;     //Signalizes internally "ready for new calculation"
     bool calculated;//Signalizes internally "calculation finished"

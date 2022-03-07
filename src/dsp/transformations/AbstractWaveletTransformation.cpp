@@ -166,9 +166,10 @@ void AbstractWaveletTransformation::fillDWTInput() {
         DBG("AbstractWaveletTransformation::fillDWTInput: mDWT_Input = null !");
         return;
     }
-    for (long i = 0; i < getResolution(); i++) {
+    auto *windowFunction = getWindowFunction();
+    for (unsigned long i = 0; i < getResolution(); i++) {
         double nextSample = mInputQueue->front();
-        (*mDwtInput)[i] = nextSample * mWindowFunction->getFactor(i);
+        (*mDwtInput)[i] = nextSample * windowFunction->getFactor(i);
         mInputQueue->pop();
     }
 }
