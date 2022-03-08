@@ -2,12 +2,13 @@
 #include "JuceHeader.h"
 
 WaveletPacketTransformation::WaveletPacketTransformation(
-	double samplingRate, 
+	double newSamplingRate, 
 	ResolutionType newResolution, 
 	int windowFunctionNr,
 	int waveletBaseTypeNr, 
 	int resolutionRatioDWPT) 
-	: AbstractWaveletTransformation(samplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr) 
+	: AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr), 
+    samplingRate(newSamplingRate)
 {
 	mSpectralDataInfo	= NULL;
 	setResolutionRatioDWPT(resolutionRatioDWPT);
@@ -17,7 +18,7 @@ WaveletPacketTransformation::WaveletPacketTransformation(
         juce::String(newResolution) +
         ",fres=" + juce::String(mFrequencyResolution) +
         ",tres=" + juce::String(mTimeResolution) +
-        ",fs=" + juce::String(mSamplingRate) +
+        ",fs=" + juce::String(newSamplingRate) +
         ",maxLevel=" + juce::String(mDwtMaxLevel) +
         ",resultTree=" + juce::String(mDWPT_ResultTreeLevel));
 
@@ -70,7 +71,7 @@ void WaveletPacketTransformation::setResolutionRatioDWPT	(int resolutionRatioDWP
     mTimeResolution = getTimeResolution();
 
     deleteAndZero(mSpectralDataInfo);
-	mSpectralDataInfo = new SpectralDataInfo(mSamplingRate, getResolution(), mFrequencyResolution, mTimeResolution);
+	mSpectralDataInfo = new SpectralDataInfo(samplingRate, getResolution(), mFrequencyResolution, mTimeResolution);
 	assert(mSpectralDataInfo);
 }
 

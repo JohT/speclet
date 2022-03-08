@@ -5,10 +5,10 @@
 
 using namespace std;
 
-Transformation::Transformation(double samplingRate, ResolutionType newResolution, int newWindowFunctionNr)
+Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, int newWindowFunctionNr)
     : waitForDestruction(new juce::WaitableEvent(true)), transformTypeNr(0), mOutputBuffer(new SpectralDataBuffer()),
       mTransformResultsListener(nullptr),
-      resolution(newResolution), mSamplingRate(samplingRate), ready(false), calculated(false),
+      resolution(newResolution), samplingRate(newSamplingRate), ready(false), calculated(false),
       mInputQueue(new queue<double>()),
       mSpectralDataInfo(nullptr),
       calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
@@ -20,7 +20,7 @@ Transformation::Transformation(double samplingRate, ResolutionType newResolution
     setWindowFunction(newWindowFunctionNr);
 
     DBG("Transformation::initialize done with fs=" +
-        juce::String(mSamplingRate) +
+        juce::String(samplingRate) +
         ",res=" + juce::String(newResolution) +
         ",fres=" + juce::String(mFrequencyResolution));
 }

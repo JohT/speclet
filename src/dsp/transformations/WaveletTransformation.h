@@ -21,7 +21,7 @@ class WaveletTransformation : public AbstractWaveletTransformation {
 public:
     WaveletTransformation() = delete;//No default contructor
     WaveletTransformation(
-            double samplingRate,
+            double newSamplingRate,
             ResolutionType newResolution,
             int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
             int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);

@@ -5,22 +5,22 @@
 
 
 WaveletPacketBestBasisTransformation::WaveletPacketBestBasisTransformation(
-        double samplingRate,
+        double newSamplingRate,
         ResolutionType newResolution,
         int windowFunctionNr,
         int waveletBaseTypeNr)
-    : AbstractWaveletTransformation(samplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr) {
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr) {
     DBG("WaveletPacketBestBasisTransformation constructor started");
 
     mSpectralDataInfo = NULL;
     mFrequencyResolution = newResolution;//can not be estimated, since it changes dynamically. set to best possible resolution
     mTimeResolution = newResolution / 2; //can not be estimated, since it changes dynamically. set to best possible resolution
-    mSpectralDataInfo = new SpectralDataInfo(samplingRate, newResolution, mFrequencyResolution, mTimeResolution);
+    mSpectralDataInfo = new SpectralDataInfo(newSamplingRate, newResolution, mFrequencyResolution, mTimeResolution);
 
     DBG("WaveletPacketBestBasisTransformation constructor freqResolution=" +
         juce::String(mFrequencyResolution) +
         ",tres=" + juce::String(mTimeResolution) +
-        ",fs=" + juce::String(mSamplingRate) +
+        ",fs=" + juce::String(newSamplingRate) +
         ",res=" + juce::String(newResolution));
 
     setReady();

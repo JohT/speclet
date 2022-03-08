@@ -1,13 +1,13 @@
 #include "FourierTransformation.h"
 
-FourierTransformation::FourierTransformation(double samplingRate, ResolutionType newResolution, int windowFunctionNr)
-    : Transformation(samplingRate, newResolution, windowFunctionNr) 
+FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, int windowFunctionNr)
+    : Transformation(newSamplingRate, newResolution, windowFunctionNr) 
     , fftExecutePlanTimer(PerformanceTimer("FourierTransformation::calculate (fftw execute)")),
       fftInputCopyTimer(PerformanceTimer("FourierTransformation::calculate (input copy)")),
       fftOutputCopyTimer(PerformanceTimer("FourierTransformation::calculate (output copy)"))    
     {
     long frequencyResolution = (long) ((newResolution / 2.0) + 1.0);
-    mSpectralDataInfo = new SpectralDataInfo(samplingRate, newResolution, frequencyResolution, 1);
+    mSpectralDataInfo = new SpectralDataInfo(newSamplingRate, newResolution, frequencyResolution, 1);
 
     in = (double *) fftw_malloc(sizeof(double) * newResolution);
     out = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * ((newResolution / 2) + 1));
@@ -15,7 +15,7 @@ FourierTransformation::FourierTransformation(double samplingRate, ResolutionType
 
     assert(plan);
 
-    DBG("FourierTransformation::initialize done with fs/res=" + juce::String(mSamplingRate) + ",resolution=" + juce::String(newResolution));
+    DBG("FourierTransformation::initialize done with fs/res=" + juce::String(newSamplingRate) + ",resolution=" + juce::String(newResolution));
 
     setReady();
     setCalculated();
