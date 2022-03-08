@@ -2,18 +2,18 @@
 #include "WaveletTransformation.h"
 
 WaveletTransformation::WaveletTransformation(
-        double samplingRate,
+        double newSamplingRate,
         ResolutionType newResolution,
         int windowFunctionNr,
         int waveletBaseTypeNr)
-    : AbstractWaveletTransformation(samplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr),
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr),
       fastWaveletTransformTimer(PerformanceTimer("Fast Wavelet Transform")) {
 
     mFrequencyResolution = newResolution;
     mTimeResolution = newResolution / 2;
-    mSpectralDataInfo = new SpectralDataInfo(samplingRate, newResolution, mFrequencyResolution, mTimeResolution);
+    mSpectralDataInfo = new SpectralDataInfo(newSamplingRate, newResolution, mFrequencyResolution, mTimeResolution);
 
-    DBG("WaveletTransformation::initialize done with fs=" + juce::String(mSamplingRate) + ",res=" + juce::String(newResolution));
+    DBG("WaveletTransformation::initialize done with fs=" + juce::String(newSamplingRate) + ",res=" + juce::String(newResolution));
 
     setReady();
     setCalculated();

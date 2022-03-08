@@ -21,7 +21,7 @@
 class WaveletPacketTransformation : public AbstractWaveletTransformation {
 public:
 	WaveletPacketTransformation(
-		double samplingRate, 
+		double newSamplingRate, 
 		ResolutionType newResolution, 
 		int windowFunctionNr		= SpectronParameters::WINDOWING_DEFAULT,
 		int waveletBaseTypeNr	= SpectronParameters::WAVELET_DEFAULT, 
@@ -38,6 +38,7 @@ protected:
 	int	getTimeResolution						(void);
 
 private:
+	double samplingRate;
 	int	mDWPT_ResultTreeLevel;		//Wavelet packet transform result tree level, 
 	int	mResolutionRatioDWPT;		//Wavelet packet transform time/freq resolution ratio (0=equal time&freq)
 };

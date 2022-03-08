@@ -20,7 +20,7 @@
 class WaveletPacketBestBasisTransformation : public AbstractWaveletTransformation {
 public:
     WaveletPacketBestBasisTransformation(
-            double samplingRate,
+            double newSamplingRate,
             ResolutionType newResolution,
             int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
             int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);

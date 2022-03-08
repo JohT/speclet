@@ -2,8 +2,8 @@
 #include "JuceHeader.h"
 
 
-AbstractWaveletTransformation::AbstractWaveletTransformation(double samplingRate, ResolutionType newResolution, int windowFunctionNr, int waveletBaseTypeNr)
-    : Transformation(samplingRate, newResolution, windowFunctionNr),
+AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, int windowFunctionNr, int waveletBaseTypeNr)
+    : Transformation(newSamplingRate, newResolution, windowFunctionNr),
       mWaveletBaseTypeNr(waveletBaseTypeNr), mDwtMaxLevel(getMaxLevel(newResolution)), mConstantLevelsHedge(nullptr), 
       mDWTLevelsHedge(nullptr), extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
 

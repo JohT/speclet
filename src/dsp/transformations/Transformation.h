@@ -40,7 +40,7 @@ public:
     auto operator=(Transformation &) -> Transformation & = delete; //No copy assignment
     auto operator=(Transformation &&) -> Transformation & = delete;//No move assignment
 
-    Transformation(double samplingRate, ResolutionType resolution, int windowFunctionNr);
+    Transformation(double newSamplingRate, ResolutionType newResolution, int newWindowFunctionNr);
     virtual ~Transformation();
 
     auto getWindowFunction() const -> WindowFunction *;
@@ -48,7 +48,7 @@ public:
     void setNextInputSample(double sample);
     auto isOutputAvailable() -> bool;
     auto getSpectralDataBuffer() -> SpectralDataBuffer *;
-    auto getSpectralDataInfo() -> SpectralDataInfo * { return mSpectralDataInfo; };
+    auto getSpectralDataInfo() -> SpectralDataInfo * { return mSpectralDataInfo; }
     auto getTransformationNr() const -> int { return transformTypeNr; }
     void setTransformationNr(int newTransformTypeNr) { transformTypeNr = newTransformTypeNr; }
     void setTransformResultListener(TransformationListener *value);
@@ -57,7 +57,10 @@ public:
     auto getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType;
 
 protected:
-    virtual void calculate() = 0;//abstract: must be implemented by inherited class!
+     /**
+     * @brief applies the transformation to the samples in the input queue and stores the result in the output queue
+     */
+   virtual void calculate() = 0;//abstract: must be implemented by inherited class!
 
     auto getResolution() const -> ResolutionType {
         return resolution;
@@ -68,7 +71,6 @@ protected:
 
     long mFrequencyResolution;
     long mTimeResolution;
-    double mSamplingRate;
 
     std::queue<double> *mInputQueue;
     SpectralDataBuffer *mOutputBuffer;
@@ -78,6 +80,8 @@ private:
     int transformTypeNr;
     std::shared_ptr<WindowFunction> windowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
     ResolutionType resolution;
+    double samplingRate;
+
     bool ready;     //Signalizes internally "ready for new calculation"
     bool calculated;//Signalizes internally "calculation finished"
 
