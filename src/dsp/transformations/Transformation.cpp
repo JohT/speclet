@@ -6,7 +6,7 @@
 using namespace std;
 
 Transformation::Transformation(double samplingRate, ResolutionType newResolution, int newWindowFunctionNr)
-    : waitForDestruction(new juce::WaitableEvent(true)), mTransformTypeNr(0), mOutputBuffer(new SpectralDataBuffer()),
+    : waitForDestruction(new juce::WaitableEvent(true)), transformTypeNr(0), mOutputBuffer(new SpectralDataBuffer()),
       mTransformResultsListener(nullptr),
       resolution(newResolution), mSamplingRate(samplingRate), ready(false), calculated(false),
       mInputQueue(new queue<double>()),

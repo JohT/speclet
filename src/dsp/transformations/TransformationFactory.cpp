@@ -1,4 +1,5 @@
 #include "TransformationFactory.h"
+#include "Transformation.h"
 #include <cstddef>
 
 #ifndef __LOGGER__
@@ -27,42 +28,43 @@ void TransformationFactory::destruct() {
 }
 
 auto TransformationFactory::createTransformation(
-        int transformationTypeNr,
+        Type newTransformationType,
         double samplingRate,
-        long resolution,
+        Transformation::ResolutionType resolution,
         int windowFunction,
         int waveletBaseTypeNr,
         int resolutionRatioDWPT) -> Transformation * {
     DBG("TransformationFactory::createTransformation started. transformationNr=" +
-        juce::String(transformationTypeNr) +
+        juce::String(newTransformationType) +
         ",pointer to transformation" + (transformation != nullptr ? "exists" : "does not exist"));
 
     deleteTransformation();
 
-    switch (transformationTypeNr) {
-        case SpectronParameters::TRANSFORM_FFT: {
+    switch (newTransformationType) {
+        case Type::FAST_FOURIER_TRANSFORM: {
             transformation = new FourierTransformation(samplingRate, resolution, windowFunction);
             jassert(transformation);
             break;
         }
-        case SpectronParameters::TRANSFORM_FWT: {
+        case Type::FAST_WAVELET_TRANSFORM: {
             transformation = new WaveletTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr);
             jassert(transformation);
             break;
         }
-        case SpectronParameters::TRANSFORM_FWPT: {
+        case Type::FAST_WAVELET_PACKET_TRANSFORM: {
             transformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr, resolutionRatioDWPT);
             jassert(transformation);
             break;
         }
-        case SpectronParameters::TRANSFORM_FWPT_BB: {
+        case Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM: {
             transformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr);
             jassert(transformation);
             break;
         }
-        case SpectronParameters::TRANSFORM_OFF: {
+        case Type::BYPASS: {
             break;
         }
+        case Type::NUMBER_OF_OPTIONS:
         default: {
             bool transformationUnknownError = false;
             jassert(transformationUnknownError);
@@ -70,13 +72,13 @@ auto TransformationFactory::createTransformation(
     }
 
     if (transformation != nullptr) {
-        transformation->setTransformationNr(transformationTypeNr);
+        transformation->setTransformationNr(transformationType);
         transformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
     }
-    transformationType = transformationTypeNr;
+    transformationType = newTransformationType;
 
     DBG("TransformationFactory::createTransformation done. transformationNr=" +
-        juce::String(transformationTypeNr) +
+        juce::String(transformationType) +
         ",pointer to transformation" + (transformation != nullptr ? "exists" : "does not exist"));
 
     return transformation;
@@ -85,5 +87,5 @@ auto TransformationFactory::createTransformation(
 void TransformationFactory::deleteTransformation() {
     delete transformation;
     transformation = nullptr;
-    transformationType = SpectronParameters::TRANSFORM_OFF;
+    transformationType = Type::BYPASS;
 }

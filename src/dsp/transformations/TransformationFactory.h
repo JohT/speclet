@@ -29,6 +29,17 @@
 //Furthermore it holds a pointer to the transformation, that had been created the last time
 class TransformationFactory {
 public:
+    enum Type {
+        FAST_FOURIER_TRANSFORM = 1,
+        FAST_WAVELET_TRANSFORM,
+        FAST_WAVELET_PACKET_TRANSFORM,
+        FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM,
+        BYPASS,
+
+        NUMBER_OF_OPTIONS,
+        DEFAULT = FAST_FOURIER_TRANSFORM
+    };
+
     static auto getSingletonInstance() -> TransformationFactory &;
 
     // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
@@ -40,9 +51,9 @@ public:
     void destruct();
 
     auto createTransformation(
-            int transformationTypeNr,
+            Type newTransformationType,
             double samplingRate,
-            long resolution,
+            Transformation::ResolutionType resolution,
             int windowFunction = SpectronParameters::WINDOWING_DEFAULT,
             int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT,
             int resolutionRatioDWPT = SpectronParameters::RESOLUTION_RATIO_DEFAULT) -> Transformation *;
@@ -55,7 +66,7 @@ private:
 
     Transformation *transformation = nullptr;
     TransformationListener *listenerToHandOverToEveryNewTransformation = nullptr;
-    int transformationType = SpectronParameters::TRANSFORM_OFF;
+    Type transformationType = Type::BYPASS;
 
     void deleteTransformation();
 };

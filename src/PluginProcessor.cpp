@@ -369,8 +369,9 @@ void SpectronAudioProcessor::updateTransformation() {
     currentTransformation = nullptr;
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
 
+    //TODO(JohT) Mapping colocated parameters to/from global plugin parameters
     TransformationFactory::getSingletonInstance().createTransformation(
-            parameters->getTransformation(),
+            static_cast<TransformationFactory::Type>(parameters->getTransformation()),
             sampleRate,
             parameters->getResolution(),
             parameters->getWindowing(),
