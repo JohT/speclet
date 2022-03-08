@@ -233,10 +233,11 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
     int basisPos = 0;
     int freqDuplicats = 0;
     int minBestBasisLevel = getMinLevel(levelsHedge);
-    long timeResolution = (long) 1 << (mDwtMaxLevel - minBestBasisLevel);
+    long timeResolution = 1U << (mDwtMaxLevel - minBestBasisLevel);
     int timeStepSize = timeResolution / TIME_RESOLUTION_LIMIT;
     float value = 0.0;
-    float realToFullResolution = (float) mFrequencyResolution / (float) getResolution();
+    auto frequencyResolution = getSpectralDataInfo()->getFrequencyResolution();
+    auto realToFullResolution = static_cast<double>(frequencyResolution) / static_cast<double>(getResolution());
 
     for (int time = 0; time < timeResolution; time++) {
         basisPos = 0;
@@ -248,7 +249,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
             blockpos = (int) ((float) blocksize / (float) timeResolution * (float) time);
             blockpos_end = (int) ((float) blocksize / (float) timeResolution * (float) (time + timeStepSize));
             blocknr = basisPos / blocksize;
-            freqDuplicats = (int) (realToFullResolution * (float) blocksize);
+            freqDuplicats = (int) (realToFullResolution * static_cast<double>(blocksize));
 
             //value = getValue(transformResultClass, origin, level, blocknr, blockpos);
             value = getAvgValue(transformResultClass, origin, level, blocknr, blockpos, blockpos_end);
