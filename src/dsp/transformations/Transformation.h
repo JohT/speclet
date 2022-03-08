@@ -69,9 +69,6 @@ protected:
     void setReady(bool value = true) { ready = value; }
     void setCalculated(bool value = true) { calculated = value; }
 
-    long mFrequencyResolution;
-    long mTimeResolution;
-
     std::queue<double> *mInputQueue;
     SpectralDataBuffer *mOutputBuffer;
     SpectralDataInfo *mSpectralDataInfo;
@@ -79,8 +76,9 @@ protected:
 private:
     int transformTypeNr;
     std::shared_ptr<WindowFunction> windowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
-    ResolutionType resolution;
     double samplingRate;
+
+    ResolutionType resolution;
 
     bool ready;     //Signalizes internally "ready for new calculation"
     bool calculated;//Signalizes internally "calculation finished"

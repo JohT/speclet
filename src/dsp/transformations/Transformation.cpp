@@ -21,8 +21,7 @@ Transformation::Transformation(double newSamplingRate, ResolutionType newResolut
 
     DBG("Transformation::initialize done with fs=" +
         juce::String(samplingRate) +
-        ",res=" + juce::String(newResolution) +
-        ",fres=" + juce::String(mFrequencyResolution));
+        ",res=" + juce::String(newResolution));
 }
 
 //destructor: waits, until a possibly within another thread currently running
