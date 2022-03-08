@@ -49,8 +49,8 @@ public:
     auto isOutputAvailable() -> bool;
     auto getSpectralDataBuffer() -> SpectralDataBuffer *;
     auto getSpectralDataInfo() -> SpectralDataInfo * { return mSpectralDataInfo; };
-    auto getTransformationNr() const -> int { return mTransformTypeNr; }
-    void setTransformationNr(int transformTypeNr) { mTransformTypeNr = transformTypeNr; };
+    auto getTransformationNr() const -> int { return transformTypeNr; }
+    void setTransformationNr(int newTransformTypeNr) { transformTypeNr = newTransformTypeNr; }
     void setTransformResultListener(TransformationListener *value);
 
     void getNextSpectrum(SpectralDataBuffer::ItemType *item);
@@ -69,13 +69,13 @@ protected:
     long mFrequencyResolution;
     long mTimeResolution;
     double mSamplingRate;
-    int mTransformTypeNr;
 
     std::queue<double> *mInputQueue;
     SpectralDataBuffer *mOutputBuffer;
     SpectralDataInfo *mSpectralDataInfo;
 
 private:
+    int transformTypeNr;
     std::shared_ptr<WindowFunction> windowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
     ResolutionType resolution;
     bool ready;     //Signalizes internally "ready for new calculation"
