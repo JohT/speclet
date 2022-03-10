@@ -236,7 +236,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
     long timeResolution = 1U << (mDwtMaxLevel - minBestBasisLevel);
     int timeStepSize = timeResolution / TIME_RESOLUTION_LIMIT;
     float value = 0.0;
-    auto frequencyResolution = getSpectralDataInfo()->getFrequencyResolution();
+    auto frequencyResolution = getSpectralDataInfo().getFrequencyResolution();
     auto realToFullResolution = static_cast<double>(frequencyResolution) / static_cast<double>(getResolution());
 
     for (int time = 0; time < timeResolution; time++) {
@@ -317,7 +317,7 @@ float AbstractWaveletTransformation::getValue(int transformResultClass, real_num
 }
 
 //Updates the member "mConstantLevelsHedge" for a given level (e.g. 4,4,4,4)
-void AbstractWaveletTransformation::updateConstantLevelsHedge(int level) {
+void AbstractWaveletTransformation::updateConstantLevelsHedge(unsigned int level) {
     assert(level > 0);
     assert(level <= mDwtMaxLevel);
 

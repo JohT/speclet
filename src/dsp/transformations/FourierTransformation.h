@@ -30,6 +30,9 @@ public:
 
 protected:
     void calculate() override;
+    auto getSpectralDataInfo() -> const SpectralDataInfo & override {
+      return spectralDataInfo;
+    }
 
 private:
     fftw_plan plan;   //Plan holds prepared (optimized) fft
@@ -39,4 +42,6 @@ private:
     PerformanceTimer fftExecutePlanTimer;
     PerformanceTimer fftInputCopyTimer;
     PerformanceTimer fftOutputCopyTimer;
+    
+    SpectralDataInfo spectralDataInfo;
 };

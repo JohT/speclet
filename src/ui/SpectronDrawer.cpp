@@ -158,19 +158,10 @@ void SpectronDrawer::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasCha
 void SpectronDrawer::appendSpectralImage(Transformation *value) {
     //	const ScopedLock myScopedLock (criticalSection);
 
-    if (!value) {
+    if (value == nullptr) {
         DBG("SpectronDrawer::appendSpectralImage(..) no value");
         return;
     }
-    if (!value->getSpectralDataInfo()) {
-        DBG("SpectronDrawer::appendSpectralImage(..) no data info");
-        return;
-    }
-    if (!value->getSpectralDataBuffer()) {
-        DBG("SpectronDrawer::appendSpectralImage(..) no data buffer");
-        return;
-    }
-
     if (currentCursorXPos > (sizeX - 1)) {
         currentCursorXPos = 0;
     }
@@ -205,8 +196,8 @@ void SpectronDrawer::updateFrequencyAxisImage() {
     // --- gets max frequency
     double maxSpectralFrequency = 22050;
     Transformation *transformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
-    if ((transformation != 0) && (transformation->getSpectralDataInfo())) {
-        maxSpectralFrequency = transformation->getSpectralDataInfo()->getMaxFrequency();
+    if (transformation != nullptr) {
+        maxSpectralFrequency = transformation->getSpectralDataInfo().getMaxFrequency();
     }
 
     int axisLineLength = 10;
@@ -297,12 +288,14 @@ void SpectronDrawer::updateTimeAxisImage() {
 
     //gets the time resolution
     Transformation *transformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
-    if ((transformation) && (transformation->getSpectralDataInfo())) {
-        timeresolution = transformation->getSpectralDataInfo()->getTimeResolutionMs();
+    if (transformation != nullptr) {
+        timeresolution = transformation->getSpectralDataInfo().getTimeResolutionMs();
     }
 
     //if effective timeresolution didn't change, the timeresolution-axis needn't to be redrawn
-    if (timeresolution == currentTimeResolution) return;
+    if (timeresolution == currentTimeResolution) {
+        return;
+    }
     currentTimeResolution = timeresolution;
 
     //clears the part of the axis image, where the time resolution is drawn at

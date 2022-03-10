@@ -7,10 +7,8 @@ WaveletTransformation::WaveletTransformation(
         int windowFunctionNr,
         int waveletBaseTypeNr)
     : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr),
+      spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)),
       fastWaveletTransformTimer(PerformanceTimer("Fast Wavelet Transform")) {
-
-    auto timeResolution =  newResolution / 2;
-    mSpectralDataInfo = new SpectralDataInfo(newSamplingRate, newResolution, newResolution, timeResolution);
 
     DBG("WaveletTransformation::initialize done with fs=" + juce::String(newSamplingRate) + ",res=" + juce::String(newResolution));
 

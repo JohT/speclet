@@ -38,16 +38,12 @@ void RenderingHelper::renderVerticalPoints(
     SpectralDataBuffer::ItemStatisticsType statistics = transformation->getSpectrumStatistics(&spectrum);
 
     // --- get info about spectral data (frequency/time-resolution...)
-    SpectralDataInfo *spectralDataInfo = transformation->getSpectralDataInfo();
-    if (spectralDataInfo == nullptr) {
-        DBG("RenderingHelper::renderVerticalPoints: spectralDataInfo null!");
-        return;
-    }
+    SpectralDataInfo spectralDataInfo = transformation->getSpectralDataInfo();
 
-    if (spectrum.size() != spectralDataInfo->getFrequencyResolution()) {
+    if (spectrum.size() != spectralDataInfo.getFrequencyResolution()) {
         DBG("RenderingHelper::renderVerticalPoints: spectrum.size()=" +
             juce::String(spectrum.size()) +
-            "!= fres=" + juce::String(spectralDataInfo->getFrequencyResolution()));
+            "!= fres=" + juce::String(spectralDataInfo.getFrequencyResolution()));
         return;
     }
 
@@ -88,7 +84,7 @@ auto RenderingHelper::getColorAmount(
 auto RenderingHelper::pixelToIndex(
         int pixel,
         int height,
-        SpectralDataInfo *spectralDataInfo,
+        const SpectralDataInfo & spectralDataInfo,
         bool logFrequency) -> long {
     if (pixel <= 0) {
         return 0;//DC in spectrum always on index = 0
@@ -97,13 +93,13 @@ auto RenderingHelper::pixelToIndex(
     jassert(pixel <= height);
     //assert(spectralDataInfo);
 
-    double frequencyResolution = spectralDataInfo->getFrequencyResolution();
+    double frequencyResolution = spectralDataInfo.getFrequencyResolution();
     double percentOfSpectrum = pixel / static_cast<double>(height);
-    double percentOfSpectrumPerIndex = spectralDataInfo->getFrequencyPartitionSize();
+    double percentOfSpectrumPerIndex = spectralDataInfo.getFrequencyPartitionSize();
     percentOfSpectrumPerIndex = assureBorders("percentOfSpectrumPerIndex", percentOfSpectrumPerIndex, 0.0, 1.0);
 
     if (logFrequency) {
-        double frequencyMax = spectralDataInfo->getSamplingFrequency() / 2.0;
+        double frequencyMax = spectralDataInfo.getSamplingFrequency() / 2.0;
         double frequencyMaxLog = log10(frequencyMax);
         double frequencyMinLog = 1.0;
         double frequencyRangeLog = frequencyMaxLog - frequencyMinLog;

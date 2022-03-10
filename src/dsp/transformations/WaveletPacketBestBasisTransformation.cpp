@@ -9,16 +9,11 @@ WaveletPacketBestBasisTransformation::WaveletPacketBestBasisTransformation(
         ResolutionType newResolution,
         int windowFunctionNr,
         int waveletBaseTypeNr)
-    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr) {
-    DBG("WaveletPacketBestBasisTransformation constructor started");
-
-    mSpectralDataInfo = NULL;
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr),
     //Time and frequency resolution can't be estimated since they change dynamically. Assume same values as for the DWT.
-    auto timeResolution = newResolution / 2; 
-    mSpectralDataInfo = new SpectralDataInfo(newSamplingRate, newResolution, newResolution, timeResolution);
-
-    DBG("WaveletPacketBestBasisTransformation constructor: " + mSpectralDataInfo->toString());
-
+    spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)) {
+    
+    DBG("WaveletPacketBestBasisTransformation constructor: " + getSpectralDataInfo().toString());
     setReady();
     setCalculated();
 };

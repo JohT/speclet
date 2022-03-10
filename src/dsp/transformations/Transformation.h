@@ -48,13 +48,18 @@ public:
     void setNextInputSample(double sample);
     auto isOutputAvailable() -> bool;
     auto getSpectralDataBuffer() -> SpectralDataBuffer *;
-    auto getSpectralDataInfo() -> SpectralDataInfo * { return mSpectralDataInfo; }
     auto getTransformationNr() const -> int { return transformTypeNr; }
     void setTransformationNr(int newTransformTypeNr) { transformTypeNr = newTransformTypeNr; }
     void setTransformResultListener(TransformationListener *value);
 
     void getNextSpectrum(SpectralDataBuffer::ItemType *item);
     auto getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType;
+    /**
+     * @brief Get the spectral data info that contains amongst others details about the time and frequency resolution.
+     * 
+     * @return const SpectralDataInfo& 
+     */
+    virtual auto getSpectralDataInfo() -> const SpectralDataInfo & = 0;
 
 protected:
      /**
@@ -71,7 +76,6 @@ protected:
 
     std::queue<double> *mInputQueue;
     SpectralDataBuffer *mOutputBuffer;
-    SpectralDataInfo *mSpectralDataInfo;
 
 private:
     int transformTypeNr;
