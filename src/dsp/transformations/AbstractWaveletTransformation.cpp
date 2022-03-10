@@ -168,9 +168,9 @@ void AbstractWaveletTransformation::fillDWTInput() {
     }
     auto *windowFunction = getWindowFunction();
     for (unsigned long i = 0; i < getResolution(); i++) {
-        double nextSample = mInputQueue->front();
+        double nextSample = getInputQueue().front();
         (*mDwtInput)[i] = nextSample * windowFunction->getFactor(i);
-        mInputQueue->pop();
+        getInputQueue().pop();
     }
 }
 
