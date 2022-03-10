@@ -1,15 +1,19 @@
 #include "Transformation.h"
-#include "JuceHeader.h"
 #include "../windowing/WindowFunctionFactory.h"
+#include "JuceHeader.h"
 
 
 using namespace std;
 
 Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, int newWindowFunctionNr)
-    : waitForDestruction(new juce::WaitableEvent(true)), transformTypeNr(0), mOutputBuffer(new SpectralDataBuffer()),
+    : mOutputBuffer(new SpectralDataBuffer()),
+      transformTypeNr(0),
+      samplingRate(newSamplingRate),
+      resolution(newResolution),
+      ready(false), 
+      calculated(false),
       mTransformResultsListener(nullptr),
-      resolution(newResolution), samplingRate(newSamplingRate), ready(false), calculated(false),
-      mInputQueue(new queue<double>()),
+      waitForDestruction(new juce::WaitableEvent(true)),
       calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
       informListenersTimer(PerformanceTimer("Transformation::informListeners")),
       waitForDestructionTimer(PerformanceTimer("Transformation::waitForDestruction")) {
@@ -36,11 +40,9 @@ Transformation::~Transformation() {
     ready = false;
     waitForDestruction->signal();
 
-    delete (mInputQueue);
     delete (mOutputBuffer);
     delete (waitForDestruction);
 
-    mInputQueue = nullptr;
     mOutputBuffer = nullptr;
     waitForDestruction = nullptr;
 
@@ -60,15 +62,16 @@ void Transformation::setWindowFunction(int windowFunctionNr) {
     setReady(true);
 }
 
+auto Transformation::getInputQueue() -> std::queue<double> & {
+    return inputQueue;
+}
+
 //reads the next input sample
 void Transformation::setNextInputSample(double sample) {
     if (!ready) {
         return;
     }
-    if (mInputQueue == nullptr) {
-        return;
-    }
-    mInputQueue->push(sample);
+    inputQueue.push(sample);
 
     if (windowFunction == nullptr) {
         return;
@@ -85,9 +88,8 @@ void Transformation::setNextInputSample(double sample) {
 //enough data? - ready? - calculate - informListeners,...
 void Transformation::calculationFrame() {
     calculated = false;
-
     assert(resolution > 0);
-    if (mInputQueue->size() < static_cast<unsigned long>(resolution)) {
+    if (inputQueue.size() < static_cast<unsigned long>(resolution)) {
         //Calculation only with at least N samples possible
         calculated = true;
         return;

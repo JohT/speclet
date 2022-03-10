@@ -46,6 +46,13 @@ public:
     auto getWindowFunction() const -> WindowFunction *;
     void setWindowFunction(int windowFunctionNr);
     void setNextInputSample(double sample);
+    
+    /**
+     * @brief Get the input queue containing the next samples to be transformed
+     * 
+     * @return const std::queue<double>& 
+     */
+    auto getInputQueue() -> std::queue<double> &;
     auto isOutputAvailable() -> bool;
     auto getSpectralDataBuffer() -> SpectralDataBuffer *;
     auto getTransformationNr() const -> int { return transformTypeNr; }
@@ -74,7 +81,6 @@ protected:
     void setReady(bool value = true) { ready = value; }
     void setCalculated(bool value = true) { calculated = value; }
 
-    std::queue<double> *mInputQueue;
     SpectralDataBuffer *mOutputBuffer;
 
 private:
@@ -83,6 +89,8 @@ private:
     double samplingRate;
 
     ResolutionType resolution;
+
+    std::queue<double> inputQueue;
 
     bool ready;     //Signalizes internally "ready for new calculation"
     bool calculated;//Signalizes internally "calculation finished"

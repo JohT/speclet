@@ -1,8 +1,8 @@
 #include "FourierTransformation.h"
 
 FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, int windowFunctionNr)
-    : Transformation(newSamplingRate, newResolution, windowFunctionNr) 
-    , fftExecutePlanTimer(PerformanceTimer("FourierTransformation::calculate (fftw execute)")),
+    : Transformation(newSamplingRate, newResolution, windowFunctionNr), 
+      fftExecutePlanTimer(PerformanceTimer("FourierTransformation::calculate (fftw execute)")),
       fftInputCopyTimer(PerformanceTimer("FourierTransformation::calculate (input copy)")),
       fftOutputCopyTimer(PerformanceTimer("FourierTransformation::calculate (output copy)")),  
       spectralDataInfo(newSamplingRate, newResolution, (newResolution / 2 + 1), 1) {
@@ -40,10 +40,10 @@ void FourierTransformation::calculate() {
     fftInputCopyTimer.start();
     auto resolution = getResolution();
     for (int i = 0; i < resolution; i++) {
-        double nextSamplePerChannel = mInputQueue->front();
+        auto nextSamplePerChannel = getInputQueue().front();
         *(in + i) = nextSamplePerChannel * getWindowFunction()->getFactor(i);
 
-        mInputQueue->pop();
+        getInputQueue().pop();
     }
     fftInputCopyTimer.stop();
 
