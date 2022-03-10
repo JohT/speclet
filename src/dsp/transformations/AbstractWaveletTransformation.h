@@ -40,8 +40,8 @@ protected:
 
     virtual void extractSpectrum(const Interval &out_DWT);
     virtual void extractSpectrum(const ArrayTreePer &out_DWPT, const HedgePer &levelsHedge);
-    virtual void updateConstantLevelsHedge(int resolutionRatioDWPT = 0);
-    virtual void updateDWTLevelsHedge(void);
+    virtual void updateConstantLevelsHedge(unsigned int resolutionRatioDWPT = 0);
+    virtual void updateDWTLevelsHedge();
 
     int mWaveletBaseTypeNr;//Waveletbase-type, see enum WAVELET_BASE_NR
     int mDwtMaxLevel;      //Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
