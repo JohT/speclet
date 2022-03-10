@@ -56,9 +56,9 @@ public:
             Transformation::ResolutionType resolution,
             int windowFunction = SpectronParameters::WINDOWING_DEFAULT,
             int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT,
-            int resolutionRatioDWPT = SpectronParameters::RESOLUTION_RATIO_DEFAULT) -> Transformation *;
-    auto getCurrentTransformation() -> Transformation * { return transformation; };
-    void registerForTransformationResults(TransformationListener *value) { listenerToHandOverToEveryNewTransformation = value; };
+            WaveletPacketTransformation::ResolutionRatioOption resolutionRatio = WaveletPacketTransformation::ResolutionRatioOption::DEFAULT) -> Transformation *;
+    auto getCurrentTransformation() -> Transformation * { return transformation; }
+    void registerForTransformationResults(TransformationListener *value) { listenerToHandOverToEveryNewTransformation = value; }
 
 private:
     TransformationFactory();

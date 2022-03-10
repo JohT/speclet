@@ -1,5 +1,6 @@
 #include "PluginProcessor.h"
 #include "dsp/transformations/TransformationFactory.h"
+#include "dsp/transformations/WaveletPacketTransformation.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpectronMainUI.h"
 #include "dsp/windowing/WindowFunctionFactory.h"
@@ -376,7 +377,7 @@ void SpectronAudioProcessor::updateTransformation() {
             parameters->getResolution(),
             parameters->getWindowing(),
             parameters->getWavelet(),
-            parameters->getWaveletPaketBase());
+            static_cast<WaveletPacketTransformation::ResolutionRatioOption>(parameters->getWaveletPaketBase()));
 
     parameters->unblockParameterChanges();
     currentTransformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();

@@ -1,5 +1,6 @@
 #include "TransformationFactory.h"
 #include "Transformation.h"
+#include "WaveletPacketTransformation.h"
 #include <cstddef>
 
 #ifndef __LOGGER__
@@ -33,7 +34,7 @@ auto TransformationFactory::createTransformation(
         Transformation::ResolutionType resolution,
         int windowFunction,
         int waveletBaseTypeNr,
-        int resolutionRatioDWPT) -> Transformation * {
+        WaveletPacketTransformation::ResolutionRatioOption resolutionRatio) -> Transformation * {
     DBG("TransformationFactory::createTransformation started. transformationNr=" +
         juce::String(newTransformationType) +
         ",pointer to transformation" + (transformation != nullptr ? "exists" : "does not exist"));
@@ -52,7 +53,7 @@ auto TransformationFactory::createTransformation(
             break;
         }
         case Type::FAST_WAVELET_PACKET_TRANSFORM: {
-            transformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr, resolutionRatioDWPT);
+            transformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr, resolutionRatio);
             jassert(transformation);
             break;
         }

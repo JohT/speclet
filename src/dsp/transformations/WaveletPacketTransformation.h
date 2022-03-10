@@ -17,28 +17,53 @@
 #include "../../plugin/SpectronParameters.h"
 #include "AbstractWaveletTransformation.h"
 
-
 class WaveletPacketTransformation : public AbstractWaveletTransformation {
 public:
-	WaveletPacketTransformation(
-		double newSamplingRate, 
-		ResolutionType newResolution, 
-		int windowFunctionNr		= SpectronParameters::WINDOWING_DEFAULT,
-		int waveletBaseTypeNr	= SpectronParameters::WAVELET_DEFAULT, 
-		int resolutionRatioDWPT = SpectronParameters::RESOLUTION_RATIO_DEFAULT
-	);
-	virtual ~WaveletPacketTransformation(void);
-	void	setResolutionRatioDWPT	(int resolutionRatioDWPT);
+    enum ResolutionRatioOption {
+        EQUAL = 99,
+        TIME_X2 = -2,
+        TIME_X4 = -1,
+        FREQUENCY_X2 = 1,
+        FREQUENCY_X4 = 2,
+
+        NUMBER_OF_OPTIONS = 5,
+        DEFAULT = EQUAL
+    };
+
+    WaveletPacketTransformation(
+            double newSamplingRate,
+            ResolutionType newResolution,
+            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
+            int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT,
+            ResolutionRatioOption newResolutionRatioOption = ResolutionRatioOption::DEFAULT);
+    ~WaveletPacketTransformation() override;
+
+    auto getSpectralDataInfo() -> const SpectralDataInfo & override {
+        return spectralDataInfo;
+    }
 
 protected:
-	virtual void calculate();		
-
-	int	getWaveletPacketResultTreeLevel	(int maxLevel, int resolutionRatioDWPT);
-	int	getFrequencyResolution				(int maxLevel);
-	int	getTimeResolution						(void);
+     void calculate() override;
 
 private:
-	double samplingRate;
-	int	mDWPT_ResultTreeLevel;		//Wavelet packet transform result tree level, 
-	int	mResolutionRatioDWPT;		//Wavelet packet transform time/freq resolution ratio (0=equal time&freq)
+    double samplingRate;
+    int timeFrequencyResolutionTreeLevelOffset; //Wavelet packet transform time/freq resolution ratio (0=equal time&freq)
+    unsigned int resultTreeLevel;//Wavelet packet transform result tree level,
+
+    SpectralDataInfo spectralDataInfo;
+
+    void setResolutionRatioOption(ResolutionRatioOption newResolutionRatio);
+
+    auto getTimeResolution() -> ResolutionType;
+    auto calculateSpectralDataInfo() -> SpectralDataInfo;
+
+    /**
+     * @brief Takes a ResolutionRatioOption and returns the offset (+/- int) to the filter tree level
+     * 
+     * @param resolutionRatioOption 
+     * @return const int 
+     */
+    static auto toTimeFrequencyResolutionTreeLevelOffset(const ResolutionRatioOption& resolutionRatioOption) -> int;
+    static auto getFrequencyResolution(unsigned int waveletPacketResultTreeLevel) -> ResolutionType;
+    static auto getWaveletPacketResultTreeLevel(unsigned int maxLevel, int resolutionRatioOffset) -> unsigned int;
 };
