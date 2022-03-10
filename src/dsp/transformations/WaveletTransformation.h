@@ -31,9 +31,14 @@ public:
     auto operator=(WaveletTransformation &) -> WaveletTransformation & = delete; //No copy assignment
     auto operator=(WaveletTransformation &&) -> WaveletTransformation & = delete;//No move assignment
 
+    auto getSpectralDataInfo() -> const SpectralDataInfo & override {
+        return spectralDataInfo;
+    }
+
 protected:
     void calculate() override;
 
 private:
+    SpectralDataInfo spectralDataInfo;
     PerformanceTimer fastWaveletTransformTimer;
 };

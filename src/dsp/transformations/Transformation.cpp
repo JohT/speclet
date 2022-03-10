@@ -10,7 +10,6 @@ Transformation::Transformation(double newSamplingRate, ResolutionType newResolut
       mTransformResultsListener(nullptr),
       resolution(newResolution), samplingRate(newSamplingRate), ready(false), calculated(false),
       mInputQueue(new queue<double>()),
-      mSpectralDataInfo(nullptr),
       calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
       informListenersTimer(PerformanceTimer("Transformation::informListeners")),
       waitForDestructionTimer(PerformanceTimer("Transformation::waitForDestruction")) {
@@ -39,12 +38,10 @@ Transformation::~Transformation() {
 
     delete (mInputQueue);
     delete (mOutputBuffer);
-    delete (mSpectralDataInfo);
     delete (waitForDestruction);
 
     mInputQueue = nullptr;
     mOutputBuffer = nullptr;
-    mSpectralDataInfo = nullptr;
     waitForDestruction = nullptr;
 
     DBG("Transform destructed");

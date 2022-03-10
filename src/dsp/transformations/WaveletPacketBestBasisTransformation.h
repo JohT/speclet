@@ -26,10 +26,17 @@ public:
             int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);
     ~WaveletPacketBestBasisTransformation() override;
 
+    auto getSpectralDataInfo() -> const SpectralDataInfo & override {
+        return spectralDataInfo;
+    }
+
+
 protected:
     void calculate() override;
 
 private:
+    SpectralDataInfo spectralDataInfo;
+
     //advanced cost function type with param factor
     using costFunAdv = real_number (WaveletPacketBestBasisTransformation::*)(const real_number *, const integer_number &, const real_number &, const real_number &, const integer_number &);
 

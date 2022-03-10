@@ -57,7 +57,7 @@ public:
     auto pixelToIndex(
             int pixel,
             int height,
-            SpectralDataInfo *spectralDataInfo,
+            const SpectralDataInfo & spectralDataInfo,
             bool logFrequency) -> long;
 
 private:

@@ -4,10 +4,8 @@ FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionT
     : Transformation(newSamplingRate, newResolution, windowFunctionNr) 
     , fftExecutePlanTimer(PerformanceTimer("FourierTransformation::calculate (fftw execute)")),
       fftInputCopyTimer(PerformanceTimer("FourierTransformation::calculate (input copy)")),
-      fftOutputCopyTimer(PerformanceTimer("FourierTransformation::calculate (output copy)"))    
-    {
-    long frequencyResolution = (long) ((newResolution / 2.0) + 1.0);
-    mSpectralDataInfo = new SpectralDataInfo(newSamplingRate, newResolution, frequencyResolution, 1);
+      fftOutputCopyTimer(PerformanceTimer("FourierTransformation::calculate (output copy)")),  
+      spectralDataInfo(newSamplingRate, newResolution, (newResolution / 2 + 1), 1) {
 
     in = (double *) fftw_malloc(sizeof(double) * newResolution);
     out = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * ((newResolution / 2) + 1));
