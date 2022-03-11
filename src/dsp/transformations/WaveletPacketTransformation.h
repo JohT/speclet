@@ -43,12 +43,12 @@ public:
     }
 
 protected:
-     void calculate() override;
+    void calculate() override;
 
 private:
     double samplingRate;
-    int timeFrequencyResolutionTreeLevelOffset; //Wavelet packet transform time/freq resolution ratio (0=equal time&freq)
-    unsigned int resultTreeLevel;//Wavelet packet transform result tree level,
+    int timeFrequencyResolutionTreeLevelOffset;//Wavelet packet transform time/freq resolution ratio (0=equal time&freq)
+    WaveletLevelType resultTreeLevel;          //Wavelet packet transform result tree level,
 
     SpectralDataInfo spectralDataInfo;
 
@@ -63,7 +63,7 @@ private:
      * @param resolutionRatioOption 
      * @return const int 
      */
-    static auto toTimeFrequencyResolutionTreeLevelOffset(const ResolutionRatioOption& resolutionRatioOption) -> int;
-    static auto getFrequencyResolution(unsigned int waveletPacketResultTreeLevel) -> ResolutionType;
-    static auto getWaveletPacketResultTreeLevel(unsigned int maxLevel, int resolutionRatioOffset) -> unsigned int;
+    static auto toTimeFrequencyResolutionTreeLevelOffset(const ResolutionRatioOption &resolutionRatioOption) -> int;
+    static auto getFrequencyResolution(WaveletLevelType waveletPacketResultTreeLevel) -> ResolutionType;
+    static auto getWaveletPacketResultTreeLevel(WaveletLevelType maxLevel, int resolutionRatioOffset) -> WaveletLevelType;
 };

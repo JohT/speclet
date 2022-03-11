@@ -27,14 +27,14 @@ AbstractWaveletTransformation::~AbstractWaveletTransformation() {
     DBG("AbstractWaveletTransformation destructed");
 }
 
-auto AbstractWaveletTransformation::getMaxLevel(int dimension) -> int {
+auto AbstractWaveletTransformation::getMaxLevel(unsigned int dimension) -> WaveletLevelType {
     int maxlevel = static_cast<int>(log(dimension) / log(2));
     //	DBG("AbstractWaveletTransformation::getMaxLevel calc: logDim/log(2)", log((double)dimension), log((double)2.0);
     //	DBG("AbstractWaveletTransformation::getMaxLevel result: dim/maxLevel=", dimension, maxlevel;
     return maxlevel;
 }
 
-auto AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) -> int {
+auto AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType {
     if (bestBasis.num_of_levels <= 0) {
         return 1;
     }
@@ -227,7 +227,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
     int blocknr = 0;
     int basisPos = 0;
     int freqDuplicats = 0;
-    int minBestBasisLevel = getMinLevel(levelsHedge);
+    WaveletLevelType minBestBasisLevel = getMinLevel(levelsHedge);
     long timeResolution = 1U << (mDwtMaxLevel - minBestBasisLevel);
     int timeStepSize = timeResolution / TIME_RESOLUTION_LIMIT;
     float value = 0.0;
@@ -271,7 +271,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
 float AbstractWaveletTransformation::getAvgValue(
         int transformResultClass,
         real_number *origin,
-        int level,
+        WaveletLevelType level,
         int blocknr,
         int blockpos_start,
         int blockpos_end) {
@@ -299,7 +299,7 @@ float AbstractWaveletTransformation::getAvgValue(
 }
 
 //returns the value of the specified result tree position
-float AbstractWaveletTransformation::getValue(int transformResultClass, real_number *origin, int level, int blocknr, int blockpos) {
+float AbstractWaveletTransformation::getValue(int transformResultClass, real_number *origin, WaveletLevelType level, int blocknr, int blockpos) {
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         auto resolution = getResolution();
         return (origin) ? *(origin + (level * resolution + blocknr * ((resolution) >> (level))) + blockpos) : 0.0f;
@@ -312,7 +312,7 @@ float AbstractWaveletTransformation::getValue(int transformResultClass, real_num
 }
 
 //Updates the member "mConstantLevelsHedge" for a given level (e.g. 4,4,4,4)
-void AbstractWaveletTransformation::updateConstantLevelsHedge(unsigned int level) {
+void AbstractWaveletTransformation::updateConstantLevelsHedge(WaveletLevelType level) {
     assert(level > 0);
     assert(level <= mDwtMaxLevel);
 
@@ -334,7 +334,7 @@ void AbstractWaveletTransformation::updateConstantLevelsHedge(unsigned int level
 }
 
 //Updates/fills the member "mDWTLevelsHedge" with the levels, that are in use when a DWT is applied
-void AbstractWaveletTransformation::updateDWTLevelsHedge(void) {
+void AbstractWaveletTransformation::updateDWTLevelsHedge() {
     integer_number *levels = new integer_number[mDwtMaxLevel + 1];
 
     levels[0] = mDwtMaxLevel;
