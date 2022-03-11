@@ -57,24 +57,25 @@ public:
     auto operator=(AbstractWaveletTransformation &&) -> AbstractWaveletTransformation & = delete;     //No move assignment
 
     void setWaveletBase(const WaveletBase &newWaveletBase);
+    using WaveletLevelType = unsigned int;
 
 protected:
-    virtual auto getMaxLevel(int dimension) -> int;
-    virtual auto getMinLevel(const HedgePer &bestBasis) -> int;
+    virtual auto getMaxLevel(unsigned int dimension) -> WaveletLevelType;
+    virtual auto getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType;
     virtual void fillDWTInput();
     virtual void sortDWPTTreeByScaleDescending(const ArrayTreePer &tree);
     virtual void swapDWPTTreeChilds(const ArrayTreePer &tree, const integer_number &L, const integer_number &B);
 
     virtual void extractSpectrum(const Interval &out_DWT);
     virtual void extractSpectrum(const ArrayTreePer &out_DWPT, const HedgePer &levelsHedge);
-    virtual void updateConstantLevelsHedge(unsigned int resolutionRatioDWPT = 0);
+    virtual void updateConstantLevelsHedge(WaveletLevelType level);
     virtual void updateDWTLevelsHedge();
 
     auto getDwtInput() -> const Interval & {
         return dwtInput;
     }
 
-    int mDwtMaxLevel;   //Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
+    WaveletLevelType mDwtMaxLevel;   //Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
     PQMF mDwtFilterH;   //DWT/DWPT lowpass filter coeffs (result=scaling function);
     PQMF mDwtFilterG;   //DWT/DWPT hipass  filter coeffs (result=wavelet function);
 
@@ -92,7 +93,7 @@ private:
     Interval dwtInput;//wavelet transformation input data of wave++ library
 
     PerformanceTimer extractSpectrumTimer;
-    void extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &bestBasis);
-    auto getValue(int transformResultClass, real_number *origin, int level, int blocknr, int blockpos) -> float;
-    auto getAvgValue(int transformResultClass, real_number *origin, int level, int blocknr, int blockposStart, int blockposEnd) -> float;
+    void extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &levelsHedge);
+    auto getValue(int transformResultClass, real_number *origin, WaveletLevelType level, int blocknr, int blockpos) -> float;
+    auto getAvgValue(int transformResultClass, real_number *origin, WaveletLevelType level, int blocknr, int blockposStart, int blockposEnd) -> float;
 };

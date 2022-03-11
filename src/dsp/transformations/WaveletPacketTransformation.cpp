@@ -11,16 +11,14 @@ WaveletPacketTransformation::WaveletPacketTransformation(
       samplingRate(newSamplingRate),
       timeFrequencyResolutionTreeLevelOffset(toTimeFrequencyResolutionTreeLevelOffset(newResolutionRatioOption)),
       resultTreeLevel(getWaveletPacketResultTreeLevel(mDwtMaxLevel, timeFrequencyResolutionTreeLevelOffset)),
-      //TODO(JohT) Fully calculate spectral data info in "calculateSpectralDataInfo" without setResolutionRatioOption
       spectralDataInfo(calculateSpectralDataInfo()) {
 
     setResolutionRatioOption(newResolutionRatioOption);
     updateConstantLevelsHedge(resultTreeLevel);
 
-    DBG("Wavelet initialize: N=" +
+    DBG("WaveletPacketTransformation constructed: resolution=" +
         juce::String(newResolution) +
-        ", " + spectralDataInfo.toString() +
-        ",sampling rate=" + juce::String(newSamplingRate) +
+        ",sampling frequency=" + juce::String(newSamplingRate) +
         ",maxLevel=" + juce::String(mDwtMaxLevel) +
         ",resultTree=" + juce::String(resultTreeLevel));
 
@@ -33,7 +31,7 @@ WaveletPacketTransformation::~WaveletPacketTransformation() {
     DBG("WaveletPacketTransformation destructed");
 }
 
-auto WaveletPacketTransformation::getFrequencyResolution(unsigned int waveletPacketResultTreeLevel) -> Transformation::ResolutionType {
+auto WaveletPacketTransformation::getFrequencyResolution(WaveletLevelType waveletPacketResultTreeLevel) -> Transformation::ResolutionType {
     return 1U << waveletPacketResultTreeLevel;
 }
 
@@ -41,7 +39,7 @@ auto WaveletPacketTransformation::getTimeResolution() -> Transformation::Resolut
     return 1U << static_cast<unsigned int>(mDwtMaxLevel - resultTreeLevel);
 }
 
-auto WaveletPacketTransformation::getWaveletPacketResultTreeLevel(unsigned int maxLevel, int resolutionRatioOffset) -> unsigned int {
+auto WaveletPacketTransformation::getWaveletPacketResultTreeLevel(WaveletLevelType maxLevel, int resolutionRatioOffset) -> WaveletLevelType {
     //the best possible time & freq resolution ratio can be read out of the (DWPT tree-)level,
     //that results in a square of blocks and block-elements (and therefor an equal freq & time resolution)
     //This is only possible, if the dimension is even (see tab below).
