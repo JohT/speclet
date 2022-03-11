@@ -56,7 +56,7 @@ public:
     auto operator=(const AbstractWaveletTransformation &) -> AbstractWaveletTransformation & = delete;//No copy assignment
     auto operator=(AbstractWaveletTransformation &&) -> AbstractWaveletTransformation & = delete;     //No move assignment
 
-    void setWaveletBase(const WaveletBase& newWaveletBase);
+    void setWaveletBase(const WaveletBase &newWaveletBase);
 
 protected:
     virtual auto getMaxLevel(int dimension) -> int;
@@ -70,10 +70,13 @@ protected:
     virtual void updateConstantLevelsHedge(unsigned int resolutionRatioDWPT = 0);
     virtual void updateDWTLevelsHedge();
 
-    int mDwtMaxLevel;      //Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
-    PQMF mDwtFilterH;      //DWT/DWPT lowpass filter coeffs (result=scaling function);
-    PQMF mDwtFilterG;      //DWT/DWPT hipass  filter coeffs (result=wavelet function);
-    Interval *mDwtInput;   //Pointer to wave++'s wavelet transformation input data
+    auto getDwtInput() -> const Interval & {
+        return dwtInput;
+    }
+
+    int mDwtMaxLevel;   //Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
+    PQMF mDwtFilterH;   //DWT/DWPT lowpass filter coeffs (result=scaling function);
+    PQMF mDwtFilterG;   //DWT/DWPT hipass  filter coeffs (result=wavelet function);
 
     HedgePer *mConstantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
     HedgePer *mDWTLevelsHedge;     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
@@ -86,6 +89,7 @@ private:
     };
 
     WaveletBase wavelet;
+    Interval dwtInput;//wavelet transformation input data of wave++ library
 
     PerformanceTimer extractSpectrumTimer;
     void extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &bestBasis);
