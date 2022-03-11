@@ -7,9 +7,8 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
       mConstantLevelsHedge(nullptr),
       mDWTLevelsHedge(nullptr), 
       wavelet(newWaveletBase), 
+      dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))),
       extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
-
-    mDwtInput = new Interval(0, newResolution - 1);//wavelet transformation input data
 
     setWaveletBase(newWaveletBase);
     updateConstantLevelsHedge(mDwtMaxLevel / 2);
@@ -19,11 +18,9 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
 };
 
 AbstractWaveletTransformation::~AbstractWaveletTransformation() {
-    delete (mDwtInput);
     delete (mConstantLevelsHedge);
     delete (mDWTLevelsHedge);
 
-    mDwtInput = nullptr;
     mConstantLevelsHedge = nullptr;
     mDWTLevelsHedge = nullptr;
 
@@ -164,14 +161,10 @@ void AbstractWaveletTransformation::setWaveletBase(const WaveletBase& newWavelet
 
 //Copying every single sample from input-queue to wavelet input-array
 void AbstractWaveletTransformation::fillDWTInput() {
-    if (mDwtInput == nullptr) {
-        DBG("AbstractWaveletTransformation::fillDWTInput: mDWT_Input = null !");
-        return;
-    }
     auto *windowFunction = getWindowFunction();
     for (unsigned long i = 0; i < getResolution(); i++) {
         double nextSample = getInputQueue().front();
-        (*mDwtInput)[i] = nextSample * windowFunction->getFactor(i);
+        (dwtInput)[i] = nextSample * windowFunction->getFactor(i);
         getInputQueue().pop();
     }
 }

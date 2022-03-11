@@ -31,7 +31,7 @@ void WaveletPacketBestBasisTransformation::calculate() {
     ArrayTreePer outDWPT(mDwtMaxLevel);
 
     //DWPT (discrete wavelet packet transform), periodic
-    Analysis(*mDwtInput, outDWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
+    Analysis(getDwtInput(), outDWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
     sortDWPTTreeByScaleDescending(outDWPT);
 
     //calculate noise level for a chosen SNR //TODO should be provided in a better way e.g. by measurement...

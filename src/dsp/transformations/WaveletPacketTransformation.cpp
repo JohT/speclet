@@ -90,11 +90,6 @@ auto WaveletPacketTransformation::toTimeFrequencyResolutionTreeLevelOffset(const
 void WaveletPacketTransformation::calculate() {
     fillDWTInput();
 
-    if (!mDwtInput) {
-        DBG("WaveletPacketTransformation::calculate: mDWT_Input = null!");
-        return;
-    }
-
     //to hold the result of the wavelet packet transformation (=DWPT coeffs)
     ArrayTreePer out_DWPT(mDwtMaxLevel);
     //DBG("WaveletPacketTransformation::calculate before with mDWT_maxLevel= "	+
@@ -104,7 +99,7 @@ void WaveletPacketTransformation::calculate() {
     //);
 
     //DWPT (discrete wavelet packet transform), periodic
-    Analysis(*mDwtInput, out_DWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
+    Analysis(getDwtInput(), out_DWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
     sortDWPTTreeByScaleDescending(out_DWPT);
     extractSpectrum(out_DWPT, *mConstantLevelsHedge);
 }
