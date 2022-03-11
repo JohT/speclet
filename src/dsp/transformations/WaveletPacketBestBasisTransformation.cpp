@@ -11,9 +11,9 @@ WaveletPacketBestBasisTransformation::WaveletPacketBestBasisTransformation(
         int windowFunctionNr,
         WaveletBase newWaveletBaseType)
     : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, newWaveletBaseType),
-    //Time and frequency resolution can't be estimated since they change dynamically. Assume same values as for the DWT.
-    spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)) {
-    
+      //Time and frequency resolution can't be estimated since they change dynamically. Assume same values as for the DWT.
+      spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)) {
+
     DBG("WaveletPacketBestBasisTransformation constructor: " + getSpectralDataInfo().toString());
     setReady();
     setCalculated();
@@ -32,7 +32,7 @@ void WaveletPacketBestBasisTransformation::calculate() {
 
     //DWPT (discrete wavelet packet transform), periodic
     Analysis(getDwtInput(), outDWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
-    sortDWPTTreeByScaleDescending(outDWPT);
+    sortWaveletFilterTreeByScaleDescending(outDWPT);
 
     //calculate noise level for a chosen SNR //TODO should be provided in a better way e.g. by measurement...
     int signalToNoiseRatioInDecibel = 48;
@@ -46,9 +46,10 @@ void WaveletPacketBestBasisTransformation::calculate() {
 
     if (bestBasis.num_of_levels <= 1) {
         DBG("WaveletPacketBestBasisTransformation::calculate best basis could not be found!");
-        bestBasis = *mConstantLevelsHedge;
+        extractSpectrum(outDWPT);
+    } else {
+        extractSpectrum(outDWPT, bestBasis);
     }
-    extractSpectrum(outDWPT, bestBasis);
 }
 
 // ----------------------------------------------------------------------------
@@ -96,7 +97,7 @@ void WaveletPacketBestBasisTransformation::extractBestBasis(const ArrayTreePer &
     // Get a member function reference to the cost function
     real_number (WaveletPacketBestBasisTransformation::*costFunction)(const real_number *data, const integer_number &n, const real_number &sigma, const real_number &factor, const integer_number &k);
     costFunction = &WaveletPacketBestBasisTransformation::oracCostAdv;
-   
+
     getCosts(a, b, costFunction, sigma, factor);
     h.dim = a.dim;
     BestBasis(h, b);

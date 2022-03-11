@@ -98,6 +98,6 @@ void WaveletPacketTransformation::calculate() {
 
     //DWPT (discrete wavelet packet transform), periodic
     Analysis(getDwtInput(), out_DWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
-    sortDWPTTreeByScaleDescending(out_DWPT);
-    extractSpectrum(out_DWPT, *mConstantLevelsHedge);
+    sortWaveletFilterTreeByScaleDescending(out_DWPT);
+    extractSpectrum(out_DWPT);
 }

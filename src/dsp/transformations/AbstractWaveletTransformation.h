@@ -60,28 +60,25 @@ public:
     using WaveletLevelType = unsigned int;
 
 protected:
-    virtual auto getMaxLevel(unsigned int dimension) -> WaveletLevelType;
+    virtual auto getMaxLevel(ResolutionType resolution) -> WaveletLevelType;
     virtual auto getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType;
     virtual void fillDWTInput();
-    virtual void sortDWPTTreeByScaleDescending(const ArrayTreePer &tree);
-    virtual void swapDWPTTreeChilds(const ArrayTreePer &tree, const integer_number &L, const integer_number &B);
+    virtual void sortWaveletFilterTreeByScaleDescending(const ArrayTreePer &tree);
+    virtual void swapWaveletFilterTreeChilds(const ArrayTreePer &tree, const integer_number &L, const integer_number &B);
 
-    virtual void extractSpectrum(const Interval &out_DWT);
-    virtual void extractSpectrum(const ArrayTreePer &out_DWPT, const HedgePer &levelsHedge);
+    void extractSpectrum(const Interval &outDWT);                                               // For "classic" (dyadic) Discrete Wavelet Transform
+    void extractSpectrum(const ArrayTreePer &outWaveletPacketTree);                             // For Discrete Wavelet Packet Transform
+    void extractSpectrum(const ArrayTreePer &outWaveletPacketTree, const HedgePer &levelsHedge);// For Discrete Wavelet Packet Transform with dynamic (best) basis
+
     virtual void updateConstantLevelsHedge(WaveletLevelType level);
-    virtual void updateDWTLevelsHedge();
 
     auto getDwtInput() -> const Interval & {
         return dwtInput;
     }
 
-    WaveletLevelType mDwtMaxLevel;   //Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
-    PQMF mDwtFilterH;   //DWT/DWPT lowpass filter coeffs (result=scaling function);
-    PQMF mDwtFilterG;   //DWT/DWPT hipass  filter coeffs (result=wavelet function);
-
-    HedgePer *mConstantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
-    HedgePer *mDWTLevelsHedge;     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
-    RenderingHelper renderingHelper;
+    WaveletLevelType mDwtMaxLevel;//Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
+    PQMF mDwtFilterH;             //DWT/DWPT lowpass filter coeffs (result=scaling function);
+    PQMF mDwtFilterG;             //DWT/DWPT hipass  filter coeffs (result=wavelet function);
 
 private:
     enum TRANSFORM_RESULT_CLASS {
@@ -89,11 +86,14 @@ private:
         TRANSFORM_RESULT_CLASS_ARRAYTREE
     };
 
-    WaveletBase wavelet;
     Interval dwtInput;//wavelet transformation input data of wave++ library
 
+    HedgePer *mConstantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
+    HedgePer *mDWTLevelsHedge;     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
+
     PerformanceTimer extractSpectrumTimer;
+    void updateDWTLevelsHedge();
     void extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &levelsHedge);
-    auto getValue(int transformResultClass, real_number *origin, WaveletLevelType level, int blocknr, int blockpos) -> float;
-    auto getAvgValue(int transformResultClass, real_number *origin, WaveletLevelType level, int blocknr, int blockposStart, int blockposEnd) -> float;
+    auto getValue(int transformResultClass, const real_number *origin, WaveletLevelType level, int blockNumber, int blockPosition) const -> float;
+    auto getAvgValue(int transformResultClass, real_number *origin, WaveletLevelType level, long blockNumber, long blockposStart, long blockposEnd) -> float;
 };
