@@ -1,5 +1,6 @@
 #include "WaveletPacketBestBasisTransformation.h"
 
+#include "AbstractWaveletTransformation.h"
 #include "JuceHeader.h"
 #include <math.h>
 
@@ -8,8 +9,8 @@ WaveletPacketBestBasisTransformation::WaveletPacketBestBasisTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
         int windowFunctionNr,
-        int waveletBaseTypeNr)
-    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr),
+        WaveletBase newWaveletBaseType)
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, newWaveletBaseType),
     //Time and frequency resolution can't be estimated since they change dynamically. Assume same values as for the DWT.
     spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)) {
     

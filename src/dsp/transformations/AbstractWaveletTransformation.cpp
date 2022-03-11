@@ -1,20 +1,21 @@
 #include "AbstractWaveletTransformation.h"
 #include "JuceHeader.h"
 
-
-AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, int windowFunctionNr, int waveletBaseTypeNr)
+AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, int windowFunctionNr, WaveletBase newWaveletBase)
     : Transformation(newSamplingRate, newResolution, windowFunctionNr),
-      mWaveletBaseTypeNr(waveletBaseTypeNr), mDwtMaxLevel(getMaxLevel(newResolution)), mConstantLevelsHedge(nullptr), 
-      mDWTLevelsHedge(nullptr), extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
-
+      mDwtMaxLevel(getMaxLevel(newResolution)), 
+      mConstantLevelsHedge(nullptr),
+      mDWTLevelsHedge(nullptr), 
+      wavelet(newWaveletBase), 
+      extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
 
     mDwtInput = new Interval(0, newResolution - 1);//wavelet transformation input data
 
-    setWaveletBase(mWaveletBaseTypeNr);
+    setWaveletBase(newWaveletBase);
     updateConstantLevelsHedge(mDwtMaxLevel / 2);
     updateDWTLevelsHedge();
 
-    DBG("AbstractWaveletTransformation::initialize done with waveletNr=" + juce::String(mWaveletBaseTypeNr) + "maxLevel=" + juce::String(mDwtMaxLevel));
+    DBG("AbstractWaveletTransformation::initialize done with waveletNr=" + juce::String(newWaveletBase) + "maxLevel=" + juce::String(mDwtMaxLevel));
 };
 
 AbstractWaveletTransformation::~AbstractWaveletTransformation() {
@@ -55,95 +56,96 @@ auto AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) -> in
     return minBestBasisLevel;
 }
 
-void AbstractWaveletTransformation::setWaveletBase(int waveletBaseNr) {
+void AbstractWaveletTransformation::setWaveletBase(const WaveletBase& newWaveletBase) {
     setReady(false);
 
-    switch (waveletBaseNr) {
-        case SpectronParameters::WAVELET_DAUBECHIES_02: {
+    switch (newWaveletBase) {
+        case WaveletBase::DAUBECHIES_02: {
             mDwtFilterG.Set(d02doqf, d02dalpha, d02domega);
             mDwtFilterH.Set(d02soqf, d02salpha, d02somega);
             break;
         }
-        case SpectronParameters::WAVELET_DAUBECHIES_04: {
+        case WaveletBase::DAUBECHIES_04: {
             mDwtFilterG.Set(d04doqf, d04dalpha, d04domega);
             mDwtFilterH.Set(d04soqf, d04salpha, d04somega);
             break;
         }
-        case SpectronParameters::WAVELET_DAUBECHIES_06: {
+        case WaveletBase::DAUBECHIES_06: {
             mDwtFilterG.Set(d06doqf, d06dalpha, d06domega);
             mDwtFilterH.Set(d06soqf, d06salpha, d06somega);
             break;
         }
-        case SpectronParameters::WAVELET_DAUBECHIES_08: {
+        case WaveletBase::DAUBECHIES_08: {
             mDwtFilterG.Set(d08doqf, d08dalpha, d08domega);
             mDwtFilterH.Set(d08soqf, d08salpha, d08somega);
             break;
         }
-        case SpectronParameters::WAVELET_DAUBECHIES_10: {
+        case WaveletBase::DAUBECHIES_10: {
             mDwtFilterG.Set(d10doqf, d10dalpha, d10domega);
             mDwtFilterH.Set(d10soqf, d10salpha, d10somega);
             break;
         }
-        case SpectronParameters::WAVELET_DAUBECHIES_12: {
+        case WaveletBase::DAUBECHIES_12: {
             mDwtFilterG.Set(d12doqf, d12dalpha, d12domega);
             mDwtFilterH.Set(d12soqf, d12salpha, d12somega);
             break;
         }
-        case SpectronParameters::WAVELET_DAUBECHIES_14: {
+        case WaveletBase::DAUBECHIES_14: {
             mDwtFilterG.Set(d14doqf, d14dalpha, d14domega);
             mDwtFilterH.Set(d14soqf, d14salpha, d14somega);
             break;
         }
-        case SpectronParameters::WAVELET_DAUBECHIES_16: {
+        case WaveletBase::DAUBECHIES_16: {
             mDwtFilterG.Set(d16doqf, d16dalpha, d16domega);
             mDwtFilterH.Set(d16soqf, d16salpha, d16somega);
             break;
         }
-        case SpectronParameters::WAVELET_DAUBECHIES_18: {
+        case WaveletBase::DAUBECHIES_18: {
             mDwtFilterG.Set(d18doqf, d18dalpha, d18domega);
             mDwtFilterH.Set(d18soqf, d18salpha, d18somega);
             break;
         }
-        case SpectronParameters::WAVELET_DAUBECHIES_20: {
+        case WaveletBase::DAUBECHIES_20: {
             mDwtFilterG.Set(d20doqf, d20dalpha, d20domega);
             mDwtFilterH.Set(d20soqf, d20salpha, d20somega);
             break;
         }
-        case SpectronParameters::WAVELET_COIFMAN_06: {
+        case WaveletBase::COIFMAN_06: {
             mDwtFilterG.Set(c06doqf, c06dalpha, c06domega);
             mDwtFilterH.Set(c06soqf, c06salpha, c06somega);
             break;
         }
-        case SpectronParameters::WAVELET_COIFMAN_12: {
+        case WaveletBase::COIFMAN_12: {
             mDwtFilterG.Set(c12doqf, c12dalpha, c12domega);
             mDwtFilterH.Set(c12soqf, c12salpha, c12somega);
             break;
         }
-        case SpectronParameters::WAVELET_COIFMAN_18: {
+        case WaveletBase::COIFMAN_18: {
             mDwtFilterG.Set(c18doqf, c18dalpha, c18domega);
             mDwtFilterH.Set(c18soqf, c18salpha, c18somega);
             break;
         }
-        case SpectronParameters::WAVELET_COIFMAN_24: {
+        case WaveletBase::COIFMAN_24: {
             mDwtFilterG.Set(c24doqf, c24dalpha, c24domega);
             mDwtFilterH.Set(c24soqf, c24salpha, c24somega);
             break;
         }
-        case SpectronParameters::WAVELET_COIFMAN_30: {
+        case WaveletBase::COIFMAN_30: {
             mDwtFilterG.Set(c30doqf, c30dalpha, c30domega);
             mDwtFilterH.Set(c30soqf, c30salpha, c30somega);
             break;
         }
-        case SpectronParameters::WAVELET_BEYLKIN_18: {
+        case WaveletBase::BEYLKIN_18: {
             mDwtFilterG.Set(b18doqf, b18dalpha, b18domega);
             mDwtFilterH.Set(b18soqf, b18salpha, b18somega);
             break;
         }
-        case SpectronParameters::WAVELET_VAIDYANATHAN_18: {
+        case WaveletBase::VAIDYANATHAN_18: {
             mDwtFilterG.Set(v24doqf, v24dalpha, v24domega);
             mDwtFilterH.Set(v24soqf, v24salpha, v24somega);
             break;
         }
+        case WaveletBase::NUMBER_OF_OPTIONS:
         default: {
             bool unknownWavelet = false;
             assert(unknownWavelet);
@@ -151,7 +153,7 @@ void AbstractWaveletTransformation::setWaveletBase(int waveletBaseNr) {
     }
 
     DBG("AbstractWaveletTransformation::setWaveletBase done with waveletBaseNr=" +
-        juce::String(waveletBaseNr) + ",coeffSize=" + juce::String(mDwtFilterG.pcoef_size));
+        juce::String(newWaveletBase) + ",coeffSize=" + juce::String(mDwtFilterG.pcoef_size));
 
     setReady(true);
 }

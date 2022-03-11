@@ -1,4 +1,5 @@
 #include "TransformationFactory.h"
+#include "AbstractWaveletTransformation.h"
 #include "Transformation.h"
 #include "WaveletPacketTransformation.h"
 #include <cstddef>
@@ -33,7 +34,7 @@ auto TransformationFactory::createTransformation(
         double samplingRate,
         Transformation::ResolutionType resolution,
         int windowFunction,
-        int waveletBaseTypeNr,
+        AbstractWaveletTransformation::WaveletBase waveletBase,
         WaveletPacketTransformation::ResolutionRatioOption resolutionRatio) -> Transformation * {
     DBG("TransformationFactory::createTransformation started. transformationNr=" +
         juce::String(newTransformationType) +
@@ -48,17 +49,17 @@ auto TransformationFactory::createTransformation(
             break;
         }
         case Type::FAST_WAVELET_TRANSFORM: {
-            transformation = new WaveletTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr);
+            transformation = new WaveletTransformation(samplingRate, resolution, windowFunction, waveletBase);
             jassert(transformation);
             break;
         }
         case Type::FAST_WAVELET_PACKET_TRANSFORM: {
-            transformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr, resolutionRatio);
+            transformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBase, resolutionRatio);
             jassert(transformation);
             break;
         }
         case Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM: {
-            transformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr);
+            transformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, windowFunction, waveletBase);
             jassert(transformation);
             break;
         }

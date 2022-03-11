@@ -34,7 +34,7 @@ public:
             double newSamplingRate,
             ResolutionType newResolution,
             int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
-            int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT,
+            WaveletBase newWaveletBaseType = WaveletBase::DEFAULT,
             ResolutionRatioOption newResolutionRatioOption = ResolutionRatioOption::DEFAULT);
     ~WaveletPacketTransformation() override;
 
