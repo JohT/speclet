@@ -55,3 +55,4 @@ GNU Lesser General Public License v2.1
 [Reference to non-static member function must be called](https://stackoverflow.com/questions/26331628/reference-to-non-static-member-function-must-be-called)
 [Pointer-to-Member Function](http://www.codeguru.com/cpp/cpp/article.php/c17401/C-Tutorial-PointertoMember-Function.htm)
 [CLAP CLever Audio Plugin](https://github.com/free-audio/clap)
+[Commit Message Guidelines](https://gist.github.com/robertpainsi/b632364184e70900af4ab688decf6f53)
