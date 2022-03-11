@@ -55,7 +55,7 @@ public:
             double samplingRate,
             Transformation::ResolutionType resolution,
             int windowFunction = SpectronParameters::WINDOWING_DEFAULT,
-            int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT,
+            AbstractWaveletTransformation::WaveletBase waveletBase = AbstractWaveletTransformation::WaveletBase::DEFAULT,
             WaveletPacketTransformation::ResolutionRatioOption resolutionRatio = WaveletPacketTransformation::ResolutionRatioOption::DEFAULT) -> Transformation *;
     auto getCurrentTransformation() -> Transformation * { return transformation; }
     void registerForTransformationResults(TransformationListener *value) { listenerToHandOverToEveryNewTransformation = value; }

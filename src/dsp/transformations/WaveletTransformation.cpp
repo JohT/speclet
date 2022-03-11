@@ -5,8 +5,8 @@ WaveletTransformation::WaveletTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
         int windowFunctionNr,
-        int waveletBaseTypeNr)
-    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr),
+        WaveletBase newWaveletBase)
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, newWaveletBase),
       spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)),
       fastWaveletTransformTimer(PerformanceTimer("Fast Wavelet Transform")) {
 

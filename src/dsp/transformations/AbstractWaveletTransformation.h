@@ -14,22 +14,49 @@
   ==============================================================================
 */
 #pragma once
-#include "../../../lib/wave++/source/libw.h"//TODO include with cmake
-#include "../../plugin/SpectronParameters.h"
+#include "../../../lib/wave++/source/libw.h"//TODO (JohT) include with cmake
+#include "../../utilities/PerformanceTimer.h"
 #include "../../utilities/RenderingHelper.h"
 #include "Transformation.h"
-#include "../../utilities/PerformanceTimer.h"
 
 class AbstractWaveletTransformation : public Transformation {
 public:
+    enum WaveletBase {
+        DAUBECHIES_02 = 1,
+        DAUBECHIES_04,
+        DAUBECHIES_06,
+        DAUBECHIES_08,
+        DAUBECHIES_10,
+        DAUBECHIES_12,
+        DAUBECHIES_14,
+        DAUBECHIES_16,
+        DAUBECHIES_18,
+        DAUBECHIES_20,
+        COIFMAN_06,
+        COIFMAN_12,
+        COIFMAN_18,
+        COIFMAN_24,
+        COIFMAN_30,
+        BEYLKIN_18,
+        VAIDYANATHAN_18,
+
+        NUMBER_OF_OPTIONS,
+        HAAR = DAUBECHIES_02,
+        DEFAULT = VAIDYANATHAN_18
+    };
     AbstractWaveletTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
-            int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);
+            int windowFunctionNr,
+            WaveletBase newWaveletBase = WaveletBase::DEFAULT);
     ~AbstractWaveletTransformation() override;
 
-    void setWaveletBase(int waveletBasNr);
+    AbstractWaveletTransformation(const AbstractWaveletTransformation &) = delete;                    //No copy contructor
+    AbstractWaveletTransformation(AbstractWaveletTransformation &&) = delete;                         //No move contructor
+    auto operator=(const AbstractWaveletTransformation &) -> AbstractWaveletTransformation & = delete;//No copy assignment
+    auto operator=(AbstractWaveletTransformation &&) -> AbstractWaveletTransformation & = delete;     //No move assignment
+
+    void setWaveletBase(const WaveletBase& newWaveletBase);
 
 protected:
     virtual auto getMaxLevel(int dimension) -> int;
@@ -43,7 +70,6 @@ protected:
     virtual void updateConstantLevelsHedge(unsigned int resolutionRatioDWPT = 0);
     virtual void updateDWTLevelsHedge();
 
-    int mWaveletBaseTypeNr;//Waveletbase-type, see enum WAVELET_BASE_NR
     int mDwtMaxLevel;      //Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
     PQMF mDwtFilterH;      //DWT/DWPT lowpass filter coeffs (result=scaling function);
     PQMF mDwtFilterG;      //DWT/DWPT hipass  filter coeffs (result=wavelet function);
@@ -58,6 +84,8 @@ private:
         TRANSFORM_RESULT_CLASS_INTERVAL = 0,
         TRANSFORM_RESULT_CLASS_ARRAYTREE
     };
+
+    WaveletBase wavelet;
 
     PerformanceTimer extractSpectrumTimer;
     void extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &bestBasis);

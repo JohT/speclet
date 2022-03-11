@@ -1,4 +1,5 @@
 #include "PluginProcessor.h"
+#include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "dsp/transformations/WaveletPacketTransformation.h"
 #include "ui/ColourGradients.h"
@@ -376,7 +377,7 @@ void SpectronAudioProcessor::updateTransformation() {
             sampleRate,
             parameters->getResolution(),
             parameters->getWindowing(),
-            parameters->getWavelet(),
+            static_cast<AbstractWaveletTransformation::WaveletBase>(parameters->getWavelet()),
             static_cast<WaveletPacketTransformation::ResolutionRatioOption>(parameters->getWaveletPaketBase()));
 
     parameters->unblockParameterChanges();

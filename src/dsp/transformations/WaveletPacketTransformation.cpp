@@ -5,9 +5,9 @@ WaveletPacketTransformation::WaveletPacketTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
         int windowFunctionNr,
-        int waveletBaseTypeNr,
+        WaveletBase newWaveletBase,
         ResolutionRatioOption newResolutionRatioOption)
-    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, waveletBaseTypeNr),
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, newWaveletBase),
       samplingRate(newSamplingRate),
       timeFrequencyResolutionTreeLevelOffset(toTimeFrequencyResolutionTreeLevelOffset(newResolutionRatioOption)),
       resultTreeLevel(getWaveletPacketResultTreeLevel(mDwtMaxLevel, timeFrequencyResolutionTreeLevelOffset)),
