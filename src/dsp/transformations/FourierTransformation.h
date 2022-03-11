@@ -19,14 +19,17 @@
 #include "TransformationFactory.h"
 #include "fftw3.h"
 
-
 class FourierTransformation : public Transformation {
 public:
     FourierTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
+            int windowFunctionNr);
     ~FourierTransformation() override;
+    FourierTransformation(FourierTransformation &) = delete;                     //No copy contructor
+    FourierTransformation(FourierTransformation &&) = delete;                    //No move contructor
+    auto operator=(FourierTransformation &) -> FourierTransformation & = delete; //No copy assignment
+    auto operator=(FourierTransformation &&) -> FourierTransformation & = delete;//No move assignment
 
 protected:
     void calculate() override;

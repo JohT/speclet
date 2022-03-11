@@ -2,13 +2,13 @@
 
 FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, int windowFunctionNr)
     : Transformation(newSamplingRate, newResolution, windowFunctionNr), 
+      in(static_cast<double *>(fftw_malloc(sizeof(double) * newResolution))), 
+      out(static_cast<fftw_complex *>(fftw_malloc(sizeof(fftw_complex) * ((newResolution / 2) + 1)))), 
       fftExecutePlanTimer(PerformanceTimer("FourierTransformation::calculate (fftw execute)")),
       fftInputCopyTimer(PerformanceTimer("FourierTransformation::calculate (input copy)")),
       fftOutputCopyTimer(PerformanceTimer("FourierTransformation::calculate (output copy)")),  
       spectralDataInfo(newSamplingRate, newResolution, (newResolution / 2 + 1), 1) {
 
-    in = (double *) fftw_malloc(sizeof(double) * newResolution);
-    out = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * ((newResolution / 2) + 1));
     plan = fftw_plan_dft_r2c_1d(newResolution, in, out, FFTW_ESTIMATE);
 
     assert(plan);
@@ -17,7 +17,7 @@ FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionT
 
     setReady();
     setCalculated();
-};
+}
 
 FourierTransformation::~FourierTransformation() {
     setReady(false);
