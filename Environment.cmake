@@ -6,7 +6,7 @@ if (POLICY CMP0025)
 endif ()
 
 # Set C++ Language Standard to C++17
-set (CMAKE_CXX_STANDARD 17)
+set (CMAKE_CXX_STANDARD 20)
 
 # Generates a JSON file containing compile info like include paths, defines, etc. for clangd (IDE support)
 # Reference: https://stackoverflow.com/questions/39455090/clang-tidy-cant-find-my-header-files
