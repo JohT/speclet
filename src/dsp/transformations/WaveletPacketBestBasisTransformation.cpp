@@ -28,7 +28,7 @@ void WaveletPacketBestBasisTransformation::calculate() {
     fillDWTInput();
 
     //to hold the result of the wavelet packet transformation (=DWPT coeffs)
-    ArrayTreePer outDWPT(mDwtMaxLevel);
+    ArrayTreePer outDWPT(getWaveletFilterTreeMaxLevel());
 
     //DWPT (discrete wavelet packet transform), periodic
     Analysis(getDwtInput(), outDWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
@@ -36,9 +36,9 @@ void WaveletPacketBestBasisTransformation::calculate() {
 
     //calculate noise level for a chosen SNR //TODO should be provided in a better way e.g. by measurement...
     int signalToNoiseRatioInDecibel = 48;
-    auto resolution = getResolution();
+    auto resolution = static_cast<double>(getResolution());
     double noiseLevel = sqrt(1.0 / (signalToNoiseRatioInDecibel * resolution));
-    const double oracCostFactor = (1.0 + sqrt((double) 2 * log((double) mDwtMaxLevel * resolution)));//D&J Best Wavelet (BWB)
+    const double oracCostFactor = (1.0 + sqrt(2.0F * log(static_cast<double>(getWaveletFilterTreeMaxLevel()) * resolution)));//D&J Best Wavelet (BWB)
 
     //Find the best basis
     HedgePer bestBasis;

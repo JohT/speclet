@@ -63,8 +63,27 @@ protected:
     virtual auto getMaxLevel(ResolutionType resolution) -> WaveletLevelType;
     virtual auto getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType;
     virtual void fillDWTInput();
+    
+    /**
+     * @brief Sorts the tree by descending scale (ascending frequency)
+     * 
+     * @param tree 
+     */
     virtual void sortWaveletFilterTreeByScaleDescending(const ArrayTreePer &tree);
-    virtual void swapWaveletFilterTreeChilds(const ArrayTreePer &tree, const integer_number &L, const integer_number &B);
+    
+    /**
+     * @brief Swaps the right and the left child of a wavelet packet transform tree node ("block").
+
+     * This is necessary to get the correct order of frequencies in the wavelet packet transform tree.
+     * The "classic" dyadic decimated discrete wavelet transform only takes the result of the previous low pass filter and splits it into two parts.
+     * The wavelet packet transform also splits the result of the high pass filter (where specified). 
+     * Splitting it into two parts leads to a swapped order of frequencies. The highpass result contains the lower frequency an vice versa.
+     * Therefore these need to be swapped.
+     * @param tree 
+     * @param level 
+     * @param block 
+     */
+    virtual void swapWaveletFilterTreeChilds(const ArrayTreePer &tree, const WaveletLevelType &level, const unsigned int &block);
 
     void extractSpectrum(const Interval &outDWT);                                               // For "classic" (dyadic) Discrete Wavelet Transform
     void extractSpectrum(const ArrayTreePer &outWaveletPacketTree);                             // For Discrete Wavelet Packet Transform
@@ -75,10 +94,12 @@ protected:
     auto getDwtInput() -> const Interval & {
         return dwtInput;
     }
+    auto getWaveletFilterTreeMaxLevel() const -> WaveletLevelType {
+        return waveletFilterTreeMaxLevel;
+    }
 
-    WaveletLevelType mDwtMaxLevel;//Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
-    PQMF mDwtFilterH;             //DWT/DWPT lowpass filter coeffs (result=scaling function);
-    PQMF mDwtFilterG;             //DWT/DWPT hipass  filter coeffs (result=wavelet function);
+    PQMF mDwtFilterH;                          //DWT/DWPT lowpass filter coeffs (result=scaling function);
+    PQMF mDwtFilterG;                          //DWT/DWPT hipass  filter coeffs (result=wavelet function);
 
 private:
     enum TRANSFORM_RESULT_CLASS {
@@ -86,6 +107,7 @@ private:
         TRANSFORM_RESULT_CLASS_ARRAYTREE
     };
 
+    WaveletLevelType waveletFilterTreeMaxLevel;//Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
     Interval dwtInput;//wavelet transformation input data of wave++ library
 
     HedgePer *mConstantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
