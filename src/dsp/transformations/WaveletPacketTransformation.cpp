@@ -1,5 +1,6 @@
 #include "WaveletPacketTransformation.h"
 #include "JuceHeader.h"
+#include <cmath>
 
 WaveletPacketTransformation::WaveletPacketTransformation(
         double newSamplingRate,
@@ -58,7 +59,7 @@ auto WaveletPacketTransformation::getWaveletPacketResultTreeLevel(WaveletLevelTy
     //---------------------------------------------------------------------------
     assert(maxLevel > 0);
     assert(resolutionRatioOffset != 99);
-    long waveletPacketResultTreeLevel = maxLevel / 2 + resolutionRatioOffset;
+    auto waveletPacketResultTreeLevel = maxLevel / 2 + resolutionRatioOffset;
     //auto waveletPacketResultTreeLevel   static_cast<unsigned int>(ceil(static_cast<double>(maxLevel) * 0.5F) + resolutionRatioDWPT);
     DBG("AbstractWaveletTransformation::getWaveletPacketResultTreeLevel: maxLevel=" + juce::String(maxLevel) +
         ",resolutionRatio=" + juce::String(resolutionRatioOffset) +

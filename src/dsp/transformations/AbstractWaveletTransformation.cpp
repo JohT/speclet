@@ -9,8 +9,8 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
     : Transformation(newSamplingRate, newResolution, windowFunctionNr),
       waveletFilterTreeMaxLevel(getMaxLevel(newResolution)),
       dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))),
-      mConstantLevelsHedge(nullptr),
-      mDWTLevelsHedge(nullptr),
+      constantLevelsHedge(nullptr),
+      dWTLevelsHedge(nullptr),
       extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
 
     setWaveletBase(newWaveletBase);
@@ -21,11 +21,8 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
 }
 
 AbstractWaveletTransformation::~AbstractWaveletTransformation() {
-    delete (mConstantLevelsHedge);
-    delete (mDWTLevelsHedge);
-
-    mConstantLevelsHedge = nullptr;
-    mDWTLevelsHedge = nullptr;
+    constantLevelsHedge = nullptr;
+    dWTLevelsHedge = nullptr;
 
     DBG("AbstractWaveletTransformation destructed");
 }
@@ -228,19 +225,25 @@ void AbstractWaveletTransformation::analyse(Interval &analysisResult) {
 
 void AbstractWaveletTransformation::extractSpectrum(const Interval &outDWT) {
     assert(outDWT.length > 0);
-    extractSpectrum(TRANSFORM_RESULT_CLASS_INTERVAL, outDWT.origin, *mDWTLevelsHedge);
+    assert(outDWT.origin != nullptr);
+    auto waveletTransformOutput = std::span<real_number>(outDWT.origin, static_cast<unsigned long>(outDWT.length));
+    extractSpectrum(TRANSFORM_RESULT_CLASS_INTERVAL, waveletTransformOutput, *dWTLevelsHedge);
 }
 
 void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &outWaveletPacketTree) {
-    extractSpectrum(outWaveletPacketTree, *mConstantLevelsHedge);
+    extractSpectrum(outWaveletPacketTree, *constantLevelsHedge);
 }
 
 void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &outWaveletPacketTree, const HedgePer &levelsHedge) {
     assert(outWaveletPacketTree.maxlevel > 0);
-    extractSpectrum(TRANSFORM_RESULT_CLASS_ARRAYTREE, outWaveletPacketTree.origin, levelsHedge);
+    assert(outWaveletPacketTree.dim > 0);
+    assert(outWaveletPacketTree.origin != nullptr);
+    auto dataLength = outWaveletPacketTree.dim * (outWaveletPacketTree.maxlevel + 1);
+    auto waveletTransformOutput = std::span<real_number>(outWaveletPacketTree.origin, static_cast<unsigned long>(dataLength));
+    extractSpectrum(TRANSFORM_RESULT_CLASS_ARRAYTREE, waveletTransformOutput, levelsHedge);
 }
 
-void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &levelsHedge) {
+void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, std::span<real_number> origin, const HedgePer &levelsHedge) {
     extractSpectrumTimer.start();
 
     SpectralDataBuffer::ItemType spectrum;
@@ -251,15 +254,15 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
     long blockNumber = 0;
     long basisPosition = 0;
     long freqDuplicates = 0;
+    
     WaveletLevelType minBestBasisLevel = getMinLevel(levelsHedge);
     auto timeResolution = 1U << (waveletFilterTreeMaxLevel - minBestBasisLevel);
     auto timeStepSize = timeResolution / TIME_RESOLUTION_LIMIT;
-    float value = 0.0;
     auto frequencyResolution = getSpectralDataInfo().getFrequencyResolution();
     auto realToFullResolution = static_cast<double>(frequencyResolution) / static_cast<double>(getResolution());
-
     auto levels = std::span(levelsHedge.levels, static_cast<unsigned long>(levelsHedge.num_of_levels));
 
+    double value = 0.0;
     for (unsigned int time = 0; time < timeResolution; time++) {
         basisPosition = 0;
         spectrum.clear();
@@ -271,12 +274,12 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
             blockPosition = lrint(static_cast<double>(blockSize) / static_cast<double>(timeResolution) * static_cast<double>(time));
             blockPositionEnd = lrint(static_cast<double>(blockSize) / static_cast<double>(timeResolution) * static_cast<double>(time + timeStepSize));
             blockNumber = lrint(static_cast<double>(basisPosition) / static_cast<double>(blockSize));
-            freqDuplicates = lrint(realToFullResolution * static_cast<double>(blockSize));
 
             value = getAvgValue(transformResultClass, origin, static_cast<WaveletLevelType>(level), blockNumber, blockPosition, blockPositionEnd);
 
+            freqDuplicates = lrint(realToFullResolution * static_cast<double>(blockSize));
             for (int freqDuplicateNr = 0; freqDuplicateNr < freqDuplicates; freqDuplicateNr++) {
-                spectrum.push_back(value * value);
+                spectrum.push_back(static_cast<SpectralDataBuffer::ValueType>(value * value));
             }
 
             basisPosition += blockSize;
@@ -298,56 +301,53 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
 //returns the average value of the specified result tree positions
 auto AbstractWaveletTransformation::getAvgValue(
         int transformResultClass,
-        real_number *origin,
+        std::span<real_number> origin,
         WaveletLevelType level,
-        long blockNumber,
-        long blockposStart,
-        long blockposEnd) -> float {
+        unsigned long blockNumber,
+        unsigned long blockposStart,
+        unsigned long blockposEnd) -> double {
 
-    if (origin == nullptr) {
-        return 0.0F;
-    }
-
-    auto stepSize = 2;//skips every nth value. no mathematically exact averaging, but necessary for performance
+    //TODO (JohT) Stepsize hack still needed?
+    unsigned long stepSize = 2;//skips every nth value. no mathematically exact averaging, but necessary for performance
     auto count = 0;
     auto averageValue = 0.0;
-    real_number *values = nullptr;
+    std::span<real_number> values;
 
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         auto resolution = getResolution();
-        values = origin + (level * resolution + blockNumber * ((resolution) >> (level)));
+        auto offset = (level * resolution + blockNumber * ((resolution) >> (level)));
+        values = origin.subspan(offset);
     }
     if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
-        values = origin + (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1);
+        auto offset = (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1);
+        values = origin.subspan(offset);
     }
     if ((blockposStart + stepSize - 1) >= blockposEnd) {
-        return *(values + blockposStart);
+        return values[blockposStart];
     }
 
-    for (int blockpos = blockposStart; blockpos < blockposEnd; blockpos += stepSize) {
-        averageValue += abs(*(values + blockpos));
+    for (auto blockpos = blockposStart; blockpos < blockposEnd; blockpos += stepSize) {
+        averageValue += abs(values[blockpos]);
         count++;
     }
-    return static_cast<float>(averageValue / count);
+    return averageValue / count;
 }
 
 //returns the value of the specified result tree position
-auto AbstractWaveletTransformation::getValue(int transformResultClass, const real_number *origin, WaveletLevelType level, int blockNumber, int blockPosition) const -> float {
-    if (origin == nullptr) {
-        return 0.0F;
-    }
+auto AbstractWaveletTransformation::getValue(int transformResultClass, std::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double {
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         auto resolution = getResolution();
-        return *(origin + (level * resolution + blockNumber * ((resolution) >> (level))) + blockPosition);
+        auto offset = (level * resolution + blockNumber * ((resolution) >> (level))) + blockPosition;
+        return origin[offset];
     }
     if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
-        return *(origin + (1 << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1) + blockPosition);
+        auto offset = (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1) + blockPosition;
+        return origin[offset];
     }
     DBG("AbstractWaveletTransformation::getValue(..): Unkown transformResultClass");
     return 0.0;
 }
 
-//Updates the member "mConstantLevelsHedge" for a given level (e.g. 4,4,4,4)
 void AbstractWaveletTransformation::updateConstantLevelsHedge(WaveletLevelType level) {
     assert(level > 0);
     assert(level <= waveletFilterTreeMaxLevel);
@@ -359,16 +359,12 @@ void AbstractWaveletTransformation::updateConstantLevelsHedge(WaveletLevelType l
         levels[i] = level;
     }
 
-    delete (mConstantLevelsHedge);
-
-    mConstantLevelsHedge = new HedgePer(getResolution(), levelCount, levels.data());
-    assert(mConstantLevelsHedge);
+    constantLevelsHedge = std::make_unique<HedgePer>(getResolution(), levelCount, levels.data());
 
     DBG("AbstractWaveletTransformation::updateConstantLevelsHedge done with level=" +
         juce::String(level) + ",count=" + juce::String(levelCount));
 }
 
-//Updates/fills the member "mDWTLevelsHedge" with the levels, that are in use when a DWT is applied
 void AbstractWaveletTransformation::updateDWTLevelsHedge() {
     assert(waveletFilterTreeMaxLevel > 0);
 
@@ -379,9 +375,7 @@ void AbstractWaveletTransformation::updateDWTLevelsHedge() {
         levels[i + 1] = waveletFilterTreeMaxLevel - i;
     }
 
-    delete (mDWTLevelsHedge);
-
-    mDWTLevelsHedge = new HedgePer(getResolution(), waveletFilterTreeMaxLevel + 1, levels.data());
+    dWTLevelsHedge = std::make_unique<HedgePer>(getResolution(), waveletFilterTreeMaxLevel + 1, levels.data());
 
     DBG("AbstractWaveletTransformation::updateDWTLevelsHedge done with mDwtMaxLevel " + juce::String(waveletFilterTreeMaxLevel));
 }
