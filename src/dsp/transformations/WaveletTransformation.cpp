@@ -28,7 +28,7 @@ void WaveletTransformation::calculate() {
     Interval outDWT(0, getResolution() - 1);
     //fast wavelet transform
     fastWaveletTransformTimer.start();
-    WaveTrans(getDwtInput(), outDWT, mDwtFilterH, mDwtFilterG, ConvDecPer);
+    analyse(outDWT);
     fastWaveletTransformTimer.stop();
     //fills the outputQueue with the spectral data (in a ready to draw order)
     extractSpectrum(outDWT);

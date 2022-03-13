@@ -42,7 +42,7 @@ auto AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) -> Wa
         return 1;
     }
     long minBestBasisLevel = 0;
-    
+
     auto levels = std::span(bestBasis.levels, static_cast<size_t>(bestBasis.num_of_levels));
     for (auto &level : levels) {
         assert(level >= 0);
@@ -218,6 +218,14 @@ void AbstractWaveletTransformation::swapWaveletFilterTreeChilds(const ArrayTreeP
     }
 }
 
+void AbstractWaveletTransformation::analyse(ArrayTreePer &analysisResult) {
+    Analysis(getDwtInput(), analysisResult, mDwtFilterH, mDwtFilterG, ConvDecPer);
+}
+
+void AbstractWaveletTransformation::analyse(Interval &analysisResult) {
+    WaveTrans(getDwtInput(), analysisResult, mDwtFilterH, mDwtFilterG, ConvDecPer);
+}
+
 void AbstractWaveletTransformation::extractSpectrum(const Interval &outDWT) {
     assert(outDWT.length > 0);
     extractSpectrum(TRANSFORM_RESULT_CLASS_INTERVAL, outDWT.origin, *mDWTLevelsHedge);
@@ -251,7 +259,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, re
     auto realToFullResolution = static_cast<double>(frequencyResolution) / static_cast<double>(getResolution());
 
     auto levels = std::span(levelsHedge.levels, static_cast<unsigned long>(levelsHedge.num_of_levels));
-    
+
     for (unsigned int time = 0; time < timeResolution; time++) {
         basisPosition = 0;
         spectrum.clear();
@@ -363,10 +371,10 @@ void AbstractWaveletTransformation::updateConstantLevelsHedge(WaveletLevelType l
 //Updates/fills the member "mDWTLevelsHedge" with the levels, that are in use when a DWT is applied
 void AbstractWaveletTransformation::updateDWTLevelsHedge() {
     assert(waveletFilterTreeMaxLevel > 0);
-    
+
     auto levels = std::vector<integer_number>(waveletFilterTreeMaxLevel + 1);
     levels[0] = waveletFilterTreeMaxLevel;
-    
+
     for (unsigned int i = 0; i < static_cast<unsigned int>(waveletFilterTreeMaxLevel); i++) {
         levels[i + 1] = waveletFilterTreeMaxLevel - i;
     }

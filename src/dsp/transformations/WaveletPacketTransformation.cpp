@@ -89,7 +89,7 @@ void WaveletPacketTransformation::calculate() {
     fillDWTInput();
 
     //to hold the result of the wavelet packet transformation (=DWPT coeffs)
-    ArrayTreePer out_DWPT(getWaveletFilterTreeMaxLevel());
+    ArrayTreePer outDWPT(getWaveletFilterTreeMaxLevel());
     //DBG("WaveletPacketTransformation::calculate before with mDWT_maxLevel= "	+
     //							  juce::String(mDWT_maxLevel)			+
     //	",inLen="		+ juce::String(mDWT_Input->length)	+
@@ -97,7 +97,7 @@ void WaveletPacketTransformation::calculate() {
     //);
 
     //DWPT (discrete wavelet packet transform), periodic
-    Analysis(getDwtInput(), out_DWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
-    sortWaveletFilterTreeByScaleDescending(out_DWPT);
-    extractSpectrum(out_DWPT);
+    analyse(outDWPT);
+    sortWaveletFilterTreeByScaleDescending(outDWPT);
+    extractSpectrum(outDWPT);
 }
