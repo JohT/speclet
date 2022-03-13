@@ -74,10 +74,10 @@ auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> const SpectralDataBuf
     assert(pItem);
     ItemStatisticsType statistics;
 
-    double valueSum = 0.0;
+    ValueType valueSum = 0.0;
 
     for (unsigned int i = 0; i < pItem->size(); i++) {
-        float value = pItem->at(i);
+        ValueType value = pItem->at(i);
 
         if (i == 0) {
             statistics.min = value;
@@ -92,7 +92,7 @@ auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> const SpectralDataBuf
 
         valueSum = valueSum + value;
     }
-    statistics.avg = static_cast<float>(valueSum / static_cast<double>(pItem->size()));
+    statistics.avg = static_cast<ValueType>(valueSum / static_cast<double>(pItem->size()));
 
     return statistics;
 }
