@@ -18,6 +18,8 @@
 #include "../../utilities/PerformanceTimer.h"
 #include "../../utilities/RenderingHelper.h"
 #include "Transformation.h"
+#include <memory>
+#include <span>
 
 class AbstractWaveletTransformation : public Transformation {
 public:
@@ -60,30 +62,14 @@ public:
     using WaveletLevelType = unsigned int;
 
 protected:
-    virtual auto getMaxLevel(ResolutionType resolution) -> WaveletLevelType;
-    virtual auto getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType;
-    virtual void fillDWTInput();
+    void fillDWTInput();
 
     /**
      * @brief Sorts the tree by descending scale (ascending frequency)
      * 
      * @param tree 
      */
-    virtual void sortWaveletFilterTreeByScaleDescending(const ArrayTreePer &tree);
-
-    /**
-     * @brief Swaps the right and the left child of a wavelet packet transform tree node ("block").
-
-     * This is necessary to get the correct order of frequencies in the wavelet packet transform tree.
-     * The "classic" dyadic decimated discrete wavelet transform only takes the result of the previous low pass filter and splits it into two parts.
-     * The wavelet packet transform also splits the result of the high pass filter (where specified). 
-     * Splitting it into two parts leads to a swapped order of frequencies. The highpass result contains the lower frequency an vice versa.
-     * Therefore these need to be swapped.
-     * @param tree 
-     * @param level 
-     * @param block 
-     */
-    virtual void swapWaveletFilterTreeChilds(const ArrayTreePer &tree, const WaveletLevelType &level, const unsigned int &block);
+    static void sortWaveletFilterTreeByScaleDescending(const ArrayTreePer &tree);
 
     /**
      * @brief Executes the wavelet packet transform analysis.
@@ -103,6 +89,10 @@ protected:
     void extractSpectrum(const ArrayTreePer &outWaveletPacketTree);                             // For Discrete Wavelet Packet Transform
     void extractSpectrum(const ArrayTreePer &outWaveletPacketTree, const HedgePer &levelsHedge);// For Discrete Wavelet Packet Transform with dynamic (best) basis
 
+    /**
+     * @brief Updates the member "constantLevelsHedge" for a given level (e.g. 4,4,4,4).
+     * @param level WaveletLevelType
+     */
     virtual void updateConstantLevelsHedge(WaveletLevelType level);
 
     auto getDwtInput() -> const Interval & {
@@ -124,12 +114,34 @@ private:
     PQMF mDwtFilterH;//DWT/DWPT lowpass filter coeffs (result=scaling function);
     PQMF mDwtFilterG;//DWT/DWPT hipass  filter coeffs (result=wavelet function);
 
-    HedgePer *mConstantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
-    HedgePer *mDWTLevelsHedge;     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
+    std::unique_ptr<HedgePer> constantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
+    std::unique_ptr<HedgePer> dWTLevelsHedge;     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
 
     PerformanceTimer extractSpectrumTimer;
+
+    static auto getMaxLevel(ResolutionType resolution) -> WaveletLevelType;
+    static auto getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType;
+
+    /**
+     * @brief Updates/fills the member "dWTLevelsHedge" with the levels, that are in use when a dyadic decimated discrete wavelet transform (DWT) is applied.
+     */
     void updateDWTLevelsHedge();
-    void extractSpectrum(int transformResultClass, real_number *origin, const HedgePer &levelsHedge);
-    auto getValue(int transformResultClass, const real_number *origin, WaveletLevelType level, int blockNumber, int blockPosition) const -> float;
-    auto getAvgValue(int transformResultClass, real_number *origin, WaveletLevelType level, long blockNumber, long blockposStart, long blockposEnd) -> float;
+
+    /**
+     * @brief Swaps the right and the left child of a wavelet packet transform tree node ("block").
+
+     * This is necessary to get the correct order of frequencies in the wavelet packet transform tree.
+     * The "classic" dyadic decimated discrete wavelet transform only takes the result of the previous low pass filter and splits it into two parts.
+     * The wavelet packet transform also splits the result of the high pass filter (where specified). 
+     * Splitting it into two parts leads to a swapped order of frequencies. The highpass result contains the lower frequency an vice versa.
+     * Therefore these need to be swapped.
+     * @param tree 
+     * @param level 
+     * @param block 
+     */
+    static void swapWaveletFilterTreeChilds(const ArrayTreePer &tree, const WaveletLevelType &level, const unsigned int &block);
+    
+    void extractSpectrum(int transformResultClass, std::span<real_number> origin, const HedgePer &levelsHedge);
+    auto getValue(int transformResultClass, std::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double;
+    auto getAvgValue(int transformResultClass, std::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockposStart, unsigned long blockposEnd) -> double;
 };

@@ -1,5 +1,6 @@
 #pragma once
 #include "WaveletTransformation.h"
+#include <limits>
 
 WaveletTransformation::WaveletTransformation(
         double newSamplingRate,
@@ -11,7 +12,7 @@ WaveletTransformation::WaveletTransformation(
       fastWaveletTransformTimer(PerformanceTimer("Fast Wavelet Transform")) {
 
     DBG("WaveletTransformation::initialize done with fs=" + juce::String(newSamplingRate) + ",res=" + juce::String(newResolution));
-
+    assert(newResolution <= std::numeric_limits<long>::max()); //wave++ Interval requires the resolution to be a long
     setReady();
     setCalculated();
 }
@@ -24,8 +25,9 @@ WaveletTransformation::~WaveletTransformation() {
 void WaveletTransformation::calculate() {
     //fills the mDWT_Input with data from the inputQueue
     fillDWTInput();
+
     //output data container to hold the result of the wavelet transformation ("coefficients")
-    Interval outDWT(0, getResolution() - 1);
+    Interval outDWT(0, static_cast<integer_number>(getResolution() - 1));
     //fast wavelet transform
     fastWaveletTransformTimer.start();
     analyse(outDWT);
