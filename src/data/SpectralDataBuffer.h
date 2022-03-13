@@ -30,15 +30,16 @@ public:
     static const int MAXHISTORYELEMENTS = 50;
     static const int SIZECHECKCOUNT = 500;
 
-    using ItemType = std::vector<float>;
-    using ItemSizeType = std::vector<float>::size_type;
-    using ItemIteratorType = std::vector<float>::iterator;
+    using ValueType = float;
+    using ItemType = std::vector<ValueType>;
+    using ItemSizeType = std::vector<ValueType>::size_type;
+    using ItemIteratorType = std::vector<ValueType>::iterator;
 
     //types for per spectrum statistic
     using ItemStatisticsType = struct {
-        float min;
-        float max;
-        float avg;
+        ValueType min;
+        ValueType max;
+        ValueType avg;
     };
 
     SpectralDataBuffer();
