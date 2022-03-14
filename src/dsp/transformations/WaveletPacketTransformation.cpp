@@ -5,7 +5,7 @@
 WaveletPacketTransformation::WaveletPacketTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
-         WindowFunctionFactory::Method newWindowFunction,
+        WindowFunctionFactory::Method newWindowFunction,
         WaveletBase newWaveletBase,
         ResolutionRatioOption newResolutionRatioOption)
     : AbstractWaveletTransformation(newSamplingRate, newResolution, newWindowFunction, newWaveletBase),
