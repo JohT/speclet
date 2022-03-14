@@ -376,7 +376,7 @@ void SpectronAudioProcessor::updateTransformation() {
             static_cast<TransformationFactory::Type>(parameters->getTransformation()),
             sampleRate,
             parameters->getResolution(),
-            parameters->getWindowing(),
+            static_cast<WindowFunctionFactory::Method>(parameters->getWindowing()),
             static_cast<AbstractWaveletTransformation::WaveletBase>(parameters->getWavelet()),
             static_cast<WaveletPacketTransformation::ResolutionRatioOption>(parameters->getWaveletPaketBase()));
 

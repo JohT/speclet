@@ -2,11 +2,11 @@
 #include "../windowing/WindowFunctionFactory.h"
 #include "JuceHeader.h"
 
-Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, int newWindowFunctionNr)
+Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
     : transformTypeNr(0),
       samplingRate(newSamplingRate),
       resolution(newResolution),
-      ready(false), 
+      ready(false),
       calculated(false),
       mTransformResultsListener(nullptr),
       calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
@@ -15,7 +15,7 @@ Transformation::Transformation(double newSamplingRate, ResolutionType newResolut
 
     waitForDestruction.signal();
 
-    setWindowFunction(newWindowFunctionNr);
+    setWindowFunction(newWindowFunction);
 
     DBG("Transformation::initialize done with sampling rate=" + juce::String(newSamplingRate) + ", resolution/blockSize=" + juce::String(newResolution));
 }
@@ -40,12 +40,11 @@ auto Transformation::getWindowFunction() const -> WindowFunction * {
     return windowFunction.get();
 }
 
-//loads or replaces the window function with the given number (see class WindowFunctionsFactory)
-void Transformation::setWindowFunction(int windowFunctionNr) {
+void Transformation::setWindowFunction(WindowFunctionFactory::Method newWindowFunction) {
     setReady(false);
-    windowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(static_cast<WindowFunctionFactory::Method>(windowFunctionNr), resolution);
+    windowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(newWindowFunction, resolution);
     assert(windowFunction);
-    DBG("Transformation::setWindowFunction done with windowFunctionNr=" + juce::String(windowFunctionNr));
+    DBG("Transformation::setWindowFunction done with windowFunctionNr=" + juce::String(newWindowFunction));
     setReady(true);
 }
 
@@ -53,7 +52,6 @@ auto Transformation::getInputQueue() -> std::queue<double> & {
     return inputQueue;
 }
 
-//reads the next input sample
 void Transformation::setNextInputSample(const double &sample) {
     if (!ready) {
         return;
@@ -70,9 +68,6 @@ void Transformation::setNextInputSample(const double &sample) {
     calculationFrame();
 }
 
-//this method is called on every new input sample and
-//contains the sequence of actions associated with the calculation, e.g.:
-//enough data? - ready? - calculate - informListeners,...
 void Transformation::calculationFrame() {
     calculated = false;
     if (inputQueue.size() < resolution) {
@@ -112,7 +107,7 @@ auto Transformation::getSpectralDataBuffer() -> SpectralDataBuffer * {
 }
 
 void Transformation::getNextSpectrum(SpectralDataBuffer::ItemType *item) {
-   outputBuffer.read(item);
+    outputBuffer.read(item);
 }
 
 auto Transformation::getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType {

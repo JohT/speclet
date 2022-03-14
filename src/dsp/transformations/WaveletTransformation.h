@@ -23,8 +23,9 @@ public:
     WaveletTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
+            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT,
             WaveletBase newWaveletBase = WaveletBase::DEFAULT);
+
     ~WaveletTransformation() override;
     WaveletTransformation(WaveletTransformation &) = delete;                     //No copy contructor
     WaveletTransformation(WaveletTransformation &&) = delete;                    //No move contructor

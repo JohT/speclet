@@ -17,6 +17,7 @@
 #include "../../plugin/SpectronParameters.h"
 #include "Transformation.h"
 #include "TransformationFactory.h"
+#include "../windowing/WindowFunctionFactory.h"
 #include "fftw3.h"
 
 class FourierTransformation : public Transformation {
@@ -24,7 +25,7 @@ public:
     FourierTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            int windowFunctionNr);
+            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT);
     ~FourierTransformation() override;
     FourierTransformation(FourierTransformation &) = delete;                     //No copy contructor
     FourierTransformation(FourierTransformation &&) = delete;                    //No move contructor

@@ -33,10 +33,14 @@ public:
     WaveletPacketTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
+            WindowFunctionFactory::Method newWindowFunction,
             WaveletBase newWaveletBaseType = WaveletBase::DEFAULT,
             ResolutionRatioOption newResolutionRatioOption = ResolutionRatioOption::DEFAULT);
     ~WaveletPacketTransformation() override;
+    WaveletPacketTransformation(const WaveletPacketTransformation &) = delete;                    //No copy contructor
+    WaveletPacketTransformation(WaveletPacketTransformation &&) = delete;                         //No move contructor
+    auto operator=(const WaveletPacketTransformation &) -> WaveletPacketTransformation & = delete;//No copy assignment
+    auto operator=(WaveletPacketTransformation &&) -> WaveletPacketTransformation & = delete;     //No move assignment
 
     auto getSpectralDataInfo() -> const SpectralDataInfo & override {
         return spectralDataInfo;

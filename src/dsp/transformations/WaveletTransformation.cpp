@@ -5,14 +5,14 @@
 WaveletTransformation::WaveletTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
-        int windowFunctionNr,
+        WindowFunctionFactory::Method newWindowFunction,
         WaveletBase newWaveletBase)
-    : AbstractWaveletTransformation(newSamplingRate, newResolution, windowFunctionNr, newWaveletBase),
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, newWindowFunction, newWaveletBase),
       spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)),
       fastWaveletTransformTimer(PerformanceTimer("Fast Wavelet Transform")) {
 
     DBG("WaveletTransformation::initialize done with fs=" + juce::String(newSamplingRate) + ",res=" + juce::String(newResolution));
-    assert(newResolution <= std::numeric_limits<long>::max()); //wave++ Interval requires the resolution to be a long
+    assert(newResolution <= std::numeric_limits<long>::max());//wave++ Interval requires the resolution to be a long
     setReady();
     setCalculated();
 }
