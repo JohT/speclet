@@ -21,8 +21,8 @@ class WaveletPacketTransformation : public AbstractWaveletTransformation {
 public:
     enum ResolutionRatioOption {
         EQUAL = 99,
-        TIME_X2 = -2,
-        TIME_X4 = -1,
+        TIME_X4 = -2,
+        TIME_X2 = -1,
         FREQUENCY_X2 = 1,
         FREQUENCY_X4 = 2,
 

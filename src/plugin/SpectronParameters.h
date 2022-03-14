@@ -90,8 +90,8 @@ public:
     };
     enum OptionsResolutionRatio {
         RESOLUTION_RATIO_Equal = 99,
-        RESOLUTION_RATIO_TimeX2 = -2,
-        RESOLUTION_RATIO_TimeX4 = -1,
+        RESOLUTION_RATIO_TimeX4 = -2,
+        RESOLUTION_RATIO_TimeX2 = -1,
         RESOLUTION_RATIO_FreqX2 = 1,
         RESOLUTION_RATIO_FreqX4 = 2,
 
