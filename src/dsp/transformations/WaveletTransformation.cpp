@@ -1,37 +1,36 @@
 #pragma once
 #include "WaveletTransformation.h"
+#include <limits>
 
 WaveletTransformation::WaveletTransformation(
-        double samplingRate,
-        long resolution,
-        int windowFunctionNr,
-        int waveletBaseTypeNr)
-    : AbstractWaveletTransformation(samplingRate, resolution, windowFunctionNr, waveletBaseTypeNr),
+        double newSamplingRate,
+        ResolutionType newResolution,
+        WindowFunctionFactory::Method newWindowFunction,
+        WaveletBase newWaveletBase)
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, newWindowFunction, newWaveletBase),
+      spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)),
       fastWaveletTransformTimer(PerformanceTimer("Fast Wavelet Transform")) {
 
-    mFrequencyResolution = resolution;
-    mTimeResolution = resolution / 2;
-    mSpectralDataInfo = new SpectralDataInfo(samplingRate, resolution, mFrequencyResolution, mTimeResolution);
-
-    DBG("WaveletTransformation::initialize done with fs=" + juce::String(mSamplingRate) + ",res=" + juce::String(mResolution));
-
-    ready = true;
-    calculated = true;
+    DBG("WaveletTransformation::initialize done with fs=" + juce::String(newSamplingRate) + ",res=" + juce::String(newResolution));
+    assert(newResolution <= std::numeric_limits<long>::max());//wave++ Interval requires the resolution to be a long
+    setReady();
+    setCalculated();
 }
 
 WaveletTransformation::~WaveletTransformation() {
-    ready = false;
+    setReady(false);
     DBG("WaveletTransformation destructed");
 }
 
 void WaveletTransformation::calculate() {
     //fills the mDWT_Input with data from the inputQueue
     fillDWTInput();
+
     //output data container to hold the result of the wavelet transformation ("coefficients")
-    Interval outDWT(0, mResolution - 1);
+    Interval outDWT(0, static_cast<integer_number>(getResolution() - 1));
     //fast wavelet transform
     fastWaveletTransformTimer.start();
-    WaveTrans(*mDwtInput, outDWT, mDwtFilterH, mDwtFilterG, ConvDecPer);
+    analyse(outDWT);
     fastWaveletTransformTimer.stop();
     //fills the outputQueue with the spectral data (in a ready to draw order)
     extractSpectrum(outDWT);

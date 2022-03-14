@@ -52,7 +52,7 @@ void SpectralDataBuffer::read(ItemType *pItem) {
     if (!buffer->empty()) {
         buffer->pop_front();
     }
-    //TODO(johnny) faster buffer? threadsafe?
+    //TODO(JohT) faster buffer? threadsafe?
     bufferReadTimer.stop();
 }
 
@@ -70,14 +70,14 @@ auto SpectralDataBuffer::unread() -> SpectralDataBuffer::ItemSizeType {
     return buffer->size();
 }
 
-auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> SpectralDataBuffer::ItemStatisticsType {
-    jassert(pItem);
+auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> const SpectralDataBuffer::ItemStatisticsType & {
+    assert(pItem);
     ItemStatisticsType statistics;
 
-    double valueSum = 0.0;
+    ValueType valueSum = 0.0;
 
     for (unsigned int i = 0; i < pItem->size(); i++) {
-        float value = pItem->at(i);
+        ValueType value = pItem->at(i);
 
         if (i == 0) {
             statistics.min = value;
@@ -92,7 +92,7 @@ auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> SpectralDataBuffer::I
 
         valueSum = valueSum + value;
     }
-    statistics.avg = static_cast<float>(valueSum / static_cast<double>(pItem->size()));
+    statistics.avg = static_cast<ValueType>(valueSum / static_cast<double>(pItem->size()));
 
     return statistics;
 }

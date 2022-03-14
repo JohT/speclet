@@ -1,89 +1,96 @@
 #include "WaveletPacketTransformation.h"
 #include "JuceHeader.h"
+#include <cmath>
 
 WaveletPacketTransformation::WaveletPacketTransformation(
-	double samplingRate, 
-	long resolution, 
-	int windowFunctionNr,
-	int waveletBaseTypeNr, 
-	int resolutionRatioDWPT) 
-	: AbstractWaveletTransformation(samplingRate, resolution, windowFunctionNr, waveletBaseTypeNr) 
-{
-	mSpectralDataInfo	= NULL;
-	setResolutionRatioDWPT(resolutionRatioDWPT);
-	updateConstantLevelsHedge(mDWPT_ResultTreeLevel);
+        double newSamplingRate,
+        ResolutionType newResolution,
+         WindowFunctionFactory::Method newWindowFunction,
+        WaveletBase newWaveletBase,
+        ResolutionRatioOption newResolutionRatioOption)
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, newWindowFunction, newWaveletBase),
+      samplingRate(newSamplingRate),
+      timeFrequencyResolutionTreeLevelOffset(toTimeFrequencyResolutionTreeLevelOffset(newResolutionRatioOption)),
+      resultTreeLevel(getWaveletPacketResultTreeLevel(getWaveletFilterTreeMaxLevel(), timeFrequencyResolutionTreeLevelOffset)),
+      spectralDataInfo(calculateSpectralDataInfo()) {
 
-    DBG("Wavelet initialize: N=" +
-        juce::String(mResolution) +
-        ",fres=" + juce::String(mFrequencyResolution) +
-        ",tres=" + juce::String(mTimeResolution) +
-        ",fs=" + juce::String(mSamplingRate) +
-        ",maxLevel=" + juce::String(mDwtMaxLevel) +
-        ",resultTree=" + juce::String(mDWPT_ResultTreeLevel));
+    setResolutionRatioOption(newResolutionRatioOption);
+    updateConstantLevelsHedge(resultTreeLevel);
 
-    ready = true;
-    calculated = true;
-};
+    DBG("WaveletPacketTransformation constructed: resolution=" +
+        juce::String(newResolution) +
+        ",sampling frequency=" + juce::String(newSamplingRate) +
+        ",maxLevel=" + juce::String(getWaveletFilterTreeMaxLevel()) +
+        ",resultTree=" + juce::String(resultTreeLevel));
+
+    setReady();
+    setCalculated();
+}
 
 WaveletPacketTransformation::~WaveletPacketTransformation() {
-	ready	= false;
+    setReady(false);
     DBG("WaveletPacketTransformation destructed");
 }
 
-int WaveletPacketTransformation::getFrequencyResolution (int waveletPacketResultTreeLevel) {
-	return (int)1<<(waveletPacketResultTreeLevel);
+auto WaveletPacketTransformation::getFrequencyResolution(WaveletLevelType waveletPacketResultTreeLevel) -> Transformation::ResolutionType {
+    return 1U << waveletPacketResultTreeLevel;
 }
 
-int WaveletPacketTransformation::getTimeResolution() {
-    return 1 << (mDwtMaxLevel - mDWPT_ResultTreeLevel);
+auto WaveletPacketTransformation::getTimeResolution() -> Transformation::ResolutionType {
+    return 1U << static_cast<unsigned int>(getWaveletFilterTreeMaxLevel() - resultTreeLevel);
 }
 
-int WaveletPacketTransformation::getWaveletPacketResultTreeLevel (int maxLevel, int resolutionRatioDWPT) {
-	//the best possible time & freq resolution ratio can be read out of the (DWPT tree-)level,
-	//that results in a square of blocks and block-elements (and therefor an equal freq & time resolution)
-	//This is only possible, if the dimension is even (see tab below).
-	//To get the possibility to change this toward a better frequency- or time-resolution,
-	//the parameter resolutionRatioDWPT can be set (+1 -> freq.Res. x2 , -2 -> time.Res. x4).
-	//
-	//---------------------------------------------------------------------------
-	//N		DIM		Level
-	//256	(8)		4	(2*128, 4*64, 8*32, 16*16)
-	//512	(9)		5?	(2*256, 4*128, 8*64, 16*32, 32*16) !
-	//1024	(10)	5	(2*512, 4*256, 8*128, 16*64, 32*32)
-	//2048	(11)	6?	(2*1024, 4*512, 8*256, 16*128, 32*64, 64*32) !
-	//4096	(12)	6	(2*2048, 4*1024, 8*512, 16*256, 32*128, 64*64)
-	//..
-	//Level = ceil_round(Dim / 2) 
-	//---------------------------------------------------------------------------
-	return (int)ceil((float)maxLevel / 2.0) + resolutionRatioDWPT;
+auto WaveletPacketTransformation::getWaveletPacketResultTreeLevel(WaveletLevelType maxLevel, int resolutionRatioOffset) -> WaveletLevelType {
+    //the best possible time & freq resolution ratio can be read out of the (DWPT tree-)level,
+    //that results in a square of blocks and block-elements (and therefor an equal freq & time resolution)
+    //This is only possible, if the dimension is even (see tab below).
+    //To get the possibility to change this toward a better frequency- or time-resolution,
+    //the parameter resolutionRatioDWPT can be set (+1 -> freq.Res. x2 , -2 -> time.Res. x4).
+    //
+    //---------------------------------------------------------------------------
+    //N		DIM		Level
+    //256	(8)		4	(2*128, 4*64, 8*32, 16*16)
+    //512	(9)		5?	(2*256, 4*128, 8*64, 16*32, 32*16) !
+    //1024	(10)	5	(2*512, 4*256, 8*128, 16*64, 32*32)
+    //2048	(11)	6?	(2*1024, 4*512, 8*256, 16*128, 32*64, 64*32) !
+    //4096	(12)	6	(2*2048, 4*1024, 8*512, 16*256, 32*128, 64*64)
+    //..
+    //Level = ceil_round(Dim / 2)
+    //---------------------------------------------------------------------------
+    assert(maxLevel > 0);
+    assert(resolutionRatioOffset != 99);
+    auto waveletPacketResultTreeLevel = maxLevel / 2 + resolutionRatioOffset;
+    //auto waveletPacketResultTreeLevel   static_cast<unsigned int>(ceil(static_cast<double>(maxLevel) * 0.5F) + resolutionRatioDWPT);
+    DBG("AbstractWaveletTransformation::getWaveletPacketResultTreeLevel: maxLevel=" + juce::String(maxLevel) +
+        ",resolutionRatio=" + juce::String(resolutionRatioOffset) +
+        ",WaveletPacketResultTreeLevel=" + juce::String(waveletPacketResultTreeLevel));
+    return waveletPacketResultTreeLevel;
 }
 
-void WaveletPacketTransformation::setResolutionRatioDWPT	(int resolutionRatioDWPT) {
-    DBG("WaveletPacketTransformation::setResolutionRatioDWPT started");
+void WaveletPacketTransformation::setResolutionRatioOption(ResolutionRatioOption newResolutionRatio) {
+    DBG("WaveletPacketTransformation::setResolutionRatioOption to " + juce::String(newResolutionRatio));
+    timeFrequencyResolutionTreeLevelOffset = toTimeFrequencyResolutionTreeLevelOffset(newResolutionRatio);
+    resultTreeLevel = getWaveletPacketResultTreeLevel(getWaveletFilterTreeMaxLevel(), timeFrequencyResolutionTreeLevelOffset);
+    spectralDataInfo = calculateSpectralDataInfo();
+}
 
-    mResolutionRatioDWPT		= resolutionRatioDWPT;
-	//since value 0 is no more allowed as enum, the new to "equal" corresponding value will be set manually to zero  
-	if (mResolutionRatioDWPT == SpectronParameters::RESOLUTION_RATIO_Equal) mResolutionRatioDWPT = 0;
+auto WaveletPacketTransformation::calculateSpectralDataInfo() -> SpectralDataInfo {
+    DBG("WaveletPacketTransformation::calculateSpectralDataInfo: waveletTreeLevel=" + juce::String(resultTreeLevel));
+    return {samplingRate, getResolution(), getFrequencyResolution(resultTreeLevel), getTimeResolution()};
+}
 
-    mDWPT_ResultTreeLevel = getWaveletPacketResultTreeLevel(mDwtMaxLevel, mResolutionRatioDWPT);
-    mFrequencyResolution = getFrequencyResolution(mDWPT_ResultTreeLevel);
-    mTimeResolution = getTimeResolution();
-
-    deleteAndZero(mSpectralDataInfo);
-	mSpectralDataInfo = new SpectralDataInfo(mSamplingRate, mResolution, mFrequencyResolution, mTimeResolution);
-	assert(mSpectralDataInfo);
+auto WaveletPacketTransformation::toTimeFrequencyResolutionTreeLevelOffset(const ResolutionRatioOption &resolutionRatioOption) -> int {
+    if (resolutionRatioOption == ResolutionRatioOption::EQUAL) {
+        return 0;
+    }
+    return resolutionRatioOption;
 }
 
 void WaveletPacketTransformation::calculate() {
-	fillDWTInput();
-
-    if (!mDwtInput) {
-        DBG("WaveletPacketTransformation::calculate: mDWT_Input = null!");
-        return;
-    }
+    fillDWTInput();
 
     //to hold the result of the wavelet packet transformation (=DWPT coeffs)
-    ArrayTreePer out_DWPT(mDwtMaxLevel);
+    ArrayTreePer outDWPT(getWaveletFilterTreeMaxLevel());
     //DBG("WaveletPacketTransformation::calculate before with mDWT_maxLevel= "	+
     //							  juce::String(mDWT_maxLevel)			+
     //	",inLen="		+ juce::String(mDWT_Input->length)	+
@@ -91,7 +98,7 @@ void WaveletPacketTransformation::calculate() {
     //);
 
     //DWPT (discrete wavelet packet transform), periodic
-    Analysis(*mDwtInput, out_DWPT, mDwtFilterH, mDwtFilterG, ConvDecPer);
-    sortDWPTTreeByScaleDescending(out_DWPT);
-    extractSpectrum(out_DWPT, *mConstantLevelsHedge);
+    analyse(outDWPT);
+    sortWaveletFilterTreeByScaleDescending(outDWPT);
+    extractSpectrum(outDWPT);
 }

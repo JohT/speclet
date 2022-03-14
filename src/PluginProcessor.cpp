@@ -1,5 +1,7 @@
 #include "PluginProcessor.h"
+#include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
+#include "dsp/transformations/WaveletPacketTransformation.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpectronMainUI.h"
 #include "dsp/windowing/WindowFunctionFactory.h"
@@ -369,13 +371,14 @@ void SpectronAudioProcessor::updateTransformation() {
     currentTransformation = nullptr;
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
 
+    //TODO(JohT) Mapping colocated parameters to/from global plugin parameters
     TransformationFactory::getSingletonInstance().createTransformation(
-            parameters->getTransformation(),
+            static_cast<TransformationFactory::Type>(parameters->getTransformation()),
             sampleRate,
             parameters->getResolution(),
-            parameters->getWindowing(),
-            parameters->getWavelet(),
-            parameters->getWaveletPaketBase());
+            static_cast<WindowFunctionFactory::Method>(parameters->getWindowing()),
+            static_cast<AbstractWaveletTransformation::WaveletBase>(parameters->getWavelet()),
+            static_cast<WaveletPacketTransformation::ResolutionRatioOption>(parameters->getWaveletPaketBase()));
 
     parameters->unblockParameterChanges();
     currentTransformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();

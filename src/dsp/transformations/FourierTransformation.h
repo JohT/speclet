@@ -17,19 +17,26 @@
 #include "../../plugin/SpectronParameters.h"
 #include "Transformation.h"
 #include "TransformationFactory.h"
+#include "../windowing/WindowFunctionFactory.h"
 #include "fftw3.h"
-
 
 class FourierTransformation : public Transformation {
 public:
     FourierTransformation(
-            double samplingRate,
-            long resolution,
-            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
+            double newSamplingRate,
+            ResolutionType newResolution,
+            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT);
     ~FourierTransformation() override;
+    FourierTransformation(FourierTransformation &) = delete;                     //No copy contructor
+    FourierTransformation(FourierTransformation &&) = delete;                    //No move contructor
+    auto operator=(FourierTransformation &) -> FourierTransformation & = delete; //No copy assignment
+    auto operator=(FourierTransformation &&) -> FourierTransformation & = delete;//No move assignment
 
 protected:
     void calculate() override;
+    auto getSpectralDataInfo() -> const SpectralDataInfo & override {
+      return spectralDataInfo;
+    }
 
 private:
     fftw_plan plan;   //Plan holds prepared (optimized) fft
@@ -39,4 +46,6 @@ private:
     PerformanceTimer fftExecutePlanTimer;
     PerformanceTimer fftInputCopyTimer;
     PerformanceTimer fftOutputCopyTimer;
+    
+    SpectralDataInfo spectralDataInfo;
 };

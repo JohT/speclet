@@ -21,19 +21,25 @@ class WaveletTransformation : public AbstractWaveletTransformation {
 public:
     WaveletTransformation() = delete;//No default contructor
     WaveletTransformation(
-            double samplingRate,
-            long resolution,
-            int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT,
-            int waveletBaseTypeNr = SpectronParameters::WAVELET_DEFAULT);
+            double newSamplingRate,
+            ResolutionType newResolution,
+            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT,
+            WaveletBase newWaveletBase = WaveletBase::DEFAULT);
+
     ~WaveletTransformation() override;
     WaveletTransformation(WaveletTransformation &) = delete;                     //No copy contructor
     WaveletTransformation(WaveletTransformation &&) = delete;                    //No move contructor
     auto operator=(WaveletTransformation &) -> WaveletTransformation & = delete; //No copy assignment
     auto operator=(WaveletTransformation &&) -> WaveletTransformation & = delete;//No move assignment
 
+    auto getSpectralDataInfo() -> const SpectralDataInfo & override {
+        return spectralDataInfo;
+    }
+
 protected:
     void calculate() override;
 
 private:
+    SpectralDataInfo spectralDataInfo;
     PerformanceTimer fastWaveletTransformTimer;
 };

@@ -30,23 +30,24 @@ public:
     static const int MAXHISTORYELEMENTS = 50;
     static const int SIZECHECKCOUNT = 500;
 
-    using ItemType = std::vector<float>;
-    using ItemSizeType = std::vector<float>::size_type;
-    using ItemIteratorType = std::vector<float>::iterator;
+    using ValueType = float;
+    using ItemType = std::vector<ValueType>;
+    using ItemSizeType = std::vector<ValueType>::size_type;
+    using ItemIteratorType = std::vector<ValueType>::iterator;
 
     //types for per spectrum statistic
     using ItemStatisticsType = struct {
-        float min;
-        float max;
-        float avg;
+        ValueType min;
+        ValueType max;
+        ValueType avg;
     };
 
     SpectralDataBuffer();
     ~SpectralDataBuffer();
-    SpectralDataBuffer(const SpectralDataBuffer &) = delete;
-    SpectralDataBuffer(SpectralDataBuffer &&) = delete;
-    auto operator=(const SpectralDataBuffer &) -> SpectralDataBuffer & = delete;
-    auto operator=(SpectralDataBuffer &&) -> SpectralDataBuffer & = delete;
+    SpectralDataBuffer(const SpectralDataBuffer &) = delete;                    //No copy contructor
+    SpectralDataBuffer(SpectralDataBuffer &&) = delete;                         //No move contructor
+    auto operator=(const SpectralDataBuffer &) -> SpectralDataBuffer & = delete;//No copy assignment
+    auto operator=(SpectralDataBuffer &&) -> SpectralDataBuffer & = delete;     //No move assignment
 
     void write(const ItemType &item);
     void read(ItemType *pItem);
@@ -54,15 +55,10 @@ public:
     auto size() -> ItemSizeType;
     auto unread() -> ItemSizeType;
 
-    static auto getStatistics(ItemType *pItem) -> ItemStatisticsType;
+    static auto getStatistics(ItemType *pItem) -> const ItemStatisticsType &;
 
 private:
-#if __USE_BOOST
-    Bounded_Buffer<ItemType> *buffer;
-#else
     std::list<ItemType> *buffer;
-    //CriticalSection			criticalSection;
-#endif
     PerformanceTimer bufferWriteTimer, bufferReadTimer;
 
     ItemSizeType mItemSize;

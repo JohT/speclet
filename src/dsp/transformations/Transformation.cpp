@@ -1,79 +1,64 @@
 #include "Transformation.h"
-#include "JuceHeader.h"
 #include "../windowing/WindowFunctionFactory.h"
+#include "JuceHeader.h"
 
-
-using namespace std;
-
-Transformation::Transformation(double samplingRate, long resolution, int windowFunctionNr)
-    : waitForDestruction(new juce::WaitableEvent(true)), mTransformTypeNr(0), mOutputBuffer(new SpectralDataBuffer()),
+Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
+    : transformTypeNr(0),
+      samplingRate(newSamplingRate),
+      resolution(newResolution),
+      ready(false),
+      calculated(false),
       mTransformResultsListener(nullptr),
-      mResolution(resolution), mSamplingRate(samplingRate), ready(false), calculated(false),
-      mInputQueue(new queue<double>()),
-      mSpectralDataInfo(nullptr),
-      mWindowFunction(nullptr),
       calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
       informListenersTimer(PerformanceTimer("Transformation::informListeners")),
       waitForDestructionTimer(PerformanceTimer("Transformation::waitForDestruction")) {
 
-    waitForDestruction->signal();
+    waitForDestruction.signal();
 
-    setWindowFunction(windowFunctionNr);
+    setWindowFunction(newWindowFunction);
 
-    DBG("Transformation::initialize done with fs=" +
-        juce::String(mSamplingRate) +
-        ",res=" + juce::String(mResolution) +
-        ",fres=" + juce::String(mFrequencyResolution));
+    DBG("Transformation::initialize done with sampling rate=" + juce::String(newSamplingRate) + ", resolution/blockSize=" + juce::String(newResolution));
 }
 
 //destructor: waits, until a possibly within another thread currently running
 //calculation ends and deletes then all allocated objects
 Transformation::~Transformation() {
     waitForDestructionTimer.start();
-    bool timeoutDuringWait = waitForDestruction->wait(3000);
+    bool timeoutDuringWait = waitForDestruction.wait(WAIT_FOR_DESTRUCTION_TIMEOUT);
     waitForDestructionTimer.stop();
     if (!timeoutDuringWait) {
         DBG("Transformation destruction: Timeout during wait!");
     }
 
     ready = false;
-    waitForDestruction->signal();
-
-    delete (mInputQueue);
-    delete (mOutputBuffer);
-    delete (mSpectralDataInfo);
-    delete (waitForDestruction);
-
-    mInputQueue = nullptr;
-    mOutputBuffer = nullptr;
-    mSpectralDataInfo = nullptr;
-    waitForDestruction = nullptr;
+    waitForDestruction.signal();
 
     DBG("Transform destructed");
 }
 
-//loads or replaces the window function with the given number (see class WindowFunctionsFactory)
-void Transformation::setWindowFunction(int windowFunctionNr) {
-    ready = false;
-
-    mWindowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(static_cast<WindowFunctionFactory::Method>(windowFunctionNr), mResolution);
-    assert(mWindowFunction);
-    DBG("Transformation::setWindowFunction done with windowFunctionNr=" + juce::String(windowFunctionNr));
-
-    ready = true;
+auto Transformation::getWindowFunction() const -> WindowFunction * {
+    return windowFunction.get();
 }
 
-//reads the next input sample
-void Transformation::setNextInputSample(double sample) {
+void Transformation::setWindowFunction(WindowFunctionFactory::Method newWindowFunction) {
+    setReady(false);
+    windowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(newWindowFunction, resolution);
+    assert(windowFunction);
+    DBG("Transformation::setWindowFunction done with windowFunctionNr=" + juce::String(newWindowFunction));
+    setReady(true);
+}
+
+auto Transformation::getInputQueue() -> std::queue<double> & {
+    return inputQueue;
+}
+
+void Transformation::setNextInputSample(const double &sample) {
     if (!ready) {
         return;
     }
-    if (mInputQueue == nullptr) {
-        return;
-    }
-    mInputQueue->push(sample);
+    inputQueue.push(sample);
 
-    if (mWindowFunction == nullptr) {
+    if (windowFunction == nullptr) {
         return;
     }
     if (!calculated) {
@@ -83,14 +68,9 @@ void Transformation::setNextInputSample(double sample) {
     calculationFrame();
 }
 
-//this method is called on every new input sample and
-//contains the sequence of actions associated with the calculation, e.g.:
-//enough data? - ready? - calculate - informListeners,...
 void Transformation::calculationFrame() {
     calculated = false;
-
-    jassert(mResolution > 0);
-    if (mInputQueue->size() < static_cast<unsigned long>(mResolution)) {
+    if (inputQueue.size() < resolution) {
         //Calculation only with at least N samples possible
         calculated = true;
         return;
@@ -103,7 +83,7 @@ void Transformation::calculationFrame() {
         //begin of critical section: only one thread per time ------------------------------
         calculationFrameTimer.start();
         const ScopedLock myScopedLock(criticalSection);
-        waitForDestruction->reset();
+        waitForDestruction.reset();
 
         calculate();
         if (isOutputAvailable()) {
@@ -111,7 +91,7 @@ void Transformation::calculationFrame() {
         }
 
         calculated = true;
-        waitForDestruction->signal();
+        waitForDestruction.signal();
         calculationFrameTimer.stop();
         //end of critical section                          ---------------------------------
     }
@@ -119,25 +99,19 @@ void Transformation::calculationFrame() {
 
 //returns true, if spectral data is available
 auto Transformation::isOutputAvailable() -> bool {
-    if (!ready) {
-        return false;
-    }
-    if (mOutputBuffer == nullptr) {
-        return false;
-    }
-    return (getSpectralDataBuffer()->unread() > 0);
+    return ready && (outputBuffer.unread() > 0);
 }
 
 auto Transformation::getSpectralDataBuffer() -> SpectralDataBuffer * {
-    return mOutputBuffer;
+    return &outputBuffer;
 }
 
 void Transformation::getNextSpectrum(SpectralDataBuffer::ItemType *item) {
-    getSpectralDataBuffer()->read(item);
+    outputBuffer.read(item);
 }
 
 auto Transformation::getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType {
-    return getSpectralDataBuffer()->getStatistics(item);
+    return SpectralDataBuffer::getStatistics(item);
 }
 
 //simple single-listener, could be extend using arrays...
