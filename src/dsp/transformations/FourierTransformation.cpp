@@ -1,7 +1,8 @@
 #include "FourierTransformation.h"
 
-FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, int windowFunctionNr)
-    : Transformation(newSamplingRate, newResolution, windowFunctionNr), 
+
+FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
+    : Transformation(newSamplingRate, newResolution, newWindowFunction), 
       in(static_cast<double *>(fftw_malloc(sizeof(double) * newResolution))), 
       out(static_cast<fftw_complex *>(fftw_malloc(sizeof(fftw_complex) * ((newResolution / 2) + 1)))), 
       fftExecutePlanTimer(PerformanceTimer("FourierTransformation::calculate (fftw execute)")),

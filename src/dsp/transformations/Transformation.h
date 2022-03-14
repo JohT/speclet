@@ -18,6 +18,7 @@
 #include "../../data/SpectralDataBuffer.h"
 #include "../../data/SpectralDataInfo.h"
 #include "../windowing/WindowFunctions.h"
+#include "../windowing/WindowFunctionFactory.h"
 #include <memory>
 #include <queue>
 
@@ -38,11 +39,17 @@ public:
     auto operator=(Transformation &) -> Transformation & = delete; //No copy assignment
     auto operator=(Transformation &&) -> Transformation & = delete;//No move assignment
 
-    Transformation(double newSamplingRate, ResolutionType newResolution, int newWindowFunctionNr);
+    Transformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT);
     virtual ~Transformation();
 
     auto getWindowFunction() const -> WindowFunction *;
-    void setWindowFunction(int windowFunctionNr);
+
+    /**
+     * @brief Loads or replaces the window function with the given number (see class WindowFunctionsFactory)
+     * 
+     * @param newWindowFunction 
+     */
+    void setWindowFunction(WindowFunctionFactory::Method newWindowFunction);
 
     /**
      * @brief Get the input queue containing the next samples to be transformed
@@ -51,6 +58,11 @@ public:
      */
     auto getInputQueue() -> std::queue<double> &;
 
+    /**
+     * @brief Gathers the next input sample
+     * 
+     * @param sample 
+     */
     void setNextInputSample(const double &sample);
     auto isOutputAvailable() -> bool;
     auto getSpectralDataBuffer() -> SpectralDataBuffer *;
@@ -58,6 +70,7 @@ public:
     void setTransformationNr(int newTransformTypeNr) { transformTypeNr = newTransformTypeNr; }
     void setTransformResultListener(TransformationListener *value);
     void getNextSpectrum(SpectralDataBuffer::ItemType *item);
+
     static auto getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType;
 
     /**
@@ -100,10 +113,16 @@ private:
     PerformanceTimer calculationFrameTimer, informListenersTimer, waitForDestructionTimer;
 
     void informListenersAboutTransformResults();
+
+    /**
+     * @brief Meant to be called on every new sample to be transformed.
+     * Contains the sequence of actions associated with the calculation, 
+     * e.g.: enough data? - ready? - calculate - informListeners,...
+     */
     void calculationFrame();
 };
 
 class TransformationListener {
 public:
-    virtual void onTransformationEvent(Transformation *value) = 0;//abstract
+    virtual void onTransformationEvent(Transformation *value) = 0;
 };

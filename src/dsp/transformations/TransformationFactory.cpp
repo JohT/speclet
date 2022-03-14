@@ -33,9 +33,10 @@ auto TransformationFactory::createTransformation(
         Type newTransformationType,
         double samplingRate,
         Transformation::ResolutionType resolution,
-        int windowFunction,
+        WindowFunctionFactory::Method windowFunction,
         AbstractWaveletTransformation::WaveletBase waveletBase,
         WaveletPacketTransformation::ResolutionRatioOption resolutionRatio) -> Transformation * {
+            
     DBG("TransformationFactory::createTransformation started. transformationNr=" +
         juce::String(newTransformationType) +
         ",pointer to transformation" + (transformation != nullptr ? "exists" : "does not exist"));
@@ -45,22 +46,22 @@ auto TransformationFactory::createTransformation(
     switch (newTransformationType) {
         case Type::FAST_FOURIER_TRANSFORM: {
             transformation = new FourierTransformation(samplingRate, resolution, windowFunction);
-            jassert(transformation);
+            assert(transformation);
             break;
         }
         case Type::FAST_WAVELET_TRANSFORM: {
             transformation = new WaveletTransformation(samplingRate, resolution, windowFunction, waveletBase);
-            jassert(transformation);
+            assert(transformation);
             break;
         }
         case Type::FAST_WAVELET_PACKET_TRANSFORM: {
             transformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBase, resolutionRatio);
-            jassert(transformation);
+            assert(transformation);
             break;
         }
         case Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM: {
             transformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, windowFunction, waveletBase);
-            jassert(transformation);
+            assert(transformation);
             break;
         }
         case Type::BYPASS: {

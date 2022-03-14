@@ -54,7 +54,7 @@ public:
             Type newTransformationType,
             double samplingRate,
             Transformation::ResolutionType resolution,
-            int windowFunction = SpectronParameters::WINDOWING_DEFAULT,
+            WindowFunctionFactory::Method windowFunction = WindowFunctionFactory::Method::DEFAULT,
             AbstractWaveletTransformation::WaveletBase waveletBase = AbstractWaveletTransformation::WaveletBase::DEFAULT,
             WaveletPacketTransformation::ResolutionRatioOption resolutionRatio = WaveletPacketTransformation::ResolutionRatioOption::DEFAULT) -> Transformation *;
     auto getCurrentTransformation() -> Transformation * { return transformation; }

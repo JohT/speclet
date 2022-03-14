@@ -49,7 +49,7 @@ public:
     AbstractWaveletTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            int windowFunctionNr,
+            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT,
             WaveletBase newWaveletBase = WaveletBase::DEFAULT);
     ~AbstractWaveletTransformation() override;
 
@@ -140,7 +140,7 @@ private:
      * @param block 
      */
     static void swapWaveletFilterTreeChilds(const ArrayTreePer &tree, const WaveletLevelType &level, const unsigned int &block);
-    
+
     void extractSpectrum(int transformResultClass, std::span<real_number> origin, const HedgePer &levelsHedge);
     auto getValue(int transformResultClass, std::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double;
     auto getAvgValue(int transformResultClass, std::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockposStart, unsigned long blockposEnd) -> double;
