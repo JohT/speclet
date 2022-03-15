@@ -1,8 +1,6 @@
 #include "SpectronParameters.h"
 
 // Singleton instance variable (only one instance of this class)
-using juce::String;
-
 SpectronParameters *SpectronParameters::singletonInstance = nullptr;
 
 const juce::String SpectronParameters::PROPERTY_VALUE = "value";
@@ -15,7 +13,7 @@ const juce::String SpectronParameters::PARAMETER_GENERATOR = "generator";
 const juce::String SpectronParameters::PARAMETER_GENERATORFREQUENCY = "generatorfrequency";
 const juce::String SpectronParameters::PARAMETER_TRANSFORMATION = "transform";
 const juce::String SpectronParameters::PARAMETER_WAVELET = "wavelet";
-const juce::String SpectronParameters::PARAMETER_WAVELETPAKETBASE = "waveletpaketbase";
+const juce::String SpectronParameters::PARAMETER_WAVELETPACKETBASE = "waveletpaketbase";
 const juce::String SpectronParameters::PARAMETER_WINDOWING = "windowing";
 
 SpectronParameters::SpectronParameters() : waitForParameterChangeTimer(PerformanceTimer("SpectronParameters::waitForParameterChangeTimer")) {
@@ -27,7 +25,7 @@ SpectronParameters::SpectronParameters() : waitForParameterChangeTimer(Performan
     properties->addChild(juce::ValueTree(PARAMETER_ROUTING), PARAMETER_INDEX_Routing, nullptr);
     properties->addChild(juce::ValueTree(PARAMETER_TRANSFORMATION), PARAMETER_INDEX_Transformation, nullptr);
     properties->addChild(juce::ValueTree(PARAMETER_RESOLUTION), PARAMETER_INDEX_Resolution, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_WAVELETPAKETBASE), PARAMETER_INDEX_WaveletPaketBase, nullptr);
+    properties->addChild(juce::ValueTree(PARAMETER_WAVELETPACKETBASE), PARAMETER_INDEX_WaveletPacketBase, nullptr);
     properties->addChild(juce::ValueTree(PARAMETER_WINDOWING), PARAMETER_INDEX_Windowing, nullptr);
     properties->addChild(juce::ValueTree(PARAMETER_WAVELET), PARAMETER_INDEX_Wavelet, nullptr);
     properties->addChild(juce::ValueTree(PARAMETER_GENERATOR), PARAMETER_INDEX_Generator, nullptr);
@@ -60,14 +58,15 @@ void SpectronParameters::destruct() {
     if (singletonInstance == nullptr) {
         return;
     }
-
     delete (singletonInstance);
     singletonInstance = nullptr;
 }
 
-float SpectronParameters::getParameter(int index) {
+auto SpectronParameters::getParameter(int index) -> float {
     juce::ValueTree child = properties->getChild(index);
-    if (!child.isValid()) return (float) 0;
+    if (!child.isValid()) {
+        return 0.0F;
+    }
     return child.getProperty(PROPERTY_VALUE);
 }
 
