@@ -392,7 +392,7 @@ void SpectronAnalyzerComponent::comboBoxChanged(ComboBox *comboBoxThatHasChanged
         //[/UserComboBoxCode_comboBoxWavelet]
     } else if (comboBoxThatHasChanged == comboBoxWaveletPaketBasis) {
         //[UserComboBoxCode_comboBoxWaveletPaketBasis] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_WaveletPaketBase, comboBoxWaveletPaketBasis->getSelectedId());
+        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_WaveletPacketBase, comboBoxWaveletPaketBasis->getSelectedId());
         //[/UserComboBoxCode_comboBoxWaveletPaketBasis]
     } else if (comboBoxThatHasChanged == comboBoxSignalgenerator) {
         //[UserComboBoxCode_comboBoxSignalgenerator] -- add your combo box handling code here..
@@ -577,7 +577,7 @@ void SpectronAnalyzerComponent::valueTreePropertyChanged(ValueTree &treeWhosePro
     updateComboBox(SpectronParameters::PARAMETER_ROUTING, comboBoxSignalquelle, treeWhosePropertyHasChanged);
     updateComboBox(SpectronParameters::PARAMETER_TRANSFORMATION, comboBoxTransformation, treeWhosePropertyHasChanged);
     updateComboBox(SpectronParameters::PARAMETER_WAVELET, comboBoxWavelet, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_WAVELETPAKETBASE, comboBoxWaveletPaketBasis, treeWhosePropertyHasChanged);
+    updateComboBox(SpectronParameters::PARAMETER_WAVELETPACKETBASE, comboBoxWaveletPaketBasis, treeWhosePropertyHasChanged);
     updateComboBox(SpectronParameters::PARAMETER_WINDOWING, comboBoxWindowing, treeWhosePropertyHasChanged);
     updateSlider(SpectronParameters::PARAMETER_GENERATORFREQUENCY, sliderGeneratorFrequenz, treeWhosePropertyHasChanged);
 }

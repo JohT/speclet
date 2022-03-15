@@ -14,8 +14,10 @@
   ==============================================================================
 */
 #pragma once
-#include <JuceHeader.h>
 #include "../utilities/PerformanceTimer.h"
+
+#include <JuceHeader.h>
+
 
 #define PARAMETERS SpectronParameters::getSingletonInstance()
 
@@ -32,12 +34,11 @@ public:
         TIMEOUT_WAIT_BEFORE_SET = 5000
     };
     enum Parameters {
-        //Has to start with index=0 and end with TOTAL_NUMBER_OF_PARAMS
-        //Be aware of that when you extend it
+        //Has to start with index=0. TOTAL_NUMBER_OF_PARAMS needs to be the last parameter.
         PARAMETER_INDEX_Routing = 0,
         PARAMETER_INDEX_Transformation,
         PARAMETER_INDEX_Resolution,
-        PARAMETER_INDEX_WaveletPaketBase,
+        PARAMETER_INDEX_WaveletPacketBase,
         PARAMETER_INDEX_Windowing,
         PARAMETER_INDEX_Wavelet,
         PARAMETER_INDEX_Generator,
@@ -54,7 +55,7 @@ public:
         COLORMODE_RAINBOW,
         COLORMODE_FIRE,
 
-        COLORMODES_NumOptions,
+        COLORMODE_NumOptions,
         COLORMODE_DEFAULT = COLORMODE_BLUE
     };
     enum OptionsGenerator {
@@ -64,10 +65,10 @@ public:
         GENERATOR_SQUARE,
         GENERATOR_NOISE,
 
-        GENERATORS_NumOptions,
+        GENERATOR_NumOptions,
         GENERATOR_DEFAULT = GENERATOR_SINE
     };
-    static enum OptionsPlotAxis {
+    enum OptionsPlotAxis {
         PLOT_AXIS_LINEAR = 1,
         PLOT_AXIS_LOGARITHMIC,
 
@@ -98,7 +99,7 @@ public:
         RESOLUTION_RATIO_NumOptions = 5,
         RESOLUTION_RATIO_DEFAULT = RESOLUTION_RATIO_Equal
     };
-    static enum OptionsRouting {
+    enum OptionsRouting {
         ROUTING_GENERATOR = 1,
         ROUTING_L,
         ROUTING_R,
@@ -137,7 +138,7 @@ public:
         WAVELET_BEYLKIN_18,
         WAVELET_VAIDYANATHAN_18,
 
-        WAVELETS_NumOptions,
+        WAVELET_NumOptions,
         WAVELET_HAAR = WAVELET_DAUBECHIES_02,
         WAVELET_DEFAULT = WAVELET_DAUBECHIES_08
     };
@@ -150,7 +151,7 @@ public:
         WINDOWING_PARZEN,
         WINDOWING_WELCH,
         WINDOWING_RECTANGULAR,
-        WINDOWINGS_NumOptions,
+        WINDOWING_NumOptions,
         WINDOWING_DEFAULT = WINDOWING_BLACKMAN_HARRIS
     };
 
@@ -164,28 +165,11 @@ public:
     const static juce::String PARAMETER_GENERATORFREQUENCY;
     const static juce::String PARAMETER_TRANSFORMATION;
     const static juce::String PARAMETER_WAVELET;
-    const static juce::String PARAMETER_WAVELETPAKETBASE;
+    const static juce::String PARAMETER_WAVELETPACKETBASE;
     const static juce::String PARAMETER_WINDOWING;
 
-private:
-    static enum ChildIndizes {
-        CHILD_INDEX_Parameters = 0,
-        CHILD_INDEX_Metadata,
-
-        CHILD_INDEX_NumIndizes
-    };
-
-    // --------------- members --------------- //
-private:
-    static SpectronParameters *singletonInstance;
-
-    juce::ScopedPointer<juce::ValueTree> properties;
-    juce::ScopedPointer<juce::WaitableEvent> waitForParameterChange;
-    juce::CriticalSection criticalSection;
-
     // --------------- methods --------------- //
-public:
-    static SpectronParameters *getSingletonInstance();
+    static auto getSingletonInstance() -> SpectronParameters *;
     void destruct();
 
     void blockParameterChanges() { waitForParameterChange->reset(); };
@@ -198,17 +182,17 @@ public:
     auto getParameterName(int index) -> const juce::String;
     auto getParameterIndex(const juce::String& name) -> int;
 
-    auto getColorMode() -> int { return (int) getParameter(PARAMETER_INDEX_ColorMode); }
-    auto getGenerator() -> int { return (int) getParameter(PARAMETER_INDEX_Generator); }
+    auto getColorMode() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_ColorMode)); }
+    auto getGenerator() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Generator)); }
     auto getGeneratorFrequency() -> float { return getParameter(PARAMETER_INDEX_GeneratorFrequency); }
-    auto getLogMagnitude() -> bool { return (bool) getParameter(PARAMETER_INDEX_LogMagnitude); }
-    auto getLogFrequency() -> bool { return (bool) getParameter(PARAMETER_INDEX_LogFrequency); }
-    auto getResolution() -> long { return (long) getParameter(PARAMETER_INDEX_Resolution); }
-    auto getRouting() -> int { return (int) getParameter(PARAMETER_INDEX_Routing); }
-    auto getTransformation() -> int { return (int) getParameter(PARAMETER_INDEX_Transformation); }
-    auto getWavelet() -> int { return (int) getParameter(PARAMETER_INDEX_Wavelet); }
-    auto getWaveletPaketBase() -> int { return (int) getParameter(PARAMETER_INDEX_WaveletPaketBase); }
-    auto getWindowing() -> int { return (int) getParameter(PARAMETER_INDEX_Windowing); }
+    auto getLogMagnitude() -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogMagnitude)); }
+    auto getLogFrequency() -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogFrequency)); }
+    auto getResolution() -> long { return static_cast<long>(getParameter(PARAMETER_INDEX_Resolution)); }
+    auto getRouting() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Routing)); }
+    auto getTransformation() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Transformation)); }
+    auto getWavelet() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Wavelet)); }
+    auto getWaveletPaketBase() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_WaveletPacketBase)); }
+    auto getWindowing() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Windowing)); }
 
     //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
     void addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation = true);
@@ -219,8 +203,25 @@ public:
     auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties->createXml(); };
 
 private:
+    enum ChildIndizes {
+        CHILD_INDEX_Parameters = 0,
+        CHILD_INDEX_Metadata,
+
+        CHILD_INDEX_NumIndizes
+    };
+
+    // --------------- members --------------- //
+    static SpectronParameters *singletonInstance;
+
+    juce::ScopedPointer<juce::ValueTree> properties;
+    juce::ScopedPointer<juce::WaitableEvent> waitForParameterChange;
+    juce::CriticalSection criticalSection;
+
+    // --------------- methods --------------- //
+    
     SpectronParameters();
     ~SpectronParameters();
+    
     SpectronParameters(const SpectronParameters &);
 
     PerformanceTimer waitForParameterChangeTimer;

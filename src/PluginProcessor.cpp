@@ -42,7 +42,7 @@ SpectronAudioProcessor::SpectronAudioProcessor()
     parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Routing, SpectronParameters::ROUTING_MID);
     parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Transformation, SpectronParameters::TRANSFORM_DEFAULT);
     parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Wavelet, SpectronParameters::WAVELET_DEFAULT);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_WaveletPaketBase, SpectronParameters::RESOLUTION_RATIO_DEFAULT);
+    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_WaveletPacketBase, SpectronParameters::RESOLUTION_RATIO_DEFAULT);
     parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Windowing, SpectronParameters::WINDOWING_DEFAULT);
 
     //registers itself as listener for parameter-changes
@@ -159,7 +159,7 @@ void SpectronAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhoseProper
     if ((changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_RESOLUTION))         //
         || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_TRANSFORMATION))  //
         || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELET))         //
-        || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELETPAKETBASE))//
+        || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELETPACKETBASE))//
         || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_WINDOWING))) {
         updateTransformation();
     }
