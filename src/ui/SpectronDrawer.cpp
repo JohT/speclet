@@ -61,7 +61,7 @@ SpectronDrawer::SpectronDrawer() :
     //registers itself also as a transformation-result-lister for every transformation that will be created in future
     TransformationFactory::getSingletonInstance().registerForTransformationResults(this);
     //registeres itself as listener for parameter-changes
-    SpectronParameters::getSingletonInstance()->addListener(this);
+    SpectronParameters::getSingletonInstance().addListener(this);
     DBG("SpectronDrawer as parameter listener added");
     LOG("SpectronDrawer as parameter listener added");
 
@@ -74,7 +74,7 @@ SpectronDrawer::~SpectronDrawer() {
     //[/Destructor_pre]
 
     //[Destructor]. You can add your own custom destruction code here..
-    SpectronParameters::getSingletonInstance()->removeListener(this);
+    SpectronParameters::getSingletonInstance().removeListener(this);
     DBG("SpectronDrawer as parameter listener removed");
     LOG("SpectronDrawer as parameter listener removed");
     //[/Destructor]
