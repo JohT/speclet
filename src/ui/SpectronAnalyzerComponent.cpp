@@ -280,9 +280,9 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     //[Constructor] You can add your own custom stuff here..
 
     //gets the pointer to the parameters singelton - for a better readability
-    parameters = SpectronParameters::getSingletonInstance();
+    parameters = &SpectronParameters::getSingletonInstance();
     //registeres itself as listener for parameter-changes
-    SpectronParameters::getSingletonInstance()->addListener(this);
+    SpectronParameters::getSingletonInstance().addListener(this);
     DBG("SpectronAnalyzerComponent as parameter listener added");
     LOG("SpectronAnalyzerComponent as parameter listener added");
     //adds spectrum drawing component to the scrollable view
@@ -324,7 +324,7 @@ SpectronAnalyzerComponent::~SpectronAnalyzerComponent() {
 
     //[Destructor]. You can add your own custom destruction code here..
     //unregisteres itself as listener for parameter-changes
-    SpectronParameters::getSingletonInstance()->removeListener(this);
+    SpectronParameters::getSingletonInstance().removeListener(this);
     DBG("SpectronAnalyzerComponent as parameter listener removed");
     LOG("SpectronAnalyzerComponent as parameter listener removed");
     parameters = NULL;

@@ -17,9 +17,7 @@
 #include "../utilities/PerformanceTimer.h"
 
 #include <JuceHeader.h>
-
-
-#define PARAMETERS SpectronParameters::getSingletonInstance()
+#include <string>
 
 class SpectronParameters {
     // --------------- constants --------------- //
@@ -169,8 +167,7 @@ public:
     const static juce::String PARAMETER_WINDOWING;
 
     // --------------- methods --------------- //
-    static auto getSingletonInstance() -> SpectronParameters *;
-    void destruct();
+    static auto getSingletonInstance() -> SpectronParameters &;
 
     void blockParameterChanges() { waitForParameterChange->reset(); };
     void unblockParameterChanges() { waitForParameterChange->signal(); };
@@ -211,8 +208,6 @@ private:
     };
 
     // --------------- members --------------- //
-    static SpectronParameters *singletonInstance;
-
     juce::ScopedPointer<juce::ValueTree> properties;
     juce::ScopedPointer<juce::WaitableEvent> waitForParameterChange;
     juce::CriticalSection criticalSection;
@@ -221,7 +216,7 @@ private:
     
     SpectronParameters();
     ~SpectronParameters();
-    
+
     SpectronParameters(const SpectronParameters &);
 
     PerformanceTimer waitForParameterChangeTimer;

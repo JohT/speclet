@@ -1,8 +1,5 @@
 #include "SpectronParameters.h"
 
-// Singleton instance variable (only one instance of this class)
-SpectronParameters *SpectronParameters::singletonInstance = nullptr;
-
 const juce::String SpectronParameters::PROPERTY_VALUE = "value";
 const juce::String SpectronParameters::PARAMETER_COLORMODE = "colormode";
 const juce::String SpectronParameters::PARAMETER_LOGMAGNITUDE = "logmagnitude";
@@ -43,23 +40,11 @@ SpectronParameters::SpectronParameters() : waitForParameterChangeTimer(Performan
     waitForParameterChange->signal();
 }
 
-SpectronParameters::~SpectronParameters() {
-}
+SpectronParameters::~SpectronParameters() = default;
 
-SpectronParameters *SpectronParameters::getSingletonInstance() {
-    // Method to get the single instance of this class (Singleton)
-    if (SpectronParameters::singletonInstance == 0) {
-        SpectronParameters::singletonInstance = new SpectronParameters();
-    }
-    return SpectronParameters::singletonInstance;
-}
-
-void SpectronParameters::destruct() {
-    if (singletonInstance == nullptr) {
-        return;
-    }
-    delete (singletonInstance);
-    singletonInstance = nullptr;
+auto SpectronParameters::getSingletonInstance() -> SpectronParameters & {
+    static SpectronParameters singletonInstance;
+    return singletonInstance;
 }
 
 auto SpectronParameters::getParameter(int index) -> float {

@@ -19,7 +19,7 @@ SpectronAudioProcessor::SpectronAudioProcessor()
                              .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                              ),
-      parameters(SpectronParameters::getSingletonInstance()), parameterRouting(parameters->getRouting()), currentTransformation(nullptr), signalGenerator(nullptr) {
+      parameters(&SpectronParameters::getSingletonInstance()), parameterRouting(parameters->getRouting()), currentTransformation(nullptr), signalGenerator(nullptr) {
 
     //TODO height and width later for flexible resizing?
     lastUIWidth = 800;
@@ -51,15 +51,13 @@ SpectronAudioProcessor::SpectronAudioProcessor()
 }
 
 SpectronAudioProcessor::~SpectronAudioProcessor() {
-    SpectronParameters::getSingletonInstance()->removeListener(this);
+    SpectronParameters::getSingletonInstance().removeListener(this);
     DBG("SpectronAudioProcessor as parameter listener removed");
     LOG("SpectronAudioProcessor as parameter listener removed");
-
-    currentTransformation = NULL;
-    parameters = NULL;
+    currentTransformation = nullptr;
+    parameters = nullptr;
 
     TransformationFactory::getSingletonInstance().destruct();
-    SpectronParameters::getSingletonInstance()->destruct();
 
 #if _LOGTOFILE
     juce::Logger::setCurrentLogger(0, true);
@@ -253,7 +251,7 @@ void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         buffer.clear (i, 0, buffer.getNumSamples());
     }
 
-    //TODO(johnny) delete?
+    //TODO(JohT) delete?
     // updateFilters();
 
     // juce::dsp::AudioBlock<float> block(buffer);
