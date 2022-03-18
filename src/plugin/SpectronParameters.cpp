@@ -34,8 +34,7 @@ SpectronParameters::SpectronParameters() {
         properties.getChild(i).setProperty(PROPERTY_VALUE, static_cast<float>(0), nullptr);
     }
 
-    waitForParameterChange = new juce::WaitableEvent(true);
-    waitForParameterChange->signal();
+    waitForParameterChange.signal();
 }
 
 SpectronParameters::~SpectronParameters() = default;
@@ -65,7 +64,7 @@ void SpectronParameters::setParameter(int index, float newValue) {
     const ScopedLock myScopedLock(criticalSection);
 
     waitForParameterChangeTimer.start();
-    bool timeoutDuringWait = waitForParameterChange->wait(TIMEOUT_WAIT_BEFORE_SET);
+    bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
     waitForParameterChangeTimer.stop();
     if (!timeoutDuringWait) {
         DBG("SpectronParameters::setParameter: Timeout during wait!");
@@ -82,7 +81,7 @@ void SpectronParameters::setParameter(const juce::String &name, float newValue) 
     const ScopedLock myScopedLock(criticalSection);
 
     waitForParameterChangeTimer.start();
-    bool timeoutDuringWait = waitForParameterChange->wait(TIMEOUT_WAIT_BEFORE_SET);
+    bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
     waitForParameterChangeTimer.stop();
     if (!timeoutDuringWait) {
         DBG("SpectronParameters::setParameter: Timeout during wait!");
