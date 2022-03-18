@@ -197,7 +197,7 @@ public:
     void removeListener(juce::ValueTree::Listener *listener);
     //read and write to XML
     void readFromXML(const XmlElement &xml);
-    auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties->createXml(); };
+    auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties.createXml(); };
 
 private:
     enum ChildIndizes {
@@ -208,7 +208,7 @@ private:
     };
 
     // --------------- members --------------- //
-    juce::ScopedPointer<juce::ValueTree> properties;
+    juce::ValueTree properties = juce::ValueTree("SpectronParameters");
     juce::ScopedPointer<juce::WaitableEvent> waitForParameterChange;
     juce::CriticalSection criticalSection;
 
@@ -219,5 +219,5 @@ private:
 
     SpectronParameters(const SpectronParameters &);
 
-    PerformanceTimer waitForParameterChangeTimer;
+    PerformanceTimer waitForParameterChangeTimer = PerformanceTimer("SpectronParameters::waitForParameterChangeTimer");
 };
