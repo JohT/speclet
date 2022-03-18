@@ -13,27 +13,25 @@ const juce::String SpectronParameters::PARAMETER_WAVELET = "wavelet";
 const juce::String SpectronParameters::PARAMETER_WAVELETPACKETBASE = "waveletpaketbase";
 const juce::String SpectronParameters::PARAMETER_WINDOWING = "windowing";
 
-SpectronParameters::SpectronParameters() : waitForParameterChangeTimer(PerformanceTimer("SpectronParameters::waitForParameterChangeTimer")) {
+SpectronParameters::SpectronParameters() {
     //create ValueTree object, which stores all parameters as childs in a tree structure
 
-    properties = new juce::ValueTree("SpectronParameters");
-
     //add parameters as tree childs (must start with zero and use ascending indices -> enum)
-    properties->addChild(juce::ValueTree(PARAMETER_ROUTING), PARAMETER_INDEX_Routing, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_TRANSFORMATION), PARAMETER_INDEX_Transformation, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_RESOLUTION), PARAMETER_INDEX_Resolution, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_WAVELETPACKETBASE), PARAMETER_INDEX_WaveletPacketBase, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_WINDOWING), PARAMETER_INDEX_Windowing, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_WAVELET), PARAMETER_INDEX_Wavelet, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_GENERATOR), PARAMETER_INDEX_Generator, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_GENERATORFREQUENCY), PARAMETER_INDEX_GeneratorFrequency, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_LOGFREQUENCY), PARAMETER_INDEX_LogFrequency, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_LOGMAGNITUDE), PARAMETER_INDEX_LogMagnitude, nullptr);
-    properties->addChild(juce::ValueTree(PARAMETER_COLORMODE), PARAMETER_INDEX_ColorMode, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_ROUTING), PARAMETER_INDEX_Routing, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_TRANSFORMATION), PARAMETER_INDEX_Transformation, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_RESOLUTION), PARAMETER_INDEX_Resolution, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_WAVELETPACKETBASE), PARAMETER_INDEX_WaveletPacketBase, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_WINDOWING), PARAMETER_INDEX_Windowing, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_WAVELET), PARAMETER_INDEX_Wavelet, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_GENERATOR), PARAMETER_INDEX_Generator, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_GENERATORFREQUENCY), PARAMETER_INDEX_GeneratorFrequency, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_LOGFREQUENCY), PARAMETER_INDEX_LogFrequency, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_LOGMAGNITUDE), PARAMETER_INDEX_LogMagnitude, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_COLORMODE), PARAMETER_INDEX_ColorMode, nullptr);
 
     //add value zero to every tree child's value property
-    for (int i = 0; i < properties->getNumChildren(); i++) {
-        properties->getChild(i).setProperty(PROPERTY_VALUE, static_cast<float>(0), nullptr);
+    for (int i = 0; i < properties.getNumChildren(); i++) {
+        properties.getChild(i).setProperty(PROPERTY_VALUE, static_cast<float>(0), nullptr);
     }
 
     waitForParameterChange = new juce::WaitableEvent(true);
@@ -48,7 +46,7 @@ auto SpectronParameters::getSingletonInstance() -> SpectronParameters & {
 }
 
 auto SpectronParameters::getParameter(int index) -> float {
-    juce::ValueTree child = properties->getChild(index);
+    juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         return 0.0F;
     }
@@ -56,7 +54,7 @@ auto SpectronParameters::getParameter(int index) -> float {
 }
 
 auto SpectronParameters::getParameter(const juce::String &name) -> float {
-    juce::ValueTree child = properties->getChildWithName(name);
+    juce::ValueTree child = properties.getChildWithName(name);
     if (!child.isValid()) {
         return 0.0F;
     }
@@ -73,7 +71,7 @@ void SpectronParameters::setParameter(int index, float newValue) {
         DBG("SpectronParameters::setParameter: Timeout during wait!");
     }
 
-    juce::ValueTree child = properties->getChild(index);
+    juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         return;
     }
@@ -90,7 +88,7 @@ void SpectronParameters::setParameter(const juce::String &name, float newValue) 
         DBG("SpectronParameters::setParameter: Timeout during wait!");
     }
 
-    juce::ValueTree child = properties->getChildWithName(name);
+    juce::ValueTree child = properties.getChildWithName(name);
     if (!child.isValid()) {
         return;
     }
@@ -98,15 +96,15 @@ void SpectronParameters::setParameter(const juce::String &name, float newValue) 
 }
 
 auto SpectronParameters::getParameterIndex(const String &name) -> int {
-    juce::ValueTree child = properties->getChildWithName(name);
+    juce::ValueTree child = properties.getChildWithName(name);
     if (!child.isValid()) {
         return -1;
     }
-    return properties->indexOf(child);
+    return properties.indexOf(child);
 }
 
 auto SpectronParameters::getParameterName(int index) -> const juce::String {
-    juce::ValueTree child = properties->getChild(index);
+    juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         return {};
     }
@@ -115,12 +113,12 @@ auto SpectronParameters::getParameterName(int index) -> const juce::String {
 
 //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
 void SpectronParameters::addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation) {
-    properties->addListener(listener);
+    properties.addListener(listener);
 
     //if selected, the already added listener will be informed about every parameter as if it had been changed
     if (sendAllParametersForInitialisation) {
-        for (int i = 0; i < properties->getNumChildren(); i++) {
-            juce::ValueTree parameter = properties->getChild(i);
+        for (int i = 0; i < properties.getNumChildren(); i++) {
+            juce::ValueTree parameter = properties.getChild(i);
             if (!parameter.isValid()) {
                 continue;
             }
@@ -130,7 +128,7 @@ void SpectronParameters::addListener(juce::ValueTree::Listener *listener, bool s
 }
 //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
 void SpectronParameters::removeListener(juce::ValueTree::Listener *listener) {
-    properties->removeListener(listener);
+    properties.removeListener(listener);
 }
 
 //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
@@ -142,15 +140,15 @@ void SpectronParameters::readFromXML(const XmlElement &xml) {
     if (!importedProperties.isValid()) {
         return;
     }
-    if (importedProperties.getNumChildren() < properties->getNumChildren()) {
+    if (importedProperties.getNumChildren() < properties.getNumChildren()) {
         return;
     }
 
     //reads all currently defined parameters and overwrites their values,
     //if the same parameter is found in the imported ValueTree
-    for (int i = 0; i < properties->getNumChildren(); i++) {
+    for (int i = 0; i < properties.getNumChildren(); i++) {
         //get current parameter, skip if invalid
-        juce::ValueTree oldParameter = properties->getChild(i);
+        juce::ValueTree oldParameter = properties.getChild(i);
         if (!oldParameter.isValid()) {
             continue;
         }
