@@ -169,8 +169,8 @@ public:
     // --------------- methods --------------- //
     static auto getSingletonInstance() -> SpectronParameters &;
 
-    void blockParameterChanges() { waitForParameterChange->reset(); };
-    void unblockParameterChanges() { waitForParameterChange->signal(); };
+    void blockParameterChanges() { waitForParameterChange.reset(); }
+    void unblockParameterChanges() { waitForParameterChange.signal(); }
 
     void setParameter(int index, float newValue);
     void setParameter(const juce::String& name, float newValue);
@@ -197,7 +197,7 @@ public:
     void removeListener(juce::ValueTree::Listener *listener);
     //read and write to XML
     void readFromXML(const XmlElement &xml);
-    auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties.createXml(); };
+    auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties.createXml(); }
 
 private:
     enum ChildIndizes {
@@ -209,7 +209,7 @@ private:
 
     // --------------- members --------------- //
     juce::ValueTree properties = juce::ValueTree("SpectronParameters");
-    juce::ScopedPointer<juce::WaitableEvent> waitForParameterChange;
+    juce::WaitableEvent waitForParameterChange = juce::WaitableEvent(true);
     juce::CriticalSection criticalSection;
 
     // --------------- methods --------------- //
