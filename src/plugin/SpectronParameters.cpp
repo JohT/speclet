@@ -1,18 +1,5 @@
 #include "SpectronParameters.h"
 
-const juce::String SpectronParameters::PROPERTY_VALUE = "value";
-const juce::String SpectronParameters::PARAMETER_COLORMODE = "colormode";
-const juce::String SpectronParameters::PARAMETER_LOGMAGNITUDE = "logmagnitude";
-const juce::String SpectronParameters::PARAMETER_LOGFREQUENCY = "logfrequency";
-const juce::String SpectronParameters::PARAMETER_RESOLUTION = "resolution";
-const juce::String SpectronParameters::PARAMETER_ROUTING = "routing";
-const juce::String SpectronParameters::PARAMETER_GENERATOR = "generator";
-const juce::String SpectronParameters::PARAMETER_GENERATORFREQUENCY = "generatorfrequency";
-const juce::String SpectronParameters::PARAMETER_TRANSFORMATION = "transform";
-const juce::String SpectronParameters::PARAMETER_WAVELET = "wavelet";
-const juce::String SpectronParameters::PARAMETER_WAVELETPACKETBASE = "waveletpaketbase";
-const juce::String SpectronParameters::PARAMETER_WINDOWING = "windowing";
-
 SpectronParameters::SpectronParameters() {
     //create ValueTree object, which stores all parameters as childs in a tree structure
 

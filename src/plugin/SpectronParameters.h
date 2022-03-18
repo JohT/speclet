@@ -140,7 +140,7 @@ public:
         WAVELET_HAAR = WAVELET_DAUBECHIES_02,
         WAVELET_DEFAULT = WAVELET_DAUBECHIES_08
     };
-	enum OptionsWindowing {
+    enum OptionsWindowing {
         WINDOWING_BARTLETT = 1,
         WINDOWING_BLACKMAN,
         WINDOWING_BLACKMAN_HARRIS,
@@ -153,18 +153,18 @@ public:
         WINDOWING_DEFAULT = WINDOWING_BLACKMAN_HARRIS
     };
 
-    const static juce::String PROPERTY_VALUE;
-    const static juce::String PARAMETER_COLORMODE;
-    const static juce::String PARAMETER_LOGMAGNITUDE;
-    const static juce::String PARAMETER_LOGFREQUENCY;
-    const static juce::String PARAMETER_RESOLUTION;
-    const static juce::String PARAMETER_ROUTING;
-    const static juce::String PARAMETER_GENERATOR;
-    const static juce::String PARAMETER_GENERATORFREQUENCY;
-    const static juce::String PARAMETER_TRANSFORMATION;
-    const static juce::String PARAMETER_WAVELET;
-    const static juce::String PARAMETER_WAVELETPACKETBASE;
-    const static juce::String PARAMETER_WINDOWING;
+    inline const static juce::String PROPERTY_VALUE{"value"};
+    inline const static juce::String PARAMETER_COLORMODE{"colormode"};
+    inline const static juce::String PARAMETER_LOGMAGNITUDE{"logmagnitude"};
+    inline const static juce::String PARAMETER_LOGFREQUENCY{"logfrequency"};
+    inline const static juce::String PARAMETER_RESOLUTION{"resolution"};
+    inline const static juce::String PARAMETER_ROUTING{"routing"};
+    inline const static juce::String PARAMETER_GENERATOR{"generator"};
+    inline const static juce::String PARAMETER_GENERATORFREQUENCY{"generatorfrequency"};
+    inline const static juce::String PARAMETER_TRANSFORMATION{"transform"};
+    inline const static juce::String PARAMETER_WAVELET{"wavelet"};
+    inline const static juce::String PARAMETER_WAVELETPACKETBASE{"waveletpacketbase"};
+    inline const static juce::String PARAMETER_WINDOWING{"windowing"};
 
     // --------------- methods --------------- //
     static auto getSingletonInstance() -> SpectronParameters &;
@@ -173,11 +173,11 @@ public:
     void unblockParameterChanges() { waitForParameterChange.signal(); }
 
     void setParameter(int index, float newValue);
-    void setParameter(const juce::String& name, float newValue);
+    void setParameter(const juce::String &name, float newValue);
     auto getParameter(int index) -> float;
-    auto getParameter(const juce::String& name) -> float;
+    auto getParameter(const juce::String &name) -> float;
     auto getParameterName(int index) -> const juce::String;
-    auto getParameterIndex(const juce::String& name) -> int;
+    auto getParameterIndex(const juce::String &name) -> int;
 
     auto getColorMode() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_ColorMode)); }
     auto getGenerator() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Generator)); }
@@ -213,7 +213,7 @@ private:
     juce::CriticalSection criticalSection;
 
     // --------------- methods --------------- //
-    
+
     SpectronParameters();
     ~SpectronParameters();
 
