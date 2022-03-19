@@ -33,7 +33,7 @@ CheckOptions:
     - { key: readability-identifier-naming.VariableCase,           value: camel_Snake_Case  }
     - { key: readability-identifier-naming.MacroDefinitionCase,    value: UPPER_CASE }
     - { key: readability-identifier-naming.EnumConstantCase,       value: Camel_Snake_Case }
-    - { key: readability-identifier-naming.ConstexprVariableCase,  value: CamelCase  }
+    - { key: readability-identifier-naming.ConstexprVariableCase,  value: UPPER_CASE }
     - { key: readability-identifier-naming.GlobalConstantCase,     value: UPPER_CASE  }
     - { key: readability-identifier-naming.MemberConstantCase,     value: CamelCase  }
     - { key: readability-identifier-naming.StaticConstantCase,     value: CamelCase  }
