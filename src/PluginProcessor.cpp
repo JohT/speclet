@@ -1,4 +1,5 @@
 #include "PluginProcessor.h"
+#include "dsp/SignalGenerator.h"
 #include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "dsp/transformations/WaveletPacketTransformation.h"
@@ -19,7 +20,10 @@ SpectronAudioProcessor::SpectronAudioProcessor()
                              .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                              ),
-      parameters(&SpectronParameters::getSingletonInstance()), parameterRouting(parameters->getRouting()), currentTransformation(nullptr), signalGenerator(nullptr) {
+      parameters(&SpectronParameters::getSingletonInstance()), 
+      parameterRouting(parameters->getRouting()), 
+      currentTransformation(nullptr), 
+      signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGenerator::Waveform>(parameters->getGenerator()), parameters->getGeneratorFrequency())) {
 
     //TODO height and width later for flexible resizing?
     lastUIWidth = 800;
@@ -62,8 +66,6 @@ SpectronAudioProcessor::~SpectronAudioProcessor() {
 #if _LOGTOFILE
     juce::Logger::setCurrentLogger(0, true);
 #endif
-
-    deleteAndZero(signalGenerator);
 }
 
 //==============================================================================
@@ -174,32 +176,8 @@ void SpectronAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhoseProper
 void SpectronAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
-    //TODO(johnny) delete?
-    // juce::dsp::ProcessSpec specification{};
-
-    // specification.maximumBlockSize = static_cast<juce::uint32>(samplesPerBlock);
-    // specification.numChannels = 1;
-    // specification.sampleRate = sampleRate;
-
-    // leftChain.prepare(specification);
-    // rightChain.prepare(specification);
-
-    // updateFilters();
-
-    // leftChannelQueue.prepare(samplesPerBlock);
-    // rightChannelQueue.prepare(samplesPerBlock);
-
-    // oscillator.initialise([](float x) { return std::sin(x); });
-
-    // specification.numChannels = static_cast<unsigned int>(getTotalNumOutputChannels());
-    // oscillator.prepare(specification);
-    // oscillator.setFrequency(200);
-
     if (currentTransformation == nullptr) {
         updateTransformation();
-    }
-    if (signalGenerator == nullptr) {
-        updateSignalGenerator();
     }
 }
 
@@ -250,28 +228,6 @@ void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) {
         buffer.clear (i, 0, buffer.getNumSamples());
     }
-
-    //TODO(JohT) delete?
-    // updateFilters();
-
-    // juce::dsp::AudioBlock<float> block(buffer);
-
-    // // Oscillator for testing
-    // // buffer.clear();
-    // // juce::dsp::ProcessContextReplacing<float> stereoContext(block);
-    // // oscillator.process(stereoContext);
-
-    // auto leftBlock = block.getSingleChannelBlock(0);
-    // auto rightBlock = block.getSingleChannelBlock(1);
-
-    // juce::dsp::ProcessContextReplacing<float> leftContext(leftBlock);
-    // juce::dsp::ProcessContextReplacing<float> rightContext(rightBlock);
-
-    // leftChain.process(leftContext);
-    // rightChain.process(rightContext);
-
-    // leftChannelQueue.update(buffer);
-    // rightChannelQueue.update(buffer);
 
     const ScopedLock myScopedLock(criticalSection);
     parameters->blockParameterChanges();
@@ -326,10 +282,6 @@ void SpectronAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 
-    // TODO(johnny): better use this method instead of xml below?
-    //juce::MemoryOutputStream memoryOutputStream(destData, true);
-    //oldParameters.state.writeToStream(memoryOutputStream);
-
     // Create an outer XML element..
     std::unique_ptr<XmlElement> xml = parameters->writeToXML();
 
@@ -338,16 +290,6 @@ void SpectronAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
 }
 
 void SpectronAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-
-    // TODO(johnny): better use this method instead of xml below?
-    //auto tree = juce::ValueTree::readFromData(data, static_cast<size_t>(sizeInBytes));
-    //if (tree.isValid()) {
-    //    oldParameters.replaceState(tree);
-    //    updateFilters();
-    //}
-
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 
@@ -384,8 +326,7 @@ void SpectronAudioProcessor::updateTransformation() {
 
 void SpectronAudioProcessor::updateSignalGenerator() {
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
-    deleteAndZero(signalGenerator);
-    signalGenerator = new SignalGenerator(parameters->getGenerator(), parameters->getGeneratorFrequency(), sampleRate);
+    signalGenerator = SignalGenerator(sampleRate, static_cast<SignalGenerator::Waveform>(parameters->getGenerator()), parameters->getGeneratorFrequency());
 }
 
 //TODO(johnny) switch to double or template for both?
@@ -400,7 +341,7 @@ auto SpectronAudioProcessor::getSampleFromRouting(const float *inL, const float 
         case SpectronParameters::ROUTING_L:
             return *inL;
         case SpectronParameters::ROUTING_GENERATOR:
-            return (signalGenerator) != nullptr ? static_cast<float>(signalGenerator->getNextSample()) : 0.0F;
+            return static_cast<float>(signalGenerator.getNextSample());
         default:
             return static_cast<float>((*inL + *inR) / 2.0);
     }
