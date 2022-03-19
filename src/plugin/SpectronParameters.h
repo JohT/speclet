@@ -176,6 +176,8 @@ public:
 
     static auto getSingletonInstance() -> SpectronParameters &;
 
+    static auto isTransformationParameter(const juce::String& parameterID) -> bool;
+
     void blockParameterChanges() { waitForParameterChange.reset(); }
     void unblockParameterChanges() { waitForParameterChange.signal(); }
 

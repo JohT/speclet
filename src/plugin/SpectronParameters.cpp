@@ -31,6 +31,14 @@ auto SpectronParameters::getSingletonInstance() -> SpectronParameters & {
     return singletonInstance;
 }
 
+auto SpectronParameters::isTransformationParameter(const juce::String &parameterID) -> bool {
+   return parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_RESOLUTION)         
+        || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_TRANSFORMATION)
+        || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELET)
+        || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELETPACKETBASE)
+        || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WINDOWING);
+}
+
 auto SpectronParameters::getParameter(int index) -> float {
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
