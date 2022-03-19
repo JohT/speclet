@@ -19,26 +19,41 @@
 
 class SignalGenerator {
 public:
+    enum Waveform {
+        SINE = 1,
+        TRIANGLE,
+        RAMP,
+        SQUARE,
+        NOISE,
+
+        NUMBER_OF_OPTIONS,
+        DEFAULT = SINE
+    };
+
     explicit SignalGenerator(
-            short signalType = SpectronParameters::GENERATOR_DEFAULT,
-            double signalFrequency = 441.0,
-            double samplingFrequency = 44100.0);
-            
+            double newSamplingFrequency = DEFAULT_SAMPLING_FREQUENCY,
+            Waveform newWaveform = Waveform::DEFAULT,
+            double newSignalFrequency = DEFAULT_GENERATOR_FREQUENCY);
+
     auto getNextSample() -> double;
 
 private:
+    constexpr static const double DEFAULT_GENERATOR_FREQUENCY = 441.0;
+    constexpr static const double DEFAULT_SAMPLING_FREQUENCY = 44100.0;
+    constexpr static const double PI_TIMES_2 = 6.283185307179586476925286766559;
+
+    double lastSignalGeneratorArgument = 0.0F;
+    double lastSignalGeneratorSample = 0.0F;
+    Waveform waveform;
+    double signalFrequency;
+    double samplingFrequency;
+
+    std::mt19937 randomMersenneTwisterEngine;
+    std::uniform_real_distribution<double> randomDistribution;
+
     auto generateSine() -> double;
     auto generateTriangle() -> double;
     auto generateRamp() -> double;
     auto generateSquare() -> double;
     auto generateNoise() -> double;
-
-    double mLastSignalGeneratorArgument;
-    double mLastSignalGeneratorSample;
-    int mSignalType;
-    double mSignalFrequency;
-    double mSamplingFrequency;
-
-    std::mt19937 randomMersenneTwisterEngine;
-    std::uniform_real_distribution<double> randomDistribution;
 };

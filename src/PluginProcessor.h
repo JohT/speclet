@@ -88,9 +88,6 @@ public:
     int lastUIWidth, lastUIHeight;
     //==============================================================================
 
-    //TODO(johnny) update parameters to a AudioProcessorValueTreeState
-    //juce::AudioProcessorValueTreeState Parameters{*this, nullptr, "Parameters", createParameterLayout()};
-
 private:
     //A pointer to the parameters-singleton is kept here
     //as local member, since it is easier to read it that way
@@ -101,7 +98,7 @@ private:
     //e.g. during Audioprocessing on every sample
     int parameterRouting;
     Transformation *currentTransformation;
-    SignalGenerator *signalGenerator;
+    SignalGenerator signalGenerator;
     juce::CriticalSection criticalSection;
     //==============================================================================
     auto getSampleFromRouting(const float *inL, const float *inR) -> float;
