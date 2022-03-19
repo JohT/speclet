@@ -167,6 +167,13 @@ public:
     inline const static juce::String PARAMETER_WINDOWING{"windowing"};
 
     // --------------- methods --------------- //
+
+    // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
+    SpectronParameters(const SpectronParameters& other) = delete;
+    SpectronParameters(SpectronParameters&& other) = delete;
+    auto operator=(const SpectronParameters& other) -> SpectronParameters& = delete;
+    auto operator=(SpectronParameters&& other) -> SpectronParameters& = delete;
+
     static auto getSingletonInstance() -> SpectronParameters &;
 
     void blockParameterChanges() { waitForParameterChange.reset(); }
@@ -184,7 +191,7 @@ public:
     auto getGeneratorFrequency() -> float { return getParameter(PARAMETER_INDEX_GeneratorFrequency); }
     auto getLogMagnitude() -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogMagnitude)); }
     auto getLogFrequency() -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogFrequency)); }
-    auto getResolution() -> long { return static_cast<long>(getParameter(PARAMETER_INDEX_Resolution)); }
+    auto getResolution() -> unsigned long { return static_cast<unsigned long>(getParameter(PARAMETER_INDEX_Resolution)); }
     auto getRouting() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Routing)); }
     auto getTransformation() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Transformation)); }
     auto getWavelet() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Wavelet)); }
@@ -216,8 +223,6 @@ private:
 
     SpectronParameters();
     ~SpectronParameters();
-
-    SpectronParameters(const SpectronParameters &);
 
     PerformanceTimer waitForParameterChangeTimer = PerformanceTimer("SpectronParameters::waitForParameterChangeTimer");
 };
