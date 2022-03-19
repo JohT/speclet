@@ -156,11 +156,7 @@ void SpectronAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhoseProper
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
     LOG("SpectronAudioProcessor::valueTreePropertyChanged: " + changedParameterName);
 
-    if ((changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_RESOLUTION))         //
-        || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_TRANSFORMATION))  //
-        || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELET))         //
-        || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELETPACKETBASE))//
-        || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_WINDOWING))) {
+    if (SpectronParameters::isTransformationParameter(changedParameterName)) {
         updateTransformation();
     }
     if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_ROUTING)) {
