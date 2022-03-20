@@ -34,16 +34,16 @@ public:
     ~SpectronAudioProcessor() override;
 
     //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
 
-    auto isBusesLayoutSupported (const BusesLayout& layouts) const -> bool override;
+    auto isBusesLayoutSupported(const BusesLayout &layouts) const -> bool override;
 
-    void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
+    void processBlock(juce::AudioBuffer<float> &, juce::MidiBuffer &) override;
     using AudioProcessor::processBlock;
 
     //==============================================================================
-    auto createEditor() -> juce::AudioProcessorEditor* override;
+    auto createEditor() -> juce::AudioProcessorEditor * override;
     auto hasEditor() const -> bool override;
 
     //==============================================================================
@@ -65,19 +65,19 @@ public:
     //==============================================================================
     auto getNumPrograms() -> int override;
     auto getCurrentProgram() -> int override;
-    void setCurrentProgram (int index) override;
-    auto getProgramName (int index) -> const juce::String override;
-    void changeProgramName (int index, const juce::String& newName) override;
+    void setCurrentProgram(int index) override;
+    auto getProgramName(int index) -> const juce::String override;
+    void changeProgramName(int index, const juce::String &newName) override;
 
     //==============================================================================
     //these methods are called, when parameter changes were recognised
     void valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) override;
-    void valueTreeChildrenChanged(ValueTree &treeWhoseChildHasChanged) {}
-    void valueTreeParentChanged(ValueTree &treeWhoseParentHasChanged) override {}
+    void valueTreeChildrenChanged(ValueTree &) {}
+    void valueTreeParentChanged(ValueTree &) override {}
 
     //==============================================================================
-    void getStateInformation (juce::MemoryBlock& destData) override;
-    void setStateInformation (const void* data, int sizeInBytes) override;
+    void getStateInformation(juce::MemoryBlock &destData) override;
+    void setStateInformation(const void *data, int sizeInBytes) override;
     //==============================================================================
     void updateTransformation();
     void updateSignalGenerator();
@@ -85,11 +85,12 @@ public:
     // these are used to persist the UI's size - the values are stored along with the
     // filter's other parameters, and the UI component will update them when it gets
     // resized.
-    int lastUIWidth, lastUIHeight;
+    int lastUIWidth = 800; //NOLINT(readability-magic-numbers)
+    int lastUIHeight = 360;//NOLINT(readability-magic-numbers)
     //==============================================================================
 
 private:
-    SpectronParameters& parameters = SpectronParameters::getSingletonInstance();
+    SpectronParameters &parameters = SpectronParameters::getSingletonInstance();
 
     //Some parameter need to be kept local (as copy),
     //since they are called in critical sections

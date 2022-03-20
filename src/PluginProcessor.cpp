@@ -3,10 +3,11 @@
 #include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "dsp/transformations/WaveletPacketTransformation.h"
+#include "dsp/windowing/WindowFunctionFactory.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpectronMainUI.h"
-#include "dsp/windowing/WindowFunctionFactory.h"
 #include <memory>
+
 
 #define DEFAULT_SAMPLINGRATE 44100
 
@@ -20,21 +21,14 @@ SpectronAudioProcessor::SpectronAudioProcessor()
                              .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                              ),
-      parameters(SpectronParameters::getSingletonInstance()), 
-      parameterRouting(parameters.getRouting()), 
-      currentTransformation(nullptr), 
+      parameters(SpectronParameters::getSingletonInstance()),
+      parameterRouting(parameters.getRouting()),
+      currentTransformation(nullptr),
       signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
-
-    //TODO height and width later for flexible resizing?
-    lastUIWidth = 800;
-    lastUIHeight = 360;
-    //lastPosInfo.resetToDefault();
 
 #if _LOGTOFILE
     juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
 #endif
-
-    //gets the pointer to the parameters singelton - for a better readability
 
     //Initialize with default settings
     parameters.setParameter(SpectronParameters::PARAMETER_INDEX_ColorMode, SpectronParameters::COLORMODE_DEFAULT);
@@ -102,25 +96,25 @@ auto SpectronAudioProcessor::getName() const -> const juce::String {
 auto SpectronAudioProcessor::acceptsMidi() const -> bool {
 #if JucePlugin_WantsMidiInput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 auto SpectronAudioProcessor::producesMidi() const -> bool {
 #if JucePlugin_ProducesMidiOutput
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 auto SpectronAudioProcessor::isMidiEffect() const -> bool {
 #if JucePlugin_IsMidiEffect
     return true;
-   #else
+#else
     return false;
-   #endif
+#endif
 }
 
 auto SpectronAudioProcessor::getTailLengthSeconds() const -> double {
@@ -128,8 +122,8 @@ auto SpectronAudioProcessor::getTailLengthSeconds() const -> double {
 }
 
 auto SpectronAudioProcessor::getNumPrograms() -> int {
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+    return 1;// NB: some hosts don't cope very well if you tell them there are 0 programs,
+             // so this should be at least 1, even if you're not really implementing programs.
 }
 
 auto SpectronAudioProcessor::getCurrentProgram() -> int {
@@ -137,20 +131,20 @@ auto SpectronAudioProcessor::getCurrentProgram() -> int {
 }
 
 void SpectronAudioProcessor::setCurrentProgram(int index) {
-    juce::ignoreUnused (index);
+    juce::ignoreUnused(index);
 }
 
 auto SpectronAudioProcessor::getProgramName(int index) -> const juce::String {
-    juce::ignoreUnused (index);
+    juce::ignoreUnused(index);
     return {};
 }
 
 void SpectronAudioProcessor::changeProgramName(int index, const juce::String &newName) {
-    juce::ignoreUnused (index, newName);
+    juce::ignoreUnused(index, newName);
 }
 
 //This method is called when a parameter changes (listener)
-void SpectronAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &changedProperty) {
+void SpectronAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier & /*changedProperty*/) {
     const ScopedLock myScopedLock(criticalSection);
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
     LOG("SpectronAudioProcessor::valueTreePropertyChanged: " + changedParameterName);
@@ -165,10 +159,10 @@ void SpectronAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhoseProper
         || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_GENERATORFREQUENCY))) {
         updateSignalGenerator();
     }
-};
+}
 
 //==============================================================================
-void SpectronAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
+void SpectronAudioProcessor::prepareToPlay(double /*sampleRate*/, int /*samplesPerBlock*/) {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     if (currentTransformation == nullptr) {
@@ -183,35 +177,34 @@ void SpectronAudioProcessor::releaseResources() {
 
 auto SpectronAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const -> bool {
 #if JucePlugin_IsMidiEffect
-    juce::ignoreUnused (layouts);
+    juce::ignoreUnused(layouts);
     return true;
-  #else
+#else
     // This is the place where you check if the layout is supported.
     // In this template code we only support mono or stereo.
     // Some plugin hosts, such as certain GarageBand versions, will only
     // load plugins that support stereo bus layouts.
-    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono()
-     && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo()) {
+    if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono() && layouts.getMainOutputChannelSet() != juce::AudioChannelSet::stereo()) {
         return false;
     }
 
     // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
+#if !JucePlugin_IsSynth
     if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet()) {
         return false;
     }
-   #endif
+#endif
 
     return true;
-  #endif
+#endif
 }
 
 void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
                                           juce::MidiBuffer &midiMessages) {
-    juce::ignoreUnused (midiMessages);
+    juce::ignoreUnused(midiMessages);
 
     juce::ScopedNoDenormals noDenormals;
-    auto totalNumInputChannels  = getTotalNumInputChannels();
+    auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
     // In case we have more outputs than inputs, this code clears any output
@@ -221,7 +214,7 @@ void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     // when they first compile a plugin, but obviously you don't need to keep
     // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) {
-        buffer.clear (i, 0, buffer.getNumSamples());
+        buffer.clear(i, 0, buffer.getNumSamples());
     }
 
     const ScopedLock myScopedLock(criticalSection);
@@ -262,7 +255,7 @@ void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
 
 //==============================================================================
 auto SpectronAudioProcessor::hasEditor() const -> bool {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true;// (change this to false if you choose to not supply an editor)
 }
 
 auto SpectronAudioProcessor::createEditor() -> juce::AudioProcessorEditor * {
