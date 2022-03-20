@@ -89,9 +89,7 @@ public:
     //==============================================================================
 
 private:
-    //A pointer to the parameters-singleton is kept here
-    //as local member, since it is easier to read it that way
-    SpectronParameters *parameters;
+    SpectronParameters& parameters = SpectronParameters::getSingletonInstance();
 
     //Some parameter need to be kept local (as copy),
     //since they are called in critical sections

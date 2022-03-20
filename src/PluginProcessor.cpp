@@ -20,10 +20,10 @@ SpectronAudioProcessor::SpectronAudioProcessor()
                              .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                              ),
-      parameters(&SpectronParameters::getSingletonInstance()), 
-      parameterRouting(parameters->getRouting()), 
+      parameters(SpectronParameters::getSingletonInstance()), 
+      parameterRouting(parameters.getRouting()), 
       currentTransformation(nullptr), 
-      signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGenerator::Waveform>(parameters->getGenerator()), parameters->getGeneratorFrequency())) {
+      signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
 
     //TODO height and width later for flexible resizing?
     lastUIWidth = 800;
@@ -37,20 +37,20 @@ SpectronAudioProcessor::SpectronAudioProcessor()
     //gets the pointer to the parameters singelton - for a better readability
 
     //Initialize with default settings
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_ColorMode, SpectronParameters::COLORMODE_DEFAULT);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Generator, SpectronParameters::GENERATOR_DEFAULT);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_GeneratorFrequency, 1000.0);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_LogFrequency, SpectronParameters::PLOT_AXIS_DEFAULT);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_LogMagnitude, SpectronParameters::PLOT_AXIS_DEFAULT);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Resolution, SpectronParameters::RESOLUTION_DEFAULT);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Routing, SpectronParameters::ROUTING_MID);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Transformation, SpectronParameters::TRANSFORM_DEFAULT);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Wavelet, SpectronParameters::WAVELET_DEFAULT);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_WaveletPacketBase, SpectronParameters::RESOLUTION_RATIO_DEFAULT);
-    parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Windowing, SpectronParameters::WINDOWING_DEFAULT);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_ColorMode, SpectronParameters::COLORMODE_DEFAULT);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Generator, SpectronParameters::GENERATOR_DEFAULT);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_GeneratorFrequency, 1000.0);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_LogFrequency, SpectronParameters::PLOT_AXIS_DEFAULT);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_LogMagnitude, SpectronParameters::PLOT_AXIS_DEFAULT);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Resolution, SpectronParameters::RESOLUTION_DEFAULT);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Routing, SpectronParameters::ROUTING_MID);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Transformation, SpectronParameters::TRANSFORM_DEFAULT);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Wavelet, SpectronParameters::WAVELET_DEFAULT);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_WaveletPacketBase, SpectronParameters::RESOLUTION_RATIO_DEFAULT);
+    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Windowing, SpectronParameters::WINDOWING_DEFAULT);
 
     //registers itself as listener for parameter-changes
-    parameters->addListener(this, true);
+    parameters.addListener(this, true);
     DBG("SpectronAudioProcessor as parameter listener added");
 }
 
@@ -59,7 +59,6 @@ SpectronAudioProcessor::~SpectronAudioProcessor() {
     DBG("SpectronAudioProcessor as parameter listener removed");
     LOG("SpectronAudioProcessor as parameter listener removed");
     currentTransformation = nullptr;
-    parameters = nullptr;
 
     TransformationFactory::getSingletonInstance().destruct();
 
@@ -70,25 +69,25 @@ SpectronAudioProcessor::~SpectronAudioProcessor() {
 
 //==============================================================================
 auto SpectronAudioProcessor::getNumParameters() -> int {
-    return parameters->TOTAL_NUMBER_OF_PARAMS;
+    return parameters.TOTAL_NUMBER_OF_PARAMS;
 }
 
 auto SpectronAudioProcessor::getParameter(int index) -> float {
     // This method will be called by the host, probably on the audio thread, so
     // it's absolutely time-critical. Don't use critical sections or anything
     // UI-related, or anything at all that may block in any way!
-    return parameters->getParameter(index);
+    return parameters.getParameter(index);
 }
 
 void SpectronAudioProcessor::setParameter(int index, float newValue) {
     // This method will be called by the host, probably on the audio thread, so
     // it's absolutely time-critical. Don't use critical sections or anything
     // UI-related, or anything at all that may block in any way!
-    parameters->setParameter(index, newValue);
+    parameters.setParameter(index, newValue);
 }
 
 auto SpectronAudioProcessor::getParameterName(int index) -> const String {
-    return parameters->getParameterName(index);
+    return parameters.getParameterName(index);
 }
 
 auto SpectronAudioProcessor::getParameterText(int index) -> const String {
@@ -160,7 +159,7 @@ void SpectronAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhoseProper
         updateTransformation();
     }
     if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_ROUTING)) {
-        parameterRouting = parameters->getRouting();
+        parameterRouting = parameters.getRouting();
     }
     if ((changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_GENERATOR))//
         || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_GENERATORFREQUENCY))) {
@@ -226,7 +225,7 @@ void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     }
 
     const ScopedLock myScopedLock(criticalSection);
-    parameters->blockParameterChanges();
+    parameters.blockParameterChanges();
 
     const int numSamples = buffer.getNumSamples();
     const int numChannels = totalNumInputChannels;
@@ -258,7 +257,7 @@ void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         buffer.clear(i, 0, numSamples);
     }
 
-    parameters->unblockParameterChanges();
+    parameters.unblockParameterChanges();
 }
 
 //==============================================================================
@@ -279,7 +278,7 @@ void SpectronAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
     // as intermediaries to make it easy to save and load complex data.
 
     // Create an outer XML element..
-    std::unique_ptr<XmlElement> xml = parameters->writeToXML();
+    std::unique_ptr<XmlElement> xml = parameters.writeToXML();
 
     // then use this helper function to stuff it into the binary blob and return it..
     copyXmlToBinary(*xml, destData);
@@ -293,7 +292,7 @@ void SpectronAudioProcessor::setStateInformation(const void *data, int sizeInByt
     std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
     if (xmlState) {
-        parameters->readFromXML(*xmlState);
+        parameters.readFromXML(*xmlState);
     }
 }
 
@@ -302,27 +301,27 @@ void SpectronAudioProcessor::setStateInformation(const void *data, int sizeInByt
 void SpectronAudioProcessor::updateTransformation() {
     const ScopedLock myScopedLock(criticalSection);
     LOG("SpectronAudioProcessor::updateTransformation()");
-    parameters->blockParameterChanges();
+    parameters.blockParameterChanges();
 
     currentTransformation = nullptr;
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
 
     //TODO(JohT) Mapping colocated parameters to/from global plugin parameters
     TransformationFactory::getSingletonInstance().createTransformation(
-            static_cast<TransformationFactory::Type>(parameters->getTransformation()),
+            static_cast<TransformationFactory::Type>(parameters.getTransformation()),
             sampleRate,
-            parameters->getResolution(),
-            static_cast<WindowFunctionFactory::Method>(parameters->getWindowing()),
-            static_cast<AbstractWaveletTransformation::WaveletBase>(parameters->getWavelet()),
-            static_cast<WaveletPacketTransformation::ResolutionRatioOption>(parameters->getWaveletPaketBase()));
+            parameters.getResolution(),
+            static_cast<WindowFunctionFactory::Method>(parameters.getWindowing()),
+            static_cast<AbstractWaveletTransformation::WaveletBase>(parameters.getWavelet()),
+            static_cast<WaveletPacketTransformation::ResolutionRatioOption>(parameters.getWaveletPaketBase()));
 
-    parameters->unblockParameterChanges();
+    parameters.unblockParameterChanges();
     currentTransformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
 }
 
 void SpectronAudioProcessor::updateSignalGenerator() {
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
-    signalGenerator = SignalGenerator(sampleRate, static_cast<SignalGenerator::Waveform>(parameters->getGenerator()), parameters->getGeneratorFrequency());
+    signalGenerator = SignalGenerator(sampleRate, static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency());
 }
 
 //TODO(johnny) switch to double or template for both?
