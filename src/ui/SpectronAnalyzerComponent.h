@@ -81,8 +81,8 @@ public:
     void valueTreeChildrenChanged(ValueTree & /*unused*/) {}
     void valueTreeParentChanged(ValueTree & /*treeWhoseParentHasChanged*/) override {}
 
-    void updateComboBox(const juce::String &parameterName, juce::ComboBox *comboBox, const ValueTree &treeWhosePropertyHasChanged);
-    void updateSlider(const juce::String &parameterName, juce::Slider *slider, const ValueTree &treeWhosePropertyHasChanged);
+    static void updateComboBox(const juce::String &parameterName, juce::ComboBox *comboBox, const ValueTree &treeWhosePropertyHasChanged);
+    static void updateSlider(const juce::String &parameterName, juce::Slider *slider, const ValueTree &treeWhosePropertyHasChanged);
 
     //[/UserVariables]
 
