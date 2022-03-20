@@ -300,7 +300,7 @@ void SpectronAudioProcessor::updateTransformation() {
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
 
     //TODO(JohT) Mapping colocated parameters to/from global plugin parameters
-    TransformationFactory::getSingletonInstance().createTransformation(
+    currentTransformation = TransformationFactory::getSingletonInstance().createTransformation(
             static_cast<TransformationFactory::Type>(parameters.getTransformation()),
             sampleRate,
             parameters.getResolution(),
@@ -309,7 +309,6 @@ void SpectronAudioProcessor::updateTransformation() {
             static_cast<WaveletPacketTransformation::ResolutionRatioOption>(parameters.getWaveletPaketBase()));
 
     parameters.unblockParameterChanges();
-    currentTransformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
 }
 
 void SpectronAudioProcessor::updateSignalGenerator() {
