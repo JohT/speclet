@@ -55,6 +55,7 @@
             "jmap",
             "jmin",
             "juce",
+            "NOLINT",
             "Struct",
             "Vaidyanathan"
         ],
