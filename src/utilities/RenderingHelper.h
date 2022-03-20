@@ -31,12 +31,12 @@ public:
     RenderingHelper();
     ~RenderingHelper() = default;
 
-    void setColourGradient(juce::ColourGradient value) { colourGradient = value; };
+    void setColourGradient(juce::ColourGradient value) { colourGradient = value; }
 
     void renderVerticalPoints(
             Transformation *transformation,
             TAnalyzerSettings settings,
-            long currentXPos,
+            int currentXPos,
             juce::Image *spectralImage);
 
 private:
@@ -46,9 +46,6 @@ private:
             double maxMagnitude,
             bool logMagnitude) -> double;
     auto assureBorders(const juce::String &paramName, double value, double min, double max) -> double;
-    static auto roundToInt(double value) -> int {
-        return value < 0 ? value - 0.5F : value + 0.5F;
-    }
 
 public:
     //Normally, this method would be defined as "privat".
@@ -57,11 +54,11 @@ public:
     auto pixelToIndex(
             int pixel,
             int height,
-            const SpectralDataInfo & spectralDataInfo,
-            bool logFrequency) -> long;
+            const SpectralDataInfo &spectralDataInfo,
+            bool logFrequency) -> unsigned long;
 
 private:
     std::vector<juce::Colour> mColorTable;//color table
     juce::ColourGradient colourGradient;  //color gradient object
-	PerformanceTimer renderVerticalPointsTimer;
+    PerformanceTimer renderVerticalPointsTimer;
 };

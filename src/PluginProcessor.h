@@ -96,7 +96,7 @@ private:
     //since they are called in critical sections
     //e.g. during Audioprocessing on every sample
     int parameterRouting;
-    Transformation *currentTransformation;
+    Transformation *currentTransformation = nullptr;
     SignalGenerator signalGenerator;
     juce::CriticalSection criticalSection;
     //==============================================================================

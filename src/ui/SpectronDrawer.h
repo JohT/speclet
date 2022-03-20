@@ -18,9 +18,7 @@
 
   ==============================================================================
 */
-
-#ifndef __JUCER_HEADER_SPECTRONDRAWER_SPECTRONDRAWER_742E0E1E__
-#define __JUCER_HEADER_SPECTRONDRAWER_SPECTRONDRAWER_742E0E1E__
+#pragma once
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../dsp/transformations/Transformation.h"
@@ -49,22 +47,22 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    static enum Constants {
+    enum Constants {
         SIZE_X = 528,
         TIMER = 20
     };
 
-    void timerCallback();
+    void timerCallback() override;
     void appendSpectralImage(Transformation *value);
-    void onTransformationEvent(Transformation *value);
-    void valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property);
-    void valueTreeChildrenChanged(ValueTree &treeWhoseChildHasChanged){};
-    void valueTreeParentChanged(ValueTree &treeWhoseParentHasChanged){};
+    void onTransformationEvent(Transformation *value) override;
+    void valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) override;
+    void valueTreeChildrenChanged(ValueTree &) {}
+    void valueTreeParentChanged(ValueTree &) override {}
     //==============================================================================
     //[/UserMethods]
 
-    void paint(Graphics &g);
-    void resized();
+    void paint(Graphics &g) override;
+    void resized() override;
 
 
     //==============================================================================
@@ -76,13 +74,14 @@ private :
 
     void updateFrequencyAxisImage();
     void updateTimeAxisImage();
-    juce::Viewport *getParentViewPort() const { return static_cast<juce::Viewport *>(getParentComponent()); };
+    juce::Viewport *getParentViewPort() const { return static_cast<juce::Viewport *>(getParentComponent()); }
 
-    int sizeX, sizeY;
+    int sizeX;
+    int sizeY;
     double currentTimeResolution;
     RenderingHelper::TAnalyzerSettings settings;
     RenderingHelper renderingHelper;
-    long currentCursorXPos;
+    int currentCursorXPos;
     juce::Image spectrumImage;
     juce::Image axisImage;
     juce::CriticalSection criticalSection;
@@ -99,6 +98,3 @@ private :
 
     PerformanceTimer imageDrawingTimer, axisDrawingTimer;
 };
-
-
-#endif// __JUCER_HEADER_SPECTRONDRAWER_SPECTRONDRAWER_742E0E1E__

@@ -69,7 +69,7 @@ class WindowRectangular : public WindowFunction {
 public:
     explicit WindowRectangular(unsigned long newResolution) : WindowFunction(newResolution){};
     auto calculateFactor(unsigned long index) -> double override;//square windowing function
-    auto getName() -> const char * override { return "Rectangular"; };
+    auto getName() -> const char * override { return "Rectangular"; }
 };
 
 class WindowWelch : public WindowFunction {

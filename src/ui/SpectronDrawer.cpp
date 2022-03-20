@@ -96,7 +96,8 @@ void SpectronDrawer::paint(Graphics &g) {
 
     //draw red position cursor ----------------
     g.setColour(Colours::red);
-    g.drawLine(currentCursorXPos, 0, currentCursorXPos, sizeY, 1.0);
+    float cursorX = static_cast<float>(currentCursorXPos);
+    g.drawLine(cursorX, 0, cursorX, static_cast<float>(sizeY), 1.0);
 
     //draw frequency and time axis ----------------
     axisDrawingTimer.start();
@@ -135,7 +136,7 @@ void SpectronDrawer::onTransformationEvent(Transformation *value) {
 }
 
 //This method is called when a parameter changes (listener)
-void SpectronDrawer::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &changedProperty) {
+void SpectronDrawer::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &/*changedProperty*/) {
     const ScopedLock myScopedLock(criticalSection);
 
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();

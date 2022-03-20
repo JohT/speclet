@@ -34,9 +34,9 @@
 //==============================================================================
 SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     : Component("SpectronAnalyzerComponent"),
-      comboBoxResolution(0),
-      spectralviewport(0),
-      labelResolution(0),
+      comboBoxResolution(nullptr),
+      spectralviewport(nullptr),
+      labelResolution(nullptr),
       comboBoxTransformation(nullptr),
       labelTransformation(nullptr),
       comboBoxWindowing(nullptr),
