@@ -7,16 +7,16 @@ RenderingHelper::RenderingHelper() : colourGradient(ColourGradients::BLUE), rend
 
 //method for rendering one column of spectral data
 void RenderingHelper::renderVerticalPoints(
-        Transformation *transformation,
+        TransformationResult *transformationResult,
         TAnalyzerSettings settings,
         int currentXPos,
         juce::Image *spectralImage) {
     renderVerticalPointsTimer.start();
 
     // --- inputdata check
-    jassert(transformation);
-    jassert(spectralImage);
-    SpectralDataBuffer *buffer = transformation->getSpectralDataBuffer();
+    assert(transformationResult);
+    assert(spectralImage);
+    SpectralDataBuffer *buffer = transformationResult->getSpectralDataBuffer();
     if (buffer == nullptr) {
         DBG("RenderingHelper::renderVerticalPoints(..image): buffer is null!!");
         return;
@@ -28,17 +28,17 @@ void RenderingHelper::renderVerticalPoints(
 
     // --- get spectrum from buffer
     SpectralDataBuffer::ItemType spectrum;
-    transformation->getNextSpectrum(&spectrum);
+    transformationResult->getNextSpectrum(&spectrum);
     if (spectrum.empty()) {
         DBG("RenderingHelper::renderVerticalPoints: spectrum empty!");
         return;
     }
 
     // --- get statistics of spectrum (min, max, ...)
-    SpectralDataBuffer::ItemStatisticsType statistics = transformation->getSpectrumStatistics(&spectrum);
+    SpectralDataBuffer::ItemStatisticsType statistics = Transformation::getSpectrumStatistics(&spectrum);
 
     // --- get info about spectral data (frequency/time-resolution...)
-    SpectralDataInfo spectralDataInfo = transformation->getSpectralDataInfo();
+    SpectralDataInfo spectralDataInfo = transformationResult->getSpectralDataInfo();
 
     if (spectrum.size() != spectralDataInfo.getFrequencyResolution()) {
         DBG("RenderingHelper::renderVerticalPoints: spectrum.size()=" +

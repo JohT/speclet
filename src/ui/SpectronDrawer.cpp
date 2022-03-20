@@ -33,8 +33,7 @@ const juce::Colour SpectronDrawer::AXIS_COLOR(0xffffffc0);
 //[/MiscUserDefs]
 
 //==============================================================================
-SpectronDrawer::SpectronDrawer() : 
-    imageDrawingTimer(PerformanceTimer("imageDrawingTimer")), axisDrawingTimer(PerformanceTimer("axisDrawingTimer")){
+SpectronDrawer::SpectronDrawer() : imageDrawingTimer(PerformanceTimer("imageDrawingTimer")), axisDrawingTimer(PerformanceTimer("axisDrawingTimer")) {
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -54,13 +53,13 @@ SpectronDrawer::SpectronDrawer() :
     axisImage = Image(juce::Image::PixelFormat::ARGB, sizeX, sizeY, true);
 
     //registers itself as a transformation-result-lister
-    Transformation *transformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
-    if (transformation != nullptr) {
-        transformation->setTransformResultListener(this);
-    }
+    // Transformation *transformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
+    // if (transformation != nullptr) {
+    //     transformation->setTransformResultListener(this);
+    // }
     //registers itself also as a transformation-result-lister for every transformation that will be created in future
     TransformationFactory::getSingletonInstance().registerForTransformationResults(this);
-    //registeres itself as listener for parameter-changes
+    //registers itself as listener for parameter-changes
     SpectronParameters::getSingletonInstance().addListener(this);
     DBG("SpectronDrawer as parameter listener added");
     LOG("SpectronDrawer as parameter listener added");
@@ -119,12 +118,12 @@ void SpectronDrawer::timerCallback() {
     startTimer(TIMER);
 }
 
-void SpectronDrawer::onTransformationEvent(Transformation *value) {
+void SpectronDrawer::onTransformationEvent(TransformationResult *result) {
     //This method is automatically called, when there are new transformation results available,
     //as far as it had been successfully been registered as a listener by "SpectronJuceMainUI"
     int watchDog = 200;
-    while (value->isOutputAvailable()) {
-        appendSpectralImage(value);
+    while (result->isOutputAvailable()) {
+        appendSpectralImage(result);
         watchDog--;
         if (watchDog <= 0) {
             //prevents endless loop
@@ -133,10 +132,17 @@ void SpectronDrawer::onTransformationEvent(Transformation *value) {
             break;
         }
     }
+    //if effective timeresolution didn't change, the timeresolution-axis needn't to be redrawn
+    auto spectralDataInfo = result->getSpectralDataInfo();
+    auto timeResolution = spectralDataInfo.getTimeResolutionMs();
+    if (timeResolution != currentTimeResolution) {
+        updateTimeAxisImage(timeResolution);
+    }
+   currentSamplingFrequency = spectralDataInfo.getSamplingFrequency();
 }
 
 //This method is called when a parameter changes (listener)
-void SpectronDrawer::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &/*changedProperty*/) {
+void SpectronDrawer::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier & /*changedProperty*/) {
     const ScopedLock myScopedLock(criticalSection);
 
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
@@ -152,15 +158,11 @@ void SpectronDrawer::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasCha
     if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_COLORMODE)) {
         renderingHelper.setColourGradient(ColourGradients::forIndex(changedParameterValue));
     }
+}
 
-    updateTimeAxisImage();
-};
-
-void SpectronDrawer::appendSpectralImage(Transformation *value) {
-    //	const ScopedLock myScopedLock (criticalSection);
-
-    if (value == nullptr) {
-        DBG("SpectronDrawer::appendSpectralImage(..) no value");
+void SpectronDrawer::appendSpectralImage(TransformationResult *result) {
+    if (result == nullptr) {
+        DBG("SpectronDrawer::appendSpectralImage(..) no result parameter");
         return;
     }
     if (currentCursorXPos > (sizeX - 1)) {
@@ -171,7 +173,7 @@ void SpectronDrawer::appendSpectralImage(Transformation *value) {
     }
 
     renderingHelper.renderVerticalPoints(
-            value,
+            result,
             settings,
             currentCursorXPos,
             &spectrumImage);
@@ -196,9 +198,8 @@ void SpectronDrawer::updateFrequencyAxisImage() {
 
     // --- gets max frequency
     double maxSpectralFrequency = 22050;
-    Transformation *transformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
-    if (transformation != nullptr) {
-        maxSpectralFrequency = transformation->getSpectralDataInfo().getMaxFrequency();
+    if (currentSamplingFrequency > 0) {
+        maxSpectralFrequency = currentSamplingFrequency / 2;
     }
 
     int axisLineLength = 10;
@@ -278,34 +279,22 @@ void SpectronDrawer::updateFrequencyAxisImage() {
     g.setFont(oldFont);
 }
 
-void SpectronDrawer::updateTimeAxisImage() {
+void SpectronDrawer::updateTimeAxisImage(double timeresolution) {
     //TODO better encapsulation
     int timeAxisWidth = 60;
     int lineLength = 50;
-    double timeresolution = 0.0;
-    double xpos_start = sizeX - timeAxisWidth;
-    double ypos_start = getHeight() - 50;
-    double ypos_line = getHeight() - 30;
+    double xPosStart = sizeX - timeAxisWidth;
+    double yPosStart = getHeight() - 50;
+    double yPosLine = getHeight() - 30;
 
-    //gets the time resolution
-    Transformation *transformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
-    if (transformation != nullptr) {
-        timeresolution = transformation->getSpectralDataInfo().getTimeResolutionMs();
-    }
-
-    //if effective timeresolution didn't change, the timeresolution-axis needn't to be redrawn
-    if (timeresolution == currentTimeResolution) {
-        return;
-    }
     currentTimeResolution = timeresolution;
 
     //clears the part of the axis image, where the time resolution is drawn at
-    Rectangle<int> areaToClear(axisImage.getBounds().withLeft(xpos_start).withTop(ypos_start));
+    Rectangle<int> areaToClear(axisImage.getBounds().withLeft(xPosStart).withTop(yPosStart));
     axisImage.clear(areaToClear, juce::Colours::transparentBlack);
 
     //get drawing context
     Graphics g(axisImage);
-
 
     double timeResultionForGivenLength = timeresolution * lineLength;
     juce::String timeResolutionText;
@@ -320,10 +309,10 @@ void SpectronDrawer::updateTimeAxisImage() {
         timeResolutionText += " s";
     }
     g.setColour(AXIS_COLOR);
-    g.drawFittedText(timeResolutionText, xpos_start + 7, ypos_start, 79, 49, juce::Justification::topLeft, true);
-    g.drawLine(xpos_start, ypos_line, xpos_start + lineLength, ypos_line, 0.5f);
-    g.drawLine(xpos_start, ypos_line - 5, xpos_start, ypos_line + 5, 0.5f);
-    g.drawLine(xpos_start + lineLength, ypos_line - 5, xpos_start + lineLength, ypos_line + 5, 0.5f);
+    g.drawFittedText(timeResolutionText, xPosStart + 7, yPosStart, 79, 49, juce::Justification::topLeft, true);
+    g.drawLine(xPosStart, yPosLine, xPosStart + lineLength, yPosLine, 0.5f);
+    g.drawLine(xPosStart, yPosLine - 5, xPosStart, yPosLine + 5, 0.5f);
+    g.drawLine(xPosStart + lineLength, yPosLine - 5, xPosStart + lineLength, yPosLine + 5, 0.5f);
 }
 
 //[/MiscUserCode]
