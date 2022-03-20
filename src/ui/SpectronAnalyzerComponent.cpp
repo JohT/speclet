@@ -37,26 +37,26 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
       comboBoxResolution(0),
       spectralviewport(0),
       labelResolution(0),
-      comboBoxTransformation(0),
-      labelTransformation(0),
-      comboBoxWindowing(0),
-      labelWindowing(0),
-      comboBoxWavelet(0),
-      labelWavelet(0),
-      comboBoxWaveletPaketBasis(0),
-      labelWaveletPaketBasis(0),
-      comboBoxSignalgenerator(0),
-      labelSignalgenerator(0),
-      comboBoxSignalquelle(0),
-      labelSignalquelle(0),
-      labelGeneratorfrequenz(0),
-      sliderGeneratorFrequenz(0),
-      labelLogF(0),
-      labelLogA(0),
-      comboBoxLogF(0),
-      comboBoxLogA(0),
-      labelColorMode(0),
-      comboBoxColorMode(0) {
+      comboBoxTransformation(nullptr),
+      labelTransformation(nullptr),
+      comboBoxWindowing(nullptr),
+      labelWindowing(nullptr),
+      comboBoxWavelet(nullptr),
+      labelWavelet(nullptr),
+      comboBoxWaveletPaketBasis(nullptr),
+      labelWaveletPaketBasis(nullptr),
+      comboBoxSignalgenerator(nullptr),
+      labelSignalgenerator(nullptr),
+      comboBoxSignalquelle(nullptr),
+      labelSignalquelle(nullptr),
+      labelGeneratorfrequenz(nullptr),
+      sliderGeneratorFrequenz(nullptr),
+      labelLogF(nullptr),
+      labelLogA(nullptr),
+      comboBoxLogF(nullptr),
+      comboBoxLogA(nullptr),
+      labelColorMode(nullptr),
+      comboBoxColorMode(nullptr) {
     addAndMakeVisible(comboBoxResolution = new ComboBox("comboBoxResolution"));
     comboBoxResolution->setTooltip("Resolution");
     comboBoxResolution->setEditableText(false);
@@ -343,29 +343,29 @@ void SpectronAnalyzerComponent::paint(Graphics &g) {
 }
 
 void SpectronAnalyzerComponent::resized() {
-    comboBoxResolution->setBounds((128) + 0, (8) + 32, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
+    comboBoxResolution->setBounds((128) + 0, (8) + 32, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
     spectralviewport->setBounds(256, 8, 528, 344);
-    labelResolution->setBounds((8) + 0, (8) + 32, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
+    labelResolution->setBounds((8) + 0, (8) + 32, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
     comboBoxTransformation->setBounds(128, 8, 120, 24);
     labelTransformation->setBounds(8, 8, 120, 24);
-    comboBoxWindowing->setBounds((128) + 0, (8) + 64, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    labelWindowing->setBounds((8) + 0, (8) + 64, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    comboBoxWavelet->setBounds((128) + 0, (8) + 96, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    labelWavelet->setBounds((8) + 0, (8) + 96, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    comboBoxWaveletPaketBasis->setBounds((128) + 0, (8) + 128, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    labelWaveletPaketBasis->setBounds((8) + 0, (8) + 128, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    comboBoxSignalgenerator->setBounds((128) + 0, (8) + 288, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    labelSignalgenerator->setBounds((8) + 0, (8) + 288, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    comboBoxSignalquelle->setBounds((128) + 0, (8) + 160, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    labelSignalquelle->setBounds((8) + 0, (8) + 160, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    labelGeneratorfrequenz->setBounds((8) + 0, (8) + 320, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    sliderGeneratorFrequenz->setBounds((128) + 0, (8) + 320, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    labelLogF->setBounds((8) + 0, (8) + 192, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    labelLogA->setBounds((8) + 0, (8) + 224, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    comboBoxLogF->setBounds((128) + 0, (8) + 192, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    comboBoxLogA->setBounds((128) + 0, (8) + 224, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    labelColorMode->setBounds((8) + 1, (8) + 256, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
-    comboBoxColorMode->setBounds((128) + 1, (8) + 256, roundFloatToInt((120) * 1.0000f), roundFloatToInt((24) * 1.0000f));
+    comboBoxWindowing->setBounds((128) + 0, (8) + 64, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelWindowing->setBounds((8) + 0, (8) + 64, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    comboBoxWavelet->setBounds((128) + 0, (8) + 96, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelWavelet->setBounds((8) + 0, (8) + 96, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    comboBoxWaveletPaketBasis->setBounds((128) + 0, (8) + 128, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelWaveletPaketBasis->setBounds((8) + 0, (8) + 128, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    comboBoxSignalgenerator->setBounds((128) + 0, (8) + 288, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelSignalgenerator->setBounds((8) + 0, (8) + 288, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    comboBoxSignalquelle->setBounds((128) + 0, (8) + 160, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelSignalquelle->setBounds((8) + 0, (8) + 160, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelGeneratorfrequenz->setBounds((8) + 0, (8) + 320, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    sliderGeneratorFrequenz->setBounds((128) + 0, (8) + 320, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelLogF->setBounds((8) + 0, (8) + 192, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelLogA->setBounds((8) + 0, (8) + 224, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    comboBoxLogF->setBounds((128) + 0, (8) + 192, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    comboBoxLogA->setBounds((128) + 0, (8) + 224, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelColorMode->setBounds((8) + 1, (8) + 256, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    comboBoxColorMode->setBounds((128) + 1, (8) + 256, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
@@ -566,7 +566,7 @@ void SpectronAnalyzerComponent::fillComboBoxes() {
     comboBoxColorMode->addItem("Rainbow", SpectronParameters::COLORMODE_RAINBOW);
 }
 
-void SpectronAnalyzerComponent::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier & /*property*/) {
+void SpectronAnalyzerComponent::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &  /*property*/) {
     const ScopedLock myScopedLock(criticalSection);
 
     updateComboBox(SpectronParameters::PARAMETER_COLORMODE, comboBoxColorMode, treeWhosePropertyHasChanged);

@@ -153,6 +153,9 @@ public:
         WINDOWING_DEFAULT = WINDOWING_BLACKMAN_HARRIS
     };
 
+    //"Initialization ... with static storage duration may throw an exception that cannot be caught"
+    //Juce doesn't support string_view yet, constexpr doesn't work with string literals and the exception is very unlikely to happen
+    //NOLINTBEGIN
     inline const static juce::String PROPERTY_VALUE{"value"};
     inline const static juce::String PARAMETER_COLORMODE{"colormode"};
     inline const static juce::String PARAMETER_LOGMAGNITUDE{"logmagnitude"};
@@ -165,6 +168,7 @@ public:
     inline const static juce::String PARAMETER_WAVELET{"wavelet"};
     inline const static juce::String PARAMETER_WAVELETPACKETBASE{"waveletpacketbase"};
     inline const static juce::String PARAMETER_WINDOWING{"windowing"};
+    //NOLINTEND
 
     // --------------- methods --------------- //
 
