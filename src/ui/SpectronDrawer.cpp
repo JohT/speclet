@@ -256,7 +256,7 @@ void SpectronDrawer::updateFrequencyAxisImage() {
         double frequencyLabels = 10;//TODO replace by array of constants?
         double step = 1.0 / frequencyLabels;
 
-        for (double pos_percent = step; pos_percent < frequencyLabels; pos_percent += step) {
+        for (double pos_percent = step; pos_percent < 1.0F; pos_percent += step) {
             double ypos = getHeight() * (1.0f - pos_percent);
 
             juce::String frequencyText(maxSpectralFrequency * pos_percent);
