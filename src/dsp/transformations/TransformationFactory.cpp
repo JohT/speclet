@@ -20,7 +20,7 @@ TransformationFactory::TransformationFactory() {
 
 TransformationFactory::~TransformationFactory() {
     deleteTransformation();
-    transformation = nullptr;
+    currentTransformation = nullptr;
     listenerToHandOverToEveryNewTransformation = nullptr;
     DBG("TransformationFactory deconstructed");
 }
@@ -39,29 +39,29 @@ auto TransformationFactory::createTransformation(
             
     DBG("TransformationFactory::createTransformation started. transformationNr=" +
         juce::String(newTransformationType) +
-        ",pointer to transformation" + (transformation != nullptr ? "exists" : "does not exist"));
+        ",pointer to transformation" + (currentTransformation != nullptr ? "exists" : "does not exist"));
 
     deleteTransformation();
 
     switch (newTransformationType) {
         case Type::FAST_FOURIER_TRANSFORM: {
-            transformation = new FourierTransformation(samplingRate, resolution, windowFunction);
-            assert(transformation);
+            currentTransformation = new FourierTransformation(samplingRate, resolution, windowFunction);
+            assert(currentTransformation);
             break;
         }
         case Type::FAST_WAVELET_TRANSFORM: {
-            transformation = new WaveletTransformation(samplingRate, resolution, windowFunction, waveletBase);
-            assert(transformation);
+            currentTransformation = new WaveletTransformation(samplingRate, resolution, windowFunction, waveletBase);
+            assert(currentTransformation);
             break;
         }
         case Type::FAST_WAVELET_PACKET_TRANSFORM: {
-            transformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBase, resolutionRatio);
-            assert(transformation);
+            currentTransformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBase, resolutionRatio);
+            assert(currentTransformation);
             break;
         }
         case Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM: {
-            transformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, windowFunction, waveletBase);
-            assert(transformation);
+            currentTransformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, windowFunction, waveletBase);
+            assert(currentTransformation);
             break;
         }
         case Type::BYPASS: {
@@ -70,25 +70,30 @@ auto TransformationFactory::createTransformation(
         case Type::NUMBER_OF_OPTIONS:
         default: {
             bool transformationUnknownError = false;
-            jassert(transformationUnknownError);
+            assert(transformationUnknownError);
         }
     }
 
-    if (transformation != nullptr) {
-        transformation->setTransformationNr(transformationType);
-        transformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
+    if (currentTransformation != nullptr) {
+        currentTransformation->setTransformationNr(transformationType);
+        currentTransformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
     }
     transformationType = newTransformationType;
 
     DBG("TransformationFactory::createTransformation done. transformationNr=" +
         juce::String(transformationType) +
-        ",pointer to transformation" + (transformation != nullptr ? "exists" : "does not exist"));
+        ",pointer to transformation" + (currentTransformation != nullptr ? "exists" : "does not exist"));
 
-    return transformation;
+    return currentTransformation;
+}
+
+void TransformationFactory::registerForTransformationResults(TransformationListener *value) {
+    listenerToHandOverToEveryNewTransformation = value;
+    currentTransformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
 }
 
 void TransformationFactory::deleteTransformation() {
-    delete transformation;
-    transformation = nullptr;
+    delete currentTransformation;
+    currentTransformation = nullptr;
     transformationType = Type::BYPASS;
 }

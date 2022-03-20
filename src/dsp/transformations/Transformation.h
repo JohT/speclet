@@ -17,14 +17,26 @@
 
 #include "../../data/SpectralDataBuffer.h"
 #include "../../data/SpectralDataInfo.h"
-#include "../windowing/WindowFunctions.h"
 #include "../windowing/WindowFunctionFactory.h"
+#include "../windowing/WindowFunctions.h"
 #include <memory>
 #include <queue>
 
 class TransformationListener;
+class TransformationResult {
+public:
+    virtual auto isOutputAvailable() -> bool = 0;
+    virtual auto getSpectralDataBuffer() -> SpectralDataBuffer * = 0;
+    virtual void getNextSpectrum(SpectralDataBuffer::ItemType *item) = 0;
+    /**
+     * @brief Get the spectral data info that contains amongst others details about the time and frequency resolution.
+     * 
+     * @return const SpectralDataInfo& 
+     */
+    virtual auto getSpectralDataInfo() -> const SpectralDataInfo & = 0;
+};
 
-class Transformation {
+class Transformation : public TransformationResult {
 public:
     enum Constants {
         TIME_RESOLUTION_LIMIT = 8,
@@ -73,13 +85,6 @@ public:
 
     static auto getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType;
 
-    /**
-     * @brief Get the spectral data info that contains amongst others details about the time and frequency resolution.
-     * 
-     * @return const SpectralDataInfo& 
-     */
-    virtual auto getSpectralDataInfo() -> const SpectralDataInfo & = 0;
-
 protected:
     /**
      * @brief applies the transformation to the samples in the input queue and stores the result in the output queue
@@ -96,7 +101,6 @@ protected:
 private:
     int transformTypeNr;
     std::shared_ptr<WindowFunction> windowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
-    double samplingRate;
 
     ResolutionType resolution;
 
@@ -106,7 +110,7 @@ private:
     bool ready;     //Signalizes internally "ready for new calculation"
     bool calculated;//Signalizes internally "calculation finished"
 
-    TransformationListener *mTransformResultsListener;
+    TransformationListener *transformResultsListener;
     juce::CriticalSection criticalSection;
     juce::WaitableEvent waitForDestruction{true};
 
@@ -124,5 +128,5 @@ private:
 
 class TransformationListener {
 public:
-    virtual void onTransformationEvent(Transformation *value) = 0;
+    virtual void onTransformationEvent(TransformationResult *result) = 0;
 };

@@ -4,11 +4,10 @@
 
 Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
     : transformTypeNr(0),
-      samplingRate(newSamplingRate),
       resolution(newResolution),
       ready(false),
       calculated(false),
-      mTransformResultsListener(nullptr),
+      transformResultsListener(nullptr),
       calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
       informListenersTimer(PerformanceTimer("Transformation::informListeners")),
       waitForDestructionTimer(PerformanceTimer("Transformation::waitForDestruction")) {
@@ -20,7 +19,7 @@ Transformation::Transformation(double newSamplingRate, ResolutionType newResolut
     DBG("Transformation::initialize done with sampling rate=" + juce::String(newSamplingRate) + ", resolution/blockSize=" + juce::String(newResolution));
 }
 
-//destructor: waits, until a possibly within another thread currently running
+//Destructor waits until a possibly within another thread currently running
 //calculation ends and deletes then all allocated objects
 Transformation::~Transformation() {
     waitForDestructionTimer.start();
@@ -116,7 +115,7 @@ auto Transformation::getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -
 
 //simple single-listener, could be extend using arrays...
 void Transformation::setTransformResultListener(TransformationListener *value) {
-    mTransformResultsListener = value;
+    transformResultsListener = value;
 }
 
 //since there is just one listener, only one call has to be done
@@ -126,8 +125,8 @@ void Transformation::informListenersAboutTransformResults() {
     if (!ready) {
         return;
     }
-    if (mTransformResultsListener != nullptr) {
-        mTransformResultsListener->onTransformationEvent(this);
+    if (transformResultsListener != nullptr) {
+        transformResultsListener->onTransformationEvent(this);
     }
 
     informListenersTimer.stop();

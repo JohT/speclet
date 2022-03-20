@@ -53,8 +53,7 @@ public:
     };
 
     void timerCallback() override;
-    void appendSpectralImage(Transformation *value);
-    void onTransformationEvent(Transformation *value) override;
+    void onTransformationEvent(TransformationResult *result) override;
     void valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) override;
     void valueTreeChildrenChanged(ValueTree &) {}
     void valueTreeParentChanged(ValueTree &) override {}
@@ -73,12 +72,14 @@ private :
     static const juce::Colour AXIS_COLOR;
 
     void updateFrequencyAxisImage();
-    void updateTimeAxisImage();
+    void updateTimeAxisImage(double timeresolution);
+    void appendSpectralImage(TransformationResult *result);
     juce::Viewport *getParentViewPort() const { return static_cast<juce::Viewport *>(getParentComponent()); }
 
     int sizeX;
     int sizeY;
     double currentTimeResolution;
+    double currentSamplingFrequency = 0.0;
     RenderingHelper::TAnalyzerSettings settings;
     RenderingHelper renderingHelper;
     int currentCursorXPos;

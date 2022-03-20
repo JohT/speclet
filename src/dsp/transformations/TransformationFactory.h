@@ -57,14 +57,13 @@ public:
             WindowFunctionFactory::Method windowFunction = WindowFunctionFactory::Method::DEFAULT,
             AbstractWaveletTransformation::WaveletBase waveletBase = AbstractWaveletTransformation::WaveletBase::DEFAULT,
             WaveletPacketTransformation::ResolutionRatioOption resolutionRatio = WaveletPacketTransformation::ResolutionRatioOption::DEFAULT) -> Transformation *;
-    auto getCurrentTransformation() -> Transformation * { return transformation; }
-    void registerForTransformationResults(TransformationListener *value) { listenerToHandOverToEveryNewTransformation = value; }
+    void registerForTransformationResults(TransformationListener *value);
 
 private:
     TransformationFactory();
     ~TransformationFactory();
 
-    Transformation *transformation = nullptr;
+    Transformation *currentTransformation = nullptr;
     TransformationListener *listenerToHandOverToEveryNewTransformation = nullptr;
     Type transformationType = Type::BYPASS;
 

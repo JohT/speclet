@@ -34,7 +34,7 @@ public:
     void setColourGradient(juce::ColourGradient value) { colourGradient = value; }
 
     void renderVerticalPoints(
-            Transformation *transformation,
+            TransformationResult *transformationResult,
             TAnalyzerSettings settings,
             int currentXPos,
             juce::Image *spectralImage);
