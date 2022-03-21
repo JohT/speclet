@@ -109,10 +109,6 @@ void Transformation::getNextSpectrum(SpectralDataBuffer::ItemType *item) {
     outputBuffer.read(item);
 }
 
-auto Transformation::getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType {
-    return SpectralDataBuffer::getStatistics(item);
-}
-
 //simple single-listener, could be extend using arrays...
 void Transformation::setTransformResultListener(TransformationListener *value) {
     transformResultsListener = value;

@@ -23,7 +23,6 @@
 #include <list>
 #include <vector>
 
-
 class SpectralDataBuffer {
 public:
     static const long CAPACITY = 5000;//50000
@@ -33,13 +32,14 @@ public:
     using ValueType = float;
     using ItemType = std::vector<ValueType>;
     using ItemSizeType = std::vector<ValueType>::size_type;
-    using ItemIteratorType = std::vector<ValueType>::iterator;
 
     //types for per spectrum statistic
-    using ItemStatisticsType = struct {
-        ValueType min;
-        ValueType max;
-        ValueType avg;
+    struct ItemStatisticsType {
+        ValueType min = 0.0;
+        ValueType max = 0.0;
+        ValueType avg = 0.0;
+
+        ItemStatisticsType(ItemType &item);
     };
 
     SpectralDataBuffer();
@@ -55,13 +55,10 @@ public:
     auto size() -> ItemSizeType;
     auto unread() -> ItemSizeType;
 
-    static auto getStatistics(ItemType *pItem) -> const ItemStatisticsType &;
-
 private:
     std::list<ItemType> *buffer;
     PerformanceTimer bufferWriteTimer, bufferReadTimer;
 
-    ItemSizeType mItemSize;
     bool mWriteAccess;
     int sizeCheckCounter;
 };

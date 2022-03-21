@@ -35,7 +35,7 @@ void RenderingHelper::renderVerticalPoints(
     }
 
     // --- get statistics of spectrum (min, max, ...)
-    SpectralDataBuffer::ItemStatisticsType statistics = Transformation::getSpectrumStatistics(&spectrum);
+    SpectralDataBuffer::ItemStatisticsType statistics = SpectralDataBuffer::ItemStatisticsType(spectrum);
 
     // --- get info about spectral data (frequency/time-resolution...)
     SpectralDataInfo spectralDataInfo = transformationResult->getSpectralDataInfo();

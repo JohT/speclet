@@ -3,7 +3,7 @@
 SpectralDataBuffer::SpectralDataBuffer()
     : buffer(new std::list<ItemType>()), bufferWriteTimer("SpectralDataBuffer::bufferWrite")
     , bufferReadTimer(PerformanceTimer("SpectralDataBuffer::bufferRead"))
-    , mItemSize(0), mWriteAccess(false), sizeCheckCounter(0) {
+    , mWriteAccess(false), sizeCheckCounter(0) {
 }
 
 SpectralDataBuffer::~SpectralDataBuffer() {
@@ -70,29 +70,22 @@ auto SpectralDataBuffer::unread() -> SpectralDataBuffer::ItemSizeType {
     return buffer->size();
 }
 
-auto SpectralDataBuffer::getStatistics(ItemType *pItem) -> const SpectralDataBuffer::ItemStatisticsType & {
-    assert(pItem);
-    ItemStatisticsType statistics;
-
-    ValueType valueSum = 0.0;
-
-    for (unsigned int i = 0; i < pItem->size(); i++) {
-        ValueType value = pItem->at(i);
-
-        if (i == 0) {
-            statistics.min = value;
-            statistics.max = value;
-        }
-        if (value > statistics.max) {
-            statistics.max = value;
-        }
-        if (value < statistics.min) {
-            statistics.min = value;
-        }
-
-        valueSum = valueSum + value;
+SpectralDataBuffer::ItemStatisticsType::ItemStatisticsType(ItemType &item) {
+    if (item.empty()) {
+        return;
     }
-    statistics.avg = static_cast<ValueType>(valueSum / static_cast<double>(pItem->size()));
+    min = item.front();
+    max = item.front();
+    double sum = 0.0;
 
-    return statistics;
+    for (ValueType &value : item) {
+        if (value < min) {
+            min = value;
+        }
+        if (value > max) {
+            max = value;
+        }
+        sum = sum + value;
+    }
+    avg = static_cast<ValueType>(sum / static_cast<double>(item.size()));
 }
