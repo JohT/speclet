@@ -23,7 +23,7 @@ namespace ColourGradients {
     auto rainbow() noexcept -> juce::ColourGradient;
 
     const juce::ColourGradient GREEN = fadeToBlack(Colour::fromRGB(45, 255, 45));
-    const juce::ColourGradient BLUE = fadeToBlack(Colour::fromRGB(45, 45, 255));
+    const juce::ColourGradient BLUE = fadeToBlack(Colour::fromRGB(10, 80, 255));
     const juce::ColourGradient FIRE = fire();
     const juce::ColourGradient RAINBOW = rainbow();
 

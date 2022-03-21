@@ -24,9 +24,9 @@ auto ColourGradients::fire() noexcept -> juce::ColourGradient {
 	juce::ColourGradient gradient = ColourGradient();
 
     gradient.addColour(1.0F, juce::Colours::yellow);
-    gradient.addColour(0.8F, juce::Colours::red);
-    gradient.addColour(0.4F, juce::Colours::darkred);
-    gradient.addColour(0.2F, juce::Colours::darkblue);
+    gradient.addColour(0.9F, juce::Colours::red);
+    gradient.addColour(0.6F, juce::Colours::darkred);
+    gradient.addColour(0.3F, juce::Colours::darkviolet);
     gradient.addColour(0.0F, juce::Colours::black);
 
     return gradient;
