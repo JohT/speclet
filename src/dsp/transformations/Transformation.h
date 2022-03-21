@@ -83,8 +83,6 @@ public:
     void setTransformResultListener(TransformationListener *value);
     void getNextSpectrum(SpectralDataBuffer::ItemType *item);
 
-    static auto getSpectrumStatistics(SpectralDataBuffer::ItemType *item) -> SpectralDataBuffer::ItemStatisticsType;
-
 protected:
     /**
      * @brief applies the transformation to the samples in the input queue and stores the result in the output queue
