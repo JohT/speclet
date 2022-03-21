@@ -214,12 +214,13 @@ void SpectronDrawer::updateFrequencyAxisImage() {
         double minFrequencyLog = 1.0;
 
         for (double logFreqDecade = 1; logFreqDecade <= 4; logFreqDecade++) {
-            for (int i = 0; i < (numberOfSubDivisions - 1); i++) {
+            for (auto i = 0; i < (numberOfSubDivisions - 1); i++) {
                 double logFreq = logSubDivisionsPerDecade[i] + logFreqDecade;
-                if (logFreq > maxFrequencyLog) break;
-
-                double pos_percent = (logFreq - minFrequencyLog) / (maxFrequencyLog - minFrequencyLog);
-                double ypos = (sizeY - 1) * (1.0f - pos_percent);
+                if (logFreq > maxFrequencyLog) {
+                    break;
+                }
+                double posPercent = (logFreq - minFrequencyLog) / (maxFrequencyLog - minFrequencyLog);
+                int yPos = static_cast<int>(lrint((sizeY - 1) * (1.0f - posPercent)));
                 double freqDouble = pow(10, logFreq);
                 double freqCeil = ceil(freqDouble);
                 double freqFloor = floor(freqDouble);
@@ -233,47 +234,47 @@ void SpectronDrawer::updateFrequencyAxisImage() {
                     g.setFont(12.0F);
                     g.drawFittedText(frequencyText,
                                      axisLineLength + 3,
-                                     ypos - 7,
+                                     yPos - 7,
                                      maxWidthOfFrequencyAxis,
-                                     ypos + 10,
+                                     yPos + 10,
                                      juce::Justification::topLeft,
                                      1);
-                    g.drawLine(0, ypos, axisLineLength, ypos, 0.4f);
+                    g.fillRect(Rectangle<int>(0, yPos, axisLineLength, 2));
                 } else {
                     //subdivision: smaller font, smaller lines
                     g.setFont(9.0F);
                     g.drawFittedText(
                             frequencyText,
                             axisLineLength + 3,
-                            ypos - 3,
+                            yPos - 3,
                             maxWidthOfFrequencyAxis,
-                            ypos + 10,
+                            yPos + 10,
                             juce::Justification::topLeft,
                             1);
-                    g.drawLine(0, ypos, axisLineLength, ypos, 0.4f);
+                    g.fillRect(Rectangle<int>(0, yPos, axisLineLength, 1));
                 }
             }
         }
     } else {
-        double frequencyLabels = 10;//TODO replace by array of constants?
+        double frequencyLabels = 10;
         double step = 1.0 / frequencyLabels;
 
-        for (double pos_percent = step; pos_percent < 1.0F; pos_percent += step) {
-            double ypos = getHeight() * (1.0f - pos_percent);
+        for (double posPercent = step; posPercent < 1.0F; posPercent += step) {
+            int yPos = static_cast<int>(lrint(getHeight() * (1.0f - posPercent)));
 
-            juce::String frequencyText(maxSpectralFrequency * pos_percent);
+            juce::String frequencyText(maxSpectralFrequency * posPercent);
             frequencyText += " Hz";
 
             g.setFont(12.0F);
             g.drawFittedText(
                     frequencyText,
                     axisLineLength + 3,
-                    ypos - 7,
+                    yPos - 7,
                     maxWidthOfFrequencyAxis,
-                    ypos,
+                    yPos,
                     juce::Justification::topLeft,
                     1);
-            g.drawLine(0, ypos, axisLineLength, ypos, 0.4f);
+            g.fillRect(Rectangle<int>(0, yPos, axisLineLength, 1));
         }
     }
     g.setFont(oldFont);
