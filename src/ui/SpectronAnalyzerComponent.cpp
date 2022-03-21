@@ -327,7 +327,7 @@ SpectronAnalyzerComponent::~SpectronAnalyzerComponent() {
     SpectronParameters::getSingletonInstance().removeListener(this);
     DBG("SpectronAnalyzerComponent as parameter listener removed");
     LOG("SpectronAnalyzerComponent as parameter listener removed");
-    parameters = NULL;
+    parameters = nullptr;
     //[/Destructor]
 }
 
