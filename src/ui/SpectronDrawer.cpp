@@ -283,9 +283,9 @@ void SpectronDrawer::updateTimeAxisImage(double timeresolution) {
     //TODO better encapsulation
     int timeAxisWidth = 60;
     int lineLength = 50;
-    double xPosStart = sizeX - timeAxisWidth;
-    double yPosStart = getHeight() - 50;
-    double yPosLine = getHeight() - 30;
+    int xPosStart = sizeX - timeAxisWidth;
+    int yPosStart = getHeight() - 50;
+    int yPosLine = getHeight() - 30;
 
     currentTimeResolution = timeresolution;
 
@@ -310,9 +310,9 @@ void SpectronDrawer::updateTimeAxisImage(double timeresolution) {
     }
     g.setColour(AXIS_COLOR);
     g.drawFittedText(timeResolutionText, xPosStart + 7, yPosStart, 79, 49, juce::Justification::topLeft, true);
-    g.drawLine(xPosStart, yPosLine, xPosStart + lineLength, yPosLine, 0.5f);
-    g.drawLine(xPosStart, yPosLine - 5, xPosStart, yPosLine + 5, 0.5f);
-    g.drawLine(xPosStart + lineLength, yPosLine - 5, xPosStart + lineLength, yPosLine + 5, 0.5f);
+    g.fillRect(Rectangle<int>(xPosStart, yPosLine, lineLength, 1));
+    g.fillRect(Rectangle<int>(xPosStart, yPosLine - 5, 1, 10));
+    g.fillRect(Rectangle<int>(xPosStart + lineLength, yPosLine - 5, 1, 10));
 }
 
 //[/MiscUserCode]
