@@ -1,4 +1,5 @@
 #include "FourierTransformation.h"
+#include <cstddef>
 
 
 FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
@@ -10,7 +11,7 @@ FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionT
       fftOutputCopyTimer(PerformanceTimer("FourierTransformation::calculate (output copy)")),  
       spectralDataInfo(newSamplingRate, newResolution, (newResolution / 2 + 1), 1) {
 
-    plan = fftw_plan_dft_r2c_1d(newResolution, in, out, FFTW_ESTIMATE);
+    plan = fftw_plan_dft_r2c_1d(static_cast<int>(newResolution), in, out, FFTW_ESTIMATE);
 
     assert(plan);
 
@@ -40,7 +41,7 @@ void FourierTransformation::calculate() {
     //Loop for copying every single sample from input-queue to fft inputarray
     fftInputCopyTimer.start();
     auto resolution = getResolution();
-    for (int i = 0; i < resolution; i++) {
+    for (std::size_t i = 0; i < resolution; i++) {
         auto nextSamplePerChannel = getInputQueue().front();
         *(in + i) = nextSamplePerChannel * getWindowFunction()->getFactor(i);
 
@@ -55,12 +56,13 @@ void FourierTransformation::calculate() {
     fftOutputCopyTimer.start();
     SpectralDataBuffer::ItemType spectrum;
 
-    for (int i = 0; i < ((resolution / 2) + 1); i++) {
+    for (std::size_t i = 0; i < ((resolution / 2) + 1); i++) {
         //Loop for copying every single fft result data into the output-queue
         double realValue = *(out + i)[0];
-        double imagValue = *(out + i)[1];
-        double magnitude = sqrt(realValue * realValue + imagValue * imagValue) / resolution; /*1/N = Normalisation*/
-        spectrum.push_back(magnitude);
+        double imaginaryValue = *(out + i)[1];
+        double magnitude = sqrt(realValue * realValue + imaginaryValue * imaginaryValue);
+        double normalizedMagnitude = magnitude / static_cast<double>(resolution); // 1/N = Normalisation
+        spectrum.push_back(static_cast<SpectralDataBuffer::ValueType>(normalizedMagnitude));
     }
     getSpectralDataBuffer()->write(spectrum);
     fftOutputCopyTimer.stop();
