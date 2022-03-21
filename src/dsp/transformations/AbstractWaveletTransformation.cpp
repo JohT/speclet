@@ -249,9 +249,9 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, st
     SpectralDataBuffer::ItemType spectrum;
 
     unsigned int blockSize = 0;
-    long blockPosition = 0;
-    long blockPositionEnd = 0;
-    long blockNumber = 0;
+    unsigned long blockPosition = 0;
+    unsigned long blockPositionEnd = 0;
+    unsigned long blockNumber = 0;
     long basisPosition = 0;
     long freqDuplicates = 0;
     
@@ -263,6 +263,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, st
     auto levels = std::span(levelsHedge.levels, static_cast<unsigned long>(levelsHedge.num_of_levels));
 
     double value = 0.0;
+    double timeResolutionPerSample = 0.0;
     for (unsigned int time = 0; time < timeResolution; time++) {
         basisPosition = 0;
         spectrum.clear();
@@ -271,9 +272,10 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, st
             assert(waveletFilterTreeMaxLevel >= level);
             assert(level > 0);
             blockSize = 1U << static_cast<unsigned int>(waveletFilterTreeMaxLevel - level);
-            blockPosition = lrint(static_cast<double>(blockSize) / static_cast<double>(timeResolution) * static_cast<double>(time));
-            blockPositionEnd = lrint(static_cast<double>(blockSize) / static_cast<double>(timeResolution) * static_cast<double>(time + timeStepSize));
-            blockNumber = lrint(static_cast<double>(basisPosition) / static_cast<double>(blockSize));
+            timeResolutionPerSample = static_cast<double>(blockSize) / static_cast<double>(timeResolution);
+            blockPosition = static_cast<unsigned long>(lrint(timeResolutionPerSample * static_cast<double>(time)));
+            blockPositionEnd = static_cast<unsigned long>(lrint(timeResolutionPerSample * static_cast<double>(time + timeStepSize)));
+            blockNumber = static_cast<unsigned long>(lrint(static_cast<double>(basisPosition) / static_cast<double>(blockSize)));
 
             value = getAvgValue(transformResultClass, origin, static_cast<WaveletLevelType>(level), blockNumber, blockPosition, blockPositionEnd);
 
