@@ -75,7 +75,7 @@ void WaveletPacketBestBasisTransformation::getCostsHelp(const ArrayTreePer &a, N
     }
 }
 
-auto WaveletPacketBestBasisTransformation::oracCostAdv(const real_number *data, const integer_number &n, const real_number &sigma, const real_number &factor, const integer_number &k) -> real_number {
+auto WaveletPacketBestBasisTransformation::oracCostAdv(const real_number *data, const integer_number &n, const real_number &sigma, const real_number &factor, const integer_number &/* k */) -> real_number {
     real_number cost = 0;
     real_number var = sigma * sigma;
     real_number temp = 0;
@@ -103,6 +103,6 @@ void WaveletPacketBestBasisTransformation::extractBestBasis(const ArrayTreePer &
     getCosts(a, b, costFunction, sigma, factor);
     h.dim = a.dim;
     BestBasis(h, b);
-    h.origin = new real_number[h.dim];
+    h.origin = new real_number[static_cast<unsigned long>(h.dim)];
     ExtractHedge(h, a);
 }
