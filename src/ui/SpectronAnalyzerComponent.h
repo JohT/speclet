@@ -61,8 +61,7 @@ public:
     void enablementChanged() override;
     void mouseMove(const MouseEvent &e) override;
     void mouseDown(const MouseEvent &e) override;
-    void mouseWheelMove(const MouseEvent &e, float wheelIncrementX, float wheelIncrementY);
-
+    void mouseWheelMove (const MouseEvent& event, const MouseWheelDetails& wheel) override;
 
     //==============================================================================
     juce_UseDebuggingNewOperator

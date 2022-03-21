@@ -485,7 +485,7 @@ void SpectronAnalyzerComponent::mouseDown(const MouseEvent &e) {
     //[/UserCode_mouseDown]
 }
 
-void SpectronAnalyzerComponent::mouseWheelMove(const MouseEvent &e, float wheelIncrementX, float wheelIncrementY) {
+void SpectronAnalyzerComponent::mouseWheelMove (const MouseEvent& /* event */, const MouseWheelDetails& /* wheel */) {
     //[UserCode_mouseWheelMove] -- Add your code here...
     //[/UserCode_mouseWheelMove]
 }
