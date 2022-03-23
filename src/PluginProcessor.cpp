@@ -6,8 +6,8 @@
 #include "dsp/windowing/WindowFunctionFactory.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpectronMainUI.h"
+#include "utilities/PerformanceLogger.h"
 #include <memory>
-
 
 #define DEFAULT_SAMPLINGRATE 44100
 
@@ -26,9 +26,10 @@ SpectronAudioProcessor::SpectronAudioProcessor()
       currentTransformation(nullptr),
       signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
 
-#if _LOGTOFILE
-    juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
-#endif
+    LOG_PERFORMANCE_BEGIN("SpectronAudioProcessor");
+    #if _LOGTOFILE
+        juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
+    #endif
 
     //Initialize with default settings
     parameters.setParameter(SpectronParameters::PARAMETER_INDEX_ColorMode, SpectronParameters::COLORMODE_DEFAULT);
@@ -56,9 +57,10 @@ SpectronAudioProcessor::~SpectronAudioProcessor() {
 
     TransformationFactory::getSingletonInstance().destruct();
 
-#if _LOGTOFILE
-    juce::Logger::setCurrentLogger(0, true);
-#endif
+    #if _LOGTOFILE
+        juce::Logger::setCurrentLogger(0, true);
+    #endif
+    LOG_PERFORMANCE_END();
 }
 
 //==============================================================================

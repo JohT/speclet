@@ -1,4 +1,5 @@
 #include "WaveletTransformation.h"
+#include "../../utilities/PerformanceLogger.h"
 #include <limits>
 
 WaveletTransformation::WaveletTransformation(
@@ -9,7 +10,7 @@ WaveletTransformation::WaveletTransformation(
     : AbstractWaveletTransformation(newSamplingRate, newResolution, newWindowFunction, newWaveletBase),
       spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)),
       fastWaveletTransformTimer(PerformanceTimer("Fast Wavelet Transform")) {
-
+    
     DBG("WaveletTransformation::initialize done with fs=" + juce::String(newSamplingRate) + ",res=" + juce::String(newResolution));
     assert(newResolution <= std::numeric_limits<long>::max());//wave++ Interval requires the resolution to be a long
     setReady();
@@ -28,8 +29,12 @@ void WaveletTransformation::calculate() {
     //output data container to hold the result of the wavelet transformation ("coefficients")
     Interval outDWT(0, static_cast<integer_number>(getResolution() - 1));
     //fast wavelet transform
+
     fastWaveletTransformTimer.start();
-    analyse(outDWT);
+    {
+        LOG_PERFORMANCE_OF_SCOPE("WaveletTransformation analyse");
+        analyse(outDWT);
+    }
     fastWaveletTransformTimer.stop();
     //fills the outputQueue with the spectral data (in a ready to draw order)
     extractSpectrum(outDWT);

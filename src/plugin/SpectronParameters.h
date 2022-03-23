@@ -228,7 +228,7 @@ private:
     // --------------- methods --------------- //
 
     SpectronParameters();
-    ~SpectronParameters();
+    ~SpectronParameters() = default;
 
     PerformanceTimer waitForParameterChangeTimer = PerformanceTimer("SpectronParameters::waitForParameterChangeTimer");
 };

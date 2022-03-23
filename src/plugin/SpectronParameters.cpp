@@ -1,4 +1,5 @@
 #include "SpectronParameters.h"
+#include "../utilities/PerformanceLogger.h"
 
 SpectronParameters::SpectronParameters() {
     //create ValueTree object, which stores all parameters as childs in a tree structure
@@ -24,19 +25,13 @@ SpectronParameters::SpectronParameters() {
     waitForParameterChange.signal();
 }
 
-SpectronParameters::~SpectronParameters() = default;
-
 auto SpectronParameters::getSingletonInstance() -> SpectronParameters & {
     static SpectronParameters singletonInstance;
     return singletonInstance;
 }
 
 auto SpectronParameters::isTransformationParameter(const juce::String &parameterID) -> bool {
-   return parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_RESOLUTION)         
-        || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_TRANSFORMATION)
-        || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELET)
-        || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELETPACKETBASE)
-        || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WINDOWING);
+    return parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_RESOLUTION) || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_TRANSFORMATION) || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELET) || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELETPACKETBASE) || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WINDOWING);
 }
 
 auto SpectronParameters::getParameter(int index) -> float {
@@ -59,12 +54,14 @@ void SpectronParameters::setParameter(int index, float newValue) {
     const ScopedLock myScopedLock(criticalSection);
 
     waitForParameterChangeTimer.start();
-    bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
-    waitForParameterChangeTimer.stop();
-    if (!timeoutDuringWait) {
-        DBG("SpectronParameters::setParameter: Timeout during wait!");
+    {
+        LOG_PERFORMANCE_OF_SCOPE("SpectronParameters setParameter waitForParameterChange(index)");
+        bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
+        waitForParameterChangeTimer.stop();
+        if (!timeoutDuringWait) {
+            DBG("SpectronParameters::setParameter: Timeout during wait!");
+        }
     }
-
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         return;
@@ -76,12 +73,14 @@ void SpectronParameters::setParameter(const juce::String &name, float newValue) 
     const ScopedLock myScopedLock(criticalSection);
 
     waitForParameterChangeTimer.start();
-    bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
-    waitForParameterChangeTimer.stop();
-    if (!timeoutDuringWait) {
-        DBG("SpectronParameters::setParameter: Timeout during wait!");
+    {
+        LOG_PERFORMANCE_OF_SCOPE("SpectronParameters setParameter waitForParameterChange(name)");
+        bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
+        waitForParameterChangeTimer.stop();
+        if (!timeoutDuringWait) {
+            DBG("SpectronParameters::setParameter: Timeout during wait!");
+        }
     }
-
     juce::ValueTree child = properties.getChildWithName(name);
     if (!child.isValid()) {
         return;

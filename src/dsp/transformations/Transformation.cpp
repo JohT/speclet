@@ -1,6 +1,7 @@
 #include "Transformation.h"
 #include "../windowing/WindowFunctionFactory.h"
 #include "JuceHeader.h"
+#include "../../utilities/PerformanceLogger.h"
 
 Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
     : transformTypeNr(0),
@@ -11,7 +12,7 @@ Transformation::Transformation(double newSamplingRate, ResolutionType newResolut
       calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
       informListenersTimer(PerformanceTimer("Transformation::informListeners")),
       waitForDestructionTimer(PerformanceTimer("Transformation::waitForDestruction")) {
-
+    
     waitForDestruction.signal();
 
     setWindowFunction(newWindowFunction);
@@ -22,16 +23,17 @@ Transformation::Transformation(double newSamplingRate, ResolutionType newResolut
 //Destructor waits until a possibly within another thread currently running
 //calculation ends and deletes then all allocated objects
 Transformation::~Transformation() {
-    waitForDestructionTimer.start();
-    bool timeoutDuringWait = waitForDestruction.wait(WAIT_FOR_DESTRUCTION_TIMEOUT);
-    waitForDestructionTimer.stop();
-    if (!timeoutDuringWait) {
-        DBG("Transformation destruction: Timeout during wait!");
+    {
+        LOG_PERFORMANCE_OF_SCOPE("Transformation waitForDestruction");
+        waitForDestructionTimer.start();
+        bool timeoutDuringWait = waitForDestruction.wait(WAIT_FOR_DESTRUCTION_TIMEOUT);
+        waitForDestructionTimer.stop();
+        if (!timeoutDuringWait) {
+            DBG("Transformation destruction: Timeout during wait!");
+        }
     }
-
     ready = false;
     waitForDestruction.signal();
-
     DBG("Transform destructed");
 }
 
@@ -80,6 +82,7 @@ void Transformation::calculationFrame() {
 
     {
         //begin of critical section: only one thread per time ------------------------------
+        LOG_PERFORMANCE_OF_SCOPE("Transformation calculationFrameTimer");
         calculationFrameTimer.start();
         const ScopedLock myScopedLock(criticalSection);
         waitForDestruction.reset();
@@ -116,6 +119,7 @@ void Transformation::setTransformResultListener(TransformationListener *value) {
 
 //since there is just one listener, only one call has to be done
 void Transformation::informListenersAboutTransformResults() {
+    LOG_PERFORMANCE_OF_SCOPE("Transformation informListenersAboutTransformResults");
     informListenersTimer.start();
 
     if (!ready) {
