@@ -63,3 +63,4 @@ ObjectStore/
 *.jar
 *.iml
 **/*.iml
+performancelog.json

@@ -1,4 +1,5 @@
 #include "AbstractWaveletTransformation.h"
+#include "../../utilities/PerformanceLogger.h"
 #include "JuceHeader.h"
 #include <memory>
 #include <span>
@@ -12,7 +13,7 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
       constantLevelsHedge(nullptr),
       dWTLevelsHedge(nullptr),
       extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
-
+    
     setWaveletBase(newWaveletBase);
     updateConstantLevelsHedge(waveletFilterTreeMaxLevel / 2);
     updateDWTLevelsHedge();
@@ -244,6 +245,7 @@ void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &outWavel
 }
 
 void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, std::span<real_number> origin, const HedgePer &levelsHedge) {
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation extractSpectrum");
     extractSpectrumTimer.start();
 
     SpectralDataBuffer::ItemType spectrum;

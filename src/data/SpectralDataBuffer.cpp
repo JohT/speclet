@@ -1,7 +1,9 @@
 #include "SpectralDataBuffer.h"
+#include "../utilities/PerformanceLogger.h"
 
 SpectralDataBuffer::SpectralDataBuffer()
-    : buffer(new std::list<ItemType>()), bufferWriteTimer("SpectralDataBuffer::bufferWrite")
+    : buffer(new std::list<ItemType>())    
+    , bufferWriteTimer("SpectralDataBuffer::bufferWrite")
     , bufferReadTimer(PerformanceTimer("SpectralDataBuffer::bufferRead"))
     , mWriteAccess(false), sizeCheckCounter(0) {
 }
@@ -13,6 +15,7 @@ SpectralDataBuffer::~SpectralDataBuffer() {
 
 void SpectralDataBuffer::write(const ItemType &item) {
     //	const ScopedLock myScopedLock (criticalSection);
+    LOG_PERFORMANCE_OF_SCOPE("SpectralDataBuffer write");
     mWriteAccess = true;
     bufferWriteTimer.start();
 
@@ -38,9 +41,10 @@ void SpectralDataBuffer::write(const ItemType &item) {
 }
 
 void SpectralDataBuffer::read(ItemType *pItem) {
+    LOG_PERFORMANCE_OF_SCOPE("SpectralDataBuffer read");
     bufferReadTimer.start();
 
-    jassert(pItem);
+    assert(pItem);
     if (mWriteAccess) {
         return;
     }

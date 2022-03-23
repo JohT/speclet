@@ -21,6 +21,7 @@
 
 //[Headers] You can add your own extra header files here...
 #include "../dsp/transformations/TransformationFactory.h"
+#include "../utilities/PerformanceLogger.h"
 #include "ColourGradients.h"
 //[/Headers]
 
@@ -90,7 +91,10 @@ void SpectronDrawer::paint(Graphics &g) {
 
     //draw spectrum ----------------
     imageDrawingTimer.start();
-    g.drawImageAt(spectrumImage, 0, 0);
+    {
+        LOG_PERFORMANCE_OF_SCOPE("SpectronDrawer paint draw spectrum");
+        g.drawImageAt(spectrumImage, 0, 0);
+    }
     imageDrawingTimer.stop();
 
     //draw red position cursor ----------------
@@ -100,7 +104,10 @@ void SpectronDrawer::paint(Graphics &g) {
 
     //draw frequency and time axis ----------------
     axisDrawingTimer.start();
-    g.drawImageAt(axisImage, 0, 0);
+    {
+        LOG_PERFORMANCE_OF_SCOPE("SpectronDrawer paint draw axis");
+        g.drawImageAt(axisImage, 0, 0);
+    }
     axisDrawingTimer.stop();
 
     //[/UserPaint]
@@ -138,7 +145,7 @@ void SpectronDrawer::onTransformationEvent(TransformationResult *result) {
     if (timeResolution != currentTimeResolution) {
         updateTimeAxisImage(timeResolution);
     }
-   currentSamplingFrequency = spectralDataInfo.getSamplingFrequency();
+    currentSamplingFrequency = spectralDataInfo.getSamplingFrequency();
 }
 
 //This method is called when a parameter changes (listener)
