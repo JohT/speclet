@@ -14,7 +14,6 @@
   ==============================================================================
 */
 #pragma once
-#include "../utilities/PerformanceTimer.h"
 
 #include <JuceHeader.h>
 #include <string>
@@ -229,6 +228,4 @@ private:
 
     SpectronParameters();
     ~SpectronParameters() = default;
-
-    PerformanceTimer waitForParameterChangeTimer = PerformanceTimer("SpectronParameters::waitForParameterChangeTimer");
 };

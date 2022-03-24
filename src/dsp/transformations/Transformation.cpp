@@ -8,10 +8,7 @@ Transformation::Transformation(double newSamplingRate, ResolutionType newResolut
       resolution(newResolution),
       ready(false),
       calculated(false),
-      transformResultsListener(nullptr),
-      calculationFrameTimer(PerformanceTimer("Transformation::calculate")),
-      informListenersTimer(PerformanceTimer("Transformation::informListeners")),
-      waitForDestructionTimer(PerformanceTimer("Transformation::waitForDestruction")) {
+      transformResultsListener(nullptr) {
     
     waitForDestruction.signal();
 
@@ -25,9 +22,7 @@ Transformation::Transformation(double newSamplingRate, ResolutionType newResolut
 Transformation::~Transformation() {
     {
         LOG_PERFORMANCE_OF_SCOPE("Transformation waitForDestruction");
-        waitForDestructionTimer.start();
         bool timeoutDuringWait = waitForDestruction.wait(WAIT_FOR_DESTRUCTION_TIMEOUT);
-        waitForDestructionTimer.stop();
         if (!timeoutDuringWait) {
             DBG("Transformation destruction: Timeout during wait!");
         }
@@ -83,7 +78,6 @@ void Transformation::calculationFrame() {
     {
         //begin of critical section: only one thread per time ------------------------------
         LOG_PERFORMANCE_OF_SCOPE("Transformation calculationFrameTimer");
-        calculationFrameTimer.start();
         const ScopedLock myScopedLock(criticalSection);
         waitForDestruction.reset();
 
@@ -94,7 +88,6 @@ void Transformation::calculationFrame() {
 
         calculated = true;
         waitForDestruction.signal();
-        calculationFrameTimer.stop();
         //end of critical section                          ---------------------------------
     }
 }
@@ -120,7 +113,6 @@ void Transformation::setTransformResultListener(TransformationListener *value) {
 //since there is just one listener, only one call has to be done
 void Transformation::informListenersAboutTransformResults() {
     LOG_PERFORMANCE_OF_SCOPE("Transformation informListenersAboutTransformResults");
-    informListenersTimer.start();
 
     if (!ready) {
         return;
@@ -128,6 +120,4 @@ void Transformation::informListenersAboutTransformResults() {
     if (transformResultsListener != nullptr) {
         transformResultsListener->onTransformationEvent(this);
     }
-
-    informListenersTimer.stop();
 }

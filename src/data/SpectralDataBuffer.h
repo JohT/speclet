@@ -16,7 +16,6 @@
 #pragma once
 
 #include "../data/SpectralDataInfo.h"
-#include "../utilities/PerformanceTimer.h"
 
 #include <JuceHeader.h>
 
@@ -57,7 +56,6 @@ public:
 
 private:
     std::list<ItemType> *buffer;
-    PerformanceTimer bufferWriteTimer, bufferReadTimer;
 
     bool mWriteAccess;
     int sizeCheckCounter;
