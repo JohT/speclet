@@ -41,5 +41,4 @@ protected:
 
 private:
     SpectralDataInfo spectralDataInfo;
-    PerformanceTimer fastWaveletTransformTimer;
 };

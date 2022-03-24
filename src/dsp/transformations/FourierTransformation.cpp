@@ -7,9 +7,6 @@ FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionT
     : Transformation(newSamplingRate, newResolution, newWindowFunction),
       in(static_cast<double *>(fftw_malloc(sizeof(double) * newResolution))),
       out(static_cast<fftw_complex *>(fftw_malloc(sizeof(fftw_complex) * ((newResolution / 2) + 1)))),
-      fftExecutePlanTimer(PerformanceTimer("FourierTransformation::calculate (fftw execute)")),
-      fftInputCopyTimer(PerformanceTimer("FourierTransformation::calculate (input copy)")),
-      fftOutputCopyTimer(PerformanceTimer("FourierTransformation::calculate (output copy)")),
       spectralDataInfo(newSamplingRate, newResolution, (newResolution / 2 + 1), 1) {
 
     plan = fftw_plan_dft_r2c_1d(static_cast<int>(newResolution), in, out, FFTW_ESTIMATE);
@@ -41,7 +38,6 @@ FourierTransformation::~FourierTransformation() {
 void FourierTransformation::calculate() {
     //Loop for copying every single sample from input-queue to fft inputarray
     auto resolution = getResolution();
-    fftInputCopyTimer.start();
     {
         LOG_PERFORMANCE_OF_SCOPE("FourierTransformation calculate fftInputCopy");
         for (std::size_t i = 0; i < resolution; i++) {
@@ -51,14 +47,10 @@ void FourierTransformation::calculate() {
             getInputQueue().pop();
         }
     }
-    fftInputCopyTimer.stop();
-    fftExecutePlanTimer.start();
     {
         LOG_PERFORMANCE_OF_SCOPE("FourierTransformation calculate fftw_execute");
         fftw_execute(plan);
     }
-    fftExecutePlanTimer.stop();
-    fftOutputCopyTimer.start();
     {
         LOG_PERFORMANCE_OF_SCOPE("FourierTransformation calculate fftOutputCopy");
         SpectralDataBuffer::ItemType spectrum;
@@ -73,5 +65,4 @@ void FourierTransformation::calculate() {
         }
         getSpectralDataBuffer()->write(spectrum);
     }
-    fftOutputCopyTimer.stop();
 }

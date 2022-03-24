@@ -112,8 +112,6 @@ private:
     juce::CriticalSection criticalSection;
     juce::WaitableEvent waitForDestruction{true};
 
-    PerformanceTimer calculationFrameTimer, informListenersTimer, waitForDestructionTimer;
-
     void informListenersAboutTransformResults();
 
     /**

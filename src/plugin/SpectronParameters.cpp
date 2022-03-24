@@ -52,12 +52,9 @@ auto SpectronParameters::getParameter(const juce::String &name) -> float {
 
 void SpectronParameters::setParameter(int index, float newValue) {
     const ScopedLock myScopedLock(criticalSection);
-
-    waitForParameterChangeTimer.start();
     {
         LOG_PERFORMANCE_OF_SCOPE("SpectronParameters setParameter waitForParameterChange(index)");
         bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
-        waitForParameterChangeTimer.stop();
         if (!timeoutDuringWait) {
             DBG("SpectronParameters::setParameter: Timeout during wait!");
         }
@@ -72,11 +69,9 @@ void SpectronParameters::setParameter(int index, float newValue) {
 void SpectronParameters::setParameter(const juce::String &name, float newValue) {
     const ScopedLock myScopedLock(criticalSection);
 
-    waitForParameterChangeTimer.start();
     {
         LOG_PERFORMANCE_OF_SCOPE("SpectronParameters setParameter waitForParameterChange(name)");
         bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
-        waitForParameterChangeTimer.stop();
         if (!timeoutDuringWait) {
             DBG("SpectronParameters::setParameter: Timeout during wait!");
         }

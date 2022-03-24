@@ -27,14 +27,13 @@
 
 #include "SpectronDrawer.h"
 
-
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 const juce::Colour SpectronDrawer::AXIS_COLOR(0xffffffc0);
 
 //[/MiscUserDefs]
 
 //==============================================================================
-SpectronDrawer::SpectronDrawer() : imageDrawingTimer(PerformanceTimer("imageDrawingTimer")), axisDrawingTimer(PerformanceTimer("axisDrawingTimer")) {
+SpectronDrawer::SpectronDrawer() {
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -63,7 +62,6 @@ SpectronDrawer::SpectronDrawer() : imageDrawingTimer(PerformanceTimer("imageDraw
     //registers itself as listener for parameter-changes
     SpectronParameters::getSingletonInstance().addListener(this);
     DBG("SpectronDrawer as parameter listener added");
-    LOG("SpectronDrawer as parameter listener added");
 
     startTimer(TIMER);
     //[/Constructor]
@@ -76,7 +74,6 @@ SpectronDrawer::~SpectronDrawer() {
     //[Destructor]. You can add your own custom destruction code here..
     SpectronParameters::getSingletonInstance().removeListener(this);
     DBG("SpectronDrawer as parameter listener removed");
-    LOG("SpectronDrawer as parameter listener removed");
     //[/Destructor]
 }
 
@@ -90,12 +87,10 @@ void SpectronDrawer::paint(Graphics &g) {
     //[UserPaint] Add your own custom painting code here..
 
     //draw spectrum ----------------
-    imageDrawingTimer.start();
     {
         LOG_PERFORMANCE_OF_SCOPE("SpectronDrawer paint draw spectrum");
         g.drawImageAt(spectrumImage, 0, 0);
     }
-    imageDrawingTimer.stop();
 
     //draw red position cursor ----------------
     g.setColour(Colours::red);
@@ -103,12 +98,10 @@ void SpectronDrawer::paint(Graphics &g) {
     g.drawLine(cursorX, 0, cursorX, static_cast<float>(sizeY), 1.0);
 
     //draw frequency and time axis ----------------
-    axisDrawingTimer.start();
     {
         LOG_PERFORMANCE_OF_SCOPE("SpectronDrawer paint draw axis");
         g.drawImageAt(axisImage, 0, 0);
     }
-    axisDrawingTimer.stop();
 
     //[/UserPaint]
 }

@@ -2,10 +2,7 @@
 #include "../utilities/PerformanceLogger.h"
 
 SpectralDataBuffer::SpectralDataBuffer()
-    : buffer(new std::list<ItemType>())    
-    , bufferWriteTimer("SpectralDataBuffer::bufferWrite")
-    , bufferReadTimer(PerformanceTimer("SpectralDataBuffer::bufferRead"))
-    , mWriteAccess(false), sizeCheckCounter(0) {
+    : buffer(new std::list<ItemType>()), mWriteAccess(false), sizeCheckCounter(0) {
 }
 
 SpectralDataBuffer::~SpectralDataBuffer() {
@@ -17,7 +14,6 @@ void SpectralDataBuffer::write(const ItemType &item) {
     //	const ScopedLock myScopedLock (criticalSection);
     LOG_PERFORMANCE_OF_SCOPE("SpectralDataBuffer write");
     mWriteAccess = true;
-    bufferWriteTimer.start();
 
     //if there are too many buffer entries,
     //delete the old ones to avoid memory problems
@@ -36,13 +32,11 @@ void SpectralDataBuffer::write(const ItemType &item) {
     if (buffer != nullptr) {
         buffer->push_back(item);
     }
-    bufferWriteTimer.stop();
     mWriteAccess = false;
 }
 
 void SpectralDataBuffer::read(ItemType *pItem) {
     LOG_PERFORMANCE_OF_SCOPE("SpectralDataBuffer read");
-    bufferReadTimer.start();
 
     assert(pItem);
     if (mWriteAccess) {
@@ -57,7 +51,6 @@ void SpectralDataBuffer::read(ItemType *pItem) {
         buffer->pop_front();
     }
     //TODO(JohT) faster buffer? threadsafe?
-    bufferReadTimer.stop();
 }
 
 auto SpectralDataBuffer::size() -> SpectralDataBuffer::ItemSizeType {

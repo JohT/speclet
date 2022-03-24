@@ -11,8 +11,7 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
       waveletFilterTreeMaxLevel(getMaxLevel(newResolution)),
       dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))),
       constantLevelsHedge(nullptr),
-      dWTLevelsHedge(nullptr),
-      extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
+      dWTLevelsHedge(nullptr) {
     
     setWaveletBase(newWaveletBase);
     updateConstantLevelsHedge(waveletFilterTreeMaxLevel / 2);
@@ -246,7 +245,6 @@ void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &outWavel
 
 void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, std::span<real_number> origin, const HedgePer &levelsHedge) {
     LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation extractSpectrum");
-    extractSpectrumTimer.start();
 
     SpectralDataBuffer::ItemType spectrum;
 
@@ -298,8 +296,6 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, st
             time += timeStepSize - 1;
         }
     }
-
-    extractSpectrumTimer.stop();
 }
 
 //returns the average value of the specified result tree positions

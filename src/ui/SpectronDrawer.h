@@ -96,6 +96,4 @@ private :
     // (prevent copy constructor and operator= being generated..)
     SpectronDrawer(const SpectronDrawer &);
     const SpectronDrawer &operator=(const SpectronDrawer &);
-
-    PerformanceTimer imageDrawingTimer, axisDrawingTimer;
 };

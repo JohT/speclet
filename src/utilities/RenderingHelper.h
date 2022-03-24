@@ -17,7 +17,6 @@
 #include "../data/SpectralDataBuffer.h"
 #include "../dsp/transformations/Transformation.h"
 #include "JuceHeader.h"
-#include "PerformanceTimer.h"
 #include <vector>
 
 class RenderingHelper {
@@ -60,5 +59,4 @@ public:
 private:
     std::vector<juce::Colour> mColorTable;//color table
     juce::ColourGradient colourGradient;  //color gradient object
-    PerformanceTimer renderVerticalPointsTimer;
 };

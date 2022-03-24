@@ -1,13 +1,9 @@
 #include "RenderingHelper.h"
 #include "../ui/ColourGradients.h"
 #include "PerformanceLogger.h"
-#include "PerformanceTimer.h"
-
 
 RenderingHelper::RenderingHelper()
-    : colourGradient(ColourGradients::BLUE),
-      renderVerticalPointsTimer(PerformanceTimer("RenderingHelper::renderVerticalPointsTimer")) {
-    
+    : colourGradient(ColourGradients::BLUE) {
 }
 
 //method for rendering one column of spectral data
@@ -18,7 +14,6 @@ void RenderingHelper::renderVerticalPoints(
         juce::Image *spectralImage) {
 
     LOG_PERFORMANCE_OF_SCOPE("RenderingHelper renderVerticalPoints");
-    renderVerticalPointsTimer.start();
 
     // --- inputdata check
     assert(transformationResult);
@@ -67,8 +62,6 @@ void RenderingHelper::renderVerticalPoints(
         juce::Colour colour = colourGradient.getColourAtPosition(amplitudeColorIndex);
         spectralImage->setPixelAt(currentXPos, (height - i), colour);
     }
-
-    renderVerticalPointsTimer.stop();
 }
 
 auto RenderingHelper::getColorAmount(
