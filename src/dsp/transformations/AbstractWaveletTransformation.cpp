@@ -161,6 +161,7 @@ void AbstractWaveletTransformation::setWaveletBase(const WaveletBase &newWavelet
 
 //Copying every single sample from input-queue to wavelet input-array
 void AbstractWaveletTransformation::fillDWTInput() {
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation fillDWTInput");
     auto *windowFunction = getWindowFunction();
     for (unsigned int i = 0; i < getResolution(); i++) {
         auto nextSample = getInputQueue().front();
@@ -170,6 +171,7 @@ void AbstractWaveletTransformation::fillDWTInput() {
 }
 
 void AbstractWaveletTransformation::sortWaveletFilterTreeByScaleDescending(const ArrayTreePer &tree) {
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation sortWaveletFilterTreeByScaleDescending");
     if (tree.origin == nullptr) {
         return;
     }
@@ -307,6 +309,8 @@ auto AbstractWaveletTransformation::getAvgValue(
         unsigned long blockposStart,
         unsigned long blockposEnd) -> double {
 
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation getAvgValue");
+    
     //TODO (JohT) Stepsize hack still needed?
     unsigned long stepSize = 2;//skips every nth value. no mathematically exact averaging, but necessary for performance
     auto count = 0;

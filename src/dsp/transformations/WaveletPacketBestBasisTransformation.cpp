@@ -1,10 +1,10 @@
 #include "WaveletPacketBestBasisTransformation.h"
 
 #include "AbstractWaveletTransformation.h"
+#include "../../utilities/PerformanceLogger.h"
 #include "JuceHeader.h"
 #include <cmath>
 #include <math.h>
-
 
 WaveletPacketBestBasisTransformation::WaveletPacketBestBasisTransformation(
         double newSamplingRate,
@@ -93,6 +93,7 @@ auto WaveletPacketBestBasisTransformation::oracCostAdv(const real_number *data, 
 }
 
 void WaveletPacketBestBasisTransformation::extractBestBasis(const ArrayTreePer &a, HedgePer &h, const double &sigma, const double &factor) {
+    LOG_PERFORMANCE_OF_SCOPE("WaveletPacketBestBasisTransformation extractBestBasis");
     assert(a.origin);
     Tree b;
 

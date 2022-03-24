@@ -1,4 +1,5 @@
 #include "WaveletPacketTransformation.h"
+#include "../../utilities/PerformanceLogger.h"
 #include "JuceHeader.h"
 #include <cmath>
 
@@ -87,6 +88,7 @@ auto WaveletPacketTransformation::toTimeFrequencyResolutionTreeLevelOffset(const
 }
 
 void WaveletPacketTransformation::calculate() {
+    LOG_PERFORMANCE_OF_SCOPE("WaveletPacketTransformation calculate");
     fillDWTInput();
 
     //to hold the result of the wavelet packet transformation (=DWPT coeffs)
