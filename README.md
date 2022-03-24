@@ -4,7 +4,7 @@ VST Audio Spectrum Analyzer Plugin using Fourier- and Wavelet-Transformation.
 
 - (c)2011 by Johannes Troppacher (Austria)   
 - For graduation at HS Mittweida - University of applied science (Germany)  
-- Paper (german): [Echtzeitspektralanalyse auf Basis der Fourier- und Wavelet-Transformation implementiert als VST-Plugin](https://monami.hs-mittweida.de/frontdoor/deliver/index/docId/3216/file/J.Troppacher_2011_Diplomarbeit.pdf)  
+- Original title (german): "Echtzeitspektralanalyse auf Basis der Fourier- und Wavelet-Transformation implementiert als VST-Plugin"  
 - License: [GNU GENERAL PUBLIC LICENSE v3](./LICENSE)
 
 ### Used Tools
@@ -127,5 +127,20 @@ arch -x86_64 /usr/local/bin/brew install llvm
 
 ### Other
 
-[Example using CPM package manager with JUCE](https://github.com/robbert-vdh/diopser/blob/master/CMakeLists.txt)
-[C++ Singleton](https://stackoverflow.com/questions/1008019/c-singleton-design-pattern)
+- [Example using CPM package manager with JUCE](https://github.com/robbert-vdh/diopser/blob/master/CMakeLists.txt)
+- [C++ Singleton](https://stackoverflow.com/questions/1008019/c-singleton-design-pattern)
+- [10 Cmake Tips & Tricks](https://medium.com/codex/10-cmake-tips-tricks-7f00d407923d)
+- [JUCE CMake Repo Prototype](https://github.com/eyalamirmusic/JUCECmakeRepoPrototype/blob/master/CMakeLists.txt)
+- [Pamplejuce](https://github.com/sudara/pamplejuce)
+- [Reference to non-static member function must be called](https://stackoverflow.com/questions/26331628/reference-to-non-static-member-function-must-be-called)
+- [Pointer-to-Member Function](http://www.codeguru.com/cpp/cpp/article.php/c17401/C-Tutorial-PointertoMember-Function.htm)
+- [CLAP CLever Audio Plugin](https://github.com/free-audio/clap)
+- [Commit Message Guidelines](https://gist.github.com/robertpainsi/b632364184e70900af4ab688decf6f53)
+
+### References regarding Performance Tracing/Logging (Profiling, Instrumentation)
+
+- [Google Chrome Browser Trace Log Viewer](chrome://tracing/)
+- [The Cherno - VISUAL BENCHMARKING in C++ (YouTube)](https://www.youtube.com/watch?v=xlAH4dbMVnU&t=197s)
+- [Instrumentor.h (Code Snippet)](https://gist.github.com/TheCherno/31f135eea6ee729ab5f26a6908eb3a5e)
+- [Instrumentor.h David Churchill Mod (Code Snippet)](https://pastebin.com/qw5Neq4U)
+- [Instrumentor.h Mattias Aronsson Mod](https://gist.github.com/maronsson/073840bf94e4d6df94c5f294a6e96e03)
