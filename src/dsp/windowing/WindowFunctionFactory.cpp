@@ -25,7 +25,7 @@ auto WindowFunctionFactory::getWindow(const Method &method, unsigned long resolu
     }
     // Window function does not exist in cache: create it.
     auto newWindow = createWindow(key.method, key.resolution);
-    windowFunctionsCache[key] = createWindow(key.method, key.resolution);
+    windowFunctionsCache[key] = newWindow;
     return newWindow;
 }
 
@@ -62,4 +62,8 @@ auto WindowFunctionFactory::createWindow(const Method &method, unsigned long res
             return nullptr;
         }
     }
+}
+
+void WindowFunctionFactory::clearCache() {
+    windowFunctionsCache.clear();
 }

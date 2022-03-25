@@ -10,7 +10,8 @@
             "twxs.cmake",
             "ms-vscode.cpptools",
             "llvm-vs-code-extensions.vscode-clangd",
-            "vadimcn.vscode-lldb"
+            "vadimcn.vscode-lldb",
+            "matepek.vscode-catch2-test-adapter"
         ]
     },
 	"settings": {

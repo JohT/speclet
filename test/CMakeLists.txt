@@ -14,7 +14,7 @@ add_test("${TEST_PROJECT_NAME}" "${TEST_PROJECT_NAME}")
 
 # find test sources
 # GLOB_RECURSE is not recommended but used here for simplicity: https://cmake.org/cmake/help/latest/command/file.html?highlight=CONFIGURE_DEPENDS#filesystem
-FILE(GLOB_RECURSE test_sources CONFIGURE_DEPENDS "*.h" "*.cpp")
+FILE(GLOB_RECURSE test_sources CONFIGURE_DEPENDS "*.h" "*Test.cpp")
 
 # log found sources when log message level is verbose (use set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE) in CMakeLists.txt)
 message(VERBOSE "${TEST_PROJECT_NAME} sources found:")
@@ -35,5 +35,9 @@ target_link_libraries("${TEST_PROJECT_NAME}" PRIVATE Catch2::Catch2WithMain "${P
 # Load and use the .cmake file provided by Catch2
 # https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md
 # We have to manually provide the source directory here for now
+include(CTest)
 include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
 catch_discover_tests("${TEST_PROJECT_NAME}")
+
+#set(CMAKE_MESSAGE_LOG_LEVEL DEBUG)
+#add_test("${TEST_PROJECT_NAME}" "${TEST_PROJECT_NAME}")

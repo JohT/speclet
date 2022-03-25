@@ -53,6 +53,7 @@ public:
     auto operator=(WindowFunctionFactory const &&) -> WindowFunctionFactory & = delete;
 
     auto getWindow(const Method &method, unsigned long resolution) -> std::shared_ptr<WindowFunction>;
+    void clearCache();
 
 private:
     WindowFunctionFactory() = default;
