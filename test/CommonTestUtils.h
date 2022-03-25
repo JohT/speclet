@@ -1,28 +1,21 @@
-#include <tchar.h>
-#include <Windows.h>
+#include "../src/data/SpectralDataBuffer.h"
+#include "../src/data/SpectralDataInfo.h"
+#include "../src/dsp/transformations/TransformationFactory.h"
+#include "../src/dsp/windowing/WindowFunctions.h"
+#include "../src/plugin/SpectronParameters.h"
+#include "../src/ui/ColourGradients.h"
+#include "../src/utilities/PerformanceLogger.h"
 #include <time.h>
-#include "WindowFunctions.h"
-#include "TransformationFactory.h"
-#include "PerformanceManager.h"
-#include "../user interface/ColourGradients.h"
-#include "SpectralDataBuffer.h"
-#include "SpectralDataInfo.h"
-#include "..\plugin\SpectronParameters.h"
+
 //#include <vld.h>
-
-#define WINFUNC				WindowFunctionsFactory::getSingletonInstance()
-#define TRANSFORM_FACTORY	TransformationFactory::getSingletonInstance()
-#define WAVELET				AbstractWaveletTransformation
-using namespace std;
-
 typedef struct {
-	double			samplingRate;
-	double			samplingPeriod;
-	double			frequencyResolutionInHz;
-	unsigned int	resolution;
-	short				channels;
+    double samplingRate;
+    double samplingPeriod;
+    double frequencyResolutionInHz;
+    unsigned int resolution;
+    short channels;
 } TCommonSettings;
 
-TCommonSettings setCommonSettings ();
-TCommonSettings setCommonSettings (double samplingRate, double resolution, short channels);
-void printCommonSettings (TCommonSettings settings);
+TCommonSettings setCommonSettings();
+TCommonSettings setCommonSettings(double samplingRate, double resolution, short channels);
+void printCommonSettings(TCommonSettings settings);
