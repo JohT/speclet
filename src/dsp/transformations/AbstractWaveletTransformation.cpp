@@ -1,6 +1,5 @@
 #include "AbstractWaveletTransformation.h"
 #include "../../utilities/PerformanceLogger.h"
-#include "JuceHeader.h"
 #include <memory>
 #include <span>
 #include <type_traits>

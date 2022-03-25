@@ -23,7 +23,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "../dsp/transformations/Transformation.h"
 #include "../plugin/SpectronParameters.h"
-#include "JuceHeader.h"
+#include "juce_core/juce_core.h"
 #include "SpectronDrawer.h"
 
 //[/Headers]
@@ -37,7 +37,7 @@
 	 Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class SpectronAnalyzerComponent : public Component,
+class SpectronAnalyzerComponent : public juce::Component,
                                   public juce::ValueTree::Listener,
                                   public juce::ComboBox::Listener,
                                   public juce::Slider::Listener {
@@ -50,18 +50,18 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     //[/UserMethods]
 
-    void paint(Graphics &g) override;
+    void paint(juce::Graphics &g) override;
     void resized() override;
-    void comboBoxChanged(ComboBox *comboBoxThatHasChanged) override;
-    void sliderValueChanged(Slider *sliderThatWasMoved) override;
+    void comboBoxChanged(juce::ComboBox *comboBoxThatHasChanged) override;
+    void sliderValueChanged(juce::Slider *sliderThatWasMoved) override;
     void visibilityChanged() override;
     void parentSizeChanged() override;
     void broughtToFront() override;
     void childrenChanged() override;
     void enablementChanged() override;
-    void mouseMove(const MouseEvent &e) override;
-    void mouseDown(const MouseEvent &e) override;
-    void mouseWheelMove (const MouseEvent& event, const MouseWheelDetails& wheel) override;
+    void mouseMove(const juce::MouseEvent &e) override;
+    void mouseDown(const juce::MouseEvent &e) override;
+    void mouseWheelMove (const juce::MouseEvent& event, const juce::MouseWheelDetails& wheel) override;
 
     //==============================================================================
     juce_UseDebuggingNewOperator
@@ -76,39 +76,39 @@ public:
     juce::PopupMenu popupMenu;
 
     void fillComboBoxes();
-    void valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) override;
-    void valueTreeChildrenChanged(ValueTree & /*unused*/) {}
-    void valueTreeParentChanged(ValueTree & /*treeWhoseParentHasChanged*/) override {}
+    void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
+    void valueTreeChildrenChanged(juce::ValueTree & /*unused*/) {}
+    void valueTreeParentChanged(juce::ValueTree & /*treeWhoseParentHasChanged*/) override {}
 
-    static void updateComboBox(const juce::String &parameterName, juce::ComboBox *comboBox, const ValueTree &treeWhosePropertyHasChanged);
-    static void updateSlider(const juce::String &parameterName, juce::Slider *slider, const ValueTree &treeWhosePropertyHasChanged);
+    static void updateComboBox(const juce::String &parameterName, juce::ComboBox *comboBox, const juce::ValueTree &treeWhosePropertyHasChanged);
+    static void updateSlider(const juce::String &parameterName, juce::Slider *slider, const juce::ValueTree &treeWhosePropertyHasChanged);
 
     //[/UserVariables]
 
     //==============================================================================
-    ComboBox *comboBoxResolution;
-    Viewport *spectralviewport;
-    Label *labelResolution;
-    ComboBox *comboBoxTransformation;
-    Label *labelTransformation;
-    ComboBox *comboBoxWindowing;
-    Label *labelWindowing;
-    ComboBox *comboBoxWavelet;
-    Label *labelWavelet;
-    ComboBox *comboBoxWaveletPaketBasis;
-    Label *labelWaveletPaketBasis;
-    ComboBox *comboBoxSignalgenerator;
-    Label *labelSignalgenerator;
-    ComboBox *comboBoxSignalquelle;
-    Label *labelSignalquelle;
-    Label *labelGeneratorfrequenz;
-    Slider *sliderGeneratorFrequenz;
-    Label *labelLogF;
-    Label *labelLogA;
-    ComboBox *comboBoxLogF;
-    ComboBox *comboBoxLogA;
-    Label *labelColorMode;
-    ComboBox *comboBoxColorMode;
+    juce::ComboBox *comboBoxResolution;
+    juce::Viewport *spectralviewport;
+    juce::Label *labelResolution;
+    juce::ComboBox *comboBoxTransformation;
+    juce::Label *labelTransformation;
+    juce::ComboBox *comboBoxWindowing;
+    juce::Label *labelWindowing;
+    juce::ComboBox *comboBoxWavelet;
+    juce::Label *labelWavelet;
+    juce::ComboBox *comboBoxWaveletPaketBasis;
+    juce::Label *labelWaveletPaketBasis;
+    juce::ComboBox *comboBoxSignalgenerator;
+    juce::Label *labelSignalgenerator;
+    juce::ComboBox *comboBoxSignalquelle;
+    juce::Label *labelSignalquelle;
+    juce::Label *labelGeneratorfrequenz;
+    juce::Slider *sliderGeneratorFrequenz;
+    juce::Label *labelLogF;
+    juce::Label *labelLogA;
+    juce::ComboBox *comboBoxLogF;
+    juce::ComboBox *comboBoxLogA;
+    juce::Label *labelColorMode;
+    juce::ComboBox *comboBoxColorMode;
 
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)

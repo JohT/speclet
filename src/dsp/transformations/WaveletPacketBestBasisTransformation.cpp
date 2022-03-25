@@ -2,7 +2,7 @@
 
 #include "AbstractWaveletTransformation.h"
 #include "../../utilities/PerformanceLogger.h"
-#include "JuceHeader.h"
+#include "juce_core/juce_core.h"
 #include <cmath>
 #include <math.h>
 

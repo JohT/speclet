@@ -57,217 +57,217 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
       comboBoxLogA(nullptr),
       labelColorMode(nullptr),
       comboBoxColorMode(nullptr) {
-    addAndMakeVisible(comboBoxResolution = new ComboBox("comboBoxResolution"));
+    addAndMakeVisible(comboBoxResolution = new juce::ComboBox("comboBoxResolution"));
     comboBoxResolution->setTooltip("Resolution");
     comboBoxResolution->setEditableText(false);
-    comboBoxResolution->setJustificationType(Justification::centredLeft);
-    comboBoxResolution->setTextWhenNothingSelected(String());
-    comboBoxResolution->setTextWhenNoChoicesAvailable(String());
+    comboBoxResolution->setJustificationType(juce::Justification::centredLeft);
+    comboBoxResolution->setTextWhenNothingSelected(juce::String());
+    comboBoxResolution->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxResolution->addListener(this);
 
-    addAndMakeVisible(spectralviewport = new Viewport("spectralviewport"));
+    addAndMakeVisible(spectralviewport = new juce::Viewport("spectralviewport"));
     spectralviewport->setScrollBarsShown(false, true);
     spectralviewport->setScrollBarThickness(10);
 
-    addAndMakeVisible(labelResolution = new Label("labelResolution",
+    addAndMakeVisible(labelResolution = new juce::Label("labelResolution",
                                                   "Resolution"));
-    labelResolution->setFont(Font(15.0000f, Font::plain));
-    labelResolution->setJustificationType(Justification::centredLeft);
+    labelResolution->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelResolution->setJustificationType(juce::Justification::centredLeft);
     labelResolution->setEditable(false, false, false);
-    labelResolution->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelResolution->setColour(Label::textColourId, Colours::white);
-    labelResolution->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelResolution->setColour(TextEditor::textColourId, Colours::black);
-    labelResolution->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelResolution->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelResolution->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelResolution->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelResolution->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelResolution->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxTransformation = new ComboBox("comboBoxTransformation"));
+    addAndMakeVisible(comboBoxTransformation = new juce::ComboBox("comboBoxTransformation"));
     comboBoxTransformation->setTooltip("Transformation");
     comboBoxTransformation->setEditableText(false);
-    comboBoxTransformation->setJustificationType(Justification::centredLeft);
-    comboBoxTransformation->setTextWhenNothingSelected(String());
-    comboBoxTransformation->setTextWhenNoChoicesAvailable(String());
+    comboBoxTransformation->setJustificationType(juce::Justification::centredLeft);
+    comboBoxTransformation->setTextWhenNothingSelected(juce::String());
+    comboBoxTransformation->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxTransformation->addListener(this);
 
-    addAndMakeVisible(labelTransformation = new Label("labelTransformation",
+    addAndMakeVisible(labelTransformation = new juce::Label("labelTransformation",
                                                       "Transformation"));
-    labelTransformation->setFont(Font(15.0000f, Font::plain));
-    labelTransformation->setJustificationType(Justification::centredLeft);
+    labelTransformation->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelTransformation->setJustificationType(juce::Justification::centredLeft);
     labelTransformation->setEditable(false, false, false);
-    labelTransformation->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelTransformation->setColour(Label::textColourId, Colours::white);
-    labelTransformation->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelTransformation->setColour(TextEditor::textColourId, Colours::black);
-    labelTransformation->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelTransformation->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelTransformation->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelTransformation->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelTransformation->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelTransformation->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxWindowing = new ComboBox("comboBoxWindowing"));
+    addAndMakeVisible(comboBoxWindowing = new juce::ComboBox("comboBoxWindowing"));
     comboBoxWindowing->setTooltip("Window Function");
     comboBoxWindowing->setEditableText(false);
-    comboBoxWindowing->setJustificationType(Justification::centredLeft);
-    comboBoxWindowing->setTextWhenNothingSelected(String());
-    comboBoxWindowing->setTextWhenNoChoicesAvailable(String());
+    comboBoxWindowing->setJustificationType(juce::Justification::centredLeft);
+    comboBoxWindowing->setTextWhenNothingSelected(juce::String());
+    comboBoxWindowing->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWindowing->addListener(this);
 
-    addAndMakeVisible(labelWindowing = new Label("labelWindowing",
+    addAndMakeVisible(labelWindowing = new juce::Label("labelWindowing",
                                                  "Window Function"));
-    labelWindowing->setFont(Font(15.0000f, Font::plain));
-    labelWindowing->setJustificationType(Justification::centredLeft);
+    labelWindowing->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelWindowing->setJustificationType(juce::Justification::centredLeft);
     labelWindowing->setEditable(false, false, false);
-    labelWindowing->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelWindowing->setColour(Label::textColourId, Colours::white);
-    labelWindowing->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelWindowing->setColour(TextEditor::textColourId, Colours::black);
-    labelWindowing->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelWindowing->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelWindowing->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelWindowing->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelWindowing->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelWindowing->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxWavelet = new ComboBox("comboBoxWavelet"));
+    addAndMakeVisible(comboBoxWavelet = new juce::ComboBox("comboBoxWavelet"));
     comboBoxWavelet->setTooltip("Wavelet");
     comboBoxWavelet->setEditableText(false);
-    comboBoxWavelet->setJustificationType(Justification::centredLeft);
-    comboBoxWavelet->setTextWhenNothingSelected(String());
-    comboBoxWavelet->setTextWhenNoChoicesAvailable(String());
+    comboBoxWavelet->setJustificationType(juce::Justification::centredLeft);
+    comboBoxWavelet->setTextWhenNothingSelected(juce::String());
+    comboBoxWavelet->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWavelet->addListener(this);
 
-    addAndMakeVisible(labelWavelet = new Label("labelWavelet",
+    addAndMakeVisible(labelWavelet = new juce::Label("labelWavelet",
                                                "Wavelet"));
-    labelWavelet->setFont(Font(15.0000f, Font::plain));
-    labelWavelet->setJustificationType(Justification::centredLeft);
+    labelWavelet->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelWavelet->setJustificationType(juce::Justification::centredLeft);
     labelWavelet->setEditable(false, false, false);
-    labelWavelet->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelWavelet->setColour(Label::textColourId, Colours::white);
-    labelWavelet->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelWavelet->setColour(TextEditor::textColourId, Colours::black);
-    labelWavelet->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelWavelet->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelWavelet->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelWavelet->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelWavelet->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelWavelet->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxWaveletPaketBasis = new ComboBox("comboBoxWaveletPaketBasis"));
+    addAndMakeVisible(comboBoxWaveletPaketBasis = new juce::ComboBox("comboBoxWaveletPaketBasis"));
     comboBoxWaveletPaketBasis->setTooltip("Wavelet Packet Base");
     comboBoxWaveletPaketBasis->setEditableText(false);
-    comboBoxWaveletPaketBasis->setJustificationType(Justification::centredLeft);
-    comboBoxWaveletPaketBasis->setTextWhenNothingSelected(String());
-    comboBoxWaveletPaketBasis->setTextWhenNoChoicesAvailable(String());
+    comboBoxWaveletPaketBasis->setJustificationType(juce::Justification::centredLeft);
+    comboBoxWaveletPaketBasis->setTextWhenNothingSelected(juce::String());
+    comboBoxWaveletPaketBasis->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWaveletPaketBasis->addListener(this);
 
-    addAndMakeVisible(labelWaveletPaketBasis = new Label("labelWaveletPaketBasis",
+    addAndMakeVisible(labelWaveletPaketBasis = new juce::Label("labelWaveletPaketBasis",
                                                          "Wavelet Packet Base"));
-    labelWaveletPaketBasis->setFont(Font(15.0000f, Font::plain));
-    labelWaveletPaketBasis->setJustificationType(Justification::centredLeft);
+    labelWaveletPaketBasis->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelWaveletPaketBasis->setJustificationType(juce::Justification::centredLeft);
     labelWaveletPaketBasis->setEditable(false, false, false);
-    labelWaveletPaketBasis->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelWaveletPaketBasis->setColour(Label::textColourId, Colours::white);
-    labelWaveletPaketBasis->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelWaveletPaketBasis->setColour(TextEditor::textColourId, Colours::black);
-    labelWaveletPaketBasis->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelWaveletPaketBasis->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelWaveletPaketBasis->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelWaveletPaketBasis->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelWaveletPaketBasis->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelWaveletPaketBasis->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxSignalgenerator = new ComboBox("comboBoxSignalgenerator"));
+    addAndMakeVisible(comboBoxSignalgenerator = new juce::ComboBox("comboBoxSignalgenerator"));
     comboBoxSignalgenerator->setTooltip("Osciallator");
     comboBoxSignalgenerator->setEditableText(false);
-    comboBoxSignalgenerator->setJustificationType(Justification::centredLeft);
-    comboBoxSignalgenerator->setTextWhenNothingSelected(String());
-    comboBoxSignalgenerator->setTextWhenNoChoicesAvailable(String());
+    comboBoxSignalgenerator->setJustificationType(juce::Justification::centredLeft);
+    comboBoxSignalgenerator->setTextWhenNothingSelected(juce::String());
+    comboBoxSignalgenerator->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxSignalgenerator->addListener(this);
 
-    addAndMakeVisible(labelSignalgenerator = new Label("labelSignalgenerator",
+    addAndMakeVisible(labelSignalgenerator = new juce::Label("labelSignalgenerator",
                                                        "Oscillator"));
-    labelSignalgenerator->setFont(Font(15.0000f, Font::plain));
-    labelSignalgenerator->setJustificationType(Justification::centredLeft);
+    labelSignalgenerator->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelSignalgenerator->setJustificationType(juce::Justification::centredLeft);
     labelSignalgenerator->setEditable(false, false, false);
-    labelSignalgenerator->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelSignalgenerator->setColour(Label::textColourId, Colours::white);
-    labelSignalgenerator->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelSignalgenerator->setColour(TextEditor::textColourId, Colours::black);
-    labelSignalgenerator->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelSignalgenerator->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelSignalgenerator->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelSignalgenerator->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelSignalgenerator->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelSignalgenerator->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxSignalquelle = new ComboBox("comboBoxSignalquelle"));
+    addAndMakeVisible(comboBoxSignalquelle = new juce::ComboBox("comboBoxSignalquelle"));
     comboBoxSignalquelle->setTooltip("Audio Source");
     comboBoxSignalquelle->setEditableText(false);
-    comboBoxSignalquelle->setJustificationType(Justification::centredLeft);
-    comboBoxSignalquelle->setTextWhenNothingSelected(String());
-    comboBoxSignalquelle->setTextWhenNoChoicesAvailable(String());
+    comboBoxSignalquelle->setJustificationType(juce::Justification::centredLeft);
+    comboBoxSignalquelle->setTextWhenNothingSelected(juce::String());
+    comboBoxSignalquelle->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxSignalquelle->addListener(this);
 
-    addAndMakeVisible(labelSignalquelle = new Label("labelSignalquelle",
+    addAndMakeVisible(labelSignalquelle = new juce::Label("labelSignalquelle",
                                                     "Audio Source"));
-    labelSignalquelle->setFont(Font(15.0000f, Font::plain));
-    labelSignalquelle->setJustificationType(Justification::centredLeft);
+    labelSignalquelle->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelSignalquelle->setJustificationType(juce::Justification::centredLeft);
     labelSignalquelle->setEditable(false, false, false);
-    labelSignalquelle->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelSignalquelle->setColour(Label::textColourId, Colours::white);
-    labelSignalquelle->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelSignalquelle->setColour(TextEditor::textColourId, Colours::black);
-    labelSignalquelle->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelSignalquelle->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelSignalquelle->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelSignalquelle->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelSignalquelle->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelSignalquelle->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(labelGeneratorfrequenz = new Label("labelGeneratorfrequenz",
+    addAndMakeVisible(labelGeneratorfrequenz = new juce::Label("labelGeneratorfrequenz",
                                                          "Oscillator Frequency"));
-    labelGeneratorfrequenz->setFont(Font(15.0000f, Font::plain));
-    labelGeneratorfrequenz->setJustificationType(Justification::centredLeft);
+    labelGeneratorfrequenz->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelGeneratorfrequenz->setJustificationType(juce::Justification::centredLeft);
     labelGeneratorfrequenz->setEditable(false, false, false);
-    labelGeneratorfrequenz->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelGeneratorfrequenz->setColour(Label::textColourId, Colours::white);
-    labelGeneratorfrequenz->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelGeneratorfrequenz->setColour(TextEditor::textColourId, Colours::black);
-    labelGeneratorfrequenz->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelGeneratorfrequenz->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelGeneratorfrequenz->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelGeneratorfrequenz->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelGeneratorfrequenz->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelGeneratorfrequenz->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(sliderGeneratorFrequenz = new Slider("sliderGeneratorFrequenz"));
+    addAndMakeVisible(sliderGeneratorFrequenz = new juce::Slider("sliderGeneratorFrequenz"));
     sliderGeneratorFrequenz->setTooltip("Oscillator Frequency");
     sliderGeneratorFrequenz->setExplicitFocusOrder(7);
     sliderGeneratorFrequenz->setRange(10, 22000, 1);
-    sliderGeneratorFrequenz->setSliderStyle(Slider::LinearHorizontal);
-    sliderGeneratorFrequenz->setTextBoxStyle(Slider::TextBoxLeft, false, 50, 25);
+    sliderGeneratorFrequenz->setSliderStyle(juce::Slider::LinearHorizontal);
+    sliderGeneratorFrequenz->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 50, 25);
     sliderGeneratorFrequenz->addListener(this);
 
-    addAndMakeVisible(labelLogF = new Label("labelLogF",
+    addAndMakeVisible(labelLogF = new juce::Label("labelLogF",
                                             "Frequency Scale"));
-    labelLogF->setFont(Font(15.0000f, Font::plain));
-    labelLogF->setJustificationType(Justification::centredLeft);
+    labelLogF->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelLogF->setJustificationType(juce::Justification::centredLeft);
     labelLogF->setEditable(false, false, false);
-    labelLogF->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelLogF->setColour(Label::textColourId, Colours::white);
-    labelLogF->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelLogF->setColour(TextEditor::textColourId, Colours::black);
-    labelLogF->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelLogF->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelLogF->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelLogF->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelLogF->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelLogF->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(labelLogA = new Label("labelLogA",
+    addAndMakeVisible(labelLogA = new juce::Label("labelLogA",
                                             "Magnitude Scale"));
-    labelLogA->setFont(Font(15.0000f, Font::plain));
-    labelLogA->setJustificationType(Justification::centredLeft);
+    labelLogA->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelLogA->setJustificationType(juce::Justification::centredLeft);
     labelLogA->setEditable(false, false, false);
-    labelLogA->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelLogA->setColour(Label::textColourId, Colours::white);
-    labelLogA->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelLogA->setColour(TextEditor::textColourId, Colours::black);
-    labelLogA->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelLogA->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelLogA->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelLogA->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelLogA->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelLogA->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxLogF = new ComboBox("comboBoxLogF"));
+    addAndMakeVisible(comboBoxLogF = new juce::ComboBox("comboBoxLogF"));
     comboBoxLogF->setTooltip("Frequency Scale");
     comboBoxLogF->setEditableText(false);
-    comboBoxLogF->setJustificationType(Justification::centredLeft);
-    comboBoxLogF->setTextWhenNothingSelected(String());
-    comboBoxLogF->setTextWhenNoChoicesAvailable(String());
+    comboBoxLogF->setJustificationType(juce::Justification::centredLeft);
+    comboBoxLogF->setTextWhenNothingSelected(juce::String());
+    comboBoxLogF->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxLogF->addListener(this);
 
-    addAndMakeVisible(comboBoxLogA = new ComboBox("comboBoxLogA"));
+    addAndMakeVisible(comboBoxLogA = new juce::ComboBox("comboBoxLogA"));
     comboBoxLogA->setTooltip("Magnitude Scale");
     comboBoxLogA->setEditableText(false);
-    comboBoxLogA->setJustificationType(Justification::centredLeft);
-    comboBoxLogA->setTextWhenNothingSelected(String());
-    comboBoxLogA->setTextWhenNoChoicesAvailable(String());
+    comboBoxLogA->setJustificationType(juce::Justification::centredLeft);
+    comboBoxLogA->setTextWhenNothingSelected(juce::String());
+    comboBoxLogA->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxLogA->addListener(this);
 
-    addAndMakeVisible(labelColorMode = new Label("labelColorMode",
+    addAndMakeVisible(labelColorMode = new juce::Label("labelColorMode",
                                                  "Color Mode"));
-    labelColorMode->setFont(Font(15.0000f, Font::plain));
-    labelColorMode->setJustificationType(Justification::centredLeft);
+    labelColorMode->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelColorMode->setJustificationType(juce::Justification::centredLeft);
     labelColorMode->setEditable(false, false, false);
-    labelColorMode->setColour(Label::backgroundColourId, Colour(0x30007bfc));
-    labelColorMode->setColour(Label::textColourId, Colours::white);
-    labelColorMode->setColour(Label::outlineColourId, Colour(0xff0082f7));
-    labelColorMode->setColour(TextEditor::textColourId, Colours::black);
-    labelColorMode->setColour(TextEditor::backgroundColourId, Colour(0x0));
+    labelColorMode->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelColorMode->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelColorMode->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelColorMode->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelColorMode->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxColorMode = new ComboBox("comboBoxColorMode"));
+    addAndMakeVisible(comboBoxColorMode = new juce::ComboBox("comboBoxColorMode"));
     comboBoxColorMode->setTooltip("Color Mode");
     comboBoxColorMode->setEditableText(false);
-    comboBoxColorMode->setJustificationType(Justification::centredLeft);
-    comboBoxColorMode->setTextWhenNothingSelected(String());
-    comboBoxColorMode->setTextWhenNoChoicesAvailable(String());
+    comboBoxColorMode->setJustificationType(juce::Justification::centredLeft);
+    comboBoxColorMode->setTextWhenNothingSelected(juce::String());
+    comboBoxColorMode->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxColorMode->addListener(this);
 
 
@@ -330,45 +330,45 @@ SpectronAnalyzerComponent::~SpectronAnalyzerComponent() {
 }
 
 //==============================================================================
-void SpectronAnalyzerComponent::paint(Graphics &g) {
+void SpectronAnalyzerComponent::paint(juce::Graphics &g) {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll(Colours::black);
+    g.fillAll(juce::Colours::black);
 
     //[UserPaint] Add your own custom painting code here..
     //[/UserPaint]
 }
 
 void SpectronAnalyzerComponent::resized() {
-    comboBoxResolution->setBounds((128) + 0, (8) + 32, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    comboBoxResolution->setBounds((128) + 0, (8) + 32, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     spectralviewport->setBounds(256, 8, 528, 344);
-    labelResolution->setBounds((8) + 0, (8) + 32, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    labelResolution->setBounds((8) + 0, (8) + 32, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     comboBoxTransformation->setBounds(128, 8, 120, 24);
     labelTransformation->setBounds(8, 8, 120, 24);
-    comboBoxWindowing->setBounds((128) + 0, (8) + 64, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    labelWindowing->setBounds((8) + 0, (8) + 64, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    comboBoxWavelet->setBounds((128) + 0, (8) + 96, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    labelWavelet->setBounds((8) + 0, (8) + 96, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    comboBoxWaveletPaketBasis->setBounds((128) + 0, (8) + 128, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    labelWaveletPaketBasis->setBounds((8) + 0, (8) + 128, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    comboBoxSignalgenerator->setBounds((128) + 0, (8) + 288, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    labelSignalgenerator->setBounds((8) + 0, (8) + 288, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    comboBoxSignalquelle->setBounds((128) + 0, (8) + 160, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    labelSignalquelle->setBounds((8) + 0, (8) + 160, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    labelGeneratorfrequenz->setBounds((8) + 0, (8) + 320, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    sliderGeneratorFrequenz->setBounds((128) + 0, (8) + 320, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    labelLogF->setBounds((8) + 0, (8) + 192, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    labelLogA->setBounds((8) + 0, (8) + 224, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    comboBoxLogF->setBounds((128) + 0, (8) + 192, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    comboBoxLogA->setBounds((128) + 0, (8) + 224, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    labelColorMode->setBounds((8) + 1, (8) + 256, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
-    comboBoxColorMode->setBounds((128) + 1, (8) + 256, roundToInt((120) * 1.0000f), roundToInt((24) * 1.0000f));
+    comboBoxWindowing->setBounds((128) + 0, (8) + 64, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelWindowing->setBounds((8) + 0, (8) + 64, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxWavelet->setBounds((128) + 0, (8) + 96, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelWavelet->setBounds((8) + 0, (8) + 96, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxWaveletPaketBasis->setBounds((128) + 0, (8) + 128, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelWaveletPaketBasis->setBounds((8) + 0, (8) + 128, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxSignalgenerator->setBounds((128) + 0, (8) + 288, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelSignalgenerator->setBounds((8) + 0, (8) + 288, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxSignalquelle->setBounds((128) + 0, (8) + 160, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelSignalquelle->setBounds((8) + 0, (8) + 160, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelGeneratorfrequenz->setBounds((8) + 0, (8) + 320, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    sliderGeneratorFrequenz->setBounds((128) + 0, (8) + 320, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelLogF->setBounds((8) + 0, (8) + 192, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelLogA->setBounds((8) + 0, (8) + 224, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxLogF->setBounds((128) + 0, (8) + 192, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxLogA->setBounds((128) + 0, (8) + 224, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelColorMode->setBounds((8) + 1, (8) + 256, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxColorMode->setBounds((128) + 1, (8) + 256, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
 
-void SpectronAnalyzerComponent::comboBoxChanged(ComboBox *comboBoxThatHasChanged) {
+void SpectronAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasChanged) {
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
@@ -418,7 +418,7 @@ void SpectronAnalyzerComponent::comboBoxChanged(ComboBox *comboBoxThatHasChanged
     //[/UsercomboBoxChanged_Post]
 }
 
-void SpectronAnalyzerComponent::sliderValueChanged(Slider *sliderThatWasMoved) {
+void SpectronAnalyzerComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
@@ -457,17 +457,17 @@ void SpectronAnalyzerComponent::enablementChanged() {
     //[/UserCode_enablementChanged]
 }
 
-void SpectronAnalyzerComponent::mouseMove(const MouseEvent &e) {
+void SpectronAnalyzerComponent::mouseMove(const juce::MouseEvent &e) {
     //[UserCode_mouseMove] -- Add your code here...
     //[/UserCode_mouseMove]
 }
 
-void SpectronAnalyzerComponent::mouseDown(const MouseEvent &e) {
+void SpectronAnalyzerComponent::mouseDown(const juce::MouseEvent &e) {
     //[UserCode_mouseDown] -- Add your code here...
     if ((e.mouseWasClicked()) && (e.mods.isRightButtonDown())) {
-        popupMenu.showMenuAsync(PopupMenu::Options().withTargetComponent(this), [this](int index) {
+        popupMenu.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(this), [this](int index) {
             if (index == POPUPMENU_INDEX_1_ABOUT) {
-                juce::AlertWindow::AlertIconType icon = AlertWindow::InfoIcon;
+                juce::AlertWindow::AlertIconType icon = juce::AlertWindow::InfoIcon;
                 juce::String message;
                 message += ("Written by Johannes Troppacher (c)2011\n");
                 message += ("\n");
@@ -476,14 +476,14 @@ void SpectronAnalyzerComponent::mouseDown(const MouseEvent &e) {
                 message += ("FFT-Library 'FFTW' by MIT (Matteo Frigo and Steven G. Johnson)\n");
                 message += ("Wavelet-Library 'wave++' by Ryerson Computrational Signal Analysis Group");
                 message += (" (S. E. Ferrando, L. A. Kolasa and N. Kovacevic)");
-                AlertWindow::showOkCancelBox(icon, "About Spectron", message, "OK", "", this, nullptr);
+                juce::AlertWindow::showOkCancelBox(icon, "About Spectron", message, "OK", "", this, nullptr);
             }
         });
     }
     //[/UserCode_mouseDown]
 }
 
-void SpectronAnalyzerComponent::mouseWheelMove (const MouseEvent& /* event */, const MouseWheelDetails& /* wheel */) {
+void SpectronAnalyzerComponent::mouseWheelMove (const juce::MouseEvent& /* event */, const juce::MouseWheelDetails& /* wheel */) {
     //[UserCode_mouseWheelMove] -- Add your code here...
     //[/UserCode_mouseWheelMove]
 }
@@ -564,8 +564,8 @@ void SpectronAnalyzerComponent::fillComboBoxes() {
     comboBoxColorMode->addItem("Rainbow", SpectronParameters::COLORMODE_RAINBOW);
 }
 
-void SpectronAnalyzerComponent::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &  /*property*/) {
-    const ScopedLock myScopedLock(criticalSection);
+void SpectronAnalyzerComponent::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &  /*property*/) {
+    const juce::ScopedLock myScopedLock(criticalSection);
 
     updateComboBox(SpectronParameters::PARAMETER_COLORMODE, comboBoxColorMode, treeWhosePropertyHasChanged);
     updateComboBox(SpectronParameters::PARAMETER_GENERATOR, comboBoxSignalgenerator, treeWhosePropertyHasChanged);
@@ -584,7 +584,7 @@ void SpectronAnalyzerComponent::valueTreePropertyChanged(ValueTree &treeWhosePro
 void SpectronAnalyzerComponent::updateComboBox(
         const juce::String &parameterName,
         juce::ComboBox *comboBox,
-        const ValueTree &treeWhosePropertyHasChanged) {
+        const juce::ValueTree &treeWhosePropertyHasChanged) {
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
     juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpectronParameters::PROPERTY_VALUE);
 
@@ -600,7 +600,7 @@ void SpectronAnalyzerComponent::updateComboBox(
 void SpectronAnalyzerComponent::updateSlider(
         const juce::String &parameterName,
         juce::Slider *slider,
-        const ValueTree &treeWhosePropertyHasChanged) {
+        const juce::ValueTree &treeWhosePropertyHasChanged) {
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
     juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpectronParameters::PROPERTY_VALUE);
 
@@ -609,7 +609,7 @@ void SpectronAnalyzerComponent::updateSlider(
     }
 
     jassert(slider);
-    slider->setValue(changedParameterValue, dontSendNotification);
+    slider->setValue(changedParameterValue, juce::dontSendNotification);
 }
 
 //[/MiscUserCode]

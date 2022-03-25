@@ -15,7 +15,7 @@
 */
 #pragma once
 
-#include <JuceHeader.h>
+#include <juce_audio_utils/juce_audio_utils.h>
 #include <string>
 
 class SpectronParameters {
@@ -208,7 +208,7 @@ public:
     //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
     void removeListener(juce::ValueTree::Listener *listener);
     //read and write to XML
-    void readFromXML(const XmlElement &xml);
+    void readFromXML(const juce::XmlElement &xml);
     auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties.createXml(); }
 
 private:

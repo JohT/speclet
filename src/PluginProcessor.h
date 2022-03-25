@@ -18,7 +18,7 @@
 #include "dsp/SignalGenerator.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "plugin/SpectronParameters.h"
-#include <JuceHeader.h>
+#include <juce_core/juce_core.h>
 #include <array>
 
 enum Channel {
@@ -51,8 +51,8 @@ public:
     auto getNumParameters() -> int override;
     auto getParameter(int index) -> float override;
     void setParameter(int index, float newValue) override;
-    auto getParameterName(int index) -> const String override;
-    auto getParameterText(int index) -> const String override;
+    auto getParameterName(int index) -> const juce::String override;
+    auto getParameterText(int index) -> const juce::String override;
 
     //==============================================================================
     auto getName() const -> const juce::String override;
@@ -71,9 +71,9 @@ public:
 
     //==============================================================================
     //these methods are called, when parameter changes were recognised
-    void valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) override;
-    void valueTreeChildrenChanged(ValueTree &) {}
-    void valueTreeParentChanged(ValueTree &) override {}
+    void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
+    void valueTreeChildrenChanged(juce::ValueTree &) {}
+    void valueTreeParentChanged(juce::ValueTree &) override {}
 
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;

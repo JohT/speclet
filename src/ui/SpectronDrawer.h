@@ -23,7 +23,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "../dsp/transformations/Transformation.h"
 #include "../utilities/RenderingHelper.h"
-#include "JuceHeader.h"
+#include "juce_core/juce_core.h"
 
 //[/Headers]
 
@@ -36,9 +36,9 @@
 	 Describe your class and how it works here!
 																						  //[/Comments]
 */
-class SpectronDrawer : public Component,
+class SpectronDrawer : public juce::Component,
                        public TransformationListener,
-                       public Timer,
+                       public juce::Timer,
                        public juce::ValueTree::Listener {
 public:
     //==============================================================================
@@ -54,13 +54,13 @@ public:
 
     void timerCallback() override;
     void onTransformationEvent(TransformationResult *result) override;
-    void valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier &property) override;
-    void valueTreeChildrenChanged(ValueTree &) {}
-    void valueTreeParentChanged(ValueTree &) override {}
+    void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
+    void valueTreeChildrenChanged(juce::ValueTree &) {}
+    void valueTreeParentChanged(juce::ValueTree &) override {}
     //==============================================================================
     //[/UserMethods]
 
-    void paint(Graphics &g) override;
+    void paint(juce::Graphics &g) override;
     void resized() override;
 
 

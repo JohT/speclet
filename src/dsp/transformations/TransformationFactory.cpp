@@ -5,7 +5,7 @@
 #include <cstddef>
 
 #ifndef __LOGGER__
-#include "JuceHeader.h"
+#include "juce_core/juce_core.h"
 #define LOGGER CLogger::getSingletonInstance()
 #endif
 

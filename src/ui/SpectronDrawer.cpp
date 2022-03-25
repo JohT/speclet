@@ -23,9 +23,11 @@
 #include "../dsp/transformations/TransformationFactory.h"
 #include "../utilities/PerformanceLogger.h"
 #include "ColourGradients.h"
+#include "SpectronDrawer.h"
+#include "juce_core/juce_core.h"
+#include "juce_audio_utils/juce_audio_utils.h"
 //[/Headers]
 
-#include "SpectronDrawer.h"
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
 const juce::Colour SpectronDrawer::AXIS_COLOR(0xffffffc0);
@@ -50,7 +52,7 @@ SpectronDrawer::SpectronDrawer() {
     currentTimeResolution = 0;
 
     //creates and prepares the axislayer image
-    axisImage = Image(juce::Image::PixelFormat::ARGB, sizeX, sizeY, true);
+    axisImage = juce::Image(juce::Image::PixelFormat::ARGB, sizeX, sizeY, true);
 
     //registers itself as a transformation-result-lister
     // Transformation *transformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
@@ -78,11 +80,11 @@ SpectronDrawer::~SpectronDrawer() {
 }
 
 //==============================================================================
-void SpectronDrawer::paint(Graphics &g) {
+void SpectronDrawer::paint(juce::Graphics &g) {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
-    g.fillAll(Colours::black);
+    g.fillAll(juce::Colours::black);
 
     //[UserPaint] Add your own custom painting code here..
 
@@ -93,7 +95,7 @@ void SpectronDrawer::paint(Graphics &g) {
     }
 
     //draw red position cursor ----------------
-    g.setColour(Colours::red);
+    g.setColour(juce::Colours::red);
     float cursorX = static_cast<float>(currentCursorXPos);
     g.drawLine(cursorX, 0, cursorX, static_cast<float>(sizeY), 1.0);
 
@@ -142,8 +144,8 @@ void SpectronDrawer::onTransformationEvent(TransformationResult *result) {
 }
 
 //This method is called when a parameter changes (listener)
-void SpectronDrawer::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier & /*changedProperty*/) {
-    const ScopedLock myScopedLock(criticalSection);
+void SpectronDrawer::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
+    const juce::ScopedLock myScopedLock(criticalSection);
 
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
     juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpectronParameters::PROPERTY_VALUE);
@@ -169,7 +171,7 @@ void SpectronDrawer::appendSpectralImage(TransformationResult *result) {
         currentCursorXPos = 0;
     }
     if (spectrumImage.isNull()) {
-        spectrumImage = Image(Image::RGB, sizeX, sizeY, true);
+        spectrumImage = juce::Image(juce::Image::RGB, sizeX, sizeY, true);
     }
 
     renderingHelper.renderVerticalPoints(
@@ -190,11 +192,11 @@ void SpectronDrawer::updateFrequencyAxisImage() {
     int maxWidthOfFrequencyAxis = 80;
 
     //clears the part of the axis image, where the frequency resolution is drawn at
-    Rectangle<int> areaToClear(axisImage.getBounds().withRight(maxWidthOfFrequencyAxis));
+    juce::Rectangle<int> areaToClear(axisImage.getBounds().withRight(maxWidthOfFrequencyAxis));
     axisImage.clear(areaToClear, juce::Colours::transparentBlack);
 
     //get drawing context
-    Graphics g(axisImage);
+    juce::Graphics g(axisImage);
 
     // --- gets max frequency
     double maxSpectralFrequency = 22050;
@@ -239,7 +241,7 @@ void SpectronDrawer::updateFrequencyAxisImage() {
                                      yPos + 10,
                                      juce::Justification::topLeft,
                                      1);
-                    g.fillRect(Rectangle<int>(0, yPos, axisLineLength, 2));
+                    g.fillRect(juce::Rectangle<int>(0, yPos, axisLineLength, 2));
                 } else {
                     //subdivision: smaller font, smaller lines
                     g.setFont(9.0F);
@@ -251,7 +253,7 @@ void SpectronDrawer::updateFrequencyAxisImage() {
                             yPos + 10,
                             juce::Justification::topLeft,
                             1);
-                    g.fillRect(Rectangle<int>(0, yPos, axisLineLength, 1));
+                    g.fillRect(juce::Rectangle<int>(0, yPos, axisLineLength, 1));
                 }
             }
         }
@@ -274,7 +276,7 @@ void SpectronDrawer::updateFrequencyAxisImage() {
                     yPos,
                     juce::Justification::topLeft,
                     1);
-            g.fillRect(Rectangle<int>(0, yPos, axisLineLength, 1));
+            g.fillRect(juce::Rectangle<int>(0, yPos, axisLineLength, 1));
         }
     }
     g.setFont(oldFont);
@@ -291,11 +293,11 @@ void SpectronDrawer::updateTimeAxisImage(double timeresolution) {
     currentTimeResolution = timeresolution;
 
     //clears the part of the axis image, where the time resolution is drawn at
-    Rectangle<int> areaToClear(axisImage.getBounds().withLeft(xPosStart).withTop(yPosStart));
+    juce::Rectangle<int> areaToClear(axisImage.getBounds().withLeft(xPosStart).withTop(yPosStart));
     axisImage.clear(areaToClear, juce::Colours::transparentBlack);
 
     //get drawing context
-    Graphics g(axisImage);
+    juce::Graphics g(axisImage);
 
     double timeResultionForGivenLength = timeresolution * lineLength;
     juce::String timeResolutionText;
@@ -311,9 +313,9 @@ void SpectronDrawer::updateTimeAxisImage(double timeresolution) {
     }
     g.setColour(AXIS_COLOR);
     g.drawFittedText(timeResolutionText, xPosStart + 7, yPosStart, 79, 49, juce::Justification::topLeft, true);
-    g.fillRect(Rectangle<int>(xPosStart, yPosLine, lineLength, 1));
-    g.fillRect(Rectangle<int>(xPosStart, yPosLine - 5, 1, 10));
-    g.fillRect(Rectangle<int>(xPosStart + lineLength, yPosLine - 5, 1, 10));
+    g.fillRect(juce::Rectangle<int>(xPosStart, yPosLine, lineLength, 1));
+    g.fillRect(juce::Rectangle<int>(xPosStart, yPosLine - 5, 1, 10));
+    g.fillRect(juce::Rectangle<int>(xPosStart + lineLength, yPosLine - 5, 1, 10));
 }
 
 //[/MiscUserCode]

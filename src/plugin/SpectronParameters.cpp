@@ -51,7 +51,7 @@ auto SpectronParameters::getParameter(const juce::String &name) -> float {
 }
 
 void SpectronParameters::setParameter(int index, float newValue) {
-    const ScopedLock myScopedLock(criticalSection);
+    const juce::ScopedLock myScopedLock(criticalSection);
     {
         LOG_PERFORMANCE_OF_SCOPE("SpectronParameters setParameter waitForParameterChange(index)");
         bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
@@ -67,7 +67,7 @@ void SpectronParameters::setParameter(int index, float newValue) {
 }
 
 void SpectronParameters::setParameter(const juce::String &name, float newValue) {
-    const ScopedLock myScopedLock(criticalSection);
+    const juce::ScopedLock myScopedLock(criticalSection);
 
     {
         LOG_PERFORMANCE_OF_SCOPE("SpectronParameters setParameter waitForParameterChange(name)");
@@ -83,7 +83,7 @@ void SpectronParameters::setParameter(const juce::String &name, float newValue) 
     child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
-auto SpectronParameters::getParameterIndex(const String &name) -> int {
+auto SpectronParameters::getParameterIndex(const juce::String &name) -> int {
     juce::ValueTree child = properties.getChildWithName(name);
     if (!child.isValid()) {
         return -1;
@@ -120,8 +120,8 @@ void SpectronParameters::removeListener(juce::ValueTree::Listener *listener) {
 }
 
 //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
-void SpectronParameters::readFromXML(const XmlElement &xml) {
-    const ScopedLock myScopedLock(criticalSection);
+void SpectronParameters::readFromXML(const juce::XmlElement &xml) {
+    const juce::ScopedLock myScopedLock(criticalSection);
     juce::ValueTree importedProperties = juce::ValueTree::fromXml(xml);
 
     //validate imported data (skip import if invalid)

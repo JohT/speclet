@@ -16,7 +16,7 @@
 #pragma once
 #include "../data/SpectralDataBuffer.h"
 #include "../dsp/transformations/Transformation.h"
-#include "JuceHeader.h"
+#include "juce_audio_utils/juce_audio_utils.h"
 #include <vector>
 
 class RenderingHelper {
