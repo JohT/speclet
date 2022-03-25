@@ -19,7 +19,7 @@ set(PROJECT_NAME "Speclet")
 set(CURRENT_VERSION "1.1.0")
 
 # Set message log level to VERBOSE to see more details about what CMake is doing.
-set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE)
+#set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE)
 
 # For simplilicity, the name of the project is also the name of the targe.
 project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
@@ -163,4 +163,4 @@ target_link_libraries("${PROJECT_NAME}"
         juce::juce_recommended_warning_flags)
 
 # Add tests
-# add_subdirectory(test)
+add_subdirectory(test)

@@ -64,3 +64,4 @@ ObjectStore/
 *.iml
 **/*.iml
 performancelog.json
+Testing/
