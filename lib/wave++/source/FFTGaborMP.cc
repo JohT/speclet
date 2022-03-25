@@ -1,4 +1,5 @@
 #include "FFTGaborMP.h"
+#include <assert.h>
 #include <math.h>
 #include <stdlib.h>
 #include "fft.h"

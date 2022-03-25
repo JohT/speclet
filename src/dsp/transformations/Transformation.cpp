@@ -2,6 +2,7 @@
 #include "../windowing/WindowFunctionFactory.h"
 #include "JuceHeader.h"
 #include "../../utilities/PerformanceLogger.h"
+#include <assert.h>
 
 Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
     : transformTypeNr(0),

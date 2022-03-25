@@ -5,6 +5,7 @@
 #include "WindowFunctions.h"
 
 #include "../../plugin/SpectronParameters.h"
+#include <assert.h>
 #include <cstddef>
 #include <memory>
 #include <utility>
@@ -28,7 +29,7 @@ auto WindowFunctionFactory::getWindow(const Method &method, unsigned long resolu
     return newWindow;
 }
 
-auto WindowFunctionFactory::createWindow(const Method& method, unsigned long resolution) -> std::shared_ptr<WindowFunction> {
+auto WindowFunctionFactory::createWindow(const Method &method, unsigned long resolution) -> std::shared_ptr<WindowFunction> {
     switch (method) {
         case Method::BARLETT: {
             return std::make_shared<WindowBartlett>(resolution);

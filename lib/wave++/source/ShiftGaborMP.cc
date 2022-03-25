@@ -1,6 +1,7 @@
 
 #include "ShiftGaborMP.h"
 #include <math.h>
+#include <assert.h>
 
 real_number RunShiftGaborMP(int max_iter, // maximal number of iterations 
 		     real_number epsilon, // desired precision | Rf | < epsilon

@@ -1,6 +1,7 @@
 #include "RenderingHelper.h"
 #include "../ui/ColourGradients.h"
 #include "PerformanceLogger.h"
+#include <assert.h>
 
 RenderingHelper::RenderingHelper()
     : colourGradient(ColourGradients::BLUE) {
@@ -107,7 +108,7 @@ auto RenderingHelper::pixelToIndex(
     }
     percentOfSpectrum = assureBorders("percentOfSpectrum", percentOfSpectrum, 0.0, 1.0);
 
-    auto index = roundToInt(percentOfSpectrum / percentOfSpectrumPerIndex);
+    auto index = juce::roundToInt(percentOfSpectrum / percentOfSpectrumPerIndex);
     if (index > static_cast<int>(frequencyResolution - 1)) {
         index = static_cast<int>(frequencyResolution - 1);
     }
