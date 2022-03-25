@@ -19,6 +19,8 @@
 #include "../../data/SpectralDataInfo.h"
 #include "../windowing/WindowFunctionFactory.h"
 #include "../windowing/WindowFunctions.h"
+#include "juce_core/juce_core.h"
+#include "juce_dsp/juce_dsp.h"
 #include <memory>
 #include <queue>
 

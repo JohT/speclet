@@ -1,6 +1,6 @@
 #include "Transformation.h"
 #include "../windowing/WindowFunctionFactory.h"
-#include "JuceHeader.h"
+#include "juce_core/juce_core.h"
 #include "../../utilities/PerformanceLogger.h"
 #include <assert.h>
 
@@ -79,7 +79,7 @@ void Transformation::calculationFrame() {
     {
         //begin of critical section: only one thread per time ------------------------------
         LOG_PERFORMANCE_OF_SCOPE("Transformation calculationFrameTimer");
-        const ScopedLock myScopedLock(criticalSection);
+        const juce::ScopedLock myScopedLock(criticalSection);
         waitForDestruction.reset();
 
         calculate();

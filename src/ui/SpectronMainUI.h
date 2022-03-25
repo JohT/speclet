@@ -11,7 +11,7 @@
 
 #include "../PluginProcessor.h"
 #include "../dsp/transformations/TransformationFactory.h"
-#include "JuceHeader.h"
+#include "juce_core/juce_core.h"
 #include "SpectronAnalyzerComponent.h"
 
 
@@ -27,7 +27,7 @@ public:
     explicit SpectronMainUI(SpectronAudioProcessor &ownerFilter);
     ~SpectronMainUI() override = default;
 
-    void paint(Graphics &graphics) override;
+    void paint(juce::Graphics &graphics) override;
     void resized() override;
 
 private:

@@ -16,9 +16,6 @@
 #pragma once
 
 #include "../data/SpectralDataInfo.h"
-
-#include <JuceHeader.h>
-
 #include <list>
 #include <vector>
 

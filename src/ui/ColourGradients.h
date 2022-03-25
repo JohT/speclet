@@ -14,16 +14,16 @@
   ==============================================================================
 */
 #pragma once
-#include "JuceHeader.h"
+#include "juce_audio_utils/juce_audio_utils.h"
 namespace ColourGradients {
     auto forIndex(int index) -> juce::ColourGradient;
 
-    auto fadeToBlack(const Colour &colour) noexcept -> juce::ColourGradient;
+    auto fadeToBlack(const juce::Colour &colour) noexcept -> juce::ColourGradient;
     auto fire() noexcept -> juce::ColourGradient;
     auto rainbow() noexcept -> juce::ColourGradient;
 
-    const juce::ColourGradient GREEN = fadeToBlack(Colour::fromRGB(45, 255, 45));
-    const juce::ColourGradient BLUE = fadeToBlack(Colour::fromRGB(10, 80, 255));
+    const juce::ColourGradient GREEN = fadeToBlack(juce::Colour::fromRGB(45, 255, 45));
+    const juce::ColourGradient BLUE = fadeToBlack(juce::Colour::fromRGB(10, 80, 255));
     const juce::ColourGradient FIRE = fire();
     const juce::ColourGradient RAINBOW = rainbow();
 

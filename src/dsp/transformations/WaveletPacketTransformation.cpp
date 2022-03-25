@@ -1,6 +1,5 @@
 #include "WaveletPacketTransformation.h"
 #include "../../utilities/PerformanceLogger.h"
-#include "JuceHeader.h"
 #include <cmath>
 
 WaveletPacketTransformation::WaveletPacketTransformation(

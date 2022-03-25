@@ -81,12 +81,12 @@ void SpectronAudioProcessor::setParameter(int index, float newValue) {
     parameters.setParameter(index, newValue);
 }
 
-auto SpectronAudioProcessor::getParameterName(int index) -> const String {
+auto SpectronAudioProcessor::getParameterName(int index) -> const juce::String {
     return parameters.getParameterName(index);
 }
 
-auto SpectronAudioProcessor::getParameterText(int index) -> const String {
-    return String(getParameter(index), 2);
+auto SpectronAudioProcessor::getParameterText(int index) -> const juce::String {
+    return juce::String(getParameter(index), 2);
 }
 
 //==============================================================================
@@ -145,8 +145,8 @@ void SpectronAudioProcessor::changeProgramName(int index, const juce::String &ne
 }
 
 //This method is called when a parameter changes (listener)
-void SpectronAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier & /*changedProperty*/) {
-    const ScopedLock myScopedLock(criticalSection);
+void SpectronAudioProcessor::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
+    const juce::ScopedLock myScopedLock(criticalSection);
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
     DBG("SpectronAudioProcessor::valueTreePropertyChanged: " + changedParameterName);
 
@@ -218,7 +218,7 @@ void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
-    const ScopedLock myScopedLock(criticalSection);
+    const juce::ScopedLock myScopedLock(criticalSection);
     parameters.blockParameterChanges();
 
     const int numSamples = buffer.getNumSamples();
@@ -272,7 +272,7 @@ void SpectronAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
     // as intermediaries to make it easy to save and load complex data.
 
     // Create an outer XML element..
-    std::unique_ptr<XmlElement> xml = parameters.writeToXML();
+    std::unique_ptr<juce::XmlElement> xml = parameters.writeToXML();
 
     // then use this helper function to stuff it into the binary blob and return it..
     copyXmlToBinary(*xml, destData);
@@ -283,7 +283,7 @@ void SpectronAudioProcessor::setStateInformation(const void *data, int sizeInByt
     // whose contents will have been created by the getStateInformation() call.
 
     // This getXmlFromBinary() helper function retrieves our XML from the binary blob..
-    std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 
     if (xmlState) {
         parameters.readFromXML(*xmlState);
@@ -293,7 +293,7 @@ void SpectronAudioProcessor::setStateInformation(const void *data, int sizeInByt
 //==============================================================================
 
 void SpectronAudioProcessor::updateTransformation() {
-    const ScopedLock myScopedLock(criticalSection);
+    const juce::ScopedLock myScopedLock(criticalSection);
     DBG("SpectronAudioProcessor::updateTransformation()");
     parameters.blockParameterChanges();
 

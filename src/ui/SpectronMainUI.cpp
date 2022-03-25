@@ -20,7 +20,7 @@ SpectronMainUI::SpectronMainUI(SpectronAudioProcessor &ownerAudioProcessor)
 }
 
 //==============================================================================
-void SpectronMainUI::paint(Graphics &) {
+void SpectronMainUI::paint(juce::Graphics &) {
 }
 
 void SpectronMainUI::resized() {

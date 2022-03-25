@@ -21,7 +21,7 @@ auto ColourGradients::forIndex(int index) -> juce::ColourGradient {
 
 auto ColourGradients::fire() noexcept -> juce::ColourGradient {
     DBG("juce::ColourGradient ColourGradients::fire()");
-	juce::ColourGradient gradient = ColourGradient();
+	juce::ColourGradient gradient = juce::ColourGradient();
 
     gradient.addColour(1.0F, juce::Colours::yellow);
     gradient.addColour(0.9F, juce::Colours::red);
@@ -34,7 +34,7 @@ auto ColourGradients::fire() noexcept -> juce::ColourGradient {
 
 auto ColourGradients::rainbow() noexcept -> juce::ColourGradient {
     DBG("juce::ColourGradient ColourGradients::rainbow()");
-	juce::ColourGradient gradient = ColourGradient();
+	juce::ColourGradient gradient = juce::ColourGradient();
 
     gradient.addColour(1.0F, juce::Colours::red);
     gradient.addColour(0.8F, juce::Colours::yellow);
@@ -46,9 +46,9 @@ auto ColourGradients::rainbow() noexcept -> juce::ColourGradient {
     return gradient;
 }
 
-auto ColourGradients::fadeToBlack(const Colour& colour) noexcept -> juce::ColourGradient {
+auto ColourGradients::fadeToBlack(const juce::Colour& colour) noexcept -> juce::ColourGradient {
     DBG("juce::ColourGradient ColourGradients::blue()");
-    juce::ColourGradient gradient = ColourGradient();
+    juce::ColourGradient gradient = juce::ColourGradient();
     gradient.addColour(1.0F, colour);
     gradient.addColour(0.9F, colour.darker(0.1F));
     gradient.addColour(0.0F, juce::Colours::black);
