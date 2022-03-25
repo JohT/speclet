@@ -14,18 +14,23 @@ cmake_minimum_required(VERSION 3.15)
 # `project()` command. `project()` sets up some helpful variables that describe source/binary
 # directories, and the current project version. This is a standard CMake command.
 
-project(speclet)
+# Name of the project and the plugin. Avoid spaces and special characters.
+set(PROJECT_NAME "Speclet")
+set(CURRENT_VERSION "1.1.0")
+
+# Set message log level to VERBOSE to see more details about what CMake is doing.
+set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE)
+
+# For simplilicity, the name of the project is also the name of the targe.
+project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 
 include(Environment.cmake)
 
 # Import dependencies
-CPMAddPackage("gh:juce-framework/JUCE#6.1.5")
+CPMAddPackage("gh:juce-framework/JUCE#6.1.6")
 CPMAddPackage("https://www.fftw.org/fftw-3.3.10.tar.gz#MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c")
 CPMAddPackage("gh:dmoulding/vld#v1.9h")
-#CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") #Online not available anymore
-
-# Import test dependencies
-CPMAddPackage("gh:catchorg/Catch2@2.13.8")
+#CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
 # target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've
@@ -48,10 +53,10 @@ CPMAddPackage("gh:catchorg/Catch2@2.13.8")
 # the formats specified by the FORMATS arguments. This function accepts many optional arguments.
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
 
-juce_add_plugin(Speclet
-    PRODUCT_NAME "Speclet"                      # The name of the final executable, which can differ from the target name
+juce_add_plugin("${PROJECT_NAME}"
+    PRODUCT_NAME "${PROJECT_NAME}"              # The name of the final executable, which can differ from the target name
     COMPANY_NAME "Johannes Troppacher"          # Specify the name of the plugin's author
-    VERSION 0.9.0                               # Set this if the plugin version is different to the project version
+    # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
     FORMATS VST3 AU AUv3 Standalone             # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
 
     PLUGIN_MANUFACTURER_CODE JohT               # A four-character manufacturer id with at least one upper-case character
@@ -73,30 +78,35 @@ juce_add_plugin(Speclet
 # include all your JUCE module headers; if you're happy to include module headers directly, you
 # probably don't need to call this.
 
-juce_generate_juce_header(Speclet)
+juce_generate_juce_header("${PROJECT_NAME}")
 
-# Get all source files in the src directory and store them in the speclet_sources variable.
-FILE(GLOB_RECURSE speclet_sources "src/*.cpp")
-# message(STATUS "Sources in ${CMAKE_CURRENT_SOURCE_DIR}/src:")
-# foreach(source ${speclet_sources})
-#    message(STATUS "'${source}'")
-# endforeach()
+# Compile Project with C++20 Standard
+target_compile_features("${PROJECT_NAME}" PRIVATE cxx_std_20)
+message(VERBOSE "C++ Language Standard set to C++20 for Target ${PROJECT_NAME}")
+
+# Get all source files in the src directory and store them in the project_sources variable.
+# GLOB_RECURSE is not recommended but used here for simplicity: https://cmake.org/cmake/help/latest/command/file.html?highlight=CONFIGURE_DEPENDS#filesystem
+FILE(GLOB_RECURSE project_sources CONFIGURE_DEPENDS "src/*.cpp")
+message(VERBOSE "Sources in ${CMAKE_CURRENT_SOURCE_DIR}/src:")
+foreach(source ${project_sources})
+   message(VERBOSE "'${source}'")
+endforeach()
 
 # `target_sources` adds source files to a target. We pass the target that needs the sources as the
 # first argument, then a visibility parameter for the sources which should normally be PRIVATE.
 # Finally, we supply a list of source files that will be built into the target. This is a standard
 # CMake command.
-target_sources(Speclet PRIVATE ${speclet_sources})
+target_sources("${PROJECT_NAME}" PRIVATE ${project_sources})
 
 # Import fftw3 api headers like fftw3.h:
 if (fftw_ADDED)
-    target_include_directories(Speclet PRIVATE "${fftw_SOURCE_DIR}/api")	 
-    message(STATUS "FFTW api (headers) directory included: ${fftw_SOURCE_DIR}/api")
+    include_directories("${PROJECT_NAME}" PRIVATE "${fftw_SOURCE_DIR}/api")	 
+    message(VERBOSE "FFTW api (headers) directory included for all targets: ${fftw_SOURCE_DIR}/api")
     # Get all include directories for the target.
-    # get_target_property(SPECLET_INCLUDES Speclet INCLUDE_DIRECTORIES)
-    # foreach(dir ${SPECLET_INCLUDES})
-    #     message(STATUS "Speclet_include_dir='${dir}'")
-    # endforeach()
+    get_target_property(PROJECT_INCLUDES "${PROJECT_NAME}" INCLUDE_DIRECTORIES)
+    foreach(dir ${PROJECT_INCLUDES})
+        message(VERBOSE "Project_include_dir='${dir}'")
+    endforeach()
 endif()
 
 # Add libraries to the target, that needed to be included inside the repository:
@@ -108,7 +118,7 @@ add_subdirectory(lib/wave++)
 # need that's not on by default, check the module header for the correct flag to set here. These
 # definitions will be visible both to your code, and also the JUCE module code, so for new
 # definitions, pick unique names that are unlikely to collide! This is a standard CMake command.
-target_compile_definitions(Speclet
+target_compile_definitions("${PROJECT_NAME}"
     PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
         JUCE_DISPLAY_SPLASH_SCREEN=0 # Disable the splash screen on startup under GPL license
@@ -127,22 +137,30 @@ target_compile_definitions(Speclet
 
 # juce_add_binary_data(AudioPluginData SOURCES ...)
 
+# We'll need to link to these from our plugin as well as our tests
+set(MAIN_LINK_LIBRARIES
+    juce::juce_core
+    juce::juce_dsp
+    juce::juce_audio_utils
+    juce::juce_gui_basics
+    fftw3
+    wave++
+)
+
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
 # we're linking our executable target to the `juce::juce_audio_utils` module. Inter-module
 # dependencies are resolved automatically, so `juce_core`, `juce_events` and so on will also be
 # linked automatically. If we'd generated a binary data target above, we would need to link to it
 # here too. This is a standard CMake command.
 
-target_link_libraries(Speclet
+target_link_libraries("${PROJECT_NAME}"
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
-        juce::juce_core
-        juce::juce_dsp
-        juce::juce_audio_utils
-        juce::juce_gui_basics
-        fftw3
-        wave++
+        ${MAIN_LINK_LIBRARIES}
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
+
+# Add tests
+# add_subdirectory(test)
