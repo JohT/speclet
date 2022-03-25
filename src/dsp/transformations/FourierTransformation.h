@@ -43,9 +43,5 @@ private:
     double *in;       //Pointer to input data
     fftw_complex *out;//Pointer to output data
 
-    PerformanceTimer fftExecutePlanTimer;
-    PerformanceTimer fftInputCopyTimer;
-    PerformanceTimer fftOutputCopyTimer;
-    
     SpectralDataInfo spectralDataInfo;
 };

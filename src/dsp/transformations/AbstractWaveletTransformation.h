@@ -15,7 +15,6 @@
 */
 #pragma once
 #include "../../../lib/wave++/source/libw.h"//TODO (JohT) include with cmake
-#include "../../utilities/PerformanceTimer.h"
 #include "../../utilities/RenderingHelper.h"
 #include "Transformation.h"
 #include <memory>
@@ -116,8 +115,6 @@ private:
 
     std::unique_ptr<HedgePer> constantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
     std::unique_ptr<HedgePer> dWTLevelsHedge;     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
-
-    PerformanceTimer extractSpectrumTimer;
 
     static auto getMaxLevel(ResolutionType resolution) -> WaveletLevelType;
     static auto getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType;

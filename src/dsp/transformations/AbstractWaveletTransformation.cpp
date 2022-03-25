@@ -1,4 +1,5 @@
 #include "AbstractWaveletTransformation.h"
+#include "../../utilities/PerformanceLogger.h"
 #include "JuceHeader.h"
 #include <memory>
 #include <span>
@@ -10,9 +11,8 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
       waveletFilterTreeMaxLevel(getMaxLevel(newResolution)),
       dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))),
       constantLevelsHedge(nullptr),
-      dWTLevelsHedge(nullptr),
-      extractSpectrumTimer(PerformanceTimer("AbstractWaveletTransformation::extractSpectrum")) {
-
+      dWTLevelsHedge(nullptr) {
+    
     setWaveletBase(newWaveletBase);
     updateConstantLevelsHedge(waveletFilterTreeMaxLevel / 2);
     updateDWTLevelsHedge();
@@ -161,6 +161,7 @@ void AbstractWaveletTransformation::setWaveletBase(const WaveletBase &newWavelet
 
 //Copying every single sample from input-queue to wavelet input-array
 void AbstractWaveletTransformation::fillDWTInput() {
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation fillDWTInput");
     auto *windowFunction = getWindowFunction();
     for (unsigned int i = 0; i < getResolution(); i++) {
         auto nextSample = getInputQueue().front();
@@ -170,6 +171,7 @@ void AbstractWaveletTransformation::fillDWTInput() {
 }
 
 void AbstractWaveletTransformation::sortWaveletFilterTreeByScaleDescending(const ArrayTreePer &tree) {
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation sortWaveletFilterTreeByScaleDescending");
     if (tree.origin == nullptr) {
         return;
     }
@@ -244,7 +246,7 @@ void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &outWavel
 }
 
 void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, std::span<real_number> origin, const HedgePer &levelsHedge) {
-    extractSpectrumTimer.start();
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation extractSpectrum");
 
     SpectralDataBuffer::ItemType spectrum;
 
@@ -296,8 +298,6 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, st
             time += timeStepSize - 1;
         }
     }
-
-    extractSpectrumTimer.stop();
 }
 
 //returns the average value of the specified result tree positions
@@ -309,6 +309,8 @@ auto AbstractWaveletTransformation::getAvgValue(
         unsigned long blockposStart,
         unsigned long blockposEnd) -> double {
 
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation getAvgValue");
+    
     //TODO (JohT) Stepsize hack still needed?
     unsigned long stepSize = 2;//skips every nth value. no mathematically exact averaging, but necessary for performance
     auto count = 0;

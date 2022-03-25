@@ -6,8 +6,8 @@
 #include "dsp/windowing/WindowFunctionFactory.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpectronMainUI.h"
+#include "utilities/PerformanceLogger.h"
 #include <memory>
-
 
 #define DEFAULT_SAMPLINGRATE 44100
 
@@ -26,9 +26,10 @@ SpectronAudioProcessor::SpectronAudioProcessor()
       currentTransformation(nullptr),
       signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
 
-#if _LOGTOFILE
-    juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
-#endif
+    LOG_PERFORMANCE_BEGIN("SpectronAudioProcessor");
+    #if _LOGTOFILE
+        juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
+    #endif
 
     //Initialize with default settings
     parameters.setParameter(SpectronParameters::PARAMETER_INDEX_ColorMode, SpectronParameters::COLORMODE_DEFAULT);
@@ -51,14 +52,14 @@ SpectronAudioProcessor::SpectronAudioProcessor()
 SpectronAudioProcessor::~SpectronAudioProcessor() {
     SpectronParameters::getSingletonInstance().removeListener(this);
     DBG("SpectronAudioProcessor as parameter listener removed");
-    LOG("SpectronAudioProcessor as parameter listener removed");
     currentTransformation = nullptr;
 
     TransformationFactory::getSingletonInstance().destruct();
 
-#if _LOGTOFILE
-    juce::Logger::setCurrentLogger(0, true);
-#endif
+    #if _LOGTOFILE
+        juce::Logger::setCurrentLogger(0, true);
+    #endif
+    LOG_PERFORMANCE_END();
 }
 
 //==============================================================================
@@ -147,7 +148,7 @@ void SpectronAudioProcessor::changeProgramName(int index, const juce::String &ne
 void SpectronAudioProcessor::valueTreePropertyChanged(ValueTree &treeWhosePropertyHasChanged, const Identifier & /*changedProperty*/) {
     const ScopedLock myScopedLock(criticalSection);
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
-    LOG("SpectronAudioProcessor::valueTreePropertyChanged: " + changedParameterName);
+    DBG("SpectronAudioProcessor::valueTreePropertyChanged: " + changedParameterName);
 
     if (SpectronParameters::isTransformationParameter(changedParameterName)) {
         updateTransformation();
@@ -293,7 +294,7 @@ void SpectronAudioProcessor::setStateInformation(const void *data, int sizeInByt
 
 void SpectronAudioProcessor::updateTransformation() {
     const ScopedLock myScopedLock(criticalSection);
-    LOG("SpectronAudioProcessor::updateTransformation()");
+    DBG("SpectronAudioProcessor::updateTransformation()");
     parameters.blockParameterChanges();
 
     currentTransformation = nullptr;

@@ -284,7 +284,6 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     //registeres itself as listener for parameter-changes
     SpectronParameters::getSingletonInstance().addListener(this);
     DBG("SpectronAnalyzerComponent as parameter listener added");
-    LOG("SpectronAnalyzerComponent as parameter listener added");
     //adds spectrum drawing component to the scrollable view
     spectralviewport->setViewedComponent(new SpectronDrawer());
 
@@ -326,7 +325,6 @@ SpectronAnalyzerComponent::~SpectronAnalyzerComponent() {
     //unregisteres itself as listener for parameter-changes
     SpectronParameters::getSingletonInstance().removeListener(this);
     DBG("SpectronAnalyzerComponent as parameter listener removed");
-    LOG("SpectronAnalyzerComponent as parameter listener removed");
     parameters = nullptr;
     //[/Destructor]
 }

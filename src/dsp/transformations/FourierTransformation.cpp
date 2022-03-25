@@ -1,14 +1,12 @@
 #include "FourierTransformation.h"
+#include "../../utilities/PerformanceLogger.h"
 #include <cstddef>
 
 
 FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
-    : Transformation(newSamplingRate, newResolution, newWindowFunction), 
-      in(static_cast<double *>(fftw_malloc(sizeof(double) * newResolution))), 
-      out(static_cast<fftw_complex *>(fftw_malloc(sizeof(fftw_complex) * ((newResolution / 2) + 1)))), 
-      fftExecutePlanTimer(PerformanceTimer("FourierTransformation::calculate (fftw execute)")),
-      fftInputCopyTimer(PerformanceTimer("FourierTransformation::calculate (input copy)")),
-      fftOutputCopyTimer(PerformanceTimer("FourierTransformation::calculate (output copy)")),  
+    : Transformation(newSamplingRate, newResolution, newWindowFunction),
+      in(static_cast<double *>(fftw_malloc(sizeof(double) * newResolution))),
+      out(static_cast<fftw_complex *>(fftw_malloc(sizeof(fftw_complex) * ((newResolution / 2) + 1)))),
       spectralDataInfo(newSamplingRate, newResolution, (newResolution / 2 + 1), 1) {
 
     plan = fftw_plan_dft_r2c_1d(static_cast<int>(newResolution), in, out, FFTW_ESTIMATE);
@@ -39,31 +37,32 @@ FourierTransformation::~FourierTransformation() {
 
 void FourierTransformation::calculate() {
     //Loop for copying every single sample from input-queue to fft inputarray
-    fftInputCopyTimer.start();
     auto resolution = getResolution();
-    for (std::size_t i = 0; i < resolution; i++) {
-        auto nextSamplePerChannel = getInputQueue().front();
-        *(in + i) = nextSamplePerChannel * getWindowFunction()->getFactor(i);
+    {
+        LOG_PERFORMANCE_OF_SCOPE("FourierTransformation calculate fftInputCopy");
+        for (std::size_t i = 0; i < resolution; i++) {
+            auto nextSamplePerChannel = getInputQueue().front();
+            *(in + i) = nextSamplePerChannel * getWindowFunction()->getFactor(i);
 
-        getInputQueue().pop();
+            getInputQueue().pop();
+        }
     }
-    fftInputCopyTimer.stop();
-
-    fftExecutePlanTimer.start();
-    fftw_execute(plan);
-    fftExecutePlanTimer.stop();
-
-    fftOutputCopyTimer.start();
-    SpectralDataBuffer::ItemType spectrum;
-
-    for (std::size_t i = 0; i < ((resolution / 2) + 1); i++) {
-        //Loop for copying every single fft result data into the output-queue
-        double realValue = *(out + i)[0];
-        double imaginaryValue = *(out + i)[1];
-        double magnitude = sqrt(realValue * realValue + imaginaryValue * imaginaryValue);
-        double normalizedMagnitude = magnitude / static_cast<double>(resolution); // 1/N = Normalisation
-        spectrum.push_back(static_cast<SpectralDataBuffer::ValueType>(normalizedMagnitude));
+    {
+        LOG_PERFORMANCE_OF_SCOPE("FourierTransformation calculate fftw_execute");
+        fftw_execute(plan);
     }
-    getSpectralDataBuffer()->write(spectrum);
-    fftOutputCopyTimer.stop();
+    {
+        LOG_PERFORMANCE_OF_SCOPE("FourierTransformation calculate fftOutputCopy");
+        SpectralDataBuffer::ItemType spectrum;
+
+        for (std::size_t i = 0; i < ((resolution / 2) + 1); i++) {
+            //Loop for copying every single fft result data into the output-queue
+            double realValue = *(out + i)[0];
+            double imaginaryValue = *(out + i)[1];
+            double magnitude = sqrt(realValue * realValue + imaginaryValue * imaginaryValue);
+            double normalizedMagnitude = magnitude / static_cast<double>(resolution);// 1/N = Normalisation
+            spectrum.push_back(static_cast<SpectralDataBuffer::ValueType>(normalizedMagnitude));
+        }
+        getSpectralDataBuffer()->write(spectrum);
+    }
 }

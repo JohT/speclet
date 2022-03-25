@@ -1,8 +1,9 @@
 #include "RenderingHelper.h"
 #include "../ui/ColourGradients.h"
-#include "PerformanceTimer.h"
+#include "PerformanceLogger.h"
 
-RenderingHelper::RenderingHelper() : colourGradient(ColourGradients::BLUE), renderVerticalPointsTimer(PerformanceTimer("RenderingHelper::renderVerticalPointsTimer")) {
+RenderingHelper::RenderingHelper()
+    : colourGradient(ColourGradients::BLUE) {
 }
 
 //method for rendering one column of spectral data
@@ -11,7 +12,8 @@ void RenderingHelper::renderVerticalPoints(
         TAnalyzerSettings settings,
         int currentXPos,
         juce::Image *spectralImage) {
-    renderVerticalPointsTimer.start();
+
+    LOG_PERFORMANCE_OF_SCOPE("RenderingHelper renderVerticalPoints");
 
     // --- inputdata check
     assert(transformationResult);
@@ -60,8 +62,6 @@ void RenderingHelper::renderVerticalPoints(
         juce::Colour colour = colourGradient.getColourAtPosition(amplitudeColorIndex);
         spectralImage->setPixelAt(currentXPos, (height - i), colour);
     }
-
-    renderVerticalPointsTimer.stop();
 }
 
 auto RenderingHelper::getColorAmount(
@@ -84,7 +84,7 @@ auto RenderingHelper::getColorAmount(
 auto RenderingHelper::pixelToIndex(
         int pixel,
         int height,
-        const SpectralDataInfo & spectralDataInfo,
+        const SpectralDataInfo &spectralDataInfo,
         bool logFrequency) -> unsigned long {
     if (pixel <= 0) {
         return 0;//DC in spectrum always on index = 0
@@ -116,7 +116,7 @@ auto RenderingHelper::pixelToIndex(
     return static_cast<unsigned int>(index);
 }
 
-auto RenderingHelper::assureBorders(const juce::String &/*paramName*/, double value, double min, double max) -> double {
+auto RenderingHelper::assureBorders(const juce::String & /*paramName*/, double value, double min, double max) -> double {
     if (value < min) {
         //DBG(T("RenderingHelper::assureBorders: <")
         //	+ paramName					+ T(">")
