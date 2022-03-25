@@ -1,6 +1,7 @@
 #include "SpectralDataInfo.h"
 #include "../dsp/transformations/Transformation.h"
 #include "JuceHeader.h"
+#include <assert.h>
 
 SpectralDataInfo::SpectralDataInfo(
         double newSamplingRate,

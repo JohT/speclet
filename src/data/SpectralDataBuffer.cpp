@@ -1,5 +1,7 @@
 #include "SpectralDataBuffer.h"
 #include "../utilities/PerformanceLogger.h"
+#include "juce_core/juce_core.h"
+#include <assert.h>
 
 SpectralDataBuffer::SpectralDataBuffer()
     : buffer(new std::list<ItemType>()), mWriteAccess(false), sizeCheckCounter(0) {
