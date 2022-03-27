@@ -8,6 +8,7 @@
 #include <assert.h>
 #include <cstddef>
 #include <memory>
+#include <stdexcept>
 #include <utility>
 
 auto WindowFunctionFactory::getSingletonInstance() -> WindowFunctionFactory & {
@@ -57,9 +58,7 @@ auto WindowFunctionFactory::createWindow(const Method &method, unsigned long res
         }
         case Method::NUMBER_OF_OPTIONS:
         default: {
-            bool windowing_function_unknown = false;
-            assert(windowing_function_unknown);
-            return nullptr;
+            throw std::invalid_argument("Unknown windowing function " + std::to_string(static_cast<int>(method)));
         }
     }
 }
