@@ -75,7 +75,7 @@ auto TransformationFactory::createTransformation(
     }
 
     if (currentTransformation != nullptr) {
-        currentTransformation->setTransformationNr(transformationType);
+        currentTransformation->setTransformationNr(newTransformationType);
         currentTransformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
     }
     transformationType = newTransformationType;

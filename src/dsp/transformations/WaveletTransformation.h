@@ -36,6 +36,8 @@ public:
         return spectralDataInfo;
     }
 
+    auto getName() -> const char * override { return "Fast Wavelet Transformation"; }
+
 protected:
     void calculate() override;
 

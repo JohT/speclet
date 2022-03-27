@@ -85,6 +85,13 @@ public:
     void setTransformResultListener(TransformationListener *value);
     void getNextSpectrum(SpectralDataBuffer::ItemType *item);
 
+    /**
+     * @brief Gets the name of the transformation
+     * 
+     * @return const char* 
+     */
+    virtual auto getName() -> const char * = 0;
+
 protected:
     /**
      * @brief applies the transformation to the samples in the input queue and stores the result in the output queue

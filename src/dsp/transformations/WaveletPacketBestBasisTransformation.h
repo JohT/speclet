@@ -39,6 +39,8 @@ public:
         return spectralDataInfo;
     }
 
+    auto getName() -> const char * override { return "Fast Wavelet Packet Best Basis Transformation"; }
+
 protected:
     void calculate() override;
 
