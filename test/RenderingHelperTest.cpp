@@ -1,4 +1,4 @@
-#include "../src/PluginProcessor.h"
+#include "../src/utilities/RenderingHelper.h"
 #include <catch2/catch_all.hpp>
 
 SCENARIO("Rendering Helper") {

@@ -1,4 +1,4 @@
-#include "../src/PluginProcessor.h"
+#include "../src/dsp/windowing/WindowFunctionFactory.h"
 #include <catch2/catch_all.hpp>
 
 SCENARIO("Window Function Factory") {
