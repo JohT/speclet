@@ -38,15 +38,6 @@ public:
             int currentXPos,
             juce::Image *spectralImage);
 
-private:
-    auto getColorAmount(
-            double magnitude,
-            double minMagnitude,
-            double maxMagnitude,
-            bool logMagnitude) -> double;
-    auto assureBorders(const juce::String &paramName, double value, double min, double max) -> double;
-
-public:
     //Normally, this method would be defined as "privat".
     //But since it is directly adressed in a unit-test, it remains
     //(until the test gets deprecated) "public"
@@ -57,6 +48,13 @@ public:
             bool logFrequency) -> unsigned long;
 
 private:
+    auto getColorAmount(
+            double magnitude,
+            double minMagnitude,
+            double maxMagnitude,
+            bool logMagnitude) -> double;
+    auto assureBorders(const juce::String &paramName, double value, double min, double max) -> double;
+
     std::vector<juce::Colour> mColorTable;//color table
     juce::ColourGradient colourGradient;  //color gradient object
 };
