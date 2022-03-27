@@ -45,6 +45,7 @@ public:
     auto getSpectralDataInfo() -> const SpectralDataInfo & override {
         return spectralDataInfo;
     }
+    auto getName() -> const char * override { return "Fast Wavelet Packet Transform"; }
 
 protected:
     void calculate() override;

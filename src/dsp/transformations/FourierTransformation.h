@@ -15,10 +15,11 @@
 */
 #pragma once
 #include "../../plugin/SpectronParameters.h"
+#include "../windowing/WindowFunctionFactory.h"
 #include "Transformation.h"
 #include "TransformationFactory.h"
-#include "../windowing/WindowFunctionFactory.h"
 #include "fftw3.h"
+
 
 class FourierTransformation : public Transformation {
 public:
@@ -32,10 +33,12 @@ public:
     auto operator=(FourierTransformation &) -> FourierTransformation & = delete; //No copy assignment
     auto operator=(FourierTransformation &&) -> FourierTransformation & = delete;//No move assignment
 
+    auto getName() -> const char * override { return "Fast Fourier Transformation"; }
+
 protected:
     void calculate() override;
     auto getSpectralDataInfo() -> const SpectralDataInfo & override {
-      return spectralDataInfo;
+        return spectralDataInfo;
     }
 
 private:
