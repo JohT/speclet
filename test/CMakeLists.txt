@@ -32,12 +32,8 @@ message(VERBOSE "C++ Language Standard set to C++20 for Target ${TEST_PROJECT_NA
 target_include_directories("${TEST_PROJECT_NAME}" PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_link_libraries("${TEST_PROJECT_NAME}" PRIVATE Catch2::Catch2WithMain "${PROJECT_NAME}" ${MAIN_LINK_LIBRARIES})
 
-# Load and use the .cmake file provided by Catch2
+# Register tests to CMake's CTest using the integration provided by Catch2:
 # https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md
-# We have to manually provide the source directory here for now
 include(CTest)
 include(${Catch2_SOURCE_DIR}/extras/Catch.cmake)
 catch_discover_tests("${TEST_PROJECT_NAME}")
-
-#set(CMAKE_MESSAGE_LOG_LEVEL DEBUG)
-#add_test("${TEST_PROJECT_NAME}" "${TEST_PROJECT_NAME}")
