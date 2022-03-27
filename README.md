@@ -79,7 +79,9 @@ GNU Lesser General Public License v2.1
 - [Instrumentor.h Mattias Aronsson Mod](https://gist.github.com/maronsson/073840bf94e4d6df94c5f294a6e96e03)
 
 ### References regarding unit testing
+- [CMake's CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html)
+- [Catch2 CMake Integration](https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md)
+- [Catch2 Data Generators](https://github.com/catchorg/Catch2/blob/devel/docs/generators.md)
+- [Integration of Catch, CMake and CMake CodeCoverage](https://github.com/fkromer/catch_cmake_coverage)
 - [Coverage for tests with cmake and catch2](https://stackoverflow.com/questions/65603144/how-to-get-coverage-for-tests-with-cmake-and-catch2)
 - [Findcodecov.cmake](https://github.com/catchorg/Catch2/blob/devel/CMake/Findcodecov.cmake)
-- [Integration of Catch, CMake and CMake CodeCoverage](https://github.com/fkromer/catch_cmake_coverage)
-- [Catch2 Data Generators](https://github.com/catchorg/Catch2/blob/devel/docs/generators.md)

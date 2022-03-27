@@ -27,3 +27,13 @@ cmake -Bbuild -DJUCE_BUILD_EXTRAS=ON -DJUCE_BUILD_EXAMPLES=ON -DCMAKE_OSX_ARCHIT
 ```shell
 cmake --build build
 ```
+
+## Run Unit-Tests
+
+From this directory start the unit test with the following command. 
+
+```shell
+ctest --test-dir build/test
+```
+
+[CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html)
