@@ -41,7 +41,7 @@ class WindowBlackmanHarris : public WindowFunction {
 public:
     explicit WindowBlackmanHarris(unsigned long newResolution) : WindowFunction(newResolution) {}
     auto calculateFactor(unsigned long index) -> double override;//blackman_harris windowing function
-    auto getName() -> const char * override { return "Blackman Harris"; }
+    auto getName() -> const char * override { return "Blackman-Harris"; }
 };
 
 class WindowHamming : public WindowFunction {

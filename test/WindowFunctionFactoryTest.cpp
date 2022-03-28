@@ -32,7 +32,7 @@ SCENARIO("Window Function Factory") {
         }
         WHEN("invalid window number is given") {
             WindowFunctionFactory::Method invalidWindowMethod = WindowFunctionFactory::Method::NUMBER_OF_OPTIONS;
-            THEN("nullptr is returned") {
+            THEN("exception is thrown") {
                 auto expectedErrorMessage = "Unknown windowing function " + std::to_string(static_cast<int>(invalidWindowMethod));
                 REQUIRE_THROWS_WITH(factory.getWindow(invalidWindowMethod, resolution), expectedErrorMessage);
             }
