@@ -87,7 +87,7 @@ double getMaxPowerFrequencyDeviation(Transformation *transformation, double expe
 
 SCENARIO("Transformations Integration Test", "[integration]") {
     auto samplingRate = 44100;
-    Transformation::ResolutionType resolution = 4096;
+    Transformation::ResolutionType resolution = GENERATE(2048U, 4096U);
     auto frequencyResolutionInHz = static_cast<double>(samplingRate) * 0.5 / static_cast<double>(resolution);
 
     // Generates a list of all transformation except for "BYPASS" and calls the tests methods below for each of them.
@@ -107,7 +107,7 @@ SCENARIO("Transformations Integration Test", "[integration]") {
 
     auto frequencyDeviationToleranceFactor = getFrequencyDeviationToleranceFactor(transformation->getTransformationNr());
     
-    GIVEN("Transformation: " << transformation->getName()) {
+    GIVEN(transformation->getName() << " with resolution " << resolution) {
         double frequency = static_cast<double>(resolution) / 100.0f;
         WHEN("sine signal with " << frequency << "Hz is analyzed") {
             generateTestSineInput(frequency, transformation, samplingRate, resolution);
