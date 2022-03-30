@@ -106,7 +106,7 @@ SCENARIO("Transformations Integration Test", "[integration]") {
     REQUIRE(transformation->getTransformationNr() == transformationType);
 
     auto frequencyDeviationToleranceFactor = getFrequencyDeviationToleranceFactor(transformation->getTransformationNr());
-    
+
     GIVEN(transformation->getName() << " with resolution " << resolution) {
         double frequency = static_cast<double>(resolution) / 100.0f;
         WHEN("sine signal with " << frequency << "Hz is analyzed") {
@@ -119,5 +119,24 @@ SCENARIO("Transformations Integration Test", "[integration]") {
             }
         }
     }
+    TransformationFactory::getSingletonInstance().destruct();
+}
+
+TEST_CASE("Transformations Performance Test", "[.performance]") {
+    auto samplingRate = 44100;
+    Transformation::ResolutionType resolution = 4096;
+    double frequency = static_cast<double>(resolution) / 100.0f;
+    BENCHMARK_ADVANCED("Fast Fourier Transform Performance")(Catch::Benchmark::Chronometer meter) {
+        Transformation *transformation = TransformationFactory::getSingletonInstance().createTransformation(
+                TransformationFactory::Type::FAST_FOURIER_TRANSFORM,
+                samplingRate,
+                resolution,
+                WindowFunctionFactory::Method::BLACKMAN_HARRIS,
+                AbstractWaveletTransformation::WaveletBase::VAIDYANATHAN_18,
+                WaveletPacketTransformation::ResolutionRatioOption::FREQUENCY_X4);
+        generateTestSineInput(frequency, transformation, samplingRate, resolution);
+        getMaxPowerFrequencyDeviation(transformation, frequency);
+        meter.measure([transformation, frequency] { return getMaxPowerFrequencyDeviation(transformation, frequency); });
+    };
     TransformationFactory::getSingletonInstance().destruct();
 }
