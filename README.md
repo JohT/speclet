@@ -4,7 +4,7 @@ VST Audio Spectrum Analyzer Plugin using Fourier- and Wavelet-Transformation.
 
 - (c)2011 by Johannes Troppacher (Austria)   
 - For graduation at HS Mittweida - University of applied science (Germany)  
-- Original title (german): "Echtzeitspektralanalyse auf Basis der Fourier- und Wavelet-Transformation implementiert als VST-Plugin"  
+- Paper (german): [Echtzeitspektralanalyse auf Basis der Fourier- und Wavelet-Transformation implementiert als VST-Plugin](https://monami.hs-mittweida.de/frontdoor/deliver/index/docId/3216/file/J.Troppacher_2011_Diplomarbeit.pdf)  
 - License: [GNU GENERAL PUBLIC LICENSE v3](./LICENSE)
 
 ### Used Tools
@@ -57,7 +57,7 @@ allowed by permission of the copyright holders.
 https://github.com/dmoulding/vld   
 GNU Lesser General Public License v2.1
 
-### References
+### References for modernization
 
 - [&#11088; Pamplejuce](https://github.com/sudara/pamplejuce)
 - [Example using CPM package manager with JUCE](https://github.com/robbert-vdh/diopser/blob/master/CMakeLists.txt)
