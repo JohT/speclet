@@ -59,11 +59,12 @@ GNU Lesser General Public License v2.1
 
 ### References
 
+- [&#11088; Pamplejuce](https://github.com/sudara/pamplejuce)
 - [Example using CPM package manager with JUCE](https://github.com/robbert-vdh/diopser/blob/master/CMakeLists.txt)
 - [C++ Singleton](https://stackoverflow.com/questions/1008019/c-singleton-design-pattern)
 - [10 Cmake Tips & Tricks](https://medium.com/codex/10-cmake-tips-tricks-7f00d407923d)
 - [JUCE CMake Repo Prototype](https://github.com/eyalamirmusic/JUCECmakeRepoPrototype/blob/master/CMakeLists.txt)
-- [Pamplejuce](https://github.com/sudara/pamplejuce)
+- [Cross-platform CI for JUCE audio plugins with Github Actions](https://github.com/maxwellpollack/juce-plugin-ci)
 - [Reference to non-static member function must be called](https://stackoverflow.com/questions/26331628/reference-to-non-static-member-function-must-be-called)
 - [Pointer-to-Member Function](http://www.codeguru.com/cpp/cpp/article.php/c17401/C-Tutorial-PointertoMember-Function.htm)
 - [CLAP CLever Audio Plugin](https://github.com/free-audio/clap)
@@ -74,13 +75,13 @@ GNU Lesser General Public License v2.1
 
 - [Google Chrome Browser Trace Log Viewer](chrome://tracing/)
 - [The Cherno - VISUAL BENCHMARKING in C++ (YouTube)](https://www.youtube.com/watch?v=xlAH4dbMVnU&t=197s)
-- [Instrumentor.h (Code Snippet)](https://gist.github.com/TheCherno/31f135eea6ee729ab5f26a6908eb3a5e)
+- [&#11088; Instrumentor.h (Code Snippet)](https://gist.github.com/TheCherno/31f135eea6ee729ab5f26a6908eb3a5e)
 - [Instrumentor.h David Churchill Mod (Code Snippet)](https://pastebin.com/qw5Neq4U)
 - [Instrumentor.h Mattias Aronsson Mod](https://gist.github.com/maronsson/073840bf94e4d6df94c5f294a6e96e03)
 
 ### References regarding unit testing
 - [CMake's CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html)
-- [Catch2 CMake Integration](https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md)
+- [&#11088; Catch2 CMake Integration](https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md)
 - [Catch2 Data Generators](https://github.com/catchorg/Catch2/blob/devel/docs/generators.md)
 - [Integration of Catch, CMake and CMake CodeCoverage](https://github.com/fkromer/catch_cmake_coverage)
 - [Coverage for tests with cmake and catch2](https://stackoverflow.com/questions/65603144/how-to-get-coverage-for-tests-with-cmake-and-catch2)
