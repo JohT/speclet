@@ -1,7 +1,7 @@
-#include "../src/PluginProcessor.h"
+#include "../src/SpecletPluginProcessor.h"
 #include <catch2/catch_all.hpp>
 
-SpectronAudioProcessor testPlugin;
+SpecletAudioProcessor testPlugin;
 
 TEST_CASE("Plugin instance name", "[name]")
 {

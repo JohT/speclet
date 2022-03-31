@@ -1,17 +1,17 @@
 #include "ColourGradients.h"
-#include "../plugin/SpectronParameters.h"
+#include "../plugin/SpecletParameters.h"
 
 auto ColourGradients::forIndex(int index) -> juce::ColourGradient {
-    if (index == SpectronParameters::COLORMODE_BLUE) {
+    if (index == SpecletParameters::COLORMODE_BLUE) {
         return BLUE;
     }
-    if (index == SpectronParameters::COLORMODE_GREEN) {
+    if (index == SpecletParameters::COLORMODE_GREEN) {
         return GREEN;
     }
-    if (index == SpectronParameters::COLORMODE_FIRE) {
+    if (index == SpecletParameters::COLORMODE_FIRE) {
         return fire();
     }
-    if (index == SpectronParameters::COLORMODE_RAINBOW) {
+    if (index == SpecletParameters::COLORMODE_RAINBOW) {
         return rainbow();
     }
 

@@ -9,23 +9,22 @@
   ==============================================================================
 */
 
-#include "../PluginProcessor.h"
+#include "../SpecletPluginProcessor.h"
 #include "../dsp/transformations/TransformationFactory.h"
 #include "juce_core/juce_core.h"
-#include "SpectronAnalyzerComponent.h"
-
+#include "SpecletAnalyzerComponent.h"
 
 //==============================================================================
 /** This is the editor component that our filter will display.
 */
-class SpectronMainUI : public juce::AudioProcessorEditor {
+class SpecletMainUI : public juce::AudioProcessorEditor {
 public:
     enum Constants {
         MAINGUI_SIZE_X = 800,
         MAINGUI_SIZE_Y = 360
     };
-    explicit SpectronMainUI(SpectronAudioProcessor &ownerFilter);
-    ~SpectronMainUI() override = default;
+    explicit SpecletMainUI(SpecletAudioProcessor &ownerFilter);
+    ~SpecletMainUI() override = default;
 
     void paint(juce::Graphics &graphics) override;
     void resized() override;
@@ -33,7 +32,7 @@ public:
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
-    SpectronAudioProcessor &audioProcessor;
+    SpecletAudioProcessor &audioProcessor;
 
-    SpectronAnalyzerComponent spectralAnalyzerComponent;
+    SpecletAnalyzerComponent spectralAnalyzerComponent;
 };

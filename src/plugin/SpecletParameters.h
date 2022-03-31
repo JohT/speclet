@@ -18,7 +18,7 @@
 #include <juce_audio_utils/juce_audio_utils.h>
 #include <string>
 
-class SpectronParameters {
+class SpecletParameters {
     // --------------- constants --------------- //
 public:
     //---------------------------------------------------------------------------
@@ -172,12 +172,12 @@ public:
     // --------------- methods --------------- //
 
     // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
-    SpectronParameters(const SpectronParameters& other) = delete;
-    SpectronParameters(SpectronParameters&& other) = delete;
-    auto operator=(const SpectronParameters& other) -> SpectronParameters& = delete;
-    auto operator=(SpectronParameters&& other) -> SpectronParameters& = delete;
+    SpecletParameters(const SpecletParameters& other) = delete;
+    SpecletParameters(SpecletParameters&& other) = delete;
+    auto operator=(const SpecletParameters& other) -> SpecletParameters& = delete;
+    auto operator=(SpecletParameters&& other) -> SpecletParameters& = delete;
 
-    static auto getSingletonInstance() -> SpectronParameters &;
+    static auto getSingletonInstance() -> SpecletParameters &;
 
     static auto isTransformationParameter(const juce::String& parameterID) -> bool;
 
@@ -220,12 +220,12 @@ private:
     };
 
     // --------------- members --------------- //
-    juce::ValueTree properties = juce::ValueTree("SpectronParameters");
+    juce::ValueTree properties = juce::ValueTree("SpecletParameters");
     juce::WaitableEvent waitForParameterChange = juce::WaitableEvent(true);
     juce::CriticalSection criticalSection;
 
     // --------------- methods --------------- //
 
-    SpectronParameters();
-    ~SpectronParameters() = default;
+    SpecletParameters();
+    ~SpecletParameters() = default;
 };

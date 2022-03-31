@@ -22,9 +22,8 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../dsp/transformations/Transformation.h"
-#include "../plugin/SpectronParameters.h"
+#include "../plugin/SpecletParameters.h"
 #include "juce_core/juce_core.h"
-#include "SpectronDrawer.h"
 
 //[/Headers]
 
@@ -37,14 +36,14 @@
 	 Describe your class and how it works here!
                                                                     //[/Comments]
 */
-class SpectronAnalyzerComponent : public juce::Component,
+class SpecletAnalyzerComponent : public juce::Component,
                                   public juce::ValueTree::Listener,
                                   public juce::ComboBox::Listener,
                                   public juce::Slider::Listener {
 public:
     //==============================================================================
-    SpectronAnalyzerComponent();
-    ~SpectronAnalyzerComponent() override;
+    SpecletAnalyzerComponent();
+    ~SpecletAnalyzerComponent() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -71,7 +70,7 @@ public:
         enum PopupMenuEntryIndizes {
             POPUPMENU_INDEX_1_ABOUT = 1
         };
-    SpectronParameters *parameters;
+    SpecletParameters *parameters;
     juce::CriticalSection criticalSection;
     juce::PopupMenu popupMenu;
 
@@ -112,6 +111,6 @@ public:
 
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
-    SpectronAnalyzerComponent(const SpectronAnalyzerComponent &);
-    auto operator=(const SpectronAnalyzerComponent &) -> const SpectronAnalyzerComponent &;
+    SpecletAnalyzerComponent(const SpecletAnalyzerComponent &);
+    auto operator=(const SpecletAnalyzerComponent &) -> const SpecletAnalyzerComponent &;
 };

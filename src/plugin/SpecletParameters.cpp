@@ -1,7 +1,7 @@
-#include "SpectronParameters.h"
+#include "SpecletParameters.h"
 #include "../utilities/PerformanceLogger.h"
 
-SpectronParameters::SpectronParameters() {
+SpecletParameters::SpecletParameters() {
     //create ValueTree object, which stores all parameters as childs in a tree structure
 
     //add parameters as tree childs (must start with zero and use ascending indices -> enum)
@@ -25,16 +25,16 @@ SpectronParameters::SpectronParameters() {
     waitForParameterChange.signal();
 }
 
-auto SpectronParameters::getSingletonInstance() -> SpectronParameters & {
-    static SpectronParameters singletonInstance;
+auto SpecletParameters::getSingletonInstance() -> SpecletParameters & {
+    static SpecletParameters singletonInstance;
     return singletonInstance;
 }
 
-auto SpectronParameters::isTransformationParameter(const juce::String &parameterID) -> bool {
-    return parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_RESOLUTION) || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_TRANSFORMATION) || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELET) || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WAVELETPACKETBASE) || parameterID.equalsIgnoreCase(SpectronParameters::PARAMETER_WINDOWING);
+auto SpecletParameters::isTransformationParameter(const juce::String &parameterID) -> bool {
+    return parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_RESOLUTION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_TRANSFORMATION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELET) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELETPACKETBASE) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WINDOWING);
 }
 
-auto SpectronParameters::getParameter(int index) -> float {
+auto SpecletParameters::getParameter(int index) -> float {
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         return 0.0F;
@@ -42,7 +42,7 @@ auto SpectronParameters::getParameter(int index) -> float {
     return child.getProperty(PROPERTY_VALUE);
 }
 
-auto SpectronParameters::getParameter(const juce::String &name) -> float {
+auto SpecletParameters::getParameter(const juce::String &name) -> float {
     juce::ValueTree child = properties.getChildWithName(name);
     if (!child.isValid()) {
         return 0.0F;
@@ -50,13 +50,13 @@ auto SpectronParameters::getParameter(const juce::String &name) -> float {
     return child.getProperty(PROPERTY_VALUE, 0.0F);
 }
 
-void SpectronParameters::setParameter(int index, float newValue) {
+void SpecletParameters::setParameter(int index, float newValue) {
     const juce::ScopedLock myScopedLock(criticalSection);
     {
-        LOG_PERFORMANCE_OF_SCOPE("SpectronParameters setParameter waitForParameterChange(index)");
+        LOG_PERFORMANCE_OF_SCOPE("SpecletParameters setParameter waitForParameterChange(index)");
         bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
         if (!timeoutDuringWait) {
-            DBG("SpectronParameters::setParameter: Timeout during wait!");
+            DBG("SpecletParameters::setParameter: Timeout during wait!");
         }
     }
     juce::ValueTree child = properties.getChild(index);
@@ -66,14 +66,14 @@ void SpectronParameters::setParameter(int index, float newValue) {
     child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
-void SpectronParameters::setParameter(const juce::String &name, float newValue) {
+void SpecletParameters::setParameter(const juce::String &name, float newValue) {
     const juce::ScopedLock myScopedLock(criticalSection);
 
     {
-        LOG_PERFORMANCE_OF_SCOPE("SpectronParameters setParameter waitForParameterChange(name)");
+        LOG_PERFORMANCE_OF_SCOPE("SpecletParameters setParameter waitForParameterChange(name)");
         bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
         if (!timeoutDuringWait) {
-            DBG("SpectronParameters::setParameter: Timeout during wait!");
+            DBG("SpecletParameters::setParameter: Timeout during wait!");
         }
     }
     juce::ValueTree child = properties.getChildWithName(name);
@@ -83,7 +83,7 @@ void SpectronParameters::setParameter(const juce::String &name, float newValue) 
     child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
-auto SpectronParameters::getParameterIndex(const juce::String &name) -> int {
+auto SpecletParameters::getParameterIndex(const juce::String &name) -> int {
     juce::ValueTree child = properties.getChildWithName(name);
     if (!child.isValid()) {
         return -1;
@@ -91,7 +91,7 @@ auto SpectronParameters::getParameterIndex(const juce::String &name) -> int {
     return properties.indexOf(child);
 }
 
-auto SpectronParameters::getParameterName(int index) -> const juce::String {
+auto SpecletParameters::getParameterName(int index) -> const juce::String {
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         return {};
@@ -100,7 +100,7 @@ auto SpectronParameters::getParameterName(int index) -> const juce::String {
 }
 
 //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
-void SpectronParameters::addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation) {
+void SpecletParameters::addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation) {
     properties.addListener(listener);
 
     //if selected, the already added listener will be informed about every parameter as if it had been changed
@@ -115,12 +115,12 @@ void SpectronParameters::addListener(juce::ValueTree::Listener *listener, bool s
     }
 }
 //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
-void SpectronParameters::removeListener(juce::ValueTree::Listener *listener) {
+void SpecletParameters::removeListener(juce::ValueTree::Listener *listener) {
     properties.removeListener(listener);
 }
 
 //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
-void SpectronParameters::readFromXML(const juce::XmlElement &xml) {
+void SpecletParameters::readFromXML(const juce::XmlElement &xml) {
     const juce::ScopedLock myScopedLock(criticalSection);
     juce::ValueTree importedProperties = juce::ValueTree::fromXml(xml);
 

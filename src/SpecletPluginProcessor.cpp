@@ -1,18 +1,18 @@
-#include "PluginProcessor.h"
+#include "SpecletPluginProcessor.h"
 #include "dsp/SignalGenerator.h"
 #include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "dsp/transformations/WaveletPacketTransformation.h"
 #include "dsp/windowing/WindowFunctionFactory.h"
 #include "ui/ColourGradients.h"
-#include "ui/SpectronMainUI.h"
+#include "ui/SpecletMainUI.h"
 #include "utilities/PerformanceLogger.h"
 #include <memory>
 
 #define DEFAULT_SAMPLINGRATE 44100
 
 //==============================================================================
-SpectronAudioProcessor::SpectronAudioProcessor()
+SpecletAudioProcessor::SpecletAudioProcessor()
     : AudioProcessor(BusesProperties()
 #if !JucePlugin_IsMidiEffect
 #if !JucePlugin_IsSynth
@@ -21,37 +21,37 @@ SpectronAudioProcessor::SpectronAudioProcessor()
                              .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                              ),
-      parameters(SpectronParameters::getSingletonInstance()),
+      parameters(SpecletParameters::getSingletonInstance()),
       parameterRouting(parameters.getRouting()),
       currentTransformation(nullptr),
       signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
 
-    LOG_PERFORMANCE_BEGIN("SpectronAudioProcessor");
+    LOG_PERFORMANCE_BEGIN("SpecletAudioProcessor");
     #if _LOGTOFILE
         juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
     #endif
 
     //Initialize with default settings
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_ColorMode, SpectronParameters::COLORMODE_DEFAULT);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Generator, SpectronParameters::GENERATOR_DEFAULT);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_GeneratorFrequency, 1000.0);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_LogFrequency, SpectronParameters::PLOT_AXIS_DEFAULT);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_LogMagnitude, SpectronParameters::PLOT_AXIS_DEFAULT);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Resolution, SpectronParameters::RESOLUTION_DEFAULT);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Routing, SpectronParameters::ROUTING_MID);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Transformation, SpectronParameters::TRANSFORM_DEFAULT);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Wavelet, SpectronParameters::WAVELET_DEFAULT);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_WaveletPacketBase, SpectronParameters::RESOLUTION_RATIO_DEFAULT);
-    parameters.setParameter(SpectronParameters::PARAMETER_INDEX_Windowing, SpectronParameters::WINDOWING_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, SpecletParameters::COLORMODE_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, SpecletParameters::GENERATOR_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, 1000.0);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, SpecletParameters::PLOT_AXIS_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, SpecletParameters::PLOT_AXIS_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, SpecletParameters::RESOLUTION_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Routing, SpecletParameters::ROUTING_MID);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, SpecletParameters::TRANSFORM_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, SpecletParameters::WAVELET_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, SpecletParameters::RESOLUTION_RATIO_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, SpecletParameters::WINDOWING_DEFAULT);
 
     //registers itself as listener for parameter-changes
     parameters.addListener(this, true);
-    DBG("SpectronAudioProcessor as parameter listener added");
+    DBG("SpecletAudioProcessor as parameter listener added");
 }
 
-SpectronAudioProcessor::~SpectronAudioProcessor() {
-    SpectronParameters::getSingletonInstance().removeListener(this);
-    DBG("SpectronAudioProcessor as parameter listener removed");
+SpecletAudioProcessor::~SpecletAudioProcessor() {
+    SpecletParameters::getSingletonInstance().removeListener(this);
+    DBG("SpecletAudioProcessor as parameter listener removed");
     currentTransformation = nullptr;
 
     TransformationFactory::getSingletonInstance().destruct();
@@ -63,38 +63,38 @@ SpectronAudioProcessor::~SpectronAudioProcessor() {
 }
 
 //==============================================================================
-auto SpectronAudioProcessor::getNumParameters() -> int {
+auto SpecletAudioProcessor::getNumParameters() -> int {
     return parameters.TOTAL_NUMBER_OF_PARAMS;
 }
 
-auto SpectronAudioProcessor::getParameter(int index) -> float {
+auto SpecletAudioProcessor::getParameter(int index) -> float {
     // This method will be called by the host, probably on the audio thread, so
     // it's absolutely time-critical. Don't use critical sections or anything
     // UI-related, or anything at all that may block in any way!
     return parameters.getParameter(index);
 }
 
-void SpectronAudioProcessor::setParameter(int index, float newValue) {
+void SpecletAudioProcessor::setParameter(int index, float newValue) {
     // This method will be called by the host, probably on the audio thread, so
     // it's absolutely time-critical. Don't use critical sections or anything
     // UI-related, or anything at all that may block in any way!
     parameters.setParameter(index, newValue);
 }
 
-auto SpectronAudioProcessor::getParameterName(int index) -> const juce::String {
+auto SpecletAudioProcessor::getParameterName(int index) -> const juce::String {
     return parameters.getParameterName(index);
 }
 
-auto SpectronAudioProcessor::getParameterText(int index) -> const juce::String {
+auto SpecletAudioProcessor::getParameterText(int index) -> const juce::String {
     return juce::String(getParameter(index), 2);
 }
 
 //==============================================================================
-auto SpectronAudioProcessor::getName() const -> const juce::String {
+auto SpecletAudioProcessor::getName() const -> const juce::String {
     return JucePlugin_Name;
 }
 
-auto SpectronAudioProcessor::acceptsMidi() const -> bool {
+auto SpecletAudioProcessor::acceptsMidi() const -> bool {
 #if JucePlugin_WantsMidiInput
     return true;
 #else
@@ -102,7 +102,7 @@ auto SpectronAudioProcessor::acceptsMidi() const -> bool {
 #endif
 }
 
-auto SpectronAudioProcessor::producesMidi() const -> bool {
+auto SpecletAudioProcessor::producesMidi() const -> bool {
 #if JucePlugin_ProducesMidiOutput
     return true;
 #else
@@ -110,7 +110,7 @@ auto SpectronAudioProcessor::producesMidi() const -> bool {
 #endif
 }
 
-auto SpectronAudioProcessor::isMidiEffect() const -> bool {
+auto SpecletAudioProcessor::isMidiEffect() const -> bool {
 #if JucePlugin_IsMidiEffect
     return true;
 #else
@@ -118,52 +118,52 @@ auto SpectronAudioProcessor::isMidiEffect() const -> bool {
 #endif
 }
 
-auto SpectronAudioProcessor::getTailLengthSeconds() const -> double {
+auto SpecletAudioProcessor::getTailLengthSeconds() const -> double {
     return 0.0;
 }
 
-auto SpectronAudioProcessor::getNumPrograms() -> int {
+auto SpecletAudioProcessor::getNumPrograms() -> int {
     return 1;// NB: some hosts don't cope very well if you tell them there are 0 programs,
              // so this should be at least 1, even if you're not really implementing programs.
 }
 
-auto SpectronAudioProcessor::getCurrentProgram() -> int {
+auto SpecletAudioProcessor::getCurrentProgram() -> int {
     return 0;
 }
 
-void SpectronAudioProcessor::setCurrentProgram(int index) {
+void SpecletAudioProcessor::setCurrentProgram(int index) {
     juce::ignoreUnused(index);
 }
 
-auto SpectronAudioProcessor::getProgramName(int index) -> const juce::String {
+auto SpecletAudioProcessor::getProgramName(int index) -> const juce::String {
     juce::ignoreUnused(index);
     return {};
 }
 
-void SpectronAudioProcessor::changeProgramName(int index, const juce::String &newName) {
+void SpecletAudioProcessor::changeProgramName(int index, const juce::String &newName) {
     juce::ignoreUnused(index, newName);
 }
 
 //This method is called when a parameter changes (listener)
-void SpectronAudioProcessor::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
+void SpecletAudioProcessor::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
     const juce::ScopedLock myScopedLock(criticalSection);
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
-    DBG("SpectronAudioProcessor::valueTreePropertyChanged: " + changedParameterName);
+    DBG("SpecletAudioProcessor::valueTreePropertyChanged: " + changedParameterName);
 
-    if (SpectronParameters::isTransformationParameter(changedParameterName)) {
+    if (SpecletParameters::isTransformationParameter(changedParameterName)) {
         updateTransformation();
     }
-    if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_ROUTING)) {
+    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_ROUTING)) {
         parameterRouting = parameters.getRouting();
     }
-    if ((changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_GENERATOR))//
-        || (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_GENERATORFREQUENCY))) {
+    if ((changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_GENERATOR))//
+        || (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_GENERATORFREQUENCY))) {
         updateSignalGenerator();
     }
 }
 
 //==============================================================================
-void SpectronAudioProcessor::prepareToPlay(double /*sampleRate*/, int /*samplesPerBlock*/) {
+void SpecletAudioProcessor::prepareToPlay(double /*sampleRate*/, int /*samplesPerBlock*/) {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     if (currentTransformation == nullptr) {
@@ -171,12 +171,12 @@ void SpectronAudioProcessor::prepareToPlay(double /*sampleRate*/, int /*samplesP
     }
 }
 
-void SpectronAudioProcessor::releaseResources() {
+void SpecletAudioProcessor::releaseResources() {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
-auto SpectronAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const -> bool {
+auto SpecletAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) const -> bool {
 #if JucePlugin_IsMidiEffect
     juce::ignoreUnused(layouts);
     return true;
@@ -200,7 +200,7 @@ auto SpectronAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) 
 #endif
 }
 
-void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
+void SpecletAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
                                           juce::MidiBuffer &midiMessages) {
     juce::ignoreUnused(midiMessages);
 
@@ -255,18 +255,17 @@ void SpectronAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
 }
 
 //==============================================================================
-auto SpectronAudioProcessor::hasEditor() const -> bool {
+auto SpecletAudioProcessor::hasEditor() const -> bool {
     return true;// (change this to false if you choose to not supply an editor)
 }
 
-auto SpectronAudioProcessor::createEditor() -> juce::AudioProcessorEditor * {
-    return new SpectronMainUI(*this);
-    //return new SpectronAudioProcessorEditor(*this);
+auto SpecletAudioProcessor::createEditor() -> juce::AudioProcessorEditor * {
+    return new SpecletMainUI(*this);
     // return new juce::GenericAudioProcessorEditor(*this); // generic editor for prototyping without GUI
 }
 
 //==============================================================================
-void SpectronAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
+void SpecletAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
@@ -278,7 +277,7 @@ void SpectronAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
     copyXmlToBinary(*xml, destData);
 }
 
-void SpectronAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
+void SpecletAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
 
@@ -292,9 +291,9 @@ void SpectronAudioProcessor::setStateInformation(const void *data, int sizeInByt
 
 //==============================================================================
 
-void SpectronAudioProcessor::updateTransformation() {
+void SpecletAudioProcessor::updateTransformation() {
     const juce::ScopedLock myScopedLock(criticalSection);
-    DBG("SpectronAudioProcessor::updateTransformation()");
+    DBG("SpecletAudioProcessor::updateTransformation()");
     parameters.blockParameterChanges();
 
     currentTransformation = nullptr;
@@ -312,23 +311,23 @@ void SpectronAudioProcessor::updateTransformation() {
     parameters.unblockParameterChanges();
 }
 
-void SpectronAudioProcessor::updateSignalGenerator() {
+void SpecletAudioProcessor::updateSignalGenerator() {
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
     signalGenerator = SignalGenerator(sampleRate, static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency());
 }
 
 //TODO(johnny) switch to double or template for both?
-auto SpectronAudioProcessor::getSampleFromRouting(const float *inL, const float *inR) -> float {
+auto SpecletAudioProcessor::getSampleFromRouting(const float *inL, const float *inR) -> float {
     switch (parameterRouting) {
-        case SpectronParameters::ROUTING_SIDE:
+        case SpecletParameters::ROUTING_SIDE:
             return *inL - *inR;
-        case SpectronParameters::ROUTING_MID:
+        case SpecletParameters::ROUTING_MID:
             return static_cast<float>((*inL + *inR) / 2.0);
-        case SpectronParameters::ROUTING_R:
+        case SpecletParameters::ROUTING_R:
             return *inR;
-        case SpectronParameters::ROUTING_L:
+        case SpecletParameters::ROUTING_L:
             return *inL;
-        case SpectronParameters::ROUTING_GENERATOR:
+        case SpecletParameters::ROUTING_GENERATOR:
             return static_cast<float>(signalGenerator.getNextSample());
         default:
             return static_cast<float>((*inL + *inR) / 2.0);
@@ -338,5 +337,5 @@ auto SpectronAudioProcessor::getSampleFromRouting(const float *inL, const float 
 //==============================================================================
 // This creates new instances of the plugin..
 auto JUCE_CALLTYPE createPluginFilter() -> juce::AudioProcessor * {
-    return new SpectronAudioProcessor();
+    return new SpecletAudioProcessor();
 }

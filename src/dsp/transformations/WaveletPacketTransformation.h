@@ -14,7 +14,7 @@
   ==============================================================================
 */
 #pragma once
-#include "../../plugin/SpectronParameters.h"
+#include "../../plugin/SpecletParameters.h"
 #include "AbstractWaveletTransformation.h"
 
 class WaveletPacketTransformation : public AbstractWaveletTransformation {

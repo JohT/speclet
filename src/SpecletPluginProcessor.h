@@ -17,7 +17,7 @@
 
 #include "dsp/SignalGenerator.h"
 #include "dsp/transformations/TransformationFactory.h"
-#include "plugin/SpectronParameters.h"
+#include "plugin/SpecletParameters.h"
 #include <juce_core/juce_core.h>
 #include <array>
 
@@ -27,11 +27,11 @@ enum Channel {
 };
 
 //==============================================================================
-class SpectronAudioProcessor : public juce::AudioProcessor, public juce::ValueTree::Listener {
+class SpecletAudioProcessor : public juce::AudioProcessor, public juce::ValueTree::Listener {
 public:
     //==============================================================================
-    SpectronAudioProcessor();
-    ~SpectronAudioProcessor() override;
+    SpecletAudioProcessor();
+    ~SpecletAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay(double sampleRate, int samplesPerBlock) override;
@@ -90,7 +90,7 @@ public:
     //==============================================================================
 
 private:
-    SpectronParameters &parameters = SpectronParameters::getSingletonInstance();
+    SpecletParameters &parameters = SpecletParameters::getSingletonInstance();
 
     //Some parameter need to be kept local (as copy),
     //since they are called in critical sections
@@ -103,5 +103,5 @@ private:
     auto getSampleFromRouting(const float *inL, const float *inR) -> float;
 
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpectronAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpecletAudioProcessor)
 };

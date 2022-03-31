@@ -16,7 +16,7 @@
 #pragma once
 
 #include "../windowing/WindowFunctions.h"
-#include "../../plugin/SpectronParameters.h"
+#include "../../plugin/SpecletParameters.h"
 #include "FourierTransformation.h"
 #include "Transformation.h"
 #include "WaveletPacketBestBasisTransformation.h"

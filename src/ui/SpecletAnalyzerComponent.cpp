@@ -20,11 +20,11 @@
 */
 
 //[Headers] You can add your own extra header files here...
-#include "SpectronDrawer.h"
+#include "SpecletDrawer.h"
 
 //[/Headers]
 
-#include "SpectronAnalyzerComponent.h"
+#include "SpecletAnalyzerComponent.h"
 #include <cstddef>
 
 
@@ -32,8 +32,8 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-SpectronAnalyzerComponent::SpectronAnalyzerComponent()
-    : Component("SpectronAnalyzerComponent"),
+SpecletAnalyzerComponent::SpecletAnalyzerComponent()
+    : Component("SpecletAnalyzerComponent"),
       comboBoxResolution(nullptr),
       spectralviewport(nullptr),
       labelResolution(nullptr),
@@ -280,12 +280,12 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     //[Constructor] You can add your own custom stuff here..
 
     //gets the pointer to the parameters singelton - for a better readability
-    parameters = &SpectronParameters::getSingletonInstance();
+    parameters = &SpecletParameters::getSingletonInstance();
     //registeres itself as listener for parameter-changes
-    SpectronParameters::getSingletonInstance().addListener(this);
-    DBG("SpectronAnalyzerComponent as parameter listener added");
+    SpecletParameters::getSingletonInstance().addListener(this);
+    DBG("SpecletAnalyzerComponent as parameter listener added");
     //adds spectrum drawing component to the scrollable view
-    spectralviewport->setViewedComponent(new SpectronDrawer());
+    spectralviewport->setViewedComponent(new SpecletDrawer());
 
     //adds entries to the popup/context menu
     popupMenu.addItem(POPUPMENU_INDEX_1_ABOUT, "about");
@@ -293,7 +293,7 @@ SpectronAnalyzerComponent::SpectronAnalyzerComponent()
     //[/Constructor]
 }
 
-SpectronAnalyzerComponent::~SpectronAnalyzerComponent() {
+SpecletAnalyzerComponent::~SpecletAnalyzerComponent() {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
@@ -323,14 +323,14 @@ SpectronAnalyzerComponent::~SpectronAnalyzerComponent() {
 
     //[Destructor]. You can add your own custom destruction code here..
     //unregisteres itself as listener for parameter-changes
-    SpectronParameters::getSingletonInstance().removeListener(this);
-    DBG("SpectronAnalyzerComponent as parameter listener removed");
+    SpecletParameters::getSingletonInstance().removeListener(this);
+    DBG("SpecletAnalyzerComponent as parameter listener removed");
     parameters = nullptr;
     //[/Destructor]
 }
 
 //==============================================================================
-void SpectronAnalyzerComponent::paint(juce::Graphics &g) {
+void SpecletAnalyzerComponent::paint(juce::Graphics &g) {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
@@ -340,7 +340,7 @@ void SpectronAnalyzerComponent::paint(juce::Graphics &g) {
     //[/UserPaint]
 }
 
-void SpectronAnalyzerComponent::resized() {
+void SpecletAnalyzerComponent::resized() {
     comboBoxResolution->setBounds((128) + 0, (8) + 32, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     spectralviewport->setBounds(256, 8, 528, 344);
     labelResolution->setBounds((8) + 0, (8) + 32, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
@@ -368,49 +368,49 @@ void SpectronAnalyzerComponent::resized() {
     //[/UserResized]
 }
 
-void SpectronAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasChanged) {
+void SpecletAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasChanged) {
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
     if (comboBoxThatHasChanged == comboBoxResolution) {
         //[UserComboBoxCode_comboBoxResolution] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Resolution, comboBoxResolution->getText().getIntValue());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, comboBoxResolution->getText().getIntValue());
         //[/UserComboBoxCode_comboBoxResolution]
     } else if (comboBoxThatHasChanged == comboBoxTransformation) {
         //[UserComboBoxCode_comboBoxTransformation] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Transformation, comboBoxTransformation->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, comboBoxTransformation->getSelectedId());
         //[/UserComboBoxCode_comboBoxTransformation]
     } else if (comboBoxThatHasChanged == comboBoxWindowing) {
         //[UserComboBoxCode_comboBoxWindowing] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Windowing, comboBoxWindowing->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, comboBoxWindowing->getSelectedId());
         //[/UserComboBoxCode_comboBoxWindowing]
     } else if (comboBoxThatHasChanged == comboBoxWavelet) {
         //[UserComboBoxCode_comboBoxWavelet] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Wavelet, comboBoxWavelet->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, comboBoxWavelet->getSelectedId());
         //[/UserComboBoxCode_comboBoxWavelet]
     } else if (comboBoxThatHasChanged == comboBoxWaveletPaketBasis) {
         //[UserComboBoxCode_comboBoxWaveletPaketBasis] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_WaveletPacketBase, comboBoxWaveletPaketBasis->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, comboBoxWaveletPaketBasis->getSelectedId());
         //[/UserComboBoxCode_comboBoxWaveletPaketBasis]
     } else if (comboBoxThatHasChanged == comboBoxSignalgenerator) {
         //[UserComboBoxCode_comboBoxSignalgenerator] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Generator, comboBoxSignalgenerator->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Generator, comboBoxSignalgenerator->getSelectedId());
         //[/UserComboBoxCode_comboBoxSignalgenerator]
     } else if (comboBoxThatHasChanged == comboBoxSignalquelle) {
         //[UserComboBoxCode_comboBoxSignalquelle] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_Routing, comboBoxSignalquelle->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Routing, comboBoxSignalquelle->getSelectedId());
         //[/UserComboBoxCode_comboBoxSignalquelle]
     } else if (comboBoxThatHasChanged == comboBoxLogF) {
         //[UserComboBoxCode_comboBoxLogF] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_LogFrequency, comboBoxLogF->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, comboBoxLogF->getSelectedId());
         //[/UserComboBoxCode_comboBoxLogF]
     } else if (comboBoxThatHasChanged == comboBoxLogA) {
         //[UserComboBoxCode_comboBoxLogA] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_LogMagnitude, comboBoxLogA->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, comboBoxLogA->getSelectedId());
         //[/UserComboBoxCode_comboBoxLogA]
     } else if (comboBoxThatHasChanged == comboBoxColorMode) {
         //[UserComboBoxCode_comboBoxColorMode] -- add your combo box handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_ColorMode, comboBoxColorMode->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, comboBoxColorMode->getSelectedId());
         //[/UserComboBoxCode_comboBoxColorMode]
     }
 
@@ -418,13 +418,13 @@ void SpectronAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasC
     //[/UsercomboBoxChanged_Post]
 }
 
-void SpectronAnalyzerComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
+void SpecletAnalyzerComponent::sliderValueChanged(juce::Slider *sliderThatWasMoved) {
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
     if (sliderThatWasMoved == sliderGeneratorFrequenz) {
         //[UserSliderCode_sliderGeneratorFrequenz] -- add your slider handling code here..
-        parameters->setParameter(SpectronParameters::PARAMETER_INDEX_GeneratorFrequency, sliderGeneratorFrequenz->getValue());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, sliderGeneratorFrequenz->getValue());
         //[/UserSliderCode_sliderGeneratorFrequenz]
     }
 
@@ -432,37 +432,37 @@ void SpectronAnalyzerComponent::sliderValueChanged(juce::Slider *sliderThatWasMo
     //[/UsersliderValueChanged_Post]
 }
 
-void SpectronAnalyzerComponent::visibilityChanged() {
+void SpecletAnalyzerComponent::visibilityChanged() {
     //[UserCode_visibilityChanged] -- Add your code here...
     //[/UserCode_visibilityChanged]
 }
 
-void SpectronAnalyzerComponent::parentSizeChanged() {
+void SpecletAnalyzerComponent::parentSizeChanged() {
     //[UserCode_parentSizeChanged] -- Add your code here...
     //[/UserCode_parentSizeChanged]
 }
 
-void SpectronAnalyzerComponent::broughtToFront() {
+void SpecletAnalyzerComponent::broughtToFront() {
     //[UserCode_broughtToFront] -- Add your code here...
     //[/UserCode_broughtToFront]
 }
 
-void SpectronAnalyzerComponent::childrenChanged() {
+void SpecletAnalyzerComponent::childrenChanged() {
     //[UserCode_childrenChanged] -- Add your code here...
     //[/UserCode_childrenChanged]
 }
 
-void SpectronAnalyzerComponent::enablementChanged() {
+void SpecletAnalyzerComponent::enablementChanged() {
     //[UserCode_enablementChanged] -- Add your code here...
     //[/UserCode_enablementChanged]
 }
 
-void SpectronAnalyzerComponent::mouseMove(const juce::MouseEvent &e) {
+void SpecletAnalyzerComponent::mouseMove(const juce::MouseEvent &e) {
     //[UserCode_mouseMove] -- Add your code here...
     //[/UserCode_mouseMove]
 }
 
-void SpectronAnalyzerComponent::mouseDown(const juce::MouseEvent &e) {
+void SpecletAnalyzerComponent::mouseDown(const juce::MouseEvent &e) {
     //[UserCode_mouseDown] -- Add your code here...
     if ((e.mouseWasClicked()) && (e.mods.isRightButtonDown())) {
         popupMenu.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(this), [this](int index) {
@@ -476,117 +476,117 @@ void SpectronAnalyzerComponent::mouseDown(const juce::MouseEvent &e) {
                 message += ("FFT-Library 'FFTW' by MIT (Matteo Frigo and Steven G. Johnson)\n");
                 message += ("Wavelet-Library 'wave++' by Ryerson Computrational Signal Analysis Group");
                 message += (" (S. E. Ferrando, L. A. Kolasa and N. Kovacevic)");
-                juce::AlertWindow::showOkCancelBox(icon, "About Spectron", message, "OK", "", this, nullptr);
+                juce::AlertWindow::showOkCancelBox(icon, "About Speclet", message, "OK", "", this, nullptr);
             }
         });
     }
     //[/UserCode_mouseDown]
 }
 
-void SpectronAnalyzerComponent::mouseWheelMove (const juce::MouseEvent& /* event */, const juce::MouseWheelDetails& /* wheel */) {
+void SpecletAnalyzerComponent::mouseWheelMove (const juce::MouseEvent& /* event */, const juce::MouseWheelDetails& /* wheel */) {
     //[UserCode_mouseWheelMove] -- Add your code here...
     //[/UserCode_mouseWheelMove]
 }
 
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void SpectronAnalyzerComponent::fillComboBoxes() {
-    comboBoxResolution->addItem("256", SpectronParameters::RESOLUTION_256);
-    comboBoxResolution->addItem("512", SpectronParameters::RESOLUTION_512);
-    comboBoxResolution->addItem("1024", SpectronParameters::RESOLUTION_1024);
-    comboBoxResolution->addItem("2048", SpectronParameters::RESOLUTION_2048);
-    comboBoxResolution->addItem("4096", SpectronParameters::RESOLUTION_4096);
-    comboBoxResolution->addItem("8192", SpectronParameters::RESOLUTION_8192);
-    comboBoxResolution->addItem("16384", SpectronParameters::RESOLUTION_16384);
-    comboBoxResolution->addItem("32768", SpectronParameters::RESOLUTION_32768);
-    comboBoxResolution->addItem("65536", SpectronParameters::RESOLUTION_65536);
+void SpecletAnalyzerComponent::fillComboBoxes() {
+    comboBoxResolution->addItem("256", SpecletParameters::RESOLUTION_256);
+    comboBoxResolution->addItem("512", SpecletParameters::RESOLUTION_512);
+    comboBoxResolution->addItem("1024", SpecletParameters::RESOLUTION_1024);
+    comboBoxResolution->addItem("2048", SpecletParameters::RESOLUTION_2048);
+    comboBoxResolution->addItem("4096", SpecletParameters::RESOLUTION_4096);
+    comboBoxResolution->addItem("8192", SpecletParameters::RESOLUTION_8192);
+    comboBoxResolution->addItem("16384", SpecletParameters::RESOLUTION_16384);
+    comboBoxResolution->addItem("32768", SpecletParameters::RESOLUTION_32768);
+    comboBoxResolution->addItem("65536", SpecletParameters::RESOLUTION_65536);
 
-    comboBoxTransformation->addItem("FFT", SpectronParameters::TRANSFORM_FFT);
-    comboBoxTransformation->addItem("FWT", SpectronParameters::TRANSFORM_FWT);
-    comboBoxTransformation->addItem("WPT", SpectronParameters::TRANSFORM_FWPT);
-    comboBoxTransformation->addItem("WPT BestBase", SpectronParameters::TRANSFORM_FWPT_BB);
-    comboBoxTransformation->addItem("Off", SpectronParameters::TRANSFORM_OFF);
+    comboBoxTransformation->addItem("FFT", SpecletParameters::TRANSFORM_FFT);
+    comboBoxTransformation->addItem("FWT", SpecletParameters::TRANSFORM_FWT);
+    comboBoxTransformation->addItem("WPT", SpecletParameters::TRANSFORM_FWPT);
+    comboBoxTransformation->addItem("WPT BestBase", SpecletParameters::TRANSFORM_FWPT_BB);
+    comboBoxTransformation->addItem("Off", SpecletParameters::TRANSFORM_OFF);
 
-    comboBoxWindowing->addItem("Barlett", SpectronParameters::WINDOWING_BARTLETT);
-    comboBoxWindowing->addItem("Blackman", SpectronParameters::WINDOWING_BLACKMAN);
-    comboBoxWindowing->addItem("Blackman-Harris", SpectronParameters::WINDOWING_BLACKMAN_HARRIS);
-    comboBoxWindowing->addItem("Hamming", SpectronParameters::WINDOWING_HAMMING);
-    comboBoxWindowing->addItem("Hann", SpectronParameters::WINDOWING_HANN);
-    comboBoxWindowing->addItem("Welch", SpectronParameters::WINDOWING_WELCH);
-    comboBoxWindowing->addItem("Parzen", SpectronParameters::WINDOWING_PARZEN);
-    comboBoxWindowing->addItem("Rectangular", SpectronParameters::WINDOWING_RECTANGULAR);
+    comboBoxWindowing->addItem("Barlett", SpecletParameters::WINDOWING_BARTLETT);
+    comboBoxWindowing->addItem("Blackman", SpecletParameters::WINDOWING_BLACKMAN);
+    comboBoxWindowing->addItem("Blackman-Harris", SpecletParameters::WINDOWING_BLACKMAN_HARRIS);
+    comboBoxWindowing->addItem("Hamming", SpecletParameters::WINDOWING_HAMMING);
+    comboBoxWindowing->addItem("Hann", SpecletParameters::WINDOWING_HANN);
+    comboBoxWindowing->addItem("Welch", SpecletParameters::WINDOWING_WELCH);
+    comboBoxWindowing->addItem("Parzen", SpecletParameters::WINDOWING_PARZEN);
+    comboBoxWindowing->addItem("Rectangular", SpecletParameters::WINDOWING_RECTANGULAR);
 
-    comboBoxWavelet->addItem("Haar (2)", SpectronParameters::WAVELET_HAAR);
-    comboBoxWavelet->addItem("Daubechies (4)", SpectronParameters::WAVELET_DAUBECHIES_04);
-    comboBoxWavelet->addItem("Daubechies (6)", SpectronParameters::WAVELET_DAUBECHIES_06);
-    comboBoxWavelet->addItem("Daubechies (8)", SpectronParameters::WAVELET_DAUBECHIES_08);
-    comboBoxWavelet->addItem("Daubechies (10)", SpectronParameters::WAVELET_DAUBECHIES_10);
-    comboBoxWavelet->addItem("Daubechies (12)", SpectronParameters::WAVELET_DAUBECHIES_12);
-    comboBoxWavelet->addItem("Daubechies (14)", SpectronParameters::WAVELET_DAUBECHIES_14);
-    comboBoxWavelet->addItem("Daubechies (16)", SpectronParameters::WAVELET_DAUBECHIES_16);
-    comboBoxWavelet->addItem("Daubechies (18)", SpectronParameters::WAVELET_DAUBECHIES_18);
-    comboBoxWavelet->addItem("Daubechies (20)", SpectronParameters::WAVELET_DAUBECHIES_20);
-    comboBoxWavelet->addItem("Coifman (6)", SpectronParameters::WAVELET_COIFMAN_06);
-    comboBoxWavelet->addItem("Coifman (12)", SpectronParameters::WAVELET_COIFMAN_12);
-    comboBoxWavelet->addItem("Coifman (18)", SpectronParameters::WAVELET_COIFMAN_18);
-    comboBoxWavelet->addItem("Coifman (24)", SpectronParameters::WAVELET_COIFMAN_24);
-    comboBoxWavelet->addItem("Coifman (30)", SpectronParameters::WAVELET_COIFMAN_30);
-    comboBoxWavelet->addItem("Beylkin (18)", SpectronParameters::WAVELET_BEYLKIN_18);
-    comboBoxWavelet->addItem("Vaidyanathan (18)", SpectronParameters::WAVELET_VAIDYANATHAN_18);
+    comboBoxWavelet->addItem("Haar (2)", SpecletParameters::WAVELET_HAAR);
+    comboBoxWavelet->addItem("Daubechies (4)", SpecletParameters::WAVELET_DAUBECHIES_04);
+    comboBoxWavelet->addItem("Daubechies (6)", SpecletParameters::WAVELET_DAUBECHIES_06);
+    comboBoxWavelet->addItem("Daubechies (8)", SpecletParameters::WAVELET_DAUBECHIES_08);
+    comboBoxWavelet->addItem("Daubechies (10)", SpecletParameters::WAVELET_DAUBECHIES_10);
+    comboBoxWavelet->addItem("Daubechies (12)", SpecletParameters::WAVELET_DAUBECHIES_12);
+    comboBoxWavelet->addItem("Daubechies (14)", SpecletParameters::WAVELET_DAUBECHIES_14);
+    comboBoxWavelet->addItem("Daubechies (16)", SpecletParameters::WAVELET_DAUBECHIES_16);
+    comboBoxWavelet->addItem("Daubechies (18)", SpecletParameters::WAVELET_DAUBECHIES_18);
+    comboBoxWavelet->addItem("Daubechies (20)", SpecletParameters::WAVELET_DAUBECHIES_20);
+    comboBoxWavelet->addItem("Coifman (6)", SpecletParameters::WAVELET_COIFMAN_06);
+    comboBoxWavelet->addItem("Coifman (12)", SpecletParameters::WAVELET_COIFMAN_12);
+    comboBoxWavelet->addItem("Coifman (18)", SpecletParameters::WAVELET_COIFMAN_18);
+    comboBoxWavelet->addItem("Coifman (24)", SpecletParameters::WAVELET_COIFMAN_24);
+    comboBoxWavelet->addItem("Coifman (30)", SpecletParameters::WAVELET_COIFMAN_30);
+    comboBoxWavelet->addItem("Beylkin (18)", SpecletParameters::WAVELET_BEYLKIN_18);
+    comboBoxWavelet->addItem("Vaidyanathan (18)", SpecletParameters::WAVELET_VAIDYANATHAN_18);
 
-    comboBoxWaveletPaketBasis->addItem("freq/time x1", SpectronParameters::RESOLUTION_RATIO_Equal);
-    comboBoxWaveletPaketBasis->addItem("freq x2", SpectronParameters::RESOLUTION_RATIO_FreqX2);
-    comboBoxWaveletPaketBasis->addItem("freq x4", SpectronParameters::RESOLUTION_RATIO_FreqX4);
-    comboBoxWaveletPaketBasis->addItem("time x2", SpectronParameters::RESOLUTION_RATIO_TimeX2);
-    comboBoxWaveletPaketBasis->addItem("time x4", SpectronParameters::RESOLUTION_RATIO_TimeX4);
+    comboBoxWaveletPaketBasis->addItem("freq/time x1", SpecletParameters::RESOLUTION_RATIO_Equal);
+    comboBoxWaveletPaketBasis->addItem("freq x2", SpecletParameters::RESOLUTION_RATIO_FreqX2);
+    comboBoxWaveletPaketBasis->addItem("freq x4", SpecletParameters::RESOLUTION_RATIO_FreqX4);
+    comboBoxWaveletPaketBasis->addItem("time x2", SpecletParameters::RESOLUTION_RATIO_TimeX2);
+    comboBoxWaveletPaketBasis->addItem("time x4", SpecletParameters::RESOLUTION_RATIO_TimeX4);
 
-    comboBoxSignalgenerator->addItem("Sine", SpectronParameters::GENERATOR_SINE);
-    comboBoxSignalgenerator->addItem("Triangle", SpectronParameters::GENERATOR_TRIANGLE);
-    comboBoxSignalgenerator->addItem("Sawtooth", SpectronParameters::GENERATOR_RAMP);
-    comboBoxSignalgenerator->addItem("Rectangle", SpectronParameters::GENERATOR_SQUARE);
-    comboBoxSignalgenerator->addItem("Noise", SpectronParameters::GENERATOR_NOISE);
+    comboBoxSignalgenerator->addItem("Sine", SpecletParameters::GENERATOR_SINE);
+    comboBoxSignalgenerator->addItem("Triangle", SpecletParameters::GENERATOR_TRIANGLE);
+    comboBoxSignalgenerator->addItem("Sawtooth", SpecletParameters::GENERATOR_RAMP);
+    comboBoxSignalgenerator->addItem("Rectangle", SpecletParameters::GENERATOR_SQUARE);
+    comboBoxSignalgenerator->addItem("Noise", SpecletParameters::GENERATOR_NOISE);
 
-    comboBoxSignalquelle->addItem("Mid", SpectronParameters::ROUTING_MID);
-    comboBoxSignalquelle->addItem("Side", SpectronParameters::ROUTING_SIDE);
-    comboBoxSignalquelle->addItem("Left", SpectronParameters::ROUTING_L);
-    comboBoxSignalquelle->addItem("Right", SpectronParameters::ROUTING_R);
-    comboBoxSignalquelle->addItem("Oscillator", SpectronParameters::ROUTING_GENERATOR);
+    comboBoxSignalquelle->addItem("Mid", SpecletParameters::ROUTING_MID);
+    comboBoxSignalquelle->addItem("Side", SpecletParameters::ROUTING_SIDE);
+    comboBoxSignalquelle->addItem("Left", SpecletParameters::ROUTING_L);
+    comboBoxSignalquelle->addItem("Right", SpecletParameters::ROUTING_R);
+    comboBoxSignalquelle->addItem("Oscillator", SpecletParameters::ROUTING_GENERATOR);
 
-    comboBoxLogF->addItem("linear", SpectronParameters::PLOT_AXIS_LINEAR);
-    comboBoxLogF->addItem("logarithmic", SpectronParameters::PLOT_AXIS_LOGARITHMIC);
+    comboBoxLogF->addItem("linear", SpecletParameters::PLOT_AXIS_LINEAR);
+    comboBoxLogF->addItem("logarithmic", SpecletParameters::PLOT_AXIS_LOGARITHMIC);
 
-    comboBoxLogA->addItem("linear", SpectronParameters::PLOT_AXIS_LINEAR);
-    comboBoxLogA->addItem("logarithmic", SpectronParameters::PLOT_AXIS_LOGARITHMIC);
+    comboBoxLogA->addItem("linear", SpecletParameters::PLOT_AXIS_LINEAR);
+    comboBoxLogA->addItem("logarithmic", SpecletParameters::PLOT_AXIS_LOGARITHMIC);
 
-    comboBoxColorMode->addItem("Blue", SpectronParameters::COLORMODE_BLUE);
-    comboBoxColorMode->addItem("Green", SpectronParameters::COLORMODE_GREEN);
-    comboBoxColorMode->addItem("Fire", SpectronParameters::COLORMODE_FIRE);
-    comboBoxColorMode->addItem("Rainbow", SpectronParameters::COLORMODE_RAINBOW);
+    comboBoxColorMode->addItem("Blue", SpecletParameters::COLORMODE_BLUE);
+    comboBoxColorMode->addItem("Green", SpecletParameters::COLORMODE_GREEN);
+    comboBoxColorMode->addItem("Fire", SpecletParameters::COLORMODE_FIRE);
+    comboBoxColorMode->addItem("Rainbow", SpecletParameters::COLORMODE_RAINBOW);
 }
 
-void SpectronAnalyzerComponent::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &  /*property*/) {
+void SpecletAnalyzerComponent::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &  /*property*/) {
     const juce::ScopedLock myScopedLock(criticalSection);
 
-    updateComboBox(SpectronParameters::PARAMETER_COLORMODE, comboBoxColorMode, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_GENERATOR, comboBoxSignalgenerator, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_LOGFREQUENCY, comboBoxLogF, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_LOGMAGNITUDE, comboBoxLogA, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_RESOLUTION, comboBoxResolution, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_ROUTING, comboBoxSignalquelle, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_TRANSFORMATION, comboBoxTransformation, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_WAVELET, comboBoxWavelet, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_WAVELETPACKETBASE, comboBoxWaveletPaketBasis, treeWhosePropertyHasChanged);
-    updateComboBox(SpectronParameters::PARAMETER_WINDOWING, comboBoxWindowing, treeWhosePropertyHasChanged);
-    updateSlider(SpectronParameters::PARAMETER_GENERATORFREQUENCY, sliderGeneratorFrequenz, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_COLORMODE, comboBoxColorMode, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_GENERATOR, comboBoxSignalgenerator, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_LOGFREQUENCY, comboBoxLogF, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_LOGMAGNITUDE, comboBoxLogA, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_RESOLUTION, comboBoxResolution, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_ROUTING, comboBoxSignalquelle, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_TRANSFORMATION, comboBoxTransformation, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_WAVELET, comboBoxWavelet, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_WAVELETPACKETBASE, comboBoxWaveletPaketBasis, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_WINDOWING, comboBoxWindowing, treeWhosePropertyHasChanged);
+    updateSlider(SpecletParameters::PARAMETER_GENERATORFREQUENCY, sliderGeneratorFrequenz, treeWhosePropertyHasChanged);
 }
 
 //This method updates a combobox-index within an parameter-change-event
-void SpectronAnalyzerComponent::updateComboBox(
+void SpecletAnalyzerComponent::updateComboBox(
         const juce::String &parameterName,
         juce::ComboBox *comboBox,
         const juce::ValueTree &treeWhosePropertyHasChanged) {
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
-    juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpectronParameters::PROPERTY_VALUE);
+    juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_VALUE);
 
     if (!changedParameterName.equalsIgnoreCase(parameterName)) {
         return;
@@ -597,12 +597,12 @@ void SpectronAnalyzerComponent::updateComboBox(
 }
 
 //This method updates a slider-value within an parameter-change-event
-void SpectronAnalyzerComponent::updateSlider(
+void SpecletAnalyzerComponent::updateSlider(
         const juce::String &parameterName,
         juce::Slider *slider,
         const juce::ValueTree &treeWhosePropertyHasChanged) {
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
-    juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpectronParameters::PROPERTY_VALUE);
+    juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_VALUE);
 
     if (!changedParameterName.equalsIgnoreCase(parameterName)) {
         return;
@@ -623,8 +623,8 @@ void SpectronAnalyzerComponent::updateSlider(
 
 BEGIN_JUCER_METADATA
 
-<JUCER_COMPONENT documentType="Component" className="SpectronAnalyzerComponent"
-                 componentName="SpectronAnalyzerComponent" parentClasses="public Component, public juce::ValueTree::Listener"
+<JUCER_COMPONENT documentType="Component" className="SpecletAnalyzerComponent"
+                 componentName="SpecletAnalyzerComponent" parentClasses="public Component, public juce::ValueTree::Listener"
                  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
                  snapShown="1" overlayOpacity="0.330000013" fixedSize="0" initialWidth="800"
                  initialHeight="360">
@@ -646,8 +646,8 @@ BEGIN_JUCER_METADATA
             layout="33" items="" textWhenNonSelected="" textWhenNoItems=""/>
   <VIEWPORT name="spectralviewport" id="f4608981cae94ca1" memberName="spectralviewport"
             virtualName="" explicitFocusOrder="0" pos="256 8 528 344" vscroll="0"
-            hscroll="1" scrollbarThickness="10" contentType="1" jucerFile="SpectronDrawer.h"
-            contentClass="SpectronDrawer" constructorParams=""/>
+            hscroll="1" scrollbarThickness="10" contentType="1" jucerFile="SpecletDrawer.h"
+            contentClass="SpecletDrawer" constructorParams=""/>
   <LABEL name="labelResolution" id="53146a9a1f994b4f" memberName="labelResolution"
          virtualName="" explicitFocusOrder="0" pos="0 32 100% 100%" posRelativeX="6c1a8307cfceedac"
          posRelativeY="6c1a8307cfceedac" posRelativeW="6c1a8307cfceedac"

@@ -36,14 +36,14 @@
 	 Describe your class and how it works here!
 																						  //[/Comments]
 */
-class SpectronDrawer : public juce::Component,
+class SpecletDrawer : public juce::Component,
                        public TransformationListener,
                        public juce::Timer,
                        public juce::ValueTree::Listener {
 public:
     //==============================================================================
-    SpectronDrawer();
-    ~SpectronDrawer() override;
+    SpecletDrawer();
+    ~SpecletDrawer() override;
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
@@ -94,6 +94,6 @@ private :
 
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
-    SpectronDrawer(const SpectronDrawer &);
-    const SpectronDrawer &operator=(const SpectronDrawer &);
+    SpecletDrawer(const SpecletDrawer &);
+    const SpecletDrawer &operator=(const SpecletDrawer &);
 };

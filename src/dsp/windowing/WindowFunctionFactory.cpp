@@ -4,7 +4,7 @@
 #include "WindowFunction.h"
 #include "WindowFunctions.h"
 
-#include "../../plugin/SpectronParameters.h"
+#include "../../plugin/SpecletParameters.h"
 #include <assert.h>
 #include <cstddef>
 #include <memory>

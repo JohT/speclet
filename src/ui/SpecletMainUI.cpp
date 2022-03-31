@@ -3,11 +3,11 @@
   ==============================================================================
 */
 
-#include "SpectronMainUI.h"
-#include "SpectronDrawer.h"
+#include "SpecletMainUI.h"
+#include "SpecletDrawer.h"
 
 //==============================================================================
-SpectronMainUI::SpectronMainUI(SpectronAudioProcessor &ownerAudioProcessor)
+SpecletMainUI::SpecletMainUI(SpecletAudioProcessor &ownerAudioProcessor)
     : AudioProcessorEditor(ownerAudioProcessor), audioProcessor(ownerAudioProcessor) {
     // set our component's initial size to be the last one that was stored in the filter's settings
     setSize(ownerAudioProcessor.lastUIWidth, ownerAudioProcessor.lastUIHeight);
@@ -20,10 +20,10 @@ SpectronMainUI::SpectronMainUI(SpectronAudioProcessor &ownerAudioProcessor)
 }
 
 //==============================================================================
-void SpectronMainUI::paint(juce::Graphics &) {
+void SpecletMainUI::paint(juce::Graphics &) {
 }
 
-void SpectronMainUI::resized() {
+void SpecletMainUI::resized() {
     spectralAnalyzerComponent.setBounds(0, 0, MAINGUI_SIZE_X, MAINGUI_SIZE_Y);
     audioProcessor.lastUIWidth = getWidth();
     audioProcessor.lastUIHeight = getHeight();

@@ -14,7 +14,7 @@
   ==============================================================================
 */
 #pragma once
-#include "../../plugin/SpectronParameters.h"
+#include "../../plugin/SpecletParameters.h"
 #include "../windowing/WindowFunctionFactory.h"
 #include "Transformation.h"
 #include "TransformationFactory.h"

@@ -23,19 +23,19 @@
 #include "../dsp/transformations/TransformationFactory.h"
 #include "../utilities/PerformanceLogger.h"
 #include "ColourGradients.h"
-#include "SpectronDrawer.h"
+#include "SpecletDrawer.h"
 #include "juce_core/juce_core.h"
 #include "juce_audio_utils/juce_audio_utils.h"
 //[/Headers]
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
-const juce::Colour SpectronDrawer::AXIS_COLOR(0xffffffc0);
+const juce::Colour SpecletDrawer::AXIS_COLOR(0xffffffc0);
 
 //[/MiscUserDefs]
 
 //==============================================================================
-SpectronDrawer::SpectronDrawer() {
+SpecletDrawer::SpecletDrawer() {
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -62,25 +62,25 @@ SpectronDrawer::SpectronDrawer() {
     //registers itself also as a transformation-result-lister for every transformation that will be created in future
     TransformationFactory::getSingletonInstance().registerForTransformationResults(this);
     //registers itself as listener for parameter-changes
-    SpectronParameters::getSingletonInstance().addListener(this);
-    DBG("SpectronDrawer as parameter listener added");
+    SpecletParameters::getSingletonInstance().addListener(this);
+    DBG("SpecletDrawer as parameter listener added");
 
     startTimer(TIMER);
     //[/Constructor]
 }
 
-SpectronDrawer::~SpectronDrawer() {
+SpecletDrawer::~SpecletDrawer() {
     //[Destructor_pre]. You can add your own custom destruction code here..
     //[/Destructor_pre]
 
     //[Destructor]. You can add your own custom destruction code here..
-    SpectronParameters::getSingletonInstance().removeListener(this);
-    DBG("SpectronDrawer as parameter listener removed");
+    SpecletParameters::getSingletonInstance().removeListener(this);
+    DBG("SpecletDrawer as parameter listener removed");
     //[/Destructor]
 }
 
 //==============================================================================
-void SpectronDrawer::paint(juce::Graphics &g) {
+void SpecletDrawer::paint(juce::Graphics &g) {
     //[UserPrePaint] Add your own custom painting code here..
     //[/UserPrePaint]
 
@@ -90,7 +90,7 @@ void SpectronDrawer::paint(juce::Graphics &g) {
 
     //draw spectrum ----------------
     {
-        LOG_PERFORMANCE_OF_SCOPE("SpectronDrawer paint draw spectrum");
+        LOG_PERFORMANCE_OF_SCOPE("SpecletDrawer paint draw spectrum");
         g.drawImageAt(spectrumImage, 0, 0);
     }
 
@@ -101,35 +101,35 @@ void SpectronDrawer::paint(juce::Graphics &g) {
 
     //draw frequency and time axis ----------------
     {
-        LOG_PERFORMANCE_OF_SCOPE("SpectronDrawer paint draw axis");
+        LOG_PERFORMANCE_OF_SCOPE("SpecletDrawer paint draw axis");
         g.drawImageAt(axisImage, 0, 0);
     }
 
     //[/UserPaint]
 }
 
-void SpectronDrawer::resized() {
+void SpecletDrawer::resized() {
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
 }
 
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
-void SpectronDrawer::timerCallback() {
+void SpecletDrawer::timerCallback() {
     stopTimer();
     repaint();
     startTimer(TIMER);
 }
 
-void SpectronDrawer::onTransformationEvent(TransformationResult *result) {
+void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
     //This method is automatically called, when there are new transformation results available,
-    //as far as it had been successfully been registered as a listener by "SpectronJuceMainUI"
+    //as far as it had been successfully been registered as a listener by "SpecletJuceMainUI"
     int watchDog = 200;
     while (result->isOutputAvailable()) {
         appendSpectralImage(result);
         watchDog--;
         if (watchDog <= 0) {
             //prevents endless loop
-            DBG("SpectronDrawer::onTransformationEvent watchDog canceled drawing!");
+            DBG("SpecletDrawer::onTransformationEvent watchDog canceled drawing!");
             watchDog = 200;
             break;
         }
@@ -144,27 +144,27 @@ void SpectronDrawer::onTransformationEvent(TransformationResult *result) {
 }
 
 //This method is called when a parameter changes (listener)
-void SpectronDrawer::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
+void SpecletDrawer::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
     const juce::ScopedLock myScopedLock(criticalSection);
 
     juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
-    juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpectronParameters::PROPERTY_VALUE);
+    juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_VALUE);
 
-    if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_LOGFREQUENCY)) {
-        settings.logFrequency = changedParameterValue.equals(SpectronParameters::PLOT_AXIS_LOGARITHMIC);
+    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGFREQUENCY)) {
+        settings.logFrequency = changedParameterValue.equals(SpecletParameters::PLOT_AXIS_LOGARITHMIC);
         updateFrequencyAxisImage();
     }
-    if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_LOGMAGNITUDE)) {
-        settings.logMagnitude = changedParameterValue.equals(SpectronParameters::PLOT_AXIS_LOGARITHMIC);
+    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGMAGNITUDE)) {
+        settings.logMagnitude = changedParameterValue.equals(SpecletParameters::PLOT_AXIS_LOGARITHMIC);
     }
-    if (changedParameterName.equalsIgnoreCase(SpectronParameters::PARAMETER_COLORMODE)) {
+    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_COLORMODE)) {
         renderingHelper.setColourGradient(ColourGradients::forIndex(changedParameterValue));
     }
 }
 
-void SpectronDrawer::appendSpectralImage(TransformationResult *result) {
+void SpecletDrawer::appendSpectralImage(TransformationResult *result) {
     if (result == nullptr) {
-        DBG("SpectronDrawer::appendSpectralImage(..) no result parameter");
+        DBG("SpecletDrawer::appendSpectralImage(..) no result parameter");
         return;
     }
     if (currentCursorXPos > (sizeX - 1)) {
@@ -187,7 +187,7 @@ void SpectronDrawer::appendSpectralImage(TransformationResult *result) {
 This method draws the currently active frequency axis into the local member frequencyAxisImage,
 which is drawn on top of the spectrum whithin the paint() method.
 */
-void SpectronDrawer::updateFrequencyAxisImage() {
+void SpecletDrawer::updateFrequencyAxisImage() {
     //TODO better encapsulation
     int maxWidthOfFrequencyAxis = 80;
 
@@ -282,7 +282,7 @@ void SpectronDrawer::updateFrequencyAxisImage() {
     g.setFont(oldFont);
 }
 
-void SpectronDrawer::updateTimeAxisImage(double timeresolution) {
+void SpecletDrawer::updateTimeAxisImage(double timeresolution) {
     //TODO better encapsulation
     int timeAxisWidth = 60;
     int lineLength = 50;
@@ -329,7 +329,7 @@ void SpectronDrawer::updateTimeAxisImage(double timeresolution) {
 
 BEGIN_JUCER_METADATA
 
-<JUCER_COMPONENT documentType="Component" className="SpectronDrawer" componentName=""
+<JUCER_COMPONENT documentType="Component" className="SpecletDrawer" componentName=""
 					  parentClasses="public Component, public TransformationListener, public Timer, public juce::ValueTree::Listener"
 					  constructorParams="" variableInitialisers="" snapPixels="8" snapActive="1"
 					  snapShown="1" overlayOpacity="0.330000013" fixedSize="0" initialWidth="100"
