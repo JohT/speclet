@@ -106,16 +106,6 @@ public:
         ROUTING_NumOptions,
         ROUTING_DEFAUTL = ROUTING_MID
     };
-    enum OptionsTransform {
-        TRANSFORM_FFT = 1,
-        TRANSFORM_FWT,
-        TRANSFORM_FWPT,
-        TRANSFORM_FWPT_BB,
-        TRANSFORM_OFF,
-
-        TRANSFORM_NumOptions,
-        TRANSFORM_DEFAULT = TRANSFORM_FFT
-    };
     enum OptionsWavelet {
         WAVELET_DAUBECHIES_02 = 1,
         WAVELET_DAUBECHIES_04,

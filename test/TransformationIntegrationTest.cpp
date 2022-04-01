@@ -1,8 +1,11 @@
 #include "../src/dsp/transformations/TransformationFactory.h"
+#include "../src/dsp/transformations/TransformationParameters.h"
 #include "../src/dsp/transformations/WaveletParameters.h"
 #include <catch2/catch_all.hpp>
 #include <memory>
 #include <string>
+#include <sys/stat.h>
+#include <type_traits>
 
 void generateTestSineInput(double frequency, Transformation *transformation, double samplingRate, Transformation::ResolutionType resolution) {
     double omega = 2.0f * M_PI * frequency;
@@ -32,27 +35,29 @@ std::size_t getMaxMagnitudeSpectralLineIndex(const SpectralDataBuffer::ItemType 
     return maxMagnitudeSpectrumLine;
 }
 
-unsigned long getExpectedSpectralDataSize(const SpectralDataInfo &spectralDataInfo, int transformationTypeNumber) {
+unsigned long getExpectedSpectralDataSize(const SpectralDataInfo &spectralDataInfo, const TransformationParameters::Type &transformationType) {
     auto expectedSpectralDataSize = spectralDataInfo.getResolution();
-    if (transformationTypeNumber == TransformationFactory::Type::FAST_FOURIER_TRANSFORM) {
+    if (transformationType == TransformationParameters::Type::FAST_FOURIER_TRANSFORM) {
         expectedSpectralDataSize = spectralDataInfo.getResolution() / 2 + 1;
-    } else if (transformationTypeNumber == TransformationFactory::Type::FAST_WAVELET_PACKET_TRANSFORM) {
+    } else if (transformationType == TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM) {
         expectedSpectralDataSize = spectralDataInfo.getResolution() / 16;// Because of 4x frequency resolution ratio
     }
-    INFO("Expected spectral data size: " << expectedSpectralDataSize << " for transformation type: " << transformationTypeNumber << " and resolution: " << spectralDataInfo.getResolution());
+    auto transformationTypeName = std::string(TransformationParameters::typeNames.at(transformationType));
+    INFO("Expected spectral data size: " << expectedSpectralDataSize << " for transformation type: " << transformationTypeName << " and resolution: " << spectralDataInfo.getResolution());
     return expectedSpectralDataSize;
 }
 
-double getFrequencyDeviationToleranceFactor(int transformationTypeNumber) {
+double getFrequencyDeviationToleranceFactor(const TransformationParameters::Type &transformationType) {
     auto frequencyDeviationToleranceFactor = 4.0F;
-    if (transformationTypeNumber == TransformationFactory::Type::FAST_FOURIER_TRANSFORM) {
+    if (transformationType == TransformationParameters::Type::FAST_FOURIER_TRANSFORM) {
         frequencyDeviationToleranceFactor = 5.0F;
-    } else if (transformationTypeNumber == TransformationFactory::Type::FAST_WAVELET_PACKET_TRANSFORM) {
+    } else if (transformationType == TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM) {
         frequencyDeviationToleranceFactor = 8.0F;
-    } else if (transformationTypeNumber == TransformationFactory::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM) {
+    } else if (transformationType == TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM) {
         frequencyDeviationToleranceFactor = 9.0F;
     }
-    INFO("Frequency deviation tolerance factor: " << frequencyDeviationToleranceFactor << " for transformation type: " << transformationTypeNumber);
+    auto transformationTypeName = std::string(TransformationParameters::typeNames.at(transformationType));
+    INFO("Frequency deviation tolerance factor: " << frequencyDeviationToleranceFactor << " for transformation type: " << transformationTypeName);
     return frequencyDeviationToleranceFactor;
 }
 
@@ -70,7 +75,7 @@ double getMaxPowerFrequencyDeviation(Transformation *transformation, double expe
     SpectralDataBuffer *spectralDataBuffer = transformation->getSpectralDataBuffer();
     REQUIRE(spectralDataBuffer != nullptr);
 
-    auto expectedSpectralDataSize = getExpectedSpectralDataSize(spectralDataInfo, transformation->getTransformationNr());
+    auto expectedSpectralDataSize = getExpectedSpectralDataSize(spectralDataInfo, static_cast<TransformationParameters::Type>(transformation->getTransformationType()));
     int count = 0;
     double maxPowerFrequencyDeviationSum = 0.0;
     while (transformation->isOutputAvailable()) {
@@ -93,9 +98,10 @@ SCENARIO("Transformations Integration Test", "[integration]") {
 
     // Generates a list of all transformation except for "BYPASS" and calls the tests methods below for each of them.
     // See: https://github.com/catchorg/Catch2/blob/devel/docs/generators.md
-    TransformationFactory::Type transformationType = static_cast<TransformationFactory::Type>(GENERATE(filter([](int typeNumber) { return typeNumber != TransformationFactory::Type::BYPASS; }, range(1, static_cast<int>(TransformationFactory::Type::NUMBER_OF_OPTIONS)))));
-    // To test single transformations, comment out the above line and uncomment the following line:
-    //TransformationFactory::Type transformationType = static_cast<TransformationFactory::Type>(GENERATE(value(TransformationFactory::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM)));
+    TransformationParameters::Type transformationType = GENERATE(TransformationParameters::Type::FAST_FOURIER_TRANSFORM,
+                                                                 TransformationParameters::Type::FAST_WAVELET_TRANSFORM,
+                                                                 TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM,
+                                                                 TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM);
     Transformation *transformation = TransformationFactory::getSingletonInstance().createTransformation(
             transformationType,
             samplingRate,
@@ -104,9 +110,9 @@ SCENARIO("Transformations Integration Test", "[integration]") {
             WaveletParameters::WaveletBase::VAIDYANATHAN_18,
             WaveletParameters::ResolutionRatioOption::FREQUENCY_X4);
     REQUIRE(transformation != nullptr);
-    REQUIRE(transformation->getTransformationNr() == transformationType);
+    REQUIRE(transformation->getTransformationType() == transformationType);
 
-    auto frequencyDeviationToleranceFactor = getFrequencyDeviationToleranceFactor(transformation->getTransformationNr());
+    auto frequencyDeviationToleranceFactor = getFrequencyDeviationToleranceFactor(transformation->getTransformationType());
 
     GIVEN(transformation->getName() << " with resolution " << resolution) {
         double frequency = static_cast<double>(resolution) / 100.0f;
@@ -127,9 +133,10 @@ TEST_CASE("Transformations Performance Test", "[.performance]") {
     auto samplingRate = 44100;
     Transformation::ResolutionType resolution = 4096;
     double frequency = static_cast<double>(resolution) / 100.0f;
-    BENCHMARK_ADVANCED("Fast Fourier Transform Performance")(Catch::Benchmark::Chronometer meter) {
+    BENCHMARK_ADVANCED("Fast Fourier Transform Performance")
+    (Catch::Benchmark::Chronometer meter) {
         Transformation *transformation = TransformationFactory::getSingletonInstance().createTransformation(
-                TransformationFactory::Type::FAST_FOURIER_TRANSFORM,
+                TransformationParameters::Type::FAST_FOURIER_TRANSFORM,
                 samplingRate,
                 resolution,
                 WindowFunctionFactory::Method::BLACKMAN_HARRIS,

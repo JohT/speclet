@@ -18,6 +18,7 @@
 #include "../../utilities/RenderingHelper.h"
 #include "Transformation.h"
 #include "WaveletParameters.h"
+#include "TransformationParameters.h"
 #include <memory>
 #include <span>
 
@@ -26,6 +27,7 @@ public:
     AbstractWaveletTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
+            TransformationParameters::Type newTransformationType,
             WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT,
             WaveletParameters::WaveletBase newWaveletBase =  WaveletParameters::WaveletBase::DEFAULT);
     ~AbstractWaveletTransformation() override;

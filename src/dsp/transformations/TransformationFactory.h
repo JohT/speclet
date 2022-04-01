@@ -19,23 +19,13 @@
 #include "../windowing/WindowFunctions.h"
 #include "Transformation.h"
 #include "WaveletParameters.h"
+#include "TransformationParameters.h"
 
 //This special factory-variant does not only create different types of "Transformation"-implementing-objects by ID,
 //it is also a singleton and therefore made to exists only once.
 //Furthermore it holds a pointer to the transformation, that had been created the last time
 class TransformationFactory {
 public:
-    enum Type {
-        FAST_FOURIER_TRANSFORM = 1,
-        FAST_WAVELET_TRANSFORM,
-        FAST_WAVELET_PACKET_TRANSFORM,
-        FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM,
-        BYPASS,
-
-        NUMBER_OF_OPTIONS,
-        DEFAULT = FAST_FOURIER_TRANSFORM
-    };
-
     static auto getSingletonInstance() -> TransformationFactory &;
 
     // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
@@ -47,7 +37,7 @@ public:
     void destruct();
 
     auto createTransformation(
-            Type newTransformationType,
+            TransformationParameters::Type newTransformationType,
             double samplingRate,
             Transformation::ResolutionType resolution,
             WindowFunctionFactory::Method windowFunction = WindowFunctionFactory::Method::DEFAULT,
@@ -61,7 +51,7 @@ private:
 
     Transformation *currentTransformation = nullptr;
     TransformationListener *listenerToHandOverToEveryNewTransformation = nullptr;
-    Type transformationType = Type::BYPASS;
+    TransformationParameters::Type transformationType = TransformationParameters::Type::BYPASS;
 
     void deleteTransformation();
 };

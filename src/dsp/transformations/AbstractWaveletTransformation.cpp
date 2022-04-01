@@ -1,14 +1,13 @@
 #include "AbstractWaveletTransformation.h"
 #include "../../utilities/PerformanceLogger.h"
-#include "WaveletParameters.h"
 #include <memory>
 #include <span>
 #include <string>
 #include <type_traits>
 #include <vector>
 
-AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction, WaveletParameters::WaveletBase newWaveletBase)
-    : Transformation(newSamplingRate, newResolution, newWindowFunction),
+AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowFunctionFactory::Method newWindowFunction, WaveletParameters::WaveletBase newWaveletBase)
+    : Transformation(newSamplingRate, newResolution, newTransformationType, newWindowFunction),
       waveletFilterTreeMaxLevel(getMaxLevel(newResolution)),
       dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))),
       constantLevelsHedge(nullptr),

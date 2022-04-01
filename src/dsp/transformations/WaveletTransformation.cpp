@@ -1,15 +1,17 @@
 #include "WaveletTransformation.h"
 #include "../../utilities/PerformanceLogger.h"
+#include "TransformationParameters.h"
 #include <limits>
+
 
 WaveletTransformation::WaveletTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
         WindowFunctionFactory::Method newWindowFunction,
         WaveletParameters::WaveletBase newWaveletBase)
-    : AbstractWaveletTransformation(newSamplingRate, newResolution, newWindowFunction, newWaveletBase),
-      spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)){
-    
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, TransformationParameters::Type::FAST_WAVELET_TRANSFORM, newWindowFunction, newWaveletBase),
+      spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)) {
+
     DBG("WaveletTransformation::initialize done with fs=" + juce::String(newSamplingRate) + ",res=" + juce::String(newResolution));
     assert(newResolution <= std::numeric_limits<long>::max());//wave++ Interval requires the resolution to be a long
     setReady();

@@ -1,5 +1,6 @@
 #include "WaveletPacketTransformation.h"
 #include "../../utilities/PerformanceLogger.h"
+#include "TransformationParameters.h"
 #include <cmath>
 
 WaveletPacketTransformation::WaveletPacketTransformation(
@@ -8,7 +9,7 @@ WaveletPacketTransformation::WaveletPacketTransformation(
         WindowFunctionFactory::Method newWindowFunction,
         WaveletParameters::WaveletBase newWaveletBase,
         WaveletParameters::ResolutionRatioOption newResolutionRatioOption)
-    : AbstractWaveletTransformation(newSamplingRate, newResolution, newWindowFunction, newWaveletBase),
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM, newWindowFunction, newWaveletBase),
       samplingRate(newSamplingRate),
       timeFrequencyResolutionTreeLevelOffset(toTimeFrequencyResolutionTreeLevelOffset(newResolutionRatioOption)),
       resultTreeLevel(getWaveletPacketResultTreeLevel(getWaveletFilterTreeMaxLevel(), timeFrequencyResolutionTreeLevelOffset)),

@@ -2,12 +2,14 @@
 #include "dsp/SignalGenerator.h"
 #include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
+#include "dsp/transformations/TransformationParameters.h"
 #include "dsp/transformations/WaveletParameters.h"
 #include "dsp/windowing/WindowFunctionFactory.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpecletMainUI.h"
 #include "utilities/PerformanceLogger.h"
 #include <memory>
+#include <type_traits>
 
 #define DEFAULT_SAMPLINGRATE 44100
 
@@ -39,7 +41,7 @@ SpecletAudioProcessor::SpecletAudioProcessor()
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, SpecletParameters::PLOT_AXIS_DEFAULT);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, SpecletParameters::RESOLUTION_DEFAULT);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Routing, SpecletParameters::ROUTING_MID);
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, SpecletParameters::TRANSFORM_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, static_cast<std::underlying_type<TransformationParameters::Type>::type>(TransformationParameters::Type::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, SpecletParameters::WAVELET_DEFAULT);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, SpecletParameters::RESOLUTION_RATIO_DEFAULT);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, SpecletParameters::WINDOWING_DEFAULT);
@@ -301,7 +303,7 @@ void SpecletAudioProcessor::updateTransformation() {
 
     //TODO(JohT) Mapping colocated parameters to/from global plugin parameters
     currentTransformation = TransformationFactory::getSingletonInstance().createTransformation(
-            static_cast<TransformationFactory::Type>(parameters.getTransformation()),
+            static_cast<TransformationParameters::Type>(parameters.getTransformation()),
             sampleRate,
             parameters.getResolution(),
             static_cast<WindowFunctionFactory::Method>(parameters.getWindowing()),

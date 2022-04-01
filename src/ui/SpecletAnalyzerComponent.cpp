@@ -22,6 +22,7 @@
 //[Headers] You can add your own extra header files here...
 #include "SpecletDrawer.h"
 #include "../dsp/transformations/WaveletParameters.h"
+#include "../dsp/transformations/TransformationParameters.h"
 
 //[/Headers]
 
@@ -503,11 +504,10 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxResolution->addItem("32768", SpecletParameters::RESOLUTION_32768);
     comboBoxResolution->addItem("65536", SpecletParameters::RESOLUTION_65536);
 
-    comboBoxTransformation->addItem("FFT", SpecletParameters::TRANSFORM_FFT);
-    comboBoxTransformation->addItem("FWT", SpecletParameters::TRANSFORM_FWT);
-    comboBoxTransformation->addItem("WPT", SpecletParameters::TRANSFORM_FWPT);
-    comboBoxTransformation->addItem("WPT BestBase", SpecletParameters::TRANSFORM_FWPT_BB);
-    comboBoxTransformation->addItem("Off", SpecletParameters::TRANSFORM_OFF);
+    using TransformationTypeValue = std::underlying_type<TransformationParameters::Type>::type;
+    for(auto transformationEntry : TransformationParameters::typeNames) {
+        comboBoxTransformation->addItem(std::string(transformationEntry.second), static_cast<TransformationTypeValue>(transformationEntry.first));
+    }
 
     comboBoxWindowing->addItem("Barlett", SpecletParameters::WINDOWING_BARTLETT);
     comboBoxWindowing->addItem("Blackman", SpecletParameters::WINDOWING_BLACKMAN);
@@ -519,7 +519,7 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxWindowing->addItem("Rectangular", SpecletParameters::WINDOWING_RECTANGULAR);
 
     using WaveletBase = WaveletParameters::WaveletBase;
-    using WaveletBaseValue = std::underlying_type<WaveletBase>::type;
+    using WaveletBaseValue = std::underlying_type<WaveletParameters::WaveletBase>::type;
     for(WaveletBaseValue option = 1; option < WaveletBaseValue(WaveletParameters::WaveletBase::NUMBER_OF_OPTIONS); ++option) {
         comboBoxWavelet->addItem(std::string(WaveletParameters::waveletBaseNames.at(static_cast<WaveletBase>(option))), option);
     }

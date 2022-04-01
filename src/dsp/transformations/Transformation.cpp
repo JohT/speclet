@@ -1,11 +1,12 @@
 #include "Transformation.h"
 #include "../windowing/WindowFunctionFactory.h"
+#include "TransformationParameters.h"
 #include "juce_core/juce_core.h"
 #include "../../utilities/PerformanceLogger.h"
 #include <assert.h>
 
-Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
-    : transformTypeNr(0),
+Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowFunctionFactory::Method newWindowFunction)
+    : transformationType(newTransformationType),
       resolution(newResolution),
       ready(false),
       calculated(false),

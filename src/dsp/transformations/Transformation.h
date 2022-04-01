@@ -19,6 +19,7 @@
 #include "../../data/SpectralDataInfo.h"
 #include "../windowing/WindowFunctionFactory.h"
 #include "../windowing/WindowFunctions.h"
+#include "TransformationParameters.h"
 #include "juce_core/juce_core.h"
 #include "juce_dsp/juce_dsp.h"
 #include <memory>
@@ -53,7 +54,11 @@ public:
     auto operator=(Transformation &) -> Transformation & = delete; //No copy assignment
     auto operator=(Transformation &&) -> Transformation & = delete;//No move assignment
 
-    Transformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT);
+    Transformation(
+            double newSamplingRate,
+            ResolutionType newResolution,
+            TransformationParameters::Type newTransformationType,
+            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT);
     virtual ~Transformation();
 
     auto getWindowFunction() const -> WindowFunction *;
@@ -80,8 +85,7 @@ public:
     void setNextInputSample(const double &sample);
     auto isOutputAvailable() -> bool;
     auto getSpectralDataBuffer() -> SpectralDataBuffer *;
-    auto getTransformationNr() const -> int { return transformTypeNr; }
-    void setTransformationNr(int newTransformTypeNr) { transformTypeNr = newTransformTypeNr; }
+    auto getTransformationType() const -> auto { return transformationType; }
     void setTransformResultListener(TransformationListener *value);
     void getNextSpectrum(SpectralDataBuffer::ItemType *item);
 
@@ -106,7 +110,7 @@ protected:
     void setCalculated(bool value = true) { calculated = value; }
 
 private:
-    int transformTypeNr;
+    TransformationParameters::Type transformationType;
     std::shared_ptr<WindowFunction> windowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
 
     ResolutionType resolution;
