@@ -6,8 +6,8 @@ WaveletPacketTransformation::WaveletPacketTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
         WindowFunctionFactory::Method newWindowFunction,
-        WaveletBase newWaveletBase,
-        ResolutionRatioOption newResolutionRatioOption)
+        WaveletParameters::WaveletBase newWaveletBase,
+        WaveletParameters::ResolutionRatioOption newResolutionRatioOption)
     : AbstractWaveletTransformation(newSamplingRate, newResolution, newWindowFunction, newWaveletBase),
       samplingRate(newSamplingRate),
       timeFrequencyResolutionTreeLevelOffset(toTimeFrequencyResolutionTreeLevelOffset(newResolutionRatioOption)),
@@ -67,8 +67,8 @@ auto WaveletPacketTransformation::getWaveletPacketResultTreeLevel(WaveletLevelTy
     return waveletPacketResultTreeLevel;
 }
 
-void WaveletPacketTransformation::setResolutionRatioOption(ResolutionRatioOption newResolutionRatio) {
-    DBG("WaveletPacketTransformation::setResolutionRatioOption to " + juce::String(newResolutionRatio));
+void WaveletPacketTransformation::setResolutionRatioOption(WaveletParameters::ResolutionRatioOption newResolutionRatio) {
+    DBG("WaveletPacketTransformation::setResolutionRatioOption to " + std::string(WaveletParameters::resolutionRatioOptionNames.at(newResolutionRatio)));
     timeFrequencyResolutionTreeLevelOffset = toTimeFrequencyResolutionTreeLevelOffset(newResolutionRatio);
     resultTreeLevel = getWaveletPacketResultTreeLevel(getWaveletFilterTreeMaxLevel(), timeFrequencyResolutionTreeLevelOffset);
     spectralDataInfo = calculateSpectralDataInfo();
@@ -79,11 +79,12 @@ auto WaveletPacketTransformation::calculateSpectralDataInfo() -> SpectralDataInf
     return {samplingRate, getResolution(), getFrequencyResolution(resultTreeLevel), getTimeResolution()};
 }
 
-auto WaveletPacketTransformation::toTimeFrequencyResolutionTreeLevelOffset(const ResolutionRatioOption &resolutionRatioOption) -> int {
-    if (resolutionRatioOption == ResolutionRatioOption::EQUAL) {
+auto WaveletPacketTransformation::toTimeFrequencyResolutionTreeLevelOffset(const WaveletParameters::ResolutionRatioOption &resolutionRatioOption) -> int {
+    if (resolutionRatioOption == WaveletParameters::ResolutionRatioOption::EQUAL) {
         return 0;
     }
-    return resolutionRatioOption;
+    using ResolutionRatioOptionValueType = std::underlying_type<WaveletParameters::ResolutionRatioOption>::type;
+    return static_cast<ResolutionRatioOptionValueType>(resolutionRatioOption);
 }
 
 void WaveletPacketTransformation::calculate() {

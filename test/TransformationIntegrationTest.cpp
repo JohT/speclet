@@ -1,4 +1,5 @@
 #include "../src/dsp/transformations/TransformationFactory.h"
+#include "../src/dsp/transformations/WaveletParameters.h"
 #include <catch2/catch_all.hpp>
 #include <memory>
 #include <string>
@@ -100,8 +101,8 @@ SCENARIO("Transformations Integration Test", "[integration]") {
             samplingRate,
             resolution,
             WindowFunctionFactory::Method::BLACKMAN_HARRIS,
-            AbstractWaveletTransformation::WaveletBase::VAIDYANATHAN_18,
-            WaveletPacketTransformation::ResolutionRatioOption::FREQUENCY_X4);
+            WaveletParameters::WaveletBase::VAIDYANATHAN_18,
+            WaveletParameters::ResolutionRatioOption::FREQUENCY_X4);
     REQUIRE(transformation != nullptr);
     REQUIRE(transformation->getTransformationNr() == transformationType);
 
@@ -132,8 +133,8 @@ TEST_CASE("Transformations Performance Test", "[.performance]") {
                 samplingRate,
                 resolution,
                 WindowFunctionFactory::Method::BLACKMAN_HARRIS,
-                AbstractWaveletTransformation::WaveletBase::VAIDYANATHAN_18,
-                WaveletPacketTransformation::ResolutionRatioOption::FREQUENCY_X4);
+                WaveletParameters::WaveletBase::VAIDYANATHAN_18,
+                WaveletParameters::ResolutionRatioOption::FREQUENCY_X4);
         generateTestSineInput(frequency, transformation, samplingRate, resolution);
         getMaxPowerFrequencyDeviation(transformation, frequency);
         meter.measure([transformation, frequency] { return getMaxPowerFrequencyDeviation(transformation, frequency); });

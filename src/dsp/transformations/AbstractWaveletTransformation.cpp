@@ -1,11 +1,13 @@
 #include "AbstractWaveletTransformation.h"
 #include "../../utilities/PerformanceLogger.h"
+#include "WaveletParameters.h"
 #include <memory>
 #include <span>
+#include <string>
 #include <type_traits>
 #include <vector>
 
-AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction, WaveletBase newWaveletBase)
+AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction, WaveletParameters::WaveletBase newWaveletBase)
     : Transformation(newSamplingRate, newResolution, newWindowFunction),
       waveletFilterTreeMaxLevel(getMaxLevel(newResolution)),
       dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))),
@@ -16,7 +18,7 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
     updateConstantLevelsHedge(waveletFilterTreeMaxLevel / 2);
     updateDWTLevelsHedge();
 
-    DBG("AbstractWaveletTransformation::initialize done with waveletNr=" + juce::String(newWaveletBase) + "maxLevel=" + juce::String(waveletFilterTreeMaxLevel));
+    DBG("AbstractWaveletTransformation::initialize done with waveletNr=" + std::string(WaveletParameters::waveletBaseNames.at(newWaveletBase)) + "maxLevel=" + std::to_string(waveletFilterTreeMaxLevel));
 }
 
 AbstractWaveletTransformation::~AbstractWaveletTransformation() {
@@ -52,96 +54,96 @@ auto AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) -> Wa
     return static_cast<WaveletLevelType>(minBestBasisLevel);
 }
 
-void AbstractWaveletTransformation::setWaveletBase(const WaveletBase &newWaveletBase) {
+void AbstractWaveletTransformation::setWaveletBase(const WaveletParameters::WaveletBase &newWaveletBase) {
     setReady(false);
 
     switch (newWaveletBase) {
-        case WaveletBase::DAUBECHIES_02: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_02: {
             mDwtFilterG.Set(d02doqf, d02dalpha, d02domega);
             mDwtFilterH.Set(d02soqf, d02salpha, d02somega);
             break;
         }
-        case WaveletBase::DAUBECHIES_04: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_04: {
             mDwtFilterG.Set(d04doqf, d04dalpha, d04domega);
             mDwtFilterH.Set(d04soqf, d04salpha, d04somega);
             break;
         }
-        case WaveletBase::DAUBECHIES_06: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_06: {
             mDwtFilterG.Set(d06doqf, d06dalpha, d06domega);
             mDwtFilterH.Set(d06soqf, d06salpha, d06somega);
             break;
         }
-        case WaveletBase::DAUBECHIES_08: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_08: {
             mDwtFilterG.Set(d08doqf, d08dalpha, d08domega);
             mDwtFilterH.Set(d08soqf, d08salpha, d08somega);
             break;
         }
-        case WaveletBase::DAUBECHIES_10: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_10: {
             mDwtFilterG.Set(d10doqf, d10dalpha, d10domega);
             mDwtFilterH.Set(d10soqf, d10salpha, d10somega);
             break;
         }
-        case WaveletBase::DAUBECHIES_12: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_12: {
             mDwtFilterG.Set(d12doqf, d12dalpha, d12domega);
             mDwtFilterH.Set(d12soqf, d12salpha, d12somega);
             break;
         }
-        case WaveletBase::DAUBECHIES_14: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_14: {
             mDwtFilterG.Set(d14doqf, d14dalpha, d14domega);
             mDwtFilterH.Set(d14soqf, d14salpha, d14somega);
             break;
         }
-        case WaveletBase::DAUBECHIES_16: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_16: {
             mDwtFilterG.Set(d16doqf, d16dalpha, d16domega);
             mDwtFilterH.Set(d16soqf, d16salpha, d16somega);
             break;
         }
-        case WaveletBase::DAUBECHIES_18: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_18: {
             mDwtFilterG.Set(d18doqf, d18dalpha, d18domega);
             mDwtFilterH.Set(d18soqf, d18salpha, d18somega);
             break;
         }
-        case WaveletBase::DAUBECHIES_20: {
+        case WaveletParameters::WaveletBase::DAUBECHIES_20: {
             mDwtFilterG.Set(d20doqf, d20dalpha, d20domega);
             mDwtFilterH.Set(d20soqf, d20salpha, d20somega);
             break;
         }
-        case WaveletBase::COIFMAN_06: {
+        case WaveletParameters::WaveletBase::COIFMAN_06: {
             mDwtFilterG.Set(c06doqf, c06dalpha, c06domega);
             mDwtFilterH.Set(c06soqf, c06salpha, c06somega);
             break;
         }
-        case WaveletBase::COIFMAN_12: {
+        case WaveletParameters::WaveletBase::COIFMAN_12: {
             mDwtFilterG.Set(c12doqf, c12dalpha, c12domega);
             mDwtFilterH.Set(c12soqf, c12salpha, c12somega);
             break;
         }
-        case WaveletBase::COIFMAN_18: {
+        case WaveletParameters::WaveletBase::COIFMAN_18: {
             mDwtFilterG.Set(c18doqf, c18dalpha, c18domega);
             mDwtFilterH.Set(c18soqf, c18salpha, c18somega);
             break;
         }
-        case WaveletBase::COIFMAN_24: {
+        case WaveletParameters::WaveletBase::COIFMAN_24: {
             mDwtFilterG.Set(c24doqf, c24dalpha, c24domega);
             mDwtFilterH.Set(c24soqf, c24salpha, c24somega);
             break;
         }
-        case WaveletBase::COIFMAN_30: {
+        case WaveletParameters::WaveletBase::COIFMAN_30: {
             mDwtFilterG.Set(c30doqf, c30dalpha, c30domega);
             mDwtFilterH.Set(c30soqf, c30salpha, c30somega);
             break;
         }
-        case WaveletBase::BEYLKIN_18: {
+        case WaveletParameters::WaveletBase::BEYLKIN_18: {
             mDwtFilterG.Set(b18doqf, b18dalpha, b18domega);
             mDwtFilterH.Set(b18soqf, b18salpha, b18somega);
             break;
         }
-        case WaveletBase::VAIDYANATHAN_18: {
+        case WaveletParameters::WaveletBase::VAIDYANATHAN_18: {
             mDwtFilterG.Set(v24doqf, v24dalpha, v24domega);
             mDwtFilterH.Set(v24soqf, v24salpha, v24somega);
             break;
         }
-        case WaveletBase::NUMBER_OF_OPTIONS:
+        case WaveletParameters::WaveletBase::NUMBER_OF_OPTIONS:
         default: {
             bool unknownWavelet = false;
             assert(unknownWavelet);
@@ -149,7 +151,7 @@ void AbstractWaveletTransformation::setWaveletBase(const WaveletBase &newWavelet
     }
 
     DBG("AbstractWaveletTransformation::setWaveletBase done with waveletBaseNr=" +
-        juce::String(newWaveletBase) + ",coeffSize=" + juce::String(mDwtFilterG.pcoef_size));
+        std::string(WaveletParameters::waveletBaseNames.at(newWaveletBase)) + ",coeffSize=" + std::to_string(mDwtFilterG.pcoef_size));
 
     setReady(true);
 }

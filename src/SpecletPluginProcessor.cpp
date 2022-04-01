@@ -2,7 +2,7 @@
 #include "dsp/SignalGenerator.h"
 #include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
-#include "dsp/transformations/WaveletPacketTransformation.h"
+#include "dsp/transformations/WaveletParameters.h"
 #include "dsp/windowing/WindowFunctionFactory.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpecletMainUI.h"
@@ -27,9 +27,9 @@ SpecletAudioProcessor::SpecletAudioProcessor()
       signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
 
     LOG_PERFORMANCE_BEGIN("SpecletAudioProcessor");
-    #if _LOGTOFILE
-        juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
-    #endif
+#if _LOGTOFILE
+    juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
+#endif
 
     //Initialize with default settings
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, SpecletParameters::COLORMODE_DEFAULT);
@@ -56,9 +56,9 @@ SpecletAudioProcessor::~SpecletAudioProcessor() {
 
     TransformationFactory::getSingletonInstance().destruct();
 
-    #if _LOGTOFILE
-        juce::Logger::setCurrentLogger(0, true);
-    #endif
+#if _LOGTOFILE
+    juce::Logger::setCurrentLogger(0, true);
+#endif
     LOG_PERFORMANCE_END();
 }
 
@@ -201,7 +201,7 @@ auto SpecletAudioProcessor::isBusesLayoutSupported(const BusesLayout &layouts) c
 }
 
 void SpecletAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
-                                          juce::MidiBuffer &midiMessages) {
+                                         juce::MidiBuffer &midiMessages) {
     juce::ignoreUnused(midiMessages);
 
     juce::ScopedNoDenormals noDenormals;
@@ -305,8 +305,8 @@ void SpecletAudioProcessor::updateTransformation() {
             sampleRate,
             parameters.getResolution(),
             static_cast<WindowFunctionFactory::Method>(parameters.getWindowing()),
-            static_cast<AbstractWaveletTransformation::WaveletBase>(parameters.getWavelet()),
-            static_cast<WaveletPacketTransformation::ResolutionRatioOption>(parameters.getWaveletPaketBase()));
+            static_cast<WaveletParameters::WaveletBase>(parameters.getWavelet()),
+            static_cast<WaveletParameters::ResolutionRatioOption>(parameters.getWaveletPaketBase()));
 
     parameters.unblockParameterChanges();
 }

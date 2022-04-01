@@ -1,7 +1,10 @@
 #include "TransformationFactory.h"
 #include "AbstractWaveletTransformation.h"
-#include "Transformation.h"
 #include "WaveletPacketTransformation.h"
+#include "FourierTransformation.h"
+#include "WaveletTransformation.h"
+#include "WaveletPacketBestBasisTransformation.h"
+#include "Transformation.h"
 #include <cstddef>
 
 #ifndef __LOGGER__
@@ -34,8 +37,8 @@ auto TransformationFactory::createTransformation(
         double samplingRate,
         Transformation::ResolutionType resolution,
         WindowFunctionFactory::Method windowFunction,
-        AbstractWaveletTransformation::WaveletBase waveletBase,
-        WaveletPacketTransformation::ResolutionRatioOption resolutionRatio) -> Transformation * {
+        WaveletParameters::WaveletBase waveletBase,
+        WaveletParameters::ResolutionRatioOption resolutionRatio) -> Transformation * {
             
     DBG("TransformationFactory::createTransformation started. transformationNr=" +
         juce::String(newTransformationType) +

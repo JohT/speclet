@@ -16,26 +16,16 @@
 #pragma once
 #include "../../plugin/SpecletParameters.h"
 #include "AbstractWaveletTransformation.h"
+#include "WaveletParameters.h"
 
 class WaveletPacketTransformation : public AbstractWaveletTransformation {
 public:
-    enum ResolutionRatioOption {
-        EQUAL = 99,
-        TIME_X4 = -2,
-        TIME_X2 = -1,
-        FREQUENCY_X2 = 1,
-        FREQUENCY_X4 = 2,
-
-        NUMBER_OF_OPTIONS = 5,
-        DEFAULT = EQUAL
-    };
-
     WaveletPacketTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
             WindowFunctionFactory::Method newWindowFunction,
-            WaveletBase newWaveletBaseType = WaveletBase::DEFAULT,
-            ResolutionRatioOption newResolutionRatioOption = ResolutionRatioOption::DEFAULT);
+            WaveletParameters::WaveletBase newWaveletBaseType = WaveletParameters::WaveletBase::DEFAULT,
+            WaveletParameters::ResolutionRatioOption newResolutionRatioOption = WaveletParameters::ResolutionRatioOption::DEFAULT);
     ~WaveletPacketTransformation() override;
     WaveletPacketTransformation(const WaveletPacketTransformation &) = delete;                    //No copy contructor
     WaveletPacketTransformation(WaveletPacketTransformation &&) = delete;                         //No move contructor
@@ -57,7 +47,7 @@ private:
 
     SpectralDataInfo spectralDataInfo;
 
-    void setResolutionRatioOption(ResolutionRatioOption newResolutionRatio);
+    void setResolutionRatioOption(WaveletParameters::ResolutionRatioOption newResolutionRatio);
 
     auto getTimeResolution() -> ResolutionType;
     auto calculateSpectralDataInfo() -> SpectralDataInfo;
@@ -68,7 +58,7 @@ private:
      * @param resolutionRatioOption 
      * @return const int 
      */
-    static auto toTimeFrequencyResolutionTreeLevelOffset(const ResolutionRatioOption &resolutionRatioOption) -> int;
+    static auto toTimeFrequencyResolutionTreeLevelOffset(const WaveletParameters::ResolutionRatioOption &resolutionRatioOption) -> int;
     static auto getFrequencyResolution(WaveletLevelType waveletPacketResultTreeLevel) -> ResolutionType;
     static auto getWaveletPacketResultTreeLevel(WaveletLevelType maxLevel, int resolutionRatioOffset) -> WaveletLevelType;
 };

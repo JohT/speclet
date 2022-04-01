@@ -10,7 +10,7 @@ WaveletPacketBestBasisTransformation::WaveletPacketBestBasisTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
         WindowFunctionFactory::Method newWindowFunction,
-        WaveletBase newWaveletBaseType)
+        WaveletParameters::WaveletBase newWaveletBaseType)
     : AbstractWaveletTransformation(newSamplingRate, newResolution, newWindowFunction, newWaveletBaseType),
       //Time and frequency resolution can't be estimated since they change dynamically. Assume same values as for the DWT.
       spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)) {

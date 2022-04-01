@@ -17,39 +17,17 @@
 #include "../../../lib/wave++/source/libw.h"//TODO (JohT) include with cmake
 #include "../../utilities/RenderingHelper.h"
 #include "Transformation.h"
+#include "WaveletParameters.h"
 #include <memory>
 #include <span>
 
 class AbstractWaveletTransformation : public Transformation {
 public:
-    enum WaveletBase {
-        DAUBECHIES_02 = 1,
-        DAUBECHIES_04,
-        DAUBECHIES_06,
-        DAUBECHIES_08,
-        DAUBECHIES_10,
-        DAUBECHIES_12,
-        DAUBECHIES_14,
-        DAUBECHIES_16,
-        DAUBECHIES_18,
-        DAUBECHIES_20,
-        COIFMAN_06,
-        COIFMAN_12,
-        COIFMAN_18,
-        COIFMAN_24,
-        COIFMAN_30,
-        BEYLKIN_18,
-        VAIDYANATHAN_18,
-
-        NUMBER_OF_OPTIONS,
-        HAAR = DAUBECHIES_02,
-        DEFAULT = VAIDYANATHAN_18
-    };
     AbstractWaveletTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
             WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT,
-            WaveletBase newWaveletBase = WaveletBase::DEFAULT);
+            WaveletParameters::WaveletBase newWaveletBase =  WaveletParameters::WaveletBase::DEFAULT);
     ~AbstractWaveletTransformation() override;
 
     AbstractWaveletTransformation(const AbstractWaveletTransformation &) = delete;                    //No copy contructor
@@ -57,7 +35,7 @@ public:
     auto operator=(const AbstractWaveletTransformation &) -> AbstractWaveletTransformation & = delete;//No copy assignment
     auto operator=(AbstractWaveletTransformation &&) -> AbstractWaveletTransformation & = delete;     //No move assignment
 
-    void setWaveletBase(const WaveletBase &newWaveletBase);
+    void setWaveletBase(const WaveletParameters::WaveletBase &newWaveletBase);
     using WaveletLevelType = unsigned int;
 
 protected:

@@ -16,6 +16,8 @@
 #pragma once
 #include "../../plugin/SpecletParameters.h"
 #include "AbstractWaveletTransformation.h"
+#include "../windowing/WindowFunctionFactory.h"
+#include "WaveletParameters.h"
 
 class WaveletTransformation : public AbstractWaveletTransformation {
 public:
@@ -24,7 +26,7 @@ public:
             double newSamplingRate,
             ResolutionType newResolution,
             WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT,
-            WaveletBase newWaveletBase = WaveletBase::DEFAULT);
+            WaveletParameters::WaveletBase newWaveletBase = WaveletParameters::WaveletBase::DEFAULT);
 
     ~WaveletTransformation() override;
     WaveletTransformation(WaveletTransformation &) = delete;                     //No copy contructor

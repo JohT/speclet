@@ -21,11 +21,13 @@
 
 //[Headers] You can add your own extra header files here...
 #include "SpecletDrawer.h"
+#include "../dsp/transformations/WaveletParameters.h"
 
 //[/Headers]
 
 #include "SpecletAnalyzerComponent.h"
 #include <cstddef>
+#include <type_traits>
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
@@ -516,29 +518,19 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxWindowing->addItem("Parzen", SpecletParameters::WINDOWING_PARZEN);
     comboBoxWindowing->addItem("Rectangular", SpecletParameters::WINDOWING_RECTANGULAR);
 
-    comboBoxWavelet->addItem("Haar (2)", SpecletParameters::WAVELET_HAAR);
-    comboBoxWavelet->addItem("Daubechies (4)", SpecletParameters::WAVELET_DAUBECHIES_04);
-    comboBoxWavelet->addItem("Daubechies (6)", SpecletParameters::WAVELET_DAUBECHIES_06);
-    comboBoxWavelet->addItem("Daubechies (8)", SpecletParameters::WAVELET_DAUBECHIES_08);
-    comboBoxWavelet->addItem("Daubechies (10)", SpecletParameters::WAVELET_DAUBECHIES_10);
-    comboBoxWavelet->addItem("Daubechies (12)", SpecletParameters::WAVELET_DAUBECHIES_12);
-    comboBoxWavelet->addItem("Daubechies (14)", SpecletParameters::WAVELET_DAUBECHIES_14);
-    comboBoxWavelet->addItem("Daubechies (16)", SpecletParameters::WAVELET_DAUBECHIES_16);
-    comboBoxWavelet->addItem("Daubechies (18)", SpecletParameters::WAVELET_DAUBECHIES_18);
-    comboBoxWavelet->addItem("Daubechies (20)", SpecletParameters::WAVELET_DAUBECHIES_20);
-    comboBoxWavelet->addItem("Coifman (6)", SpecletParameters::WAVELET_COIFMAN_06);
-    comboBoxWavelet->addItem("Coifman (12)", SpecletParameters::WAVELET_COIFMAN_12);
-    comboBoxWavelet->addItem("Coifman (18)", SpecletParameters::WAVELET_COIFMAN_18);
-    comboBoxWavelet->addItem("Coifman (24)", SpecletParameters::WAVELET_COIFMAN_24);
-    comboBoxWavelet->addItem("Coifman (30)", SpecletParameters::WAVELET_COIFMAN_30);
-    comboBoxWavelet->addItem("Beylkin (18)", SpecletParameters::WAVELET_BEYLKIN_18);
-    comboBoxWavelet->addItem("Vaidyanathan (18)", SpecletParameters::WAVELET_VAIDYANATHAN_18);
+    using WaveletBase = WaveletParameters::WaveletBase;
+    using WaveletBaseValue = std::underlying_type<WaveletBase>::type;
+    for(WaveletBaseValue option = 1; option < WaveletBaseValue(WaveletParameters::WaveletBase::NUMBER_OF_OPTIONS); ++option) {
+        comboBoxWavelet->addItem(std::string(WaveletParameters::waveletBaseNames.at(static_cast<WaveletBase>(option))), option);
+    }
 
-    comboBoxWaveletPaketBasis->addItem("freq/time x1", SpecletParameters::RESOLUTION_RATIO_Equal);
-    comboBoxWaveletPaketBasis->addItem("freq x2", SpecletParameters::RESOLUTION_RATIO_FreqX2);
-    comboBoxWaveletPaketBasis->addItem("freq x4", SpecletParameters::RESOLUTION_RATIO_FreqX4);
-    comboBoxWaveletPaketBasis->addItem("time x2", SpecletParameters::RESOLUTION_RATIO_TimeX2);
-    comboBoxWaveletPaketBasis->addItem("time x4", SpecletParameters::RESOLUTION_RATIO_TimeX4);
+    using ResolutionRatio = WaveletParameters::ResolutionRatioOption;
+    using ResolutionRatioValue = std::underlying_type<ResolutionRatio>::type;
+    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::EQUAL)), static_cast<ResolutionRatioValue>(ResolutionRatio::EQUAL));
+    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::FREQUENCY_X2)), static_cast<ResolutionRatioValue>(ResolutionRatio::FREQUENCY_X2));
+    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::FREQUENCY_X4)), static_cast<ResolutionRatioValue>(ResolutionRatio::FREQUENCY_X4));
+    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::TIME_X2)), static_cast<ResolutionRatioValue>(ResolutionRatio::TIME_X2));
+    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::TIME_X4)), static_cast<ResolutionRatioValue>(ResolutionRatio::TIME_X4));
 
     comboBoxSignalgenerator->addItem("Sine", SpecletParameters::GENERATOR_SINE);
     comboBoxSignalgenerator->addItem("Triangle", SpecletParameters::GENERATOR_TRIANGLE);

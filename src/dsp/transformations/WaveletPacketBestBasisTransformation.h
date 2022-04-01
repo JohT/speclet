@@ -27,7 +27,7 @@ public:
             double newSamplingRate,
             ResolutionType newResolution,
             WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT,
-            WaveletBase newWaveletBaseType = WaveletBase::DEFAULT);
+            WaveletParameters::WaveletBase newWaveletBaseType = WaveletParameters::WaveletBase::DEFAULT);
     ~WaveletPacketBestBasisTransformation() override;
 
     WaveletPacketBestBasisTransformation(const WaveletPacketBestBasisTransformation &) = delete;                    //No copy contructor
