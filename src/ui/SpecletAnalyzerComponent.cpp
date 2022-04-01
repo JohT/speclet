@@ -23,6 +23,7 @@
 #include "../dsp/transformations/TransformationParameters.h"
 #include "../dsp/transformations/WaveletParameters.h"
 #include "../dsp/windowing/WindowParameters.h"
+#include "../dsp/SignalGeneratorParameters.h"
 #include "SpecletDrawer.h"
 
 //[/Headers]
@@ -74,7 +75,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     spectralviewport->setScrollBarThickness(10);
 
     addAndMakeVisible(labelResolution = new juce::Label("labelResolution",
-                                                  "Resolution"));
+                                                        "Resolution"));
     labelResolution->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelResolution->setJustificationType(juce::Justification::centredLeft);
     labelResolution->setEditable(false, false, false);
@@ -93,7 +94,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxTransformation->addListener(this);
 
     addAndMakeVisible(labelTransformation = new juce::Label("labelTransformation",
-                                                      "Transformation"));
+                                                            "Transformation"));
     labelTransformation->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelTransformation->setJustificationType(juce::Justification::centredLeft);
     labelTransformation->setEditable(false, false, false);
@@ -112,7 +113,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWindowing->addListener(this);
 
     addAndMakeVisible(labelWindowing = new juce::Label("labelWindowing",
-                                                 "Window Function"));
+                                                       "Window Function"));
     labelWindowing->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelWindowing->setJustificationType(juce::Justification::centredLeft);
     labelWindowing->setEditable(false, false, false);
@@ -131,7 +132,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWavelet->addListener(this);
 
     addAndMakeVisible(labelWavelet = new juce::Label("labelWavelet",
-                                               "Wavelet"));
+                                                     "Wavelet"));
     labelWavelet->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelWavelet->setJustificationType(juce::Justification::centredLeft);
     labelWavelet->setEditable(false, false, false);
@@ -150,7 +151,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWaveletPaketBasis->addListener(this);
 
     addAndMakeVisible(labelWaveletPaketBasis = new juce::Label("labelWaveletPaketBasis",
-                                                         "Wavelet Packet Base"));
+                                                               "Wavelet Packet Base"));
     labelWaveletPaketBasis->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelWaveletPaketBasis->setJustificationType(juce::Justification::centredLeft);
     labelWaveletPaketBasis->setEditable(false, false, false);
@@ -169,7 +170,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxSignalgenerator->addListener(this);
 
     addAndMakeVisible(labelSignalgenerator = new juce::Label("labelSignalgenerator",
-                                                       "Oscillator"));
+                                                             "Oscillator"));
     labelSignalgenerator->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelSignalgenerator->setJustificationType(juce::Justification::centredLeft);
     labelSignalgenerator->setEditable(false, false, false);
@@ -188,7 +189,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxSignalquelle->addListener(this);
 
     addAndMakeVisible(labelSignalquelle = new juce::Label("labelSignalquelle",
-                                                    "Audio Source"));
+                                                          "Audio Source"));
     labelSignalquelle->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelSignalquelle->setJustificationType(juce::Justification::centredLeft);
     labelSignalquelle->setEditable(false, false, false);
@@ -199,7 +200,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelSignalquelle->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(labelGeneratorfrequenz = new juce::Label("labelGeneratorfrequenz",
-                                                         "Oscillator Frequency"));
+                                                               "Oscillator Frequency"));
     labelGeneratorfrequenz->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelGeneratorfrequenz->setJustificationType(juce::Justification::centredLeft);
     labelGeneratorfrequenz->setEditable(false, false, false);
@@ -218,7 +219,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     sliderGeneratorFrequenz->addListener(this);
 
     addAndMakeVisible(labelLogF = new juce::Label("labelLogF",
-                                            "Frequency Scale"));
+                                                  "Frequency Scale"));
     labelLogF->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelLogF->setJustificationType(juce::Justification::centredLeft);
     labelLogF->setEditable(false, false, false);
@@ -229,7 +230,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelLogF->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(labelLogA = new juce::Label("labelLogA",
-                                            "Magnitude Scale"));
+                                                  "Magnitude Scale"));
     labelLogA->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelLogA->setJustificationType(juce::Justification::centredLeft);
     labelLogA->setEditable(false, false, false);
@@ -256,7 +257,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxLogA->addListener(this);
 
     addAndMakeVisible(labelColorMode = new juce::Label("labelColorMode",
-                                                 "Color Mode"));
+                                                       "Color Mode"));
     labelColorMode->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelColorMode->setJustificationType(juce::Justification::centredLeft);
     labelColorMode->setEditable(false, false, false);
@@ -487,7 +488,7 @@ void SpecletAnalyzerComponent::mouseDown(const juce::MouseEvent &e) {
     //[/UserCode_mouseDown]
 }
 
-void SpecletAnalyzerComponent::mouseWheelMove (const juce::MouseEvent& /* event */, const juce::MouseWheelDetails& /* wheel */) {
+void SpecletAnalyzerComponent::mouseWheelMove(const juce::MouseEvent & /* event */, const juce::MouseWheelDetails & /* wheel */) {
     //[UserCode_mouseWheelMove] -- Add your code here...
     //[/UserCode_mouseWheelMove]
 }
@@ -506,30 +507,29 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxResolution->addItem("65536", SpecletParameters::RESOLUTION_65536);
 
     using TransformationTypeValue = std::underlying_type<TransformationParameters::Type>::type;
-    for(auto entry : TransformationParameters::typeNames) {
+    for (auto entry : TransformationParameters::typeNames) {
         comboBoxTransformation->addItem(std::string(entry.second), static_cast<TransformationTypeValue>(entry.first));
     }
 
     using WindowFunctionValue = std::underlying_type<WindowParameters::WindowFunction>::type;
-    for(auto entry : WindowParameters::windowFunctionNames) {
+    for (auto entry : WindowParameters::windowFunctionNames) {
         comboBoxWindowing->addItem(std::string(entry.second), static_cast<WindowFunctionValue>(entry.first));
     }
 
     using WaveletBaseValue = std::underlying_type<WaveletParameters::WaveletBase>::type;
-    for(auto entry : WaveletParameters::waveletBaseNames) {
+    for (auto entry : WaveletParameters::waveletBaseNames) {
         comboBoxWavelet->addItem(std::string(entry.second), static_cast<WaveletBaseValue>(entry.first));
     }
 
     using ResolutionRatioValue = std::underlying_type<WaveletParameters::ResolutionRatioOption>::type;
-     for(auto entry : WaveletParameters::resolutionRatioOptionNames) {
+    for (auto entry : WaveletParameters::resolutionRatioOptionNames) {
         comboBoxWaveletPaketBasis->addItem(std::string(entry.second), static_cast<ResolutionRatioValue>(entry.first));
     }
 
-    comboBoxSignalgenerator->addItem("Sine", SpecletParameters::GENERATOR_SINE);
-    comboBoxSignalgenerator->addItem("Triangle", SpecletParameters::GENERATOR_TRIANGLE);
-    comboBoxSignalgenerator->addItem("Sawtooth", SpecletParameters::GENERATOR_RAMP);
-    comboBoxSignalgenerator->addItem("Rectangle", SpecletParameters::GENERATOR_SQUARE);
-    comboBoxSignalgenerator->addItem("Noise", SpecletParameters::GENERATOR_NOISE);
+    using SignalGeneratorValue = std::underlying_type<SignalGeneratorParameters::Waveform>::type;
+    for (auto entry : SignalGeneratorParameters::typeNames) {
+        comboBoxSignalgenerator->addItem(std::string(entry.second), static_cast<SignalGeneratorValue>(entry.first));
+    }
 
     comboBoxSignalquelle->addItem("Mid", SpecletParameters::ROUTING_MID);
     comboBoxSignalquelle->addItem("Side", SpecletParameters::ROUTING_SIDE);
@@ -549,7 +549,7 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxColorMode->addItem("Rainbow", SpecletParameters::COLORMODE_RAINBOW);
 }
 
-void SpecletAnalyzerComponent::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &  /*property*/) {
+void SpecletAnalyzerComponent::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*property*/) {
     const juce::ScopedLock myScopedLock(criticalSection);
 
     updateComboBox(SpecletParameters::PARAMETER_COLORMODE, comboBoxColorMode, treeWhosePropertyHasChanged);

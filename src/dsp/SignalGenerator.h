@@ -15,24 +15,14 @@
 */
 #pragma once
 #include "../plugin/SpecletParameters.h"
+#include "SignalGeneratorParameters.h"
 #include <random>
 
 class SignalGenerator {
 public:
-    enum Waveform {
-        SINE = 1,
-        TRIANGLE,
-        RAMP,
-        SQUARE,
-        NOISE,
-
-        NUMBER_OF_OPTIONS,
-        DEFAULT = SINE
-    };
-
     explicit SignalGenerator(
             double newSamplingFrequency = DEFAULT_SAMPLING_FREQUENCY,
-            Waveform newWaveform = Waveform::DEFAULT,
+            SignalGeneratorParameters::Waveform newWaveform = SignalGeneratorParameters::Waveform::DEFAULT,
             double newSignalFrequency = DEFAULT_GENERATOR_FREQUENCY);
 
     auto getNextSample() -> double;
@@ -44,7 +34,7 @@ private:
 
     double lastSignalGeneratorArgument = 0.0F;
     double lastSignalGeneratorSample = 0.0F;
-    Waveform waveform;
+    SignalGeneratorParameters::Waveform waveform;
     double signalFrequency;
     double samplingFrequency;
 

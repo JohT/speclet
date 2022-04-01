@@ -55,16 +55,6 @@ public:
         COLORMODE_NumOptions,
         COLORMODE_DEFAULT = COLORMODE_BLUE
     };
-    enum OptionsGenerator {
-        GENERATOR_SINE = 1,
-        GENERATOR_TRIANGLE,
-        GENERATOR_RAMP,
-        GENERATOR_SQUARE,
-        GENERATOR_NOISE,
-
-        GENERATOR_NumOptions,
-        GENERATOR_DEFAULT = GENERATOR_SINE
-    };
     enum OptionsPlotAxis {
         PLOT_AXIS_LINEAR = 1,
         PLOT_AXIS_LOGARITHMIC,

@@ -1,8 +1,9 @@
 #include "SignalGenerator.h"
+#include "SignalGeneratorParameters.h"
 #include <cfloat>
 #include <random>
 
-SignalGenerator::SignalGenerator(double newSamplingFrequency, Waveform newWaveform, double newSignalFrequency)
+SignalGenerator::SignalGenerator(double newSamplingFrequency, SignalGeneratorParameters::Waveform newWaveform, double newSignalFrequency)
     : waveform(newWaveform),
       signalFrequency(newSignalFrequency),
       samplingFrequency(newSamplingFrequency),
@@ -12,17 +13,17 @@ SignalGenerator::SignalGenerator(double newSamplingFrequency, Waveform newWavefo
 
 auto SignalGenerator::getNextSample() -> double {
     switch (waveform) {
-        case Waveform::SINE:
+        case SignalGeneratorParameters::Waveform::SINE:
             return generateSine();
-        case Waveform::TRIANGLE:
+        case SignalGeneratorParameters::Waveform::TRIANGLE:
             return generateTriangle();
-        case Waveform::RAMP:
+        case SignalGeneratorParameters::Waveform::RAMP:
             return generateRamp();
-        case Waveform::SQUARE:
+        case SignalGeneratorParameters::Waveform::SQUARE:
             return generateSquare();
-        case Waveform::NOISE:
+        case SignalGeneratorParameters::Waveform::NOISE:
             return generateNoise();
-        case Waveform::NUMBER_OF_OPTIONS:
+        case SignalGeneratorParameters::Waveform::NUMBER_OF_OPTIONS:
         default: {
             //ignore if wrong: use sine as default
             return generateSine();

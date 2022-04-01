@@ -1,5 +1,6 @@
 #include "SpecletPluginProcessor.h"
 #include "dsp/SignalGenerator.h"
+#include "dsp/SignalGeneratorParameters.h"
 #include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "dsp/transformations/TransformationParameters.h"
@@ -10,6 +11,7 @@
 #include "utilities/PerformanceLogger.h"
 #include <memory>
 #include <type_traits>
+
 
 #define DEFAULT_SAMPLINGRATE 44100
 
@@ -26,7 +28,7 @@ SpecletAudioProcessor::SpecletAudioProcessor()
       parameters(SpecletParameters::getSingletonInstance()),
       parameterRouting(parameters.getRouting()),
       currentTransformation(nullptr),
-      signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
+      signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGeneratorParameters::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
 
     LOG_PERFORMANCE_BEGIN("SpecletAudioProcessor");
 #if _LOGTOFILE
@@ -35,7 +37,7 @@ SpecletAudioProcessor::SpecletAudioProcessor()
 
     //Initialize with default settings
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, SpecletParameters::COLORMODE_DEFAULT);
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, SpecletParameters::GENERATOR_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, static_cast<std::underlying_type<SignalGeneratorParameters::Waveform>::type>(SignalGeneratorParameters::Waveform::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, 1000.0);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, SpecletParameters::PLOT_AXIS_DEFAULT);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, SpecletParameters::PLOT_AXIS_DEFAULT);
@@ -315,7 +317,7 @@ void SpecletAudioProcessor::updateTransformation() {
 
 void SpecletAudioProcessor::updateSignalGenerator() {
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
-    signalGenerator = SignalGenerator(sampleRate, static_cast<SignalGenerator::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency());
+    signalGenerator = SignalGenerator(sampleRate, static_cast<SignalGeneratorParameters::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency());
 }
 
 //TODO(johnny) switch to double or template for both?
