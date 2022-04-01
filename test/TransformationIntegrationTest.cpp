@@ -1,7 +1,10 @@
 #include "../src/dsp/transformations/TransformationFactory.h"
 #include "../src/dsp/transformations/TransformationParameters.h"
 #include "../src/dsp/transformations/WaveletParameters.h"
+#include "catch2/generators/catch_generators.hpp"
+#include "catch2/generators/catch_generators_range.hpp"
 #include <catch2/catch_all.hpp>
+#include <iterator>
 #include <memory>
 #include <string>
 #include <sys/stat.h>
@@ -96,12 +99,9 @@ SCENARIO("Transformations Integration Test", "[integration]") {
     Transformation::ResolutionType resolution = GENERATE(2048U, 4096U);
     auto frequencyResolutionInHz = static_cast<double>(samplingRate) * 0.5 / static_cast<double>(resolution);
 
-    // Generates a list of all transformation except for "BYPASS" and calls the tests methods below for each of them.
+    // Generates a list of all transformation except for the last one ("BYPASS") out of the typeNames Map (first value = transformation type) and uses them to call the tests methods below for each of them.
     // See: https://github.com/catchorg/Catch2/blob/devel/docs/generators.md
-    TransformationParameters::Type transformationType = GENERATE(TransformationParameters::Type::FAST_FOURIER_TRANSFORM,
-                                                                 TransformationParameters::Type::FAST_WAVELET_TRANSFORM,
-                                                                 TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM,
-                                                                 TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM);
+    auto transformationType = GENERATE(from_range(TransformationParameters::typeNames.begin(), std::prev(TransformationParameters::typeNames.end()))).first;
     Transformation *transformation = TransformationFactory::getSingletonInstance().createTransformation(
             transformationType,
             samplingRate,

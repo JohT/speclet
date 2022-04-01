@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <map>
 #include <string_view>
 
@@ -47,27 +48,28 @@ namespace WaveletParameters {
             {WaveletBase::COIFMAN_24, "Coifman (24)"},
             {WaveletBase::COIFMAN_30, "Coifman (30)"},
             {WaveletBase::BEYLKIN_18, "Beylkin (18)"},
-            {WaveletBase::VAIDYANATHAN_18, "Vaidyanathan (18)"}
+            {WaveletBase::VAIDYANATHAN_18, "Vaidyanathan (18)"},
 
     };
 
     enum class ResolutionRatioOption {
-        EQUAL = 99,
         TIME_X4 = -2,
         TIME_X2 = -1,
         FREQUENCY_X2 = 1,
         FREQUENCY_X4 = 2,
 
+        EQUAL = 99,
         NUMBER_OF_OPTIONS = 5,
         DEFAULT = EQUAL
     };
 
-    inline static const std::map<ResolutionRatioOption, std::string_view> resolutionRatioOptionNames = {
-            {ResolutionRatioOption::EQUAL, "Freq/Time x1"},
+    // Map is created in inverse enum value order using std::greater to ensure that the default value (99) is the first one followed by decreasing frequency resolutions and ascending time resolutions.
+    inline static const std::map<ResolutionRatioOption, std::string_view, std::greater<ResolutionRatioOption>> resolutionRatioOptionNames = {
             {ResolutionRatioOption::TIME_X4, "Time x4"},
             {ResolutionRatioOption::TIME_X2, "Time x2"},
             {ResolutionRatioOption::FREQUENCY_X2, "Freq x2"},
-            {ResolutionRatioOption::FREQUENCY_X4, "Freq x4"}
+            {ResolutionRatioOption::FREQUENCY_X4, "Freq x4"},
+            {ResolutionRatioOption::EQUAL, "Freq/Time x1"},
 
     };
 

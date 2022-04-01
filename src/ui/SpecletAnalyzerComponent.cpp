@@ -505,8 +505,8 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxResolution->addItem("65536", SpecletParameters::RESOLUTION_65536);
 
     using TransformationTypeValue = std::underlying_type<TransformationParameters::Type>::type;
-    for(auto transformationEntry : TransformationParameters::typeNames) {
-        comboBoxTransformation->addItem(std::string(transformationEntry.second), static_cast<TransformationTypeValue>(transformationEntry.first));
+    for(auto entry : TransformationParameters::typeNames) {
+        comboBoxTransformation->addItem(std::string(entry.second), static_cast<TransformationTypeValue>(entry.first));
     }
 
     comboBoxWindowing->addItem("Barlett", SpecletParameters::WINDOWING_BARTLETT);
@@ -518,19 +518,15 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxWindowing->addItem("Parzen", SpecletParameters::WINDOWING_PARZEN);
     comboBoxWindowing->addItem("Rectangular", SpecletParameters::WINDOWING_RECTANGULAR);
 
-    using WaveletBase = WaveletParameters::WaveletBase;
     using WaveletBaseValue = std::underlying_type<WaveletParameters::WaveletBase>::type;
-    for(WaveletBaseValue option = 1; option < WaveletBaseValue(WaveletParameters::WaveletBase::NUMBER_OF_OPTIONS); ++option) {
-        comboBoxWavelet->addItem(std::string(WaveletParameters::waveletBaseNames.at(static_cast<WaveletBase>(option))), option);
+    for(auto entry : WaveletParameters::waveletBaseNames) {
+        comboBoxWavelet->addItem(std::string(entry.second), static_cast<WaveletBaseValue>(entry.first));
     }
 
-    using ResolutionRatio = WaveletParameters::ResolutionRatioOption;
-    using ResolutionRatioValue = std::underlying_type<ResolutionRatio>::type;
-    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::EQUAL)), static_cast<ResolutionRatioValue>(ResolutionRatio::EQUAL));
-    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::FREQUENCY_X2)), static_cast<ResolutionRatioValue>(ResolutionRatio::FREQUENCY_X2));
-    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::FREQUENCY_X4)), static_cast<ResolutionRatioValue>(ResolutionRatio::FREQUENCY_X4));
-    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::TIME_X2)), static_cast<ResolutionRatioValue>(ResolutionRatio::TIME_X2));
-    comboBoxWaveletPaketBasis->addItem(std::string(WaveletParameters::resolutionRatioOptionNames.at(ResolutionRatio::TIME_X4)), static_cast<ResolutionRatioValue>(ResolutionRatio::TIME_X4));
+    using ResolutionRatioValue = std::underlying_type<WaveletParameters::ResolutionRatioOption>::type;
+     for(auto entry : WaveletParameters::resolutionRatioOptionNames) {
+        comboBoxWaveletPaketBasis->addItem(std::string(entry.second), static_cast<ResolutionRatioValue>(entry.first));
+    }
 
     comboBoxSignalgenerator->addItem("Sine", SpecletParameters::GENERATOR_SINE);
     comboBoxSignalgenerator->addItem("Triangle", SpecletParameters::GENERATOR_TRIANGLE);

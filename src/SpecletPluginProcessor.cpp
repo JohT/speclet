@@ -42,8 +42,8 @@ SpecletAudioProcessor::SpecletAudioProcessor()
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, SpecletParameters::RESOLUTION_DEFAULT);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Routing, SpecletParameters::ROUTING_MID);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, static_cast<std::underlying_type<TransformationParameters::Type>::type>(TransformationParameters::Type::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, SpecletParameters::WAVELET_DEFAULT);
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, SpecletParameters::RESOLUTION_RATIO_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, static_cast<std::underlying_type<WaveletParameters::WaveletBase>::type>(WaveletParameters::WaveletBase::DEFAULT));
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, static_cast<std::underlying_type<WaveletParameters::ResolutionRatioOption>::type>(WaveletParameters::ResolutionRatioOption::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, SpecletParameters::WINDOWING_DEFAULT);
 
     //registers itself as listener for parameter-changes

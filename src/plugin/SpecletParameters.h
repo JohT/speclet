@@ -86,16 +86,6 @@ public:
         RESOLUTION_MAX = RESOLUTION_65536,
         RESOLUTION_DEFAULT = RESOLUTION_4096
     };
-    enum OptionsResolutionRatio {
-        RESOLUTION_RATIO_Equal = 99,
-        RESOLUTION_RATIO_TimeX4 = -2,
-        RESOLUTION_RATIO_TimeX2 = -1,
-        RESOLUTION_RATIO_FreqX2 = 1,
-        RESOLUTION_RATIO_FreqX4 = 2,
-
-        RESOLUTION_RATIO_NumOptions = 5,
-        RESOLUTION_RATIO_DEFAULT = RESOLUTION_RATIO_Equal
-    };
     enum OptionsRouting {
         ROUTING_GENERATOR = 1,
         ROUTING_L,
@@ -105,29 +95,6 @@ public:
 
         ROUTING_NumOptions,
         ROUTING_DEFAUTL = ROUTING_MID
-    };
-    enum OptionsWavelet {
-        WAVELET_DAUBECHIES_02 = 1,
-        WAVELET_DAUBECHIES_04,
-        WAVELET_DAUBECHIES_06,
-        WAVELET_DAUBECHIES_08,
-        WAVELET_DAUBECHIES_10,
-        WAVELET_DAUBECHIES_12,
-        WAVELET_DAUBECHIES_14,
-        WAVELET_DAUBECHIES_16,
-        WAVELET_DAUBECHIES_18,
-        WAVELET_DAUBECHIES_20,
-        WAVELET_COIFMAN_06,
-        WAVELET_COIFMAN_12,
-        WAVELET_COIFMAN_18,
-        WAVELET_COIFMAN_24,
-        WAVELET_COIFMAN_30,
-        WAVELET_BEYLKIN_18,
-        WAVELET_VAIDYANATHAN_18,
-
-        WAVELET_NumOptions,
-        WAVELET_HAAR = WAVELET_DAUBECHIES_02,
-        WAVELET_DEFAULT = WAVELET_DAUBECHIES_08
     };
     enum OptionsWindowing {
         WINDOWING_BARTLETT = 1,
