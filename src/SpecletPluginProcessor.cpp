@@ -39,17 +39,17 @@ SpecletAudioProcessor::SpecletAudioProcessor()
 #endif
 
     //Initialize with default settings
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, static_cast<std::underlying_type<ColorGradientsParameters::ColorMode>::type>(ColorGradientsParameters::ColorMode::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, static_cast<std::underlying_type<SignalGeneratorParameters::Waveform>::type>(SignalGeneratorParameters::Waveform::DEFAULT));
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, enumOptionToFloat(ColorGradientsParameters::ColorMode::DEFAULT));
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, enumOptionToFloat(SignalGeneratorParameters::Waveform::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, 1000.0);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, SpecletParameters::RESOLUTION_DEFAULT);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Routing, SpecletParameters::ROUTING_MID);
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, static_cast<std::underlying_type<TransformationParameters::Type>::type>(TransformationParameters::Type::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, static_cast<std::underlying_type<WaveletParameters::WaveletBase>::type>(WaveletParameters::WaveletBase::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, static_cast<std::underlying_type<WaveletParameters::ResolutionRatioOption>::type>(WaveletParameters::ResolutionRatioOption::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, static_cast<std::underlying_type<WindowParameters::WindowFunction>::type>(WindowParameters::WindowFunction::DEFAULT));
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, enumOptionToFloat(TransformationParameters::Type::DEFAULT));
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, enumOptionToFloat(WaveletParameters::WaveletBase::DEFAULT));
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, enumOptionToFloat(WaveletParameters::ResolutionRatioOption::DEFAULT));
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, enumOptionToFloat(WindowParameters::WindowFunction::DEFAULT));
 
     //registers itself as listener for parameter-changes
     parameters.addListener(this, true);
@@ -306,7 +306,6 @@ void SpecletAudioProcessor::updateTransformation() {
     currentTransformation = nullptr;
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
 
-    //TODO(JohT) Mapping colocated parameters to/from global plugin parameters
     currentTransformation = TransformationFactory::getSingletonInstance().createTransformation(
             static_cast<TransformationParameters::Type>(parameters.getTransformation()),
             sampleRate,
@@ -323,7 +322,6 @@ void SpecletAudioProcessor::updateSignalGenerator() {
     signalGenerator = SignalGenerator(sampleRate, static_cast<SignalGeneratorParameters::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency());
 }
 
-//TODO(johnny) switch to double or template for both?
 auto SpecletAudioProcessor::getSampleFromRouting(const float *inL, const float *inR) -> float {
     switch (parameterRouting) {
         case SpecletParameters::ROUTING_SIDE:

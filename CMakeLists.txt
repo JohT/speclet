@@ -112,6 +112,7 @@ endif()
 
 # Add libraries to the target, that needed to be included inside the repository:
 add_subdirectory(lib/wave++)
+include_directories("${PROJECT_NAME}" PRIVATE "lib/wave++/source")
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use

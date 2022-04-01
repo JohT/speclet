@@ -38,7 +38,7 @@ SpectralDataInfo::SpectralDataInfo(
     DBG("SpectralDataInfo constructed" + toString());
 }
 
-//TODO (JohT) Gets the relative frequency partition size for the specified spectral line number.
+//TODO (JohT) Granular partition size not yet implemented
 auto SpectralDataInfo::constgetSpectralLineFrequencyPartitionSize(ResolutionType /*spectralLineNr*/) const -> double {
     return frequencyPartitionSize;
 }

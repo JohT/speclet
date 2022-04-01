@@ -14,7 +14,7 @@
   ==============================================================================
 */
 #pragma once
-#include "../../../lib/wave++/source/libw.h"//TODO (JohT) include with cmake
+#include "libw.h"
 #include "../../utilities/RenderingHelper.h"
 #include "Transformation.h"
 #include "WaveletParameters.h"

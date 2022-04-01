@@ -52,7 +52,7 @@ void SpectralDataBuffer::read(ItemType *pItem) {
     if (!buffer->empty()) {
         buffer->pop_front();
     }
-    //TODO(JohT) faster buffer? threadsafe?
+    //TODO(JohT) faster buffer? threadsafe? use juce framework solution?
 }
 
 auto SpectralDataBuffer::size() -> SpectralDataBuffer::ItemSizeType {

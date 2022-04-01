@@ -289,7 +289,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
 
     //gets the pointer to the parameters singelton - for a better readability
     parameters = &SpecletParameters::getSingletonInstance();
-    //registeres itself as listener for parameter-changes
+    //registers itself as listener for parameter-changes
     SpecletParameters::getSingletonInstance().addListener(this);
     DBG("SpecletAnalyzerComponent as parameter listener added");
     //adds spectrum drawing component to the scrollable view

@@ -47,25 +47,45 @@ public:
     [[nodiscard]] auto getResolution() const -> ResolutionType {
         return resolution;
     }
-    //Gets the spectral line count within mSamplingFrequency/2 Hz ("vertical resolution")
+    /**
+     * @brief Gets the spectral line count within mSamplingFrequency/2 Hz ("vertical resolution")
+     * 
+     * @return ResolutionType 
+     */
     [[nodiscard]] auto getFrequencyResolution() const -> ResolutionType {
         return frequencyResolution;
     }
-    //Gets the spectral line count within 1/mResolution ms ("horizontal resolution")
+    /**
+     * @brief Gets the spectral line count within 1/mResolution ms ("horizontal resolution")
+     * 
+     * @return ResolutionType 
+     */
     [[nodiscard]] auto getTimeResolution() const -> ResolutionType {
         return timeResolution;
     }
-    //Gets the time resolution in ms (best resolution in case of non linear time resolution)
+    /**
+     * @brief Gets the time resolution in ms (best resolution in case of non linear time resolution)
+     * 
+     * @return double 
+     */
     [[nodiscard]] auto getTimeResolutionMs() const -> double {
         return timeResolutionMs;
     }
-    //Gets the frequency partition (e.g. 1/32 -> partition [Hz] = mSamplingFrequency/2 split into 1/32)
+    /**
+     * @brief Gets the frequency partition (e.g. 1/32 -> partition [Hz] = mSamplingFrequency/2 split into 1/32)
+     * 
+     * @return double 
+     */
     [[nodiscard]] auto getFrequencyPartitionSize() const -> double {
         return frequencyPartitionSize;
     }
-    //TODO (JohT) Gets the relative frequency partition size for the specified spectral line number.
-    //Example 1: Fast Fourier Transformation FFT: mFrequencyPartitionSize=1/16: 1/16, 1/16, 1/16....
-    //Example 2: Discrete (Decimated) Wavelet Transform DWT: mFrequencyPartitionSize=1/16, Progression=2: 1/16, 1/16, 1/8, 1/4, 1/2
+    /**
+     * @brief Gets the relative frequency partition size for the specified spectral line number.
+     * Example 1: Fast Fourier Transformation FFT: mFrequencyPartitionSize=1/16: 1/16, 1/16, 1/16....
+     * Example 2: Discrete (Decimated) Wavelet Transform DWT: mFrequencyPartitionSize=1/16, Progression=2: 1/16, 1/16, 1/8, 1/4, 1/2
+     * @param spectralLineNr ResolutionType
+     * @return double 
+     */
     [[nodiscard]] auto constgetSpectralLineFrequencyPartitionSize(ResolutionType spectralLineNr) const -> double;
 
     [[nodiscard]] auto toString() const -> std::string;

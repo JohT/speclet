@@ -190,7 +190,6 @@ This method draws the currently active frequency axis into the local member freq
 which is drawn on top of the spectrum whithin the paint() method.
 */
 void SpecletDrawer::updateFrequencyAxisImage() {
-    //TODO better encapsulation
     int maxWidthOfFrequencyAxis = 80;
 
     //clears the part of the axis image, where the frequency resolution is drawn at
@@ -285,7 +284,6 @@ void SpecletDrawer::updateFrequencyAxisImage() {
 }
 
 void SpecletDrawer::updateTimeAxisImage(double timeresolution) {
-    //TODO better encapsulation
     int timeAxisWidth = 60;
     int lineLength = 50;
     int xPosStart = sizeX - timeAxisWidth;

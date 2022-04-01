@@ -311,8 +311,6 @@ auto AbstractWaveletTransformation::getAvgValue(
 
     LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation getAvgValue");
     
-    //TODO (JohT) Stepsize hack still needed?
-    unsigned long stepSize = 2;//skips every nth value. no mathematically exact averaging, but necessary for performance
     auto count = 0;
     auto averageValue = 0.0;
     std::span<real_number> values;
@@ -326,11 +324,11 @@ auto AbstractWaveletTransformation::getAvgValue(
         auto offset = (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1);
         values = origin.subspan(offset);
     }
-    if ((blockposStart + stepSize - 1) >= blockposEnd) {
+    if (blockposStart >= blockposEnd) {
         return values[blockposStart];
     }
 
-    for (auto blockpos = blockposStart; blockpos < blockposEnd; blockpos += stepSize) {
+    for (auto blockpos = blockposStart; blockpos < blockposEnd; blockpos++) {
         averageValue += abs(values[blockpos]);
         count++;
     }
