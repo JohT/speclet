@@ -25,6 +25,7 @@
 #include "../dsp/transformations/WaveletParameters.h"
 #include "../dsp/windowing/WindowParameters.h"
 #include "../ui/ColorGradientsParameters.h"
+#include "../ui/SpecletDrawerParameters.h"
 #include "SpecletDrawer.h"
 
 
@@ -539,11 +540,11 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxSignalquelle->addItem("Right", SpecletParameters::ROUTING_R);
     comboBoxSignalquelle->addItem("Oscillator", SpecletParameters::ROUTING_GENERATOR);
 
-    comboBoxLogF->addItem("linear", SpecletParameters::PLOT_AXIS_LINEAR);
-    comboBoxLogF->addItem("logarithmic", SpecletParameters::PLOT_AXIS_LOGARITHMIC);
-
-    comboBoxLogA->addItem("linear", SpecletParameters::PLOT_AXIS_LINEAR);
-    comboBoxLogA->addItem("logarithmic", SpecletParameters::PLOT_AXIS_LOGARITHMIC);
+    using AxisValue = std::underlying_type<SpecletDrawerParameters::Axis>::type;
+    for (auto entry : SpecletDrawerParameters::axisNames) {
+        comboBoxLogF->addItem(std::string(entry.second), static_cast<AxisValue>(entry.first));
+        comboBoxLogA->addItem(std::string(entry.second), static_cast<AxisValue>(entry.first));
+    }
 
     using ColorGradientValue = std::underlying_type<ColorGradientsParameters::ColorMode>::type;
     for (auto entry : ColorGradientsParameters::colorModeNames) {

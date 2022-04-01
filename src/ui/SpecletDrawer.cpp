@@ -24,8 +24,10 @@
 #include "../utilities/PerformanceLogger.h"
 #include "ColourGradients.h"
 #include "SpecletDrawer.h"
+#include "SpecletDrawerParameters.h"
 #include "juce_core/juce_core.h"
 #include "juce_audio_utils/juce_audio_utils.h"
+#include <type_traits>
 //[/Headers]
 
 
@@ -151,11 +153,11 @@ void SpecletDrawer::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyH
     juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_VALUE);
 
     if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGFREQUENCY)) {
-        settings.logFrequency = changedParameterValue.equals(SpecletParameters::PLOT_AXIS_LOGARITHMIC);
+        settings.logFrequency = changedParameterValue.equals(static_cast<std::underlying_type<SpecletDrawerParameters::Axis>::type>(SpecletDrawerParameters::Axis::LOGARITHMIC));
         updateFrequencyAxisImage();
     }
     if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGMAGNITUDE)) {
-        settings.logMagnitude = changedParameterValue.equals(SpecletParameters::PLOT_AXIS_LOGARITHMIC);
+        settings.logMagnitude = changedParameterValue.equals(static_cast<std::underlying_type<SpecletDrawerParameters::Axis>::type>(SpecletDrawerParameters::Axis::LOGARITHMIC));
     }
     if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_COLORMODE)) {
         renderingHelper.setColourGradient(ColourGradients::forIndex(changedParameterValue));

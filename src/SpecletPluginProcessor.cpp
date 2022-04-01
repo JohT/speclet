@@ -8,9 +8,11 @@
 #include "dsp/windowing/WindowParameters.h"
 #include "ui/ColorGradientsParameters.h"
 #include "ui/ColourGradients.h"
+#include "ui/SpecletDrawerParameters.h"
 #include "ui/SpecletMainUI.h"
 #include "utilities/PerformanceLogger.h"
 #include <memory>
+#include <string>
 #include <type_traits>
 
 
@@ -40,8 +42,8 @@ SpecletAudioProcessor::SpecletAudioProcessor()
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, static_cast<std::underlying_type<ColorGradientsParameters::ColorMode>::type>(ColorGradientsParameters::ColorMode::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, static_cast<std::underlying_type<SignalGeneratorParameters::Waveform>::type>(SignalGeneratorParameters::Waveform::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, 1000.0);
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, SpecletParameters::PLOT_AXIS_DEFAULT);
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, SpecletParameters::PLOT_AXIS_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, SpecletParameters::RESOLUTION_DEFAULT);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Routing, SpecletParameters::ROUTING_MID);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, static_cast<std::underlying_type<TransformationParameters::Type>::type>(TransformationParameters::Type::DEFAULT));
@@ -337,6 +339,12 @@ auto SpecletAudioProcessor::getSampleFromRouting(const float *inL, const float *
         default:
             return static_cast<float>((*inL + *inR) / 2.0);
     }
+}
+
+template<class _Tp>
+auto SpecletAudioProcessor::enumOptionToFloat(const _Tp& enumType) const -> float{
+   auto enumValue = static_cast<typename std::underlying_type<_Tp>::type>(enumType);
+   return static_cast<float>(enumValue);
 }
 
 //==============================================================================

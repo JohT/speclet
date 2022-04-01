@@ -46,13 +46,6 @@ public:
 
         TOTAL_NUMBER_OF_PARAMS
     };
-    enum OptionsPlotAxis {
-        PLOT_AXIS_LINEAR = 1,
-        PLOT_AXIS_LOGARITHMIC,
-
-        PLOT_AXIS_NumOptions,
-        PLOT_AXIS_DEFAULT = PLOT_AXIS_LOGARITHMIC
-    };
     enum OptionsResolution {
         RESOLUTION_256 = 256,
         RESOLUTION_512 = 512,

@@ -18,8 +18,10 @@
 #include "dsp/SignalGenerator.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "plugin/SpecletParameters.h"
-#include <juce_core/juce_core.h>
 #include <array>
+#include <juce_core/juce_core.h>
+#include <type_traits>
+
 
 enum Channel {
     Left = 0,
@@ -101,6 +103,9 @@ private:
     juce::CriticalSection criticalSection;
     //==============================================================================
     auto getSampleFromRouting(const float *inL, const float *inR) -> float;
+
+    template<class _Tp>
+    auto enumOptionToFloat(const _Tp& enumType) const -> float;
 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpecletAudioProcessor)
