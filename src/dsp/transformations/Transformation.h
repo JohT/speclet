@@ -17,7 +17,7 @@
 
 #include "../../data/SpectralDataBuffer.h"
 #include "../../data/SpectralDataInfo.h"
-#include "../windowing/WindowFunctionFactory.h"
+#include "../windowing/WindowParameters.h"
 #include "../windowing/WindowFunctions.h"
 #include "TransformationParameters.h"
 #include "juce_core/juce_core.h"
@@ -58,7 +58,7 @@ public:
             double newSamplingRate,
             ResolutionType newResolution,
             TransformationParameters::Type newTransformationType,
-            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT);
+            WindowParameters::WindowFunction newWindowFunction = WindowParameters::WindowFunction::DEFAULT);
     virtual ~Transformation();
 
     auto getWindowFunction() const -> WindowFunction *;
@@ -68,7 +68,7 @@ public:
      * 
      * @param newWindowFunction 
      */
-    void setWindowFunction(WindowFunctionFactory::Method newWindowFunction);
+    void setWindowFunction(const WindowParameters::WindowFunction& newWindowFunction);
 
     /**
      * @brief Get the input queue containing the next samples to be transformed

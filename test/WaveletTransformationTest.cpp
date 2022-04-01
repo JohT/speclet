@@ -1,5 +1,6 @@
 #include "../src/dsp/transformations/WaveletTransformation.h"
 #include "../src/dsp/transformations/WaveletParameters.h"
+#include "../src/dsp/windowing/WindowParameters.h"
 #include "catch2/matchers/catch_matchers.hpp"
 #include <catch2/catch_all.hpp>
 #include <string>
@@ -7,7 +8,7 @@
 SCENARIO("Wavelet Transformation") {
     auto samplingRate = 44100;
     Transformation::ResolutionType resolution = 4096;
-    auto windowFunction = WindowFunctionFactory::Method::BLACKMAN_HARRIS;
+    auto windowFunction = WindowParameters::WindowFunction::BLACKMAN_HARRIS;
     auto waveletBase = WaveletParameters::WaveletBase::VAIDYANATHAN_18;
 
     GIVEN("Wavelet Transform is created") {

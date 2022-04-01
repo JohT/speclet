@@ -23,7 +23,7 @@ public:
     WaveletPacketTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            WindowFunctionFactory::Method newWindowFunction,
+            WindowParameters::WindowFunction newWindowFunction,
             WaveletParameters::WaveletBase newWaveletBaseType = WaveletParameters::WaveletBase::DEFAULT,
             WaveletParameters::ResolutionRatioOption newResolutionRatioOption = WaveletParameters::ResolutionRatioOption::DEFAULT);
     ~WaveletPacketTransformation() override;

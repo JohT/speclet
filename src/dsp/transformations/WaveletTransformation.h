@@ -25,7 +25,7 @@ public:
     WaveletTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT,
+            WindowParameters::WindowFunction newWindowFunction = WindowParameters::WindowFunction::DEFAULT,
             WaveletParameters::WaveletBase newWaveletBase = WaveletParameters::WaveletBase::DEFAULT);
 
     ~WaveletTransformation() override;

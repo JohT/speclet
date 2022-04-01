@@ -1,6 +1,7 @@
 #include "../src/dsp/transformations/TransformationFactory.h"
 #include "../src/dsp/transformations/TransformationParameters.h"
 #include "../src/dsp/transformations/WaveletParameters.h"
+#include "../src/dsp/windowing/WindowParameters.h"
 #include "catch2/generators/catch_generators.hpp"
 #include "catch2/generators/catch_generators_range.hpp"
 #include <catch2/catch_all.hpp>
@@ -106,7 +107,7 @@ SCENARIO("Transformations Integration Test", "[integration]") {
             transformationType,
             samplingRate,
             resolution,
-            WindowFunctionFactory::Method::BLACKMAN_HARRIS,
+            WindowParameters::WindowFunction::BLACKMAN_HARRIS,
             WaveletParameters::WaveletBase::VAIDYANATHAN_18,
             WaveletParameters::ResolutionRatioOption::FREQUENCY_X4);
     REQUIRE(transformation != nullptr);
@@ -139,7 +140,7 @@ TEST_CASE("Transformations Performance Test", "[.performance]") {
                 TransformationParameters::Type::FAST_FOURIER_TRANSFORM,
                 samplingRate,
                 resolution,
-                WindowFunctionFactory::Method::BLACKMAN_HARRIS,
+                WindowParameters::WindowFunction::BLACKMAN_HARRIS,
                 WaveletParameters::WaveletBase::VAIDYANATHAN_18,
                 WaveletParameters::ResolutionRatioOption::FREQUENCY_X4);
         generateTestSineInput(frequency, transformation, samplingRate, resolution);

@@ -26,7 +26,7 @@ public:
     WaveletPacketBestBasisTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT,
+            WindowParameters::WindowFunction newWindowFunction = WindowParameters::WindowFunction::DEFAULT,
             WaveletParameters::WaveletBase newWaveletBaseType = WaveletParameters::WaveletBase::DEFAULT);
     ~WaveletPacketBestBasisTransformation() override;
 

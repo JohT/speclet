@@ -18,6 +18,7 @@
 */
 #pragma once
 #include "WindowFunction.h"
+#include "WindowParameters.h"
 #include <map>
 #include <memory>
 #include <tuple>
@@ -27,23 +28,6 @@
  */
 class WindowFunctionFactory {
 public:
-    /**
-     * @brief Available windowing functions
-     */
-    enum Method {
-        BARLETT = 1,
-        BLACKMAN,
-        BLACKMAN_HARRIS,
-        HAMMING,
-        HANN,
-        PARZEN,
-        WELCH,
-        RECTANGULAR,
-
-        NUMBER_OF_OPTIONS,
-        DEFAULT = BLACKMAN_HARRIS
-    };
-
     static auto getSingletonInstance() -> WindowFunctionFactory &;
     
     // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
@@ -52,7 +36,7 @@ public:
     auto operator=(WindowFunctionFactory const &) -> WindowFunctionFactory & = delete;
     auto operator=(WindowFunctionFactory const &&) -> WindowFunctionFactory & = delete;
 
-    auto getWindow(const Method &method, unsigned long resolution) -> std::shared_ptr<WindowFunction>;
+    auto getWindow(const WindowParameters::WindowFunction &newWindowFunction, unsigned long resolution) -> std::shared_ptr<WindowFunction>;
     void clearCache();
 
 private:
@@ -60,15 +44,15 @@ private:
     ~WindowFunctionFactory() = default;
 
     struct Key {
-        Method method;
+        WindowParameters::WindowFunction windowFunction;
         unsigned long resolution;
         auto operator < (const Key& other) const -> bool {
-            return std::tie(method, resolution) < std::tie(other.method, other.resolution);
+            return std::tie(windowFunction, resolution) < std::tie(other.windowFunction, other.resolution);
         }
     };
 
     using WindowFunctionMapType = std::map<Key, std::shared_ptr<WindowFunction>>;
     WindowFunctionMapType windowFunctionsCache;
 
-    static auto createWindow(const Method& method, unsigned long resolution) -> std::shared_ptr<WindowFunction>;
+    static auto createWindow(const WindowParameters::WindowFunction& newWindowFunction, unsigned long resolution) -> std::shared_ptr<WindowFunction>;
 };

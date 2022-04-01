@@ -3,7 +3,7 @@
 #include "TransformationParameters.h"
 #include <cstddef>
 
-FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, WindowFunctionFactory::Method newWindowFunction)
+FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, WindowParameters::WindowFunction newWindowFunction)
     : Transformation(newSamplingRate, newResolution, TransformationParameters::Type::FAST_FOURIER_TRANSFORM, newWindowFunction),
       in(static_cast<double *>(fftw_malloc(sizeof(double) * newResolution))),
       out(static_cast<fftw_complex *>(fftw_malloc(sizeof(fftw_complex) * ((newResolution / 2) + 1)))),

@@ -7,7 +7,7 @@
 WaveletTransformation::WaveletTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
-        WindowFunctionFactory::Method newWindowFunction,
+        WindowParameters::WindowFunction newWindowFunction,
         WaveletParameters::WaveletBase newWaveletBase)
     : AbstractWaveletTransformation(newSamplingRate, newResolution, TransformationParameters::Type::FAST_WAVELET_TRANSFORM, newWindowFunction, newWaveletBase),
       spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)) {

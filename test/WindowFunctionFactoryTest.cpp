@@ -1,3 +1,4 @@
+#include "../src/dsp/windowing/WindowParameters.h"
 #include "../src/dsp/windowing/WindowFunctionFactory.h"
 #include "catch2/matchers/catch_matchers.hpp"
 #include "catch2/matchers/catch_matchers_contains.hpp"
@@ -14,7 +15,7 @@ SCENARIO("Window Function Factory") {
         WHEN("window functions are cached") {
             // Generates a list of all window functions/methods and calls the tests methods below for each of them.
             // See: https://github.com/catchorg/Catch2/blob/devel/docs/generators.md
-            WindowFunctionFactory::Method windowMethod = static_cast<WindowFunctionFactory::Method>(GENERATE(range(1, static_cast<int>(WindowFunctionFactory::Method::NUMBER_OF_OPTIONS))));
+            WindowParameters::WindowFunction windowMethod = static_cast<WindowParameters::WindowFunction>(GENERATE(range(1, static_cast<int>(WindowParameters::WindowFunction::NUMBER_OF_OPTIONS))));
             auto window = factory.getWindow(windowMethod, resolution);
             REQUIRE(window != nullptr);
 
@@ -31,7 +32,7 @@ SCENARIO("Window Function Factory") {
             }
         }
         WHEN("invalid window number is given") {
-            WindowFunctionFactory::Method invalidWindowMethod = WindowFunctionFactory::Method::NUMBER_OF_OPTIONS;
+            WindowParameters::WindowFunction invalidWindowMethod = WindowParameters::WindowFunction::NUMBER_OF_OPTIONS;
             THEN("exception is thrown") {
                 auto expectedErrorMessage = "Unknown windowing function " + std::to_string(static_cast<int>(invalidWindowMethod));
                 REQUIRE_THROWS_WITH(factory.getWindow(invalidWindowMethod, resolution), expectedErrorMessage);

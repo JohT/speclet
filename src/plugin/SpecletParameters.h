@@ -96,18 +96,6 @@ public:
         ROUTING_NumOptions,
         ROUTING_DEFAUTL = ROUTING_MID
     };
-    enum OptionsWindowing {
-        WINDOWING_BARTLETT = 1,
-        WINDOWING_BLACKMAN,
-        WINDOWING_BLACKMAN_HARRIS,
-        WINDOWING_HAMMING,
-        WINDOWING_HANN,
-        WINDOWING_PARZEN,
-        WINDOWING_WELCH,
-        WINDOWING_RECTANGULAR,
-        WINDOWING_NumOptions,
-        WINDOWING_DEFAULT = WINDOWING_BLACKMAN_HARRIS
-    };
 
     //"Initialization ... with static storage duration may throw an exception that cannot be caught"
     //Juce doesn't support string_view yet, constexpr doesn't work with string literals and the exception is very unlikely to happen

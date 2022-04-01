@@ -39,7 +39,7 @@ auto TransformationFactory::createTransformation(
         TransformationParameters::Type newTransformationType,
         double samplingRate,
         Transformation::ResolutionType resolution,
-        WindowFunctionFactory::Method windowFunction,
+        WindowParameters::WindowFunction newWindowFunction,
         WaveletParameters::WaveletBase waveletBase,
         WaveletParameters::ResolutionRatioOption resolutionRatio) -> Transformation * {
 
@@ -51,22 +51,22 @@ auto TransformationFactory::createTransformation(
 
     switch (newTransformationType) {
         case TransformationParameters::Type::FAST_FOURIER_TRANSFORM: {
-            currentTransformation = new FourierTransformation(samplingRate, resolution, windowFunction);
+            currentTransformation = new FourierTransformation(samplingRate, resolution, newWindowFunction);
             assert(currentTransformation);
             break;
         }
         case TransformationParameters::Type::FAST_WAVELET_TRANSFORM: {
-            currentTransformation = new WaveletTransformation(samplingRate, resolution, windowFunction, waveletBase);
+            currentTransformation = new WaveletTransformation(samplingRate, resolution, newWindowFunction, waveletBase);
             assert(currentTransformation);
             break;
         }
         case TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM: {
-            currentTransformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBase, resolutionRatio);
+            currentTransformation = new WaveletPacketTransformation(samplingRate, resolution, newWindowFunction, waveletBase, resolutionRatio);
             assert(currentTransformation);
             break;
         }
         case TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM: {
-            currentTransformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, windowFunction, waveletBase);
+            currentTransformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, newWindowFunction, waveletBase);
             assert(currentTransformation);
             break;
         }

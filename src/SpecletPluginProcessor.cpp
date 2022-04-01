@@ -4,7 +4,7 @@
 #include "dsp/transformations/TransformationFactory.h"
 #include "dsp/transformations/TransformationParameters.h"
 #include "dsp/transformations/WaveletParameters.h"
-#include "dsp/windowing/WindowFunctionFactory.h"
+#include "dsp/windowing/WindowParameters.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpecletMainUI.h"
 #include "utilities/PerformanceLogger.h"
@@ -44,7 +44,7 @@ SpecletAudioProcessor::SpecletAudioProcessor()
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, static_cast<std::underlying_type<TransformationParameters::Type>::type>(TransformationParameters::Type::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, static_cast<std::underlying_type<WaveletParameters::WaveletBase>::type>(WaveletParameters::WaveletBase::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, static_cast<std::underlying_type<WaveletParameters::ResolutionRatioOption>::type>(WaveletParameters::ResolutionRatioOption::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, SpecletParameters::WINDOWING_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, static_cast<std::underlying_type<WindowParameters::WindowFunction>::type>(WindowParameters::WindowFunction::DEFAULT));
 
     //registers itself as listener for parameter-changes
     parameters.addListener(this, true);
@@ -306,7 +306,7 @@ void SpecletAudioProcessor::updateTransformation() {
             static_cast<TransformationParameters::Type>(parameters.getTransformation()),
             sampleRate,
             parameters.getResolution(),
-            static_cast<WindowFunctionFactory::Method>(parameters.getWindowing()),
+            static_cast<WindowParameters::WindowFunction>(parameters.getWindowing()),
             static_cast<WaveletParameters::WaveletBase>(parameters.getWavelet()),
             static_cast<WaveletParameters::ResolutionRatioOption>(parameters.getWaveletPaketBase()));
 

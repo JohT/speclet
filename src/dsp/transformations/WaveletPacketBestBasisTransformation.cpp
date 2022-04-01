@@ -7,11 +7,10 @@
 #include <cmath>
 #include <math.h>
 
-
 WaveletPacketBestBasisTransformation::WaveletPacketBestBasisTransformation(
         double newSamplingRate,
         ResolutionType newResolution,
-        WindowFunctionFactory::Method newWindowFunction,
+        WindowParameters::WindowFunction newWindowFunction,
         WaveletParameters::WaveletBase newWaveletBaseType)
     : AbstractWaveletTransformation(newSamplingRate, newResolution, TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM, newWindowFunction, newWaveletBaseType),
       //Time and frequency resolution can't be estimated since they change dynamically. Assume same values as for the DWT.

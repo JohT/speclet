@@ -6,7 +6,7 @@
 #include <type_traits>
 #include <vector>
 
-AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowFunctionFactory::Method newWindowFunction, WaveletParameters::WaveletBase newWaveletBase)
+AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowParameters::WindowFunction newWindowFunction, WaveletParameters::WaveletBase newWaveletBase)
     : Transformation(newSamplingRate, newResolution, newTransformationType, newWindowFunction),
       waveletFilterTreeMaxLevel(getMaxLevel(newResolution)),
       dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))),

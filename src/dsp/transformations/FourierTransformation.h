@@ -15,7 +15,7 @@
 */
 #pragma once
 #include "../../plugin/SpecletParameters.h"
-#include "../windowing/WindowFunctionFactory.h"
+#include "../windowing/WindowParameters.h"
 #include "Transformation.h"
 #include "TransformationFactory.h"
 #include "fftw3.h"
@@ -26,7 +26,7 @@ public:
     FourierTransformation(
             double newSamplingRate,
             ResolutionType newResolution,
-            WindowFunctionFactory::Method newWindowFunction = WindowFunctionFactory::Method::DEFAULT);
+            WindowParameters::WindowFunction newWindowFunction = WindowParameters::WindowFunction::DEFAULT);
     ~FourierTransformation() override;
     FourierTransformation(FourierTransformation &) = delete;                     //No copy contructor
     FourierTransformation(FourierTransformation &&) = delete;                    //No move contructor

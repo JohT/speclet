@@ -16,10 +16,10 @@
 #pragma once
 
 #include "../../plugin/SpecletParameters.h"
-#include "../windowing/WindowFunctions.h"
+#include "../windowing/WindowParameters.h"
 #include "Transformation.h"
-#include "WaveletParameters.h"
 #include "TransformationParameters.h"
+#include "WaveletParameters.h"
 
 //This special factory-variant does not only create different types of "Transformation"-implementing-objects by ID,
 //it is also a singleton and therefore made to exists only once.
@@ -40,7 +40,7 @@ public:
             TransformationParameters::Type newTransformationType,
             double samplingRate,
             Transformation::ResolutionType resolution,
-            WindowFunctionFactory::Method windowFunction = WindowFunctionFactory::Method::DEFAULT,
+            WindowParameters::WindowFunction newWindowFunction = WindowParameters::WindowFunction::DEFAULT,
             WaveletParameters::WaveletBase waveletBase = WaveletParameters::WaveletBase::DEFAULT,
             WaveletParameters::ResolutionRatioOption resolutionRatio = WaveletParameters::ResolutionRatioOption::DEFAULT) -> Transformation *;
     void registerForTransformationResults(TransformationListener *value);

@@ -5,7 +5,7 @@
 #include "../../utilities/PerformanceLogger.h"
 #include <assert.h>
 
-Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowFunctionFactory::Method newWindowFunction)
+Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowParameters::WindowFunction newWindowFunction)
     : transformationType(newTransformationType),
       resolution(newResolution),
       ready(false),
@@ -38,11 +38,12 @@ auto Transformation::getWindowFunction() const -> WindowFunction * {
     return windowFunction.get();
 }
 
-void Transformation::setWindowFunction(WindowFunctionFactory::Method newWindowFunction) {
+void Transformation::setWindowFunction(const WindowParameters::WindowFunction& newWindowFunction) {
     setReady(false);
     windowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(newWindowFunction, resolution);
     assert(windowFunction);
-    DBG("Transformation::setWindowFunction done with windowFunctionNr=" + juce::String(newWindowFunction));
+    auto windowFunctionName = std::string(WindowParameters::windowFunctionNames.find(newWindowFunction)->second);
+    DBG("Transformation::setWindowFunction done with windowFunctionNr=" + windowFunctionName);
     setReady(true);
 }
 

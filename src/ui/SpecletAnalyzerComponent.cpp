@@ -20,9 +20,10 @@
 */
 
 //[Headers] You can add your own extra header files here...
-#include "SpecletDrawer.h"
-#include "../dsp/transformations/WaveletParameters.h"
 #include "../dsp/transformations/TransformationParameters.h"
+#include "../dsp/transformations/WaveletParameters.h"
+#include "../dsp/windowing/WindowParameters.h"
+#include "SpecletDrawer.h"
 
 //[/Headers]
 
@@ -509,14 +510,10 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
         comboBoxTransformation->addItem(std::string(entry.second), static_cast<TransformationTypeValue>(entry.first));
     }
 
-    comboBoxWindowing->addItem("Barlett", SpecletParameters::WINDOWING_BARTLETT);
-    comboBoxWindowing->addItem("Blackman", SpecletParameters::WINDOWING_BLACKMAN);
-    comboBoxWindowing->addItem("Blackman-Harris", SpecletParameters::WINDOWING_BLACKMAN_HARRIS);
-    comboBoxWindowing->addItem("Hamming", SpecletParameters::WINDOWING_HAMMING);
-    comboBoxWindowing->addItem("Hann", SpecletParameters::WINDOWING_HANN);
-    comboBoxWindowing->addItem("Welch", SpecletParameters::WINDOWING_WELCH);
-    comboBoxWindowing->addItem("Parzen", SpecletParameters::WINDOWING_PARZEN);
-    comboBoxWindowing->addItem("Rectangular", SpecletParameters::WINDOWING_RECTANGULAR);
+    using WindowFunctionValue = std::underlying_type<WindowParameters::WindowFunction>::type;
+    for(auto entry : WindowParameters::windowFunctionNames) {
+        comboBoxWindowing->addItem(std::string(entry.second), static_cast<WindowFunctionValue>(entry.first));
+    }
 
     using WaveletBaseValue = std::underlying_type<WaveletParameters::WaveletBase>::type;
     for(auto entry : WaveletParameters::waveletBaseNames) {

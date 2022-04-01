@@ -5,10 +5,13 @@
 #include "WindowFunctions.h"
 
 #include "../../plugin/SpecletParameters.h"
+#include "WindowParameters.h"
 #include <assert.h>
 #include <cstddef>
 #include <memory>
 #include <stdexcept>
+#include <string>
+#include <type_traits>
 #include <utility>
 
 auto WindowFunctionFactory::getSingletonInstance() -> WindowFunctionFactory & {
@@ -16,8 +19,8 @@ auto WindowFunctionFactory::getSingletonInstance() -> WindowFunctionFactory & {
     return singletonInstance;
 }
 
-auto WindowFunctionFactory::getWindow(const Method &method, unsigned long resolution) -> std::shared_ptr<WindowFunction> {
-    Key key{method, resolution};
+auto WindowFunctionFactory::getWindow(const WindowParameters::WindowFunction &newWindowFunction, unsigned long resolution) -> std::shared_ptr<WindowFunction> {
+    Key key{newWindowFunction, resolution};
     auto lowerBoundIterator = windowFunctionsCache.lower_bound(key);
     auto keyComparator = windowFunctionsCache.key_comp();
     if ((lowerBoundIterator != windowFunctionsCache.end()) && !(keyComparator(key, lowerBoundIterator->first))) {
@@ -25,40 +28,41 @@ auto WindowFunctionFactory::getWindow(const Method &method, unsigned long resolu
         return lowerBoundIterator->second;
     }
     // Window function does not exist in cache: create it.
-    auto newWindow = createWindow(key.method, key.resolution);
+    auto newWindow = createWindow(key.windowFunction, key.resolution);
     windowFunctionsCache[key] = newWindow;
     return newWindow;
 }
 
-auto WindowFunctionFactory::createWindow(const Method &method, unsigned long resolution) -> std::shared_ptr<WindowFunction> {
-    switch (method) {
-        case Method::BARLETT: {
+auto WindowFunctionFactory::createWindow(const WindowParameters::WindowFunction &newWindowFunction, unsigned long resolution) -> std::shared_ptr<WindowFunction> {
+    switch (newWindowFunction) {
+        case WindowParameters::WindowFunction::BARLETT: {
             return std::make_shared<WindowBartlett>(resolution);
         }
-        case Method::BLACKMAN: {
+        case WindowParameters::WindowFunction::BLACKMAN: {
             return std::make_shared<WindowBlackman>(resolution);
         }
-        case Method::BLACKMAN_HARRIS: {
+        case WindowParameters::WindowFunction::BLACKMAN_HARRIS: {
             return std::make_shared<WindowBlackmanHarris>(resolution);
         }
-        case Method::HAMMING: {
+        case WindowParameters::WindowFunction::HAMMING: {
             return std::make_shared<WindowHamming>(resolution);
         }
-        case Method::HANN: {
+        case WindowParameters::WindowFunction::HANN: {
             return std::make_shared<WindowHann>(resolution);
         }
-        case Method::PARZEN: {
+        case WindowParameters::WindowFunction::PARZEN: {
             return std::make_shared<WindowParzen>(resolution);
         }
-        case Method::RECTANGULAR: {
+        case WindowParameters::WindowFunction::RECTANGULAR: {
             return std::make_shared<WindowRectangular>(resolution);
         }
-        case Method::WELCH: {
+        case WindowParameters::WindowFunction::WELCH: {
             return std::make_shared<WindowWelch>(resolution);
         }
-        case Method::NUMBER_OF_OPTIONS:
+        case WindowParameters::WindowFunction::NUMBER_OF_OPTIONS:
         default: {
-            throw std::invalid_argument("Unknown windowing function " + std::to_string(static_cast<int>(method)));
+            using WindowFunctionValueType = std::underlying_type<WindowParameters::WindowFunction>::type;
+            throw std::invalid_argument("Unknown windowing function " + std::to_string(static_cast<WindowFunctionValueType>(newWindowFunction)));
         }
     }
 }
