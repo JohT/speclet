@@ -16,7 +16,7 @@ cmake_minimum_required(VERSION 3.15)
 
 # Name of the project and the plugin. Avoid spaces and special characters.
 set(PROJECT_NAME "Speclet")
-set(CURRENT_VERSION "1.1.0")
+set(CURRENT_VERSION "1.0.0")
 
 # Set message log level to VERBOSE to see more details about what CMake is doing.
 #set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE)
@@ -27,10 +27,11 @@ project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 include(Environment.cmake)
 
 # Import dependencies
+#CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
 CPMAddPackage("gh:juce-framework/JUCE#6.1.6")
 CPMAddPackage("https://www.fftw.org/fftw-3.3.10.tar.gz#MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c")
 CPMAddPackage("gh:dmoulding/vld#v1.9h")
-#CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
+# CPMAddPackage("gh:Neargye/magic_enum#v0.7.3") # simplifies enum handling, not yet needed
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
 # target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've
