@@ -31,7 +31,6 @@ namespace WindowParameters {
             {WindowFunction::HANN, "Hann"},
             {WindowFunction::PARZEN, "Parzen"},
             {WindowFunction::WELCH, "Welch"},
-            {WindowFunction::RECTANGULAR, "Rectangular"}
-    };
+            {WindowFunction::RECTANGULAR, "Rectangular"}};
 
-}
+}// namespace WindowParameters

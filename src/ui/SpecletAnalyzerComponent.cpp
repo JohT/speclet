@@ -20,11 +20,13 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "../dsp/SignalGeneratorParameters.h"
 #include "../dsp/transformations/TransformationParameters.h"
 #include "../dsp/transformations/WaveletParameters.h"
 #include "../dsp/windowing/WindowParameters.h"
-#include "../dsp/SignalGeneratorParameters.h"
+#include "../ui/ColorGradientsParameters.h"
 #include "SpecletDrawer.h"
+
 
 //[/Headers]
 
@@ -543,10 +545,10 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxLogA->addItem("linear", SpecletParameters::PLOT_AXIS_LINEAR);
     comboBoxLogA->addItem("logarithmic", SpecletParameters::PLOT_AXIS_LOGARITHMIC);
 
-    comboBoxColorMode->addItem("Blue", SpecletParameters::COLORMODE_BLUE);
-    comboBoxColorMode->addItem("Green", SpecletParameters::COLORMODE_GREEN);
-    comboBoxColorMode->addItem("Fire", SpecletParameters::COLORMODE_FIRE);
-    comboBoxColorMode->addItem("Rainbow", SpecletParameters::COLORMODE_RAINBOW);
+    using ColorGradientValue = std::underlying_type<ColorGradientsParameters::ColorMode>::type;
+    for (auto entry : ColorGradientsParameters::colorModeNames) {
+        comboBoxColorMode->addItem(std::string(entry.second), static_cast<ColorGradientValue>(entry.first));
+    }
 }
 
 void SpecletAnalyzerComponent::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*property*/) {

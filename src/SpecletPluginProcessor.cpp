@@ -6,6 +6,7 @@
 #include "dsp/transformations/TransformationParameters.h"
 #include "dsp/transformations/WaveletParameters.h"
 #include "dsp/windowing/WindowParameters.h"
+#include "ui/ColorGradientsParameters.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpecletMainUI.h"
 #include "utilities/PerformanceLogger.h"
@@ -36,7 +37,7 @@ SpecletAudioProcessor::SpecletAudioProcessor()
 #endif
 
     //Initialize with default settings
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, SpecletParameters::COLORMODE_DEFAULT);
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, static_cast<std::underlying_type<ColorGradientsParameters::ColorMode>::type>(ColorGradientsParameters::ColorMode::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, static_cast<std::underlying_type<SignalGeneratorParameters::Waveform>::type>(SignalGeneratorParameters::Waveform::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, 1000.0);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, SpecletParameters::PLOT_AXIS_DEFAULT);

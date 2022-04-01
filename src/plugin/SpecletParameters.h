@@ -46,15 +46,6 @@ public:
 
         TOTAL_NUMBER_OF_PARAMS
     };
-    enum OptionsColormode {
-        COLORMODE_BLUE = 1,
-        COLORMODE_GREEN,
-        COLORMODE_RAINBOW,
-        COLORMODE_FIRE,
-
-        COLORMODE_NumOptions,
-        COLORMODE_DEFAULT = COLORMODE_BLUE
-    };
     enum OptionsPlotAxis {
         PLOT_AXIS_LINEAR = 1,
         PLOT_AXIS_LOGARITHMIC,
