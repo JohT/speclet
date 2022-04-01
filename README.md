@@ -15,6 +15,7 @@ Modernized 2022 using the following tools:
 - [Ninja](https://github.com/ninja-build/ninja)
 - [CMake](https://gitlab.kitware.com/cmake/cmake)
 - [Setup-free CMake dependency management](https://github.com/cpm-cmake/CPM.cmake)
+- [MagicEnumC++ - static reflection for enums](https://github.com/Neargye/magic_enum)
 
 This version is not ready yet. 
 It contains the code from back then, that doesn't compile any more.   
