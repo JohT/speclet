@@ -100,8 +100,8 @@ private :
     juce::Label *labelWindowing;
     juce::ComboBox *comboBoxWavelet;
     juce::Label *labelWavelet;
-    juce::ComboBox *comboBoxWaveletPaketBasis;
-    juce::Label *labelWaveletPaketBasis;
+    juce::ComboBox *comboBoxWaveletPacketBasis;
+    juce::Label *labelWaveletPacketBasis;
     juce::ComboBox *comboBoxSignalGenerator;
     juce::Label *labelSignalGenerator;
     juce::ComboBox *comboBoxRouting;

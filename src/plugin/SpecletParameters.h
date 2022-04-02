@@ -35,7 +35,7 @@ public:
         PARAMETER_INDEX_Routing = 0,
         PARAMETER_INDEX_Transformation,
         PARAMETER_INDEX_Resolution,
-        PARAMETER_INDEX_WaveletPacketBase,
+        PARAMETER_INDEX_WaveletPacketBasis,
         PARAMETER_INDEX_Windowing,
         PARAMETER_INDEX_Wavelet,
         PARAMETER_INDEX_Generator,
@@ -84,7 +84,7 @@ public:
     inline const static juce::String PARAMETER_GENERATORFREQUENCY{"generatorfrequency"};
     inline const static juce::String PARAMETER_TRANSFORMATION{"transform"};
     inline const static juce::String PARAMETER_WAVELET{"wavelet"};
-    inline const static juce::String PARAMETER_WAVELETPACKETBASE{"waveletpacketbase"};
+    inline const static juce::String PARAMETER_WAVELETPACKETBASIS{"waveletpacketbasis"};
     inline const static juce::String PARAMETER_WINDOWING{"windowing"};
     //NOLINTEND
 
@@ -119,7 +119,7 @@ public:
     auto getRouting() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Routing)); }
     auto getTransformation() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Transformation)); }
     auto getWavelet() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Wavelet)); }
-    auto getWaveletPaketBase() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_WaveletPacketBase)); }
+    auto getWaveletPacketBasis() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_WaveletPacketBasis)); }
     auto getWindowing() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Windowing)); }
 
     //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)

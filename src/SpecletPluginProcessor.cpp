@@ -48,7 +48,7 @@ SpecletAudioProcessor::SpecletAudioProcessor()
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Routing, SpecletParameters::ROUTING_MID);
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, enumOptionToFloat(TransformationParameters::Type::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, enumOptionToFloat(WaveletParameters::WaveletBase::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, enumOptionToFloat(WaveletParameters::ResolutionRatioOption::DEFAULT));
+    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBasis, enumOptionToFloat(WaveletParameters::ResolutionRatioOption::DEFAULT));
     parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, enumOptionToFloat(WindowParameters::WindowFunction::DEFAULT));
 
     //registers itself as listener for parameter-changes
@@ -312,7 +312,7 @@ void SpecletAudioProcessor::updateTransformation() {
             parameters.getResolution(),
             static_cast<WindowParameters::WindowFunction>(parameters.getWindowing()),
             static_cast<WaveletParameters::WaveletBase>(parameters.getWavelet()),
-            static_cast<WaveletParameters::ResolutionRatioOption>(parameters.getWaveletPaketBase()));
+            static_cast<WaveletParameters::ResolutionRatioOption>(parameters.getWaveletPacketBasis()));
 
     parameters.unblockParameterChanges();
 }

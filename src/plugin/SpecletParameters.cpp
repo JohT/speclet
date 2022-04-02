@@ -8,7 +8,7 @@ SpecletParameters::SpecletParameters() {
     properties.addChild(juce::ValueTree(PARAMETER_ROUTING), PARAMETER_INDEX_Routing, nullptr);
     properties.addChild(juce::ValueTree(PARAMETER_TRANSFORMATION), PARAMETER_INDEX_Transformation, nullptr);
     properties.addChild(juce::ValueTree(PARAMETER_RESOLUTION), PARAMETER_INDEX_Resolution, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_WAVELETPACKETBASE), PARAMETER_INDEX_WaveletPacketBase, nullptr);
+    properties.addChild(juce::ValueTree(PARAMETER_WAVELETPACKETBASIS), PARAMETER_INDEX_WaveletPacketBasis, nullptr);
     properties.addChild(juce::ValueTree(PARAMETER_WINDOWING), PARAMETER_INDEX_Windowing, nullptr);
     properties.addChild(juce::ValueTree(PARAMETER_WAVELET), PARAMETER_INDEX_Wavelet, nullptr);
     properties.addChild(juce::ValueTree(PARAMETER_GENERATOR), PARAMETER_INDEX_Generator, nullptr);
@@ -31,7 +31,7 @@ auto SpecletParameters::getSingletonInstance() -> SpecletParameters & {
 }
 
 auto SpecletParameters::isTransformationParameter(const juce::String &parameterID) -> bool {
-    return parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_RESOLUTION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_TRANSFORMATION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELET) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELETPACKETBASE) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WINDOWING);
+    return parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_RESOLUTION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_TRANSFORMATION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELET) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELETPACKETBASIS) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WINDOWING);
 }
 
 auto SpecletParameters::getParameter(int index) -> float {

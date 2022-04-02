@@ -51,8 +51,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
       labelWindowing(nullptr),
       comboBoxWavelet(nullptr),
       labelWavelet(nullptr),
-      comboBoxWaveletPaketBasis(nullptr),
-      labelWaveletPaketBasis(nullptr),
+      comboBoxWaveletPacketBasis(nullptr),
+      labelWaveletPacketBasis(nullptr),
       comboBoxSignalGenerator(nullptr),
       labelSignalGenerator(nullptr),
       comboBoxRouting(nullptr),
@@ -145,24 +145,24 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelWavelet->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelWavelet->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxWaveletPaketBasis = new juce::ComboBox("comboBoxWaveletPaketBasis"));
-    comboBoxWaveletPaketBasis->setTooltip("Wavelet Packet Base");
-    comboBoxWaveletPaketBasis->setEditableText(false);
-    comboBoxWaveletPaketBasis->setJustificationType(juce::Justification::centredLeft);
-    comboBoxWaveletPaketBasis->setTextWhenNothingSelected(juce::String());
-    comboBoxWaveletPaketBasis->setTextWhenNoChoicesAvailable(juce::String());
-    comboBoxWaveletPaketBasis->addListener(this);
+    addAndMakeVisible(comboBoxWaveletPacketBasis = new juce::ComboBox("comboBoxWaveletPacketBasis"));
+    comboBoxWaveletPacketBasis->setTooltip("Wavelet Packet Basis");
+    comboBoxWaveletPacketBasis->setEditableText(false);
+    comboBoxWaveletPacketBasis->setJustificationType(juce::Justification::centredLeft);
+    comboBoxWaveletPacketBasis->setTextWhenNothingSelected(juce::String());
+    comboBoxWaveletPacketBasis->setTextWhenNoChoicesAvailable(juce::String());
+    comboBoxWaveletPacketBasis->addListener(this);
 
-    addAndMakeVisible(labelWaveletPaketBasis = new juce::Label("labelWaveletPaketBasis",
-                                                               "Wavelet Packet Base"));
-    labelWaveletPaketBasis->setFont(juce::Font(15.0000f, juce::Font::plain));
-    labelWaveletPaketBasis->setJustificationType(juce::Justification::centredLeft);
-    labelWaveletPaketBasis->setEditable(false, false, false);
-    labelWaveletPaketBasis->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
-    labelWaveletPaketBasis->setColour(juce::Label::textColourId, juce::Colours::white);
-    labelWaveletPaketBasis->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
-    labelWaveletPaketBasis->setColour(juce::TextEditor::textColourId, juce::Colours::black);
-    labelWaveletPaketBasis->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
+    addAndMakeVisible(labelWaveletPacketBasis = new juce::Label("labelWaveletPacketBasis",
+                                                               "Wavelet Packet Basis"));
+    labelWaveletPacketBasis->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelWaveletPacketBasis->setJustificationType(juce::Justification::centredLeft);
+    labelWaveletPacketBasis->setEditable(false, false, false);
+    labelWaveletPacketBasis->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelWaveletPacketBasis->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelWaveletPacketBasis->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelWaveletPacketBasis->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelWaveletPacketBasis->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxSignalGenerator = new juce::ComboBox("comboBoxSignalgenerator"));
     comboBoxSignalGenerator->setTooltip("Osciallator");
@@ -313,8 +313,8 @@ SpecletAnalyzerComponent::~SpecletAnalyzerComponent() {
     deleteAndZero(labelWindowing);
     deleteAndZero(comboBoxWavelet);
     deleteAndZero(labelWavelet);
-    deleteAndZero(comboBoxWaveletPaketBasis);
-    deleteAndZero(labelWaveletPaketBasis);
+    deleteAndZero(comboBoxWaveletPacketBasis);
+    deleteAndZero(labelWaveletPacketBasis);
     deleteAndZero(comboBoxSignalGenerator);
     deleteAndZero(labelSignalGenerator);
     deleteAndZero(comboBoxRouting);
@@ -357,8 +357,8 @@ void SpecletAnalyzerComponent::resized() {
     labelWindowing->setBounds((8) + 0, (8) + 64, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     comboBoxWavelet->setBounds((128) + 0, (8) + 96, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     labelWavelet->setBounds((8) + 0, (8) + 96, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
-    comboBoxWaveletPaketBasis->setBounds((128) + 0, (8) + 128, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
-    labelWaveletPaketBasis->setBounds((8) + 0, (8) + 128, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxWaveletPacketBasis->setBounds((128) + 0, (8) + 128, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelWaveletPacketBasis->setBounds((8) + 0, (8) + 128, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     comboBoxSignalGenerator->setBounds((128) + 0, (8) + 288, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     labelSignalGenerator->setBounds((8) + 0, (8) + 288, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     comboBoxRouting->setBounds((128) + 0, (8) + 160, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
@@ -397,10 +397,10 @@ void SpecletAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasCh
         //[UserComboBoxCode_comboBoxWavelet] -- add your combo box handling code here..
         parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, comboBoxWavelet->getSelectedId());
         //[/UserComboBoxCode_comboBoxWavelet]
-    } else if (comboBoxThatHasChanged == comboBoxWaveletPaketBasis) {
-        //[UserComboBoxCode_comboBoxWaveletPaketBasis] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, comboBoxWaveletPaketBasis->getSelectedId());
-        //[/UserComboBoxCode_comboBoxWaveletPaketBasis]
+    } else if (comboBoxThatHasChanged == comboBoxWaveletPacketBasis) {
+        //[UserComboBoxCode_comboBoxWaveletPacketBasis] -- add your combo box handling code here..
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBasis, comboBoxWaveletPacketBasis->getSelectedId());
+        //[/UserComboBoxCode_comboBoxWaveletPacketBasis]
     } else if (comboBoxThatHasChanged == comboBoxSignalGenerator) {
         //[UserComboBoxCode_comboBoxSignalgenerator] -- add your combo box handling code here..
         parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Generator, comboBoxSignalGenerator->getSelectedId());
@@ -529,7 +529,7 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
 
     using ResolutionRatioValue = std::underlying_type<WaveletParameters::ResolutionRatioOption>::type;
     for (auto entry : WaveletParameters::resolutionRatioOptionNames) {
-        comboBoxWaveletPaketBasis->addItem(std::string(entry.second), static_cast<ResolutionRatioValue>(entry.first));
+        comboBoxWaveletPacketBasis->addItem(std::string(entry.second), static_cast<ResolutionRatioValue>(entry.first));
     }
 
     using SignalGeneratorValue = std::underlying_type<SignalGeneratorParameters::Waveform>::type;
@@ -566,7 +566,7 @@ void SpecletAnalyzerComponent::valueTreePropertyChanged(juce::ValueTree &treeWho
     updateComboBox(SpecletParameters::PARAMETER_ROUTING, comboBoxRouting, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_TRANSFORMATION, comboBoxTransformation, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_WAVELET, comboBoxWavelet, treeWhosePropertyHasChanged);
-    updateComboBox(SpecletParameters::PARAMETER_WAVELETPACKETBASE, comboBoxWaveletPaketBasis, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_WAVELETPACKETBASIS, comboBoxWaveletPacketBasis, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_WINDOWING, comboBoxWindowing, treeWhosePropertyHasChanged);
     updateSlider(SpecletParameters::PARAMETER_GENERATORFREQUENCY, sliderSignalGeneratorFrequency, treeWhosePropertyHasChanged);
 }
@@ -651,32 +651,32 @@ void SpecletAnalyzerComponent::transformationChanged(auto selectedOption) {
         //Disable all wavelet related controls for the Fast Fourier Transform (FFT).
         comboBoxWavelet->setEnabled(false);
         labelWavelet->setEnabled(false);
-        comboBoxWaveletPaketBasis->setEnabled(false);
-        labelWaveletPaketBasis->setEnabled(false);
+        comboBoxWaveletPacketBasis->setEnabled(false);
+        labelWaveletPacketBasis->setEnabled(false);
     } else if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_TRANSFORM)) {
         //Disable Wavelet Tree/Packet related control for the dyadic Fast Wavelet Transform.
         comboBoxWavelet->setEnabled(true);
         labelWavelet->setEnabled(true);
-        comboBoxWaveletPaketBasis->setEnabled(false);
-        labelWaveletPaketBasis->setEnabled(false);
+        comboBoxWaveletPacketBasis->setEnabled(false);
+        labelWaveletPacketBasis->setEnabled(false);
     } else if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM)) {
         //Enable all controls for the Fast Wavelet Packet Transform.
         comboBoxWavelet->setEnabled(true);
         labelWavelet->setEnabled(true);
-        comboBoxWaveletPaketBasis->setEnabled(true);
-        labelWaveletPaketBasis->setEnabled(true);
+        comboBoxWaveletPacketBasis->setEnabled(true);
+        labelWaveletPacketBasis->setEnabled(true);
     } else if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM)) {
         //Disable Wavelet Packet Basis controls when the best basis (based on a cost function) is chosen dynamically for the Fast Wavelet Packet Best Basis Transform
         comboBoxWavelet->setEnabled(true);
         labelWavelet->setEnabled(true);
-        comboBoxWaveletPaketBasis->setEnabled(false);
-        labelWaveletPaketBasis->setEnabled(false);
+        comboBoxWaveletPacketBasis->setEnabled(false);
+        labelWaveletPacketBasis->setEnabled(false);
     } else {
         //Disable all wavelet related controls otherwise (e.g. when analyzer is bypassed)
         comboBoxWavelet->setEnabled(false);
         labelWavelet->setEnabled(false);
-        comboBoxWaveletPaketBasis->setEnabled(false);
-        labelWaveletPaketBasis->setEnabled(false);
+        comboBoxWaveletPacketBasis->setEnabled(false);
+        labelWaveletPacketBasis->setEnabled(false);
     }
 }
 
@@ -777,16 +777,16 @@ BEGIN_JUCER_METADATA
          outlineCol="ff0082f7" edTextCol="ff000000" edBkgCol="0" labelText="Wavelet"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-  <COMBOBOX name="comboBoxWaveletPaketBasis" id="ceb2b5bc318d589" memberName="comboBoxWaveletPaketBasis"
+  <COMBOBOX name="comboBoxWaveletPacketBasis" id="ceb2b5bc318d589" memberName="comboBoxWaveletPacketBasis"
             virtualName="" explicitFocusOrder="0" pos="0 128 100% 100%" posRelativeX="9966dea6e9dc5423"
             posRelativeY="9966dea6e9dc5423" posRelativeW="9966dea6e9dc5423"
-            posRelativeH="9966dea6e9dc5423" tooltip="Wavelet Paket Basis"
+            posRelativeH="9966dea6e9dc5423" tooltip="Wavelet Packet Basis"
             editable="0" layout="33" items="" textWhenNonSelected="" textWhenNoItems=""/>
-  <LABEL name="labelWaveletPaketBasis" id="4b1ed4f77ecd0904" memberName="labelWaveletPaketBasis"
+  <LABEL name="labelWaveletPacketBasis" id="4b1ed4f77ecd0904" memberName="labelWaveletPacketBasis"
          virtualName="" explicitFocusOrder="0" pos="0 128 100% 100%" posRelativeX="6c1a8307cfceedac"
          posRelativeY="6c1a8307cfceedac" posRelativeW="6c1a8307cfceedac"
          posRelativeH="6c1a8307cfceedac" bkgCol="30007bfc" textCol="ffffffff"
-         outlineCol="ff0082f7" edTextCol="ff000000" edBkgCol="0" labelText="Wavelet Paketbasis"
+         outlineCol="ff0082f7" edTextCol="ff000000" edBkgCol="0" labelText="Wavelet Packetbasis"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
   <COMBOBOX name="comboBoxSignalgenerator" id="db30338a07b7384f" memberName="comboBoxSignalgenerator"
