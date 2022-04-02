@@ -37,6 +37,11 @@
 
 
 //[MiscUserDefs] You can add your own user definitions and misc code here...
+void SpecletTooltipWindowLookAndFeel::drawTooltip(juce::Graphics &g, const juce::String &text, int width, int height) {
+    g.fillAll(juce::Colours::black.withAlpha(0.8F));
+    g.setColour(juce::Colours::white);
+    g.drawFittedText(text, 0, 0, width, height, juce::Justification::left, 1);
+}
 //[/MiscUserDefs]
 
 //==============================================================================
@@ -64,14 +69,21 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
       comboBoxLogF(nullptr),
       comboBoxLogA(nullptr),
       labelColorMode(nullptr),
-      comboBoxColorMode(nullptr) {
+      comboBoxColorMode(nullptr),
+      tooltipWindow(nullptr) {
+
     addAndMakeVisible(comboBoxResolution = new juce::ComboBox("comboBoxResolution"));
-    comboBoxResolution->setTooltip("Resolution");
     comboBoxResolution->setEditableText(false);
     comboBoxResolution->setJustificationType(juce::Justification::centredLeft);
     comboBoxResolution->setTextWhenNothingSelected(juce::String());
     comboBoxResolution->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxResolution->addListener(this);
+    comboBoxResolution->setTooltip(
+        "Sets the buffer size for the analysis.\n"
+        "Higher values lead to better frequency resolution"
+        "but also higher cpu consumption. "
+        "For fast calculation, all values are a power of 2."
+    );
 
     addAndMakeVisible(spectralviewport = new juce::Viewport("spectralviewport"));
     spectralviewport->setScrollBarsShown(false, true);
@@ -89,12 +101,17 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelResolution->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxTransformation = new juce::ComboBox("comboBoxTransformation"));
-    comboBoxTransformation->setTooltip("Transformation");
     comboBoxTransformation->setEditableText(false);
     comboBoxTransformation->setJustificationType(juce::Justification::centredLeft);
     comboBoxTransformation->setTextWhenNothingSelected(juce::String());
     comboBoxTransformation->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxTransformation->addListener(this);
+    comboBoxTransformation->setTooltip(
+            "Transformation methods:\n\n"
+            " - FFT: Fast Fourier Transform\n"
+            " - FWT: Fast Wavelet Transform\n"
+            " - WPT: Wavelet Packet Transform\n"
+            " - WPT BestBasis: WPT with best basis\n");
 
     addAndMakeVisible(labelTransformation = new juce::Label("labelTransformation",
                                                             "Transformation"));
@@ -108,12 +125,15 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelTransformation->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxWindowing = new juce::ComboBox("comboBoxWindowing"));
-    comboBoxWindowing->setTooltip("Window Function");
     comboBoxWindowing->setEditableText(false);
     comboBoxWindowing->setJustificationType(juce::Justification::centredLeft);
     comboBoxWindowing->setTextWhenNothingSelected(juce::String());
     comboBoxWindowing->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWindowing->addListener(this);
+    comboBoxWindowing->setTooltip(
+        "Window functions are like a fades at the beginning and end of the sample buffer.\n"
+        "The rectangular window shows how the spectrum is affected when there is no smoothing."
+    );
 
     addAndMakeVisible(labelWindowing = new juce::Label("labelWindowing",
                                                        "Window Function"));
@@ -154,7 +174,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWaveletPacketBasis->addListener(this);
 
     addAndMakeVisible(labelWaveletPacketBasis = new juce::Label("labelWaveletPacketBasis",
-                                                               "Wavelet Packet Basis"));
+                                                                "Wavelet Packet Basis"));
     labelWaveletPacketBasis->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelWaveletPacketBasis->setJustificationType(juce::Justification::centredLeft);
     labelWaveletPacketBasis->setEditable(false, false, false);
@@ -165,7 +185,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelWaveletPacketBasis->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxSignalGenerator = new juce::ComboBox("comboBoxSignalgenerator"));
-    comboBoxSignalGenerator->setTooltip("Osciallator");
+    comboBoxSignalGenerator->setTooltip("Oscillator");
     comboBoxSignalGenerator->setEditableText(false);
     comboBoxSignalGenerator->setJustificationType(juce::Justification::centredLeft);
     comboBoxSignalGenerator->setTextWhenNothingSelected(juce::String());
@@ -201,8 +221,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelRouting->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelRouting->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(labelSignalGeneratorFrequency = new juce::Label("labelGeneratorfrequenz",
-                                                               "Oscillator Frequency"));
+    addAndMakeVisible(labelSignalGeneratorFrequency = new juce::Label("labelGeneratorFrequency",
+                                                                      "Oscillator Frequency"));
     labelSignalGeneratorFrequency->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelSignalGeneratorFrequency->setJustificationType(juce::Justification::centredLeft);
     labelSignalGeneratorFrequency->setEditable(false, false, false);
@@ -212,7 +232,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelSignalGeneratorFrequency->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelSignalGeneratorFrequency->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(sliderSignalGeneratorFrequency = new juce::Slider("sliderGeneratorFrequenz"));
+    addAndMakeVisible(sliderSignalGeneratorFrequency = new juce::Slider("sliderGeneratorFrequency"));
     sliderSignalGeneratorFrequency->setTooltip("Oscillator Frequency");
     sliderSignalGeneratorFrequency->setExplicitFocusOrder(7);
     sliderSignalGeneratorFrequency->setRange(10, 22000, 1);
@@ -277,7 +297,9 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxColorMode->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxColorMode->addListener(this);
 
-    
+    addAndMakeVisible(tooltipWindow = new juce::TooltipWindow(this));
+    tooltipWindow->setLookAndFeel(&tooltipWindowLookAndFeel);
+
     //[UserPreSize]
     fillComboBoxes();
     //[/UserPreSize]
@@ -327,6 +349,7 @@ SpecletAnalyzerComponent::~SpecletAnalyzerComponent() {
     deleteAndZero(comboBoxLogA);
     deleteAndZero(labelColorMode);
     deleteAndZero(comboBoxColorMode);
+    deleteAndZero(tooltipWindow);
 
     //[Destructor]. You can add your own custom destruction code here..
     //unregisteres itself as listener for parameter-changes

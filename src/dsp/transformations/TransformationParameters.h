@@ -20,7 +20,7 @@ namespace TransformationParameters {
             {Type::FAST_FOURIER_TRANSFORM, "FFT"},
             {Type::FAST_WAVELET_TRANSFORM, "FWT"},
             {Type::FAST_WAVELET_PACKET_TRANSFORM, "WPT"},
-            {Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM, "WPT BestBase"},
+            {Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM, "WPT BestBasis"},
             {Type::BYPASS, "Off"},
     };
 

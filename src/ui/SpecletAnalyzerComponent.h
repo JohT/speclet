@@ -27,6 +27,12 @@
 
 //[/Headers]
 
+class SpecletTooltipWindowLookAndFeel : public juce::LookAndFeel_V4 {
+public:
+    SpecletTooltipWindowLookAndFeel() = default;
+    virtual ~SpecletTooltipWindowLookAndFeel() override = default;
+    virtual void drawTooltip(juce::Graphics &g, const juce::String &text, int width, int height) override;
+};
 
 //==============================================================================
 /**
@@ -65,12 +71,12 @@ public:
     //==============================================================================
     juce_UseDebuggingNewOperator
 
-private :
-    //[UserVariables]   -- You can add your own custom variables in this section.
-    enum PopupMenuEntryIndizes {
-        POPUPMENU_INDEX_1_ABOUT = 1
-    };
-    
+            private :
+        //[UserVariables]   -- You can add your own custom variables in this section.
+        enum PopupMenuEntryIndizes {
+            POPUPMENU_INDEX_1_ABOUT = 1
+        };
+
     SpecletParameters *parameters;
     juce::CriticalSection criticalSection;
     juce::PopupMenu popupMenu;
@@ -84,10 +90,10 @@ private :
     static void updateSlider(const juce::String &parameterName, juce::Slider *slider, const juce::ValueTree &treeWhosePropertyHasChanged);
     void transformationChanged(auto selectedOption);
     void routingChanged(auto selectedOption);
-    
+
     template<class _Tp>
-    auto enumOptionToFloat(const _Tp& enumType) const -> float;
-    
+    auto enumOptionToFloat(const _Tp &enumType) const -> float;
+
     //[/UserVariables]
 
     //==============================================================================
@@ -115,6 +121,8 @@ private :
     juce::Label *labelColorMode;
     juce::ComboBox *comboBoxColorMode;
 
+    juce::TooltipWindow *tooltipWindow;
+    SpecletTooltipWindowLookAndFeel tooltipWindowLookAndFeel;
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
     SpecletAnalyzerComponent(const SpecletAnalyzerComponent &);
