@@ -53,12 +53,12 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
       labelWavelet(nullptr),
       comboBoxWaveletPaketBasis(nullptr),
       labelWaveletPaketBasis(nullptr),
-      comboBoxSignalgenerator(nullptr),
-      labelSignalgenerator(nullptr),
-      comboBoxSignalquelle(nullptr),
-      labelSignalquelle(nullptr),
-      labelGeneratorfrequenz(nullptr),
-      sliderGeneratorFrequenz(nullptr),
+      comboBoxSignalGenerator(nullptr),
+      labelSignalGenerator(nullptr),
+      comboBoxRouting(nullptr),
+      labelRouting(nullptr),
+      labelSignalGeneratorFrequency(nullptr),
+      sliderSignalGeneratorFrequency(nullptr),
       labelLogF(nullptr),
       labelLogA(nullptr),
       comboBoxLogF(nullptr),
@@ -164,62 +164,61 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelWaveletPaketBasis->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelWaveletPaketBasis->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxSignalgenerator = new juce::ComboBox("comboBoxSignalgenerator"));
-    comboBoxSignalgenerator->setTooltip("Osciallator");
-    comboBoxSignalgenerator->setEditableText(false);
-    comboBoxSignalgenerator->setJustificationType(juce::Justification::centredLeft);
-    comboBoxSignalgenerator->setTextWhenNothingSelected(juce::String());
-    comboBoxSignalgenerator->setTextWhenNoChoicesAvailable(juce::String());
-    comboBoxSignalgenerator->addListener(this);
+    addAndMakeVisible(comboBoxSignalGenerator = new juce::ComboBox("comboBoxSignalgenerator"));
+    comboBoxSignalGenerator->setTooltip("Osciallator");
+    comboBoxSignalGenerator->setEditableText(false);
+    comboBoxSignalGenerator->setJustificationType(juce::Justification::centredLeft);
+    comboBoxSignalGenerator->setTextWhenNothingSelected(juce::String());
+    comboBoxSignalGenerator->setTextWhenNoChoicesAvailable(juce::String());
+    comboBoxSignalGenerator->addListener(this);
 
-    addAndMakeVisible(labelSignalgenerator = new juce::Label("labelSignalgenerator",
+    addAndMakeVisible(labelSignalGenerator = new juce::Label("labelSignalgenerator",
                                                              "Oscillator"));
-    labelSignalgenerator->setFont(juce::Font(15.0000f, juce::Font::plain));
-    labelSignalgenerator->setJustificationType(juce::Justification::centredLeft);
-    labelSignalgenerator->setEditable(false, false, false);
-    labelSignalgenerator->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
-    labelSignalgenerator->setColour(juce::Label::textColourId, juce::Colours::white);
-    labelSignalgenerator->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
-    labelSignalgenerator->setColour(juce::TextEditor::textColourId, juce::Colours::black);
-    labelSignalgenerator->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
+    labelSignalGenerator->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelSignalGenerator->setJustificationType(juce::Justification::centredLeft);
+    labelSignalGenerator->setEditable(false, false, false);
+    labelSignalGenerator->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelSignalGenerator->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelSignalGenerator->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelSignalGenerator->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelSignalGenerator->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxSignalquelle = new juce::ComboBox("comboBoxSignalquelle"));
-    comboBoxSignalquelle->setTooltip("Audio Source");
-    comboBoxSignalquelle->setEditableText(false);
-    comboBoxSignalquelle->setJustificationType(juce::Justification::centredLeft);
-    comboBoxSignalquelle->setTextWhenNothingSelected(juce::String());
-    comboBoxSignalquelle->setTextWhenNoChoicesAvailable(juce::String());
-    comboBoxSignalquelle->addListener(this);
+    addAndMakeVisible(comboBoxRouting = new juce::ComboBox("comboBoxRouting"));
+    comboBoxRouting->setTooltip("Audio Source");
+    comboBoxRouting->setEditableText(false);
+    comboBoxRouting->setJustificationType(juce::Justification::centredLeft);
+    comboBoxRouting->setTextWhenNothingSelected(juce::String());
+    comboBoxRouting->setTextWhenNoChoicesAvailable(juce::String());
+    comboBoxRouting->addListener(this);
 
-    addAndMakeVisible(labelSignalquelle = new juce::Label("labelSignalquelle",
-                                                          "Audio Source"));
-    labelSignalquelle->setFont(juce::Font(15.0000f, juce::Font::plain));
-    labelSignalquelle->setJustificationType(juce::Justification::centredLeft);
-    labelSignalquelle->setEditable(false, false, false);
-    labelSignalquelle->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
-    labelSignalquelle->setColour(juce::Label::textColourId, juce::Colours::white);
-    labelSignalquelle->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
-    labelSignalquelle->setColour(juce::TextEditor::textColourId, juce::Colours::black);
-    labelSignalquelle->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
+    addAndMakeVisible(labelRouting = new juce::Label("labelRouting", "Audio Source"));
+    labelRouting->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelRouting->setJustificationType(juce::Justification::centredLeft);
+    labelRouting->setEditable(false, false, false);
+    labelRouting->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelRouting->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelRouting->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelRouting->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelRouting->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(labelGeneratorfrequenz = new juce::Label("labelGeneratorfrequenz",
+    addAndMakeVisible(labelSignalGeneratorFrequency = new juce::Label("labelGeneratorfrequenz",
                                                                "Oscillator Frequency"));
-    labelGeneratorfrequenz->setFont(juce::Font(15.0000f, juce::Font::plain));
-    labelGeneratorfrequenz->setJustificationType(juce::Justification::centredLeft);
-    labelGeneratorfrequenz->setEditable(false, false, false);
-    labelGeneratorfrequenz->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
-    labelGeneratorfrequenz->setColour(juce::Label::textColourId, juce::Colours::white);
-    labelGeneratorfrequenz->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
-    labelGeneratorfrequenz->setColour(juce::TextEditor::textColourId, juce::Colours::black);
-    labelGeneratorfrequenz->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
+    labelSignalGeneratorFrequency->setFont(juce::Font(15.0000f, juce::Font::plain));
+    labelSignalGeneratorFrequency->setJustificationType(juce::Justification::centredLeft);
+    labelSignalGeneratorFrequency->setEditable(false, false, false);
+    labelSignalGeneratorFrequency->setColour(juce::Label::backgroundColourId, juce::Colour(0x30007bfc));
+    labelSignalGeneratorFrequency->setColour(juce::Label::textColourId, juce::Colours::white);
+    labelSignalGeneratorFrequency->setColour(juce::Label::outlineColourId, juce::Colour(0xff0082f7));
+    labelSignalGeneratorFrequency->setColour(juce::TextEditor::textColourId, juce::Colours::black);
+    labelSignalGeneratorFrequency->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(sliderGeneratorFrequenz = new juce::Slider("sliderGeneratorFrequenz"));
-    sliderGeneratorFrequenz->setTooltip("Oscillator Frequency");
-    sliderGeneratorFrequenz->setExplicitFocusOrder(7);
-    sliderGeneratorFrequenz->setRange(10, 22000, 1);
-    sliderGeneratorFrequenz->setSliderStyle(juce::Slider::LinearHorizontal);
-    sliderGeneratorFrequenz->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 50, 25);
-    sliderGeneratorFrequenz->addListener(this);
+    addAndMakeVisible(sliderSignalGeneratorFrequency = new juce::Slider("sliderGeneratorFrequenz"));
+    sliderSignalGeneratorFrequency->setTooltip("Oscillator Frequency");
+    sliderSignalGeneratorFrequency->setExplicitFocusOrder(7);
+    sliderSignalGeneratorFrequency->setRange(10, 22000, 1);
+    sliderSignalGeneratorFrequency->setSliderStyle(juce::Slider::LinearHorizontal);
+    sliderSignalGeneratorFrequency->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 50, 25);
+    sliderSignalGeneratorFrequency->addListener(this);
 
     addAndMakeVisible(labelLogF = new juce::Label("labelLogF",
                                                   "Frequency Scale"));
@@ -316,12 +315,12 @@ SpecletAnalyzerComponent::~SpecletAnalyzerComponent() {
     deleteAndZero(labelWavelet);
     deleteAndZero(comboBoxWaveletPaketBasis);
     deleteAndZero(labelWaveletPaketBasis);
-    deleteAndZero(comboBoxSignalgenerator);
-    deleteAndZero(labelSignalgenerator);
-    deleteAndZero(comboBoxSignalquelle);
-    deleteAndZero(labelSignalquelle);
-    deleteAndZero(labelGeneratorfrequenz);
-    deleteAndZero(sliderGeneratorFrequenz);
+    deleteAndZero(comboBoxSignalGenerator);
+    deleteAndZero(labelSignalGenerator);
+    deleteAndZero(comboBoxRouting);
+    deleteAndZero(labelRouting);
+    deleteAndZero(labelSignalGeneratorFrequency);
+    deleteAndZero(sliderSignalGeneratorFrequency);
     deleteAndZero(labelLogF);
     deleteAndZero(labelLogA);
     deleteAndZero(comboBoxLogF);
@@ -360,12 +359,12 @@ void SpecletAnalyzerComponent::resized() {
     labelWavelet->setBounds((8) + 0, (8) + 96, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     comboBoxWaveletPaketBasis->setBounds((128) + 0, (8) + 128, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     labelWaveletPaketBasis->setBounds((8) + 0, (8) + 128, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
-    comboBoxSignalgenerator->setBounds((128) + 0, (8) + 288, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
-    labelSignalgenerator->setBounds((8) + 0, (8) + 288, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
-    comboBoxSignalquelle->setBounds((128) + 0, (8) + 160, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
-    labelSignalquelle->setBounds((8) + 0, (8) + 160, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
-    labelGeneratorfrequenz->setBounds((8) + 0, (8) + 320, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
-    sliderGeneratorFrequenz->setBounds((128) + 0, (8) + 320, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxSignalGenerator->setBounds((128) + 0, (8) + 288, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelSignalGenerator->setBounds((8) + 0, (8) + 288, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    comboBoxRouting->setBounds((128) + 0, (8) + 160, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelRouting->setBounds((8) + 0, (8) + 160, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    labelSignalGeneratorFrequency->setBounds((8) + 0, (8) + 320, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
+    sliderSignalGeneratorFrequency->setBounds((128) + 0, (8) + 320, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     labelLogF->setBounds((8) + 0, (8) + 192, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     labelLogA->setBounds((8) + 0, (8) + 224, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     comboBoxLogF->setBounds((128) + 0, (8) + 192, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
@@ -402,14 +401,16 @@ void SpecletAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasCh
         //[UserComboBoxCode_comboBoxWaveletPaketBasis] -- add your combo box handling code here..
         parameters->setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBase, comboBoxWaveletPaketBasis->getSelectedId());
         //[/UserComboBoxCode_comboBoxWaveletPaketBasis]
-    } else if (comboBoxThatHasChanged == comboBoxSignalgenerator) {
+    } else if (comboBoxThatHasChanged == comboBoxSignalGenerator) {
         //[UserComboBoxCode_comboBoxSignalgenerator] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Generator, comboBoxSignalgenerator->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Generator, comboBoxSignalGenerator->getSelectedId());
         //[/UserComboBoxCode_comboBoxSignalgenerator]
-    } else if (comboBoxThatHasChanged == comboBoxSignalquelle) {
-        //[UserComboBoxCode_comboBoxSignalquelle] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Routing, comboBoxSignalquelle->getSelectedId());
-        //[/UserComboBoxCode_comboBoxSignalquelle]
+    } else if (comboBoxThatHasChanged == comboBoxRouting) {
+        //[UserComboBoxCode_comboBoxRouting] -- add your combo box handling code here..
+        float selectedOption = static_cast<float>(comboBoxRouting->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Routing, selectedOption);
+        routingChanged(selectedOption);
+        //[/UserComboBoxCode_comboBoxRouting]
     } else if (comboBoxThatHasChanged == comboBoxLogF) {
         //[UserComboBoxCode_comboBoxLogF] -- add your combo box handling code here..
         parameters->setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, comboBoxLogF->getSelectedId());
@@ -432,9 +433,9 @@ void SpecletAnalyzerComponent::sliderValueChanged(juce::Slider *sliderThatWasMov
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == sliderGeneratorFrequenz) {
+    if (sliderThatWasMoved == sliderSignalGeneratorFrequency) {
         //[UserSliderCode_sliderGeneratorFrequenz] -- add your slider handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, sliderGeneratorFrequenz->getValue());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, sliderSignalGeneratorFrequency->getValue());
         //[/UserSliderCode_sliderGeneratorFrequenz]
     }
 
@@ -533,14 +534,14 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
 
     using SignalGeneratorValue = std::underlying_type<SignalGeneratorParameters::Waveform>::type;
     for (auto entry : SignalGeneratorParameters::typeNames) {
-        comboBoxSignalgenerator->addItem(std::string(entry.second), static_cast<SignalGeneratorValue>(entry.first));
+        comboBoxSignalGenerator->addItem(std::string(entry.second), static_cast<SignalGeneratorValue>(entry.first));
     }
 
-    comboBoxSignalquelle->addItem("Mid", SpecletParameters::ROUTING_MID);
-    comboBoxSignalquelle->addItem("Side", SpecletParameters::ROUTING_SIDE);
-    comboBoxSignalquelle->addItem("Left", SpecletParameters::ROUTING_L);
-    comboBoxSignalquelle->addItem("Right", SpecletParameters::ROUTING_R);
-    comboBoxSignalquelle->addItem("Oscillator", SpecletParameters::ROUTING_GENERATOR);
+    comboBoxRouting->addItem("Mid", SpecletParameters::ROUTING_MID);
+    comboBoxRouting->addItem("Side", SpecletParameters::ROUTING_SIDE);
+    comboBoxRouting->addItem("Left", SpecletParameters::ROUTING_L);
+    comboBoxRouting->addItem("Right", SpecletParameters::ROUTING_R);
+    comboBoxRouting->addItem("Oscillator", SpecletParameters::ROUTING_GENERATOR);
 
     using AxisValue = std::underlying_type<SpecletDrawerParameters::Axis>::type;
     for (auto entry : SpecletDrawerParameters::axisNames) {
@@ -558,16 +559,16 @@ void SpecletAnalyzerComponent::valueTreePropertyChanged(juce::ValueTree &treeWho
     const juce::ScopedLock myScopedLock(criticalSection);
 
     updateComboBox(SpecletParameters::PARAMETER_COLORMODE, comboBoxColorMode, treeWhosePropertyHasChanged);
-    updateComboBox(SpecletParameters::PARAMETER_GENERATOR, comboBoxSignalgenerator, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_GENERATOR, comboBoxSignalGenerator, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_LOGFREQUENCY, comboBoxLogF, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_LOGMAGNITUDE, comboBoxLogA, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_RESOLUTION, comboBoxResolution, treeWhosePropertyHasChanged);
-    updateComboBox(SpecletParameters::PARAMETER_ROUTING, comboBoxSignalquelle, treeWhosePropertyHasChanged);
+    updateComboBox(SpecletParameters::PARAMETER_ROUTING, comboBoxRouting, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_TRANSFORMATION, comboBoxTransformation, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_WAVELET, comboBoxWavelet, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_WAVELETPACKETBASE, comboBoxWaveletPaketBasis, treeWhosePropertyHasChanged);
     updateComboBox(SpecletParameters::PARAMETER_WINDOWING, comboBoxWindowing, treeWhosePropertyHasChanged);
-    updateSlider(SpecletParameters::PARAMETER_GENERATORFREQUENCY, sliderGeneratorFrequenz, treeWhosePropertyHasChanged);
+    updateSlider(SpecletParameters::PARAMETER_GENERATORFREQUENCY, sliderSignalGeneratorFrequency, treeWhosePropertyHasChanged);
 }
 
 //This method updates a combobox-index within an parameter-change-event
@@ -587,6 +588,9 @@ void SpecletAnalyzerComponent::updateComboBox(
 
     if (parameterName == SpecletParameters::PARAMETER_TRANSFORMATION) {
         transformationChanged(static_cast<float>(changedParameterValue));
+    }
+    if (parameterName == SpecletParameters::PARAMETER_ROUTING) {
+        routingChanged(static_cast<float>(changedParameterValue));
     }
 }
 
@@ -613,12 +617,12 @@ void SpecletAnalyzerComponent::transformationChanged(auto selectedOption) {
         labelResolution->setEnabled(false);
         comboBoxWindowing->setEnabled(false);
         labelWindowing->setEnabled(false);
-        comboBoxSignalgenerator->setEnabled(false);
-        labelSignalgenerator->setEnabled(false);
-        comboBoxSignalquelle->setEnabled(false);
-        labelSignalquelle->setEnabled(false);
-        labelGeneratorfrequenz->setEnabled(false);
-        sliderGeneratorFrequenz->setEnabled(false);
+        comboBoxSignalGenerator->setEnabled(false);
+        labelSignalGenerator->setEnabled(false);
+        comboBoxRouting->setEnabled(false);
+        labelRouting->setEnabled(false);
+        labelSignalGeneratorFrequency->setEnabled(false);
+        sliderSignalGeneratorFrequency->setEnabled(false);
         labelLogF->setEnabled(false);
         labelLogA->setEnabled(false);
         comboBoxLogF->setEnabled(false);
@@ -631,18 +635,16 @@ void SpecletAnalyzerComponent::transformationChanged(auto selectedOption) {
         labelResolution->setEnabled(true);
         comboBoxWindowing->setEnabled(true);
         labelWindowing->setEnabled(true);
-        comboBoxSignalgenerator->setEnabled(true);
-        labelSignalgenerator->setEnabled(true);
-        comboBoxSignalquelle->setEnabled(true);
-        labelSignalquelle->setEnabled(true);
-        labelGeneratorfrequenz->setEnabled(true);
-        sliderGeneratorFrequenz->setEnabled(true);
+        comboBoxRouting->setEnabled(true);
+        labelRouting->setEnabled(true);
         labelLogF->setEnabled(true);
         labelLogA->setEnabled(true);
         comboBoxLogF->setEnabled(true);
         comboBoxLogA->setEnabled(true);
         labelColorMode->setEnabled(true);
         comboBoxColorMode->setEnabled(true);
+
+        routingChanged(comboBoxRouting->getSelectedId());
     }
 
     if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_FOURIER_TRANSFORM)) {
@@ -675,6 +677,22 @@ void SpecletAnalyzerComponent::transformationChanged(auto selectedOption) {
         labelWavelet->setEnabled(false);
         comboBoxWaveletPaketBasis->setEnabled(false);
         labelWaveletPaketBasis->setEnabled(false);
+    }
+}
+
+void SpecletAnalyzerComponent::routingChanged(auto selectedOption) {
+    if (selectedOption == enumOptionToFloat(SpecletParameters::OptionsRouting::ROUTING_GENERATOR)) {
+        //Audio source is set to generator. Enable all related controls.
+        comboBoxSignalGenerator->setEnabled(true);
+        labelSignalGenerator->setEnabled(true);
+        labelSignalGeneratorFrequency->setEnabled(true);
+        sliderSignalGeneratorFrequency->setEnabled(true);
+    } else {
+        //Audio source is set to input signal. Disable all related controls.
+        comboBoxSignalGenerator->setEnabled(false);
+        labelSignalGenerator->setEnabled(false);
+        labelSignalGeneratorFrequency->setEnabled(false);
+        sliderSignalGeneratorFrequency->setEnabled(false);
     }
 }
 
@@ -783,16 +801,16 @@ BEGIN_JUCER_METADATA
          outlineCol="ff0082f7" edTextCol="ff000000" edBkgCol="0" labelText="Signalgenerator"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
-  <COMBOBOX name="comboBoxSignalquelle" id="bac855bba2b60061" memberName="comboBoxSignalquelle"
+  <COMBOBOX name="comboBoxRouting" id="bac855bba2b60061" memberName="comboBoxRouting"
             virtualName="" explicitFocusOrder="0" pos="0 160 100% 100%" posRelativeX="9966dea6e9dc5423"
             posRelativeY="9966dea6e9dc5423" posRelativeW="9966dea6e9dc5423"
-            posRelativeH="9966dea6e9dc5423" tooltip="Signalquelle" editable="0"
+            posRelativeH="9966dea6e9dc5423" tooltip="Routing" editable="0"
             layout="33" items="" textWhenNonSelected="" textWhenNoItems=""/>
-  <LABEL name="labelSignalquelle" id="a1fd5c3b9d2287a4" memberName="labelSignalquelle"
+  <LABEL name="labelRouting" id="a1fd5c3b9d2287a4" memberName="labelRouting"
          virtualName="" explicitFocusOrder="0" pos="0 160 100% 100%" posRelativeX="6c1a8307cfceedac"
          posRelativeY="6c1a8307cfceedac" posRelativeW="6c1a8307cfceedac"
          posRelativeH="6c1a8307cfceedac" bkgCol="30007bfc" textCol="ffffffff"
-         outlineCol="ff0082f7" edTextCol="ff000000" edBkgCol="0" labelText="Signalquelle"
+         outlineCol="ff0082f7" edTextCol="ff000000" edBkgCol="0" labelText="Routing"
          editableSingleClick="0" editableDoubleClick="0" focusDiscardsChanges="0"
          fontname="Default font" fontsize="15" bold="0" italic="0" justification="33"/>
   <LABEL name="labelGeneratorfrequenz" id="1c0a811f824ca806" memberName="labelGeneratorfrequenz"

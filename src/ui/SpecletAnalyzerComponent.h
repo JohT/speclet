@@ -83,6 +83,7 @@ private :
     void updateComboBox(const juce::String &parameterName, juce::ComboBox *comboBox, const juce::ValueTree &treeWhosePropertyHasChanged);
     static void updateSlider(const juce::String &parameterName, juce::Slider *slider, const juce::ValueTree &treeWhosePropertyHasChanged);
     void transformationChanged(auto selectedOption);
+    void routingChanged(auto selectedOption);
     
     template<class _Tp>
     auto enumOptionToFloat(const _Tp& enumType) const -> float;
@@ -101,12 +102,12 @@ private :
     juce::Label *labelWavelet;
     juce::ComboBox *comboBoxWaveletPaketBasis;
     juce::Label *labelWaveletPaketBasis;
-    juce::ComboBox *comboBoxSignalgenerator;
-    juce::Label *labelSignalgenerator;
-    juce::ComboBox *comboBoxSignalquelle;
-    juce::Label *labelSignalquelle;
-    juce::Label *labelGeneratorfrequenz;
-    juce::Slider *sliderGeneratorFrequenz;
+    juce::ComboBox *comboBoxSignalGenerator;
+    juce::Label *labelSignalGenerator;
+    juce::ComboBox *comboBoxRouting;
+    juce::Label *labelRouting;
+    juce::Label *labelSignalGeneratorFrequency;
+    juce::Slider *sliderSignalGeneratorFrequency;
     juce::Label *labelLogF;
     juce::Label *labelLogA;
     juce::ComboBox *comboBoxLogF;
