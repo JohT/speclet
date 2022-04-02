@@ -386,7 +386,9 @@ void SpecletAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasCh
         //[/UserComboBoxCode_comboBoxResolution]
     } else if (comboBoxThatHasChanged == comboBoxTransformation) {
         //[UserComboBoxCode_comboBoxTransformation] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, comboBoxTransformation->getSelectedId());
+        float selectedOption = static_cast<float>(comboBoxTransformation->getSelectedId());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, selectedOption);
+        transformationChanged(selectedOption);
         //[/UserComboBoxCode_comboBoxTransformation]
     } else if (comboBoxThatHasChanged == comboBoxWindowing) {
         //[UserComboBoxCode_comboBoxWindowing] -- add your combo box handling code here..
@@ -581,7 +583,11 @@ void SpecletAnalyzerComponent::updateComboBox(
     }
 
     jassert(comboBox);
-    comboBox->setSelectedId((int) changedParameterValue, true);
+    comboBox->setSelectedId(static_cast<int>(changedParameterValue));
+
+    if (parameterName == SpecletParameters::PARAMETER_TRANSFORMATION) {
+        transformationChanged(static_cast<float>(changedParameterValue));
+    }
 }
 
 //This method updates a slider-value within an parameter-change-event
@@ -600,6 +606,83 @@ void SpecletAnalyzerComponent::updateSlider(
     slider->setValue(changedParameterValue, juce::dontSendNotification);
 }
 
+void SpecletAnalyzerComponent::transformationChanged(auto selectedOption) {
+    if (selectedOption == enumOptionToFloat(TransformationParameters::Type::BYPASS)) {
+        //Analyzer is turned off (bypass). Disable all related controls.
+        comboBoxResolution->setEnabled(false);
+        labelResolution->setEnabled(false);
+        comboBoxWindowing->setEnabled(false);
+        labelWindowing->setEnabled(false);
+        comboBoxSignalgenerator->setEnabled(false);
+        labelSignalgenerator->setEnabled(false);
+        comboBoxSignalquelle->setEnabled(false);
+        labelSignalquelle->setEnabled(false);
+        labelGeneratorfrequenz->setEnabled(false);
+        sliderGeneratorFrequenz->setEnabled(false);
+        labelLogF->setEnabled(false);
+        labelLogA->setEnabled(false);
+        comboBoxLogF->setEnabled(false);
+        comboBoxLogA->setEnabled(false);
+        labelColorMode->setEnabled(false);
+        comboBoxColorMode->setEnabled(false);
+    } else {
+        //Analyzer is turned on. Enable all related controls.
+        comboBoxResolution->setEnabled(true);
+        labelResolution->setEnabled(true);
+        comboBoxWindowing->setEnabled(true);
+        labelWindowing->setEnabled(true);
+        comboBoxSignalgenerator->setEnabled(true);
+        labelSignalgenerator->setEnabled(true);
+        comboBoxSignalquelle->setEnabled(true);
+        labelSignalquelle->setEnabled(true);
+        labelGeneratorfrequenz->setEnabled(true);
+        sliderGeneratorFrequenz->setEnabled(true);
+        labelLogF->setEnabled(true);
+        labelLogA->setEnabled(true);
+        comboBoxLogF->setEnabled(true);
+        comboBoxLogA->setEnabled(true);
+        labelColorMode->setEnabled(true);
+        comboBoxColorMode->setEnabled(true);
+    }
+
+    if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_FOURIER_TRANSFORM)) {
+        //Disable all wavelet related controls for the Fast Fourier Transform (FFT).
+        comboBoxWavelet->setEnabled(false);
+        labelWavelet->setEnabled(false);
+        comboBoxWaveletPaketBasis->setEnabled(false);
+        labelWaveletPaketBasis->setEnabled(false);
+    } else if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_TRANSFORM)) {
+        //Disable Wavelet Tree/Packet related control for the dyadic Fast Wavelet Transform.
+        comboBoxWavelet->setEnabled(true);
+        labelWavelet->setEnabled(true);
+        comboBoxWaveletPaketBasis->setEnabled(false);
+        labelWaveletPaketBasis->setEnabled(false);
+    } else if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM)) {
+        //Enable all controls for the Fast Wavelet Packet Transform.
+        comboBoxWavelet->setEnabled(true);
+        labelWavelet->setEnabled(true);
+        comboBoxWaveletPaketBasis->setEnabled(true);
+        labelWaveletPaketBasis->setEnabled(true);
+    } else if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM)) {
+        //Disable Wavelet Packet Basis controls when the best basis (based on a cost function) is chosen dynamically for the Fast Wavelet Packet Best Basis Transform
+        comboBoxWavelet->setEnabled(true);
+        labelWavelet->setEnabled(true);
+        comboBoxWaveletPaketBasis->setEnabled(false);
+        labelWaveletPaketBasis->setEnabled(false);
+    } else {
+        //Disable all wavelet related controls otherwise (e.g. when analyzer is bypassed)
+        comboBoxWavelet->setEnabled(false);
+        labelWavelet->setEnabled(false);
+        comboBoxWaveletPaketBasis->setEnabled(false);
+        labelWaveletPaketBasis->setEnabled(false);
+    }
+}
+
+template<class _Tp>
+auto SpecletAnalyzerComponent::enumOptionToFloat(const _Tp &enumType) const -> float {
+    auto enumValue = static_cast<typename std::underlying_type<_Tp>::type>(enumType);
+    return static_cast<float>(enumValue);
+}
 //[/MiscUserCode]
 
 
