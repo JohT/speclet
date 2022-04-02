@@ -277,7 +277,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxColorMode->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxColorMode->addListener(this);
 
-
+    
     //[UserPreSize]
     fillComboBoxes();
     //[/UserPreSize]
@@ -475,19 +475,29 @@ void SpecletAnalyzerComponent::mouseMove(const juce::MouseEvent &e) {
 
 void SpecletAnalyzerComponent::mouseDown(const juce::MouseEvent &e) {
     //[UserCode_mouseDown] -- Add your code here...
-    if ((e.mouseWasClicked()) && (e.mods.isRightButtonDown())) {
-        popupMenu.showMenuAsync(juce::PopupMenu::Options().withTargetComponent(this), [this](int index) {
+    if (e.mods.isRightButtonDown()) {
+        auto options = juce::PopupMenu::Options().withTargetComponent(this).withMousePosition();
+        popupMenu.showMenuAsync(options, [](auto index) {
             if (index == POPUPMENU_INDEX_1_ABOUT) {
                 juce::AlertWindow::AlertIconType icon = juce::AlertWindow::InfoIcon;
-                juce::String message;
-                message += ("Written by Johannes Troppacher (c)2011\n");
-                message += ("\n");
-                message += ("Framework 'JUCE' by Raw Material Software\n");
-                message += ("VST-Interface 'VST SDK 2.4 rev2' by Steinberg\n");
-                message += ("FFT-Library 'FFTW' by MIT (Matteo Frigo and Steven G. Johnson)\n");
-                message += ("Wavelet-Library 'wave++' by Ryerson Computrational Signal Analysis Group");
-                message += (" (S. E. Ferrando, L. A. Kolasa and N. Kovacevic)");
-                juce::AlertWindow::showOkCancelBox(icon, "About Speclet", message, "OK", "", this, nullptr);
+
+                juce::StringRef message =
+                        "Written by Johannes Troppacher (c)2011\n"
+                        "Modernized 2022\n"
+                        "\n"
+                        "Audio Spectrum Analyzer Plugin using\n"
+                        "Fourier- and Wavelet-Transformation\n"
+                        "\n"
+                        "Made with:\n"
+                        "- Framework 'JUCE' originally (2011) by Raw Material Software\n"
+                        "- VST-Interface 'VST SDK 2.4 rev2' by Steinberg(2011)\n"
+                        "- VST 3 Audio Plug-Ins SDK by Steinberg (2022)\n"
+                        "- FFT-Library 'FFTW' by MIT (Matteo Frigo and Steven G. Johnson)\n"
+                        "- Wavelet-Library 'wave++'\n"
+                        "   by Ryerson Computrational Signal Analysis Group\n"
+                        "   (S. E. Ferrando, L. A. Kolasa and N. Kovacevic)";
+
+                juce::AlertWindow::showMessageBoxAsync(icon, "About Speclet", message, "OK");
             }
         });
     }
