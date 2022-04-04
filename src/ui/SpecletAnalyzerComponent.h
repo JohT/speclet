@@ -45,7 +45,8 @@ public:
 class SpecletAnalyzerComponent : public juce::Component,
                                  public juce::ValueTree::Listener,
                                  public juce::ComboBox::Listener,
-                                 public juce::Slider::Listener {
+                                 public juce::Slider::Listener,
+                                 public juce::SettableTooltipClient {
 public:
     //==============================================================================
     SpecletAnalyzerComponent();

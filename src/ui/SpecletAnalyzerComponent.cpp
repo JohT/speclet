@@ -79,18 +79,16 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxResolution->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxResolution->addListener(this);
     comboBoxResolution->setTooltip(
-        "Sets the buffer size for the analysis.\n"
-        "Higher values lead to better frequency resolution"
-        "but also higher cpu consumption. "
-        "For fast calculation, all values are a power of 2."
+        "Sets the block size for the analysis.\n"
+        "Higher values lead to better frequency resolution, lower time resolution and more cpu consumption. "
+        "For efficient calculation, all values are a power of 2."
     );
 
     addAndMakeVisible(spectralviewport = new juce::Viewport("spectralviewport"));
     spectralviewport->setScrollBarsShown(false, true);
     spectralviewport->setScrollBarThickness(10);
 
-    addAndMakeVisible(labelResolution = new juce::Label("labelResolution",
-                                                        "Resolution"));
+    addAndMakeVisible(labelResolution = new juce::Label("labelResolution", "Resolution"));
     labelResolution->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelResolution->setJustificationType(juce::Justification::centredLeft);
     labelResolution->setEditable(false, false, false);
@@ -113,8 +111,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
             " - WPT: Wavelet Packet Transform\n"
             " - WPT BestBasis: WPT with best basis\n");
 
-    addAndMakeVisible(labelTransformation = new juce::Label("labelTransformation",
-                                                            "Transformation"));
+    addAndMakeVisible(labelTransformation = new juce::Label("labelTransformation", "Transformation"));
     labelTransformation->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelTransformation->setJustificationType(juce::Justification::centredLeft);
     labelTransformation->setEditable(false, false, false);
@@ -131,12 +128,13 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWindowing->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWindowing->addListener(this);
     comboBoxWindowing->setTooltip(
-        "Window functions are like a fades at the beginning and end of the sample buffer.\n"
-        "The rectangular window shows how the spectrum is affected when there is no smoothing."
+        "Window functions are like fades at the beginning and end of the block of input samples.\n"
+        "They reduce 'leakage' in the frequency spectrum. "
+        "Choose a sine input and use different windows to see the impact. "
+        "The rectangular window shows how the spectrum is affected when there is no smoothing.\n"
     );
 
-    addAndMakeVisible(labelWindowing = new juce::Label("labelWindowing",
-                                                       "Window Function"));
+    addAndMakeVisible(labelWindowing = new juce::Label("labelWindowing", "Window Function"));
     labelWindowing->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelWindowing->setJustificationType(juce::Justification::centredLeft);
     labelWindowing->setEditable(false, false, false);
@@ -147,15 +145,18 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelWindowing->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxWavelet = new juce::ComboBox("comboBoxWavelet"));
-    comboBoxWavelet->setTooltip("Wavelet");
     comboBoxWavelet->setEditableText(false);
     comboBoxWavelet->setJustificationType(juce::Justification::centredLeft);
     comboBoxWavelet->setTextWhenNothingSelected(juce::String());
     comboBoxWavelet->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWavelet->addListener(this);
+    comboBoxWavelet->setTooltip(
+        "Wavelets are represented by their high- and low-pass filter coefficients.\n"
+        "The number in the parentheses is the number of coefficients.\n"
+        "More coefficients lead to more precise results, less aliasing and higher cpu consuption.\n"
+    );
 
-    addAndMakeVisible(labelWavelet = new juce::Label("labelWavelet",
-                                                     "Wavelet"));
+    addAndMakeVisible(labelWavelet = new juce::Label("labelWavelet", "Wavelet"));
     labelWavelet->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelWavelet->setJustificationType(juce::Justification::centredLeft);
     labelWavelet->setEditable(false, false, false);
@@ -166,15 +167,18 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelWavelet->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxWaveletPacketBasis = new juce::ComboBox("comboBoxWaveletPacketBasis"));
-    comboBoxWaveletPacketBasis->setTooltip("Wavelet Packet Basis");
     comboBoxWaveletPacketBasis->setEditableText(false);
     comboBoxWaveletPacketBasis->setJustificationType(juce::Justification::centredLeft);
     comboBoxWaveletPacketBasis->setTextWhenNothingSelected(juce::String());
     comboBoxWaveletPacketBasis->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWaveletPacketBasis->addListener(this);
+    comboBoxWaveletPacketBasis->setTooltip(
+        "The wavelet packet transform (WPT) also uses the output of the high pass filter (details) and splits it up further.\n"
+        "This results in evenly/linear spaced frequency bands in contrast to the ""dyadic"" wavelet transform.\n"
+        "More levels lead to finer frequency resolution and less time resolution."
+    );
 
-    addAndMakeVisible(labelWaveletPacketBasis = new juce::Label("labelWaveletPacketBasis",
-                                                                "Wavelet Packet Basis"));
+    addAndMakeVisible(labelWaveletPacketBasis = new juce::Label("labelWaveletPacketBasis", "Wavelet Packet Basis"));
     labelWaveletPacketBasis->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelWaveletPacketBasis->setJustificationType(juce::Justification::centredLeft);
     labelWaveletPacketBasis->setEditable(false, false, false);
@@ -185,15 +189,14 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelWaveletPacketBasis->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxSignalGenerator = new juce::ComboBox("comboBoxSignalgenerator"));
-    comboBoxSignalGenerator->setTooltip("Oscillator");
     comboBoxSignalGenerator->setEditableText(false);
     comboBoxSignalGenerator->setJustificationType(juce::Justification::centredLeft);
     comboBoxSignalGenerator->setTextWhenNothingSelected(juce::String());
     comboBoxSignalGenerator->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxSignalGenerator->addListener(this);
+    comboBoxSignalGenerator->setTooltip("Sets the waveform of the build-in test signal generator/oscillator.");
 
-    addAndMakeVisible(labelSignalGenerator = new juce::Label("labelSignalgenerator",
-                                                             "Oscillator"));
+    addAndMakeVisible(labelSignalGenerator = new juce::Label("labelSignalGenerator", "Oscillator"));
     labelSignalGenerator->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelSignalGenerator->setJustificationType(juce::Justification::centredLeft);
     labelSignalGenerator->setEditable(false, false, false);
@@ -204,12 +207,15 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelSignalGenerator->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxRouting = new juce::ComboBox("comboBoxRouting"));
-    comboBoxRouting->setTooltip("Audio Source");
     comboBoxRouting->setEditableText(false);
     comboBoxRouting->setJustificationType(juce::Justification::centredLeft);
     comboBoxRouting->setTextWhenNothingSelected(juce::String());
     comboBoxRouting->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxRouting->addListener(this);
+    comboBoxRouting->setTooltip(
+        "Sets the input audio source to\n"
+        "either one of the input channels\n"
+        "or the build-in signal generator/oscillator.");
 
     addAndMakeVisible(labelRouting = new juce::Label("labelRouting", "Audio Source"));
     labelRouting->setFont(juce::Font(15.0000f, juce::Font::plain));
@@ -221,8 +227,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelRouting->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelRouting->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(labelSignalGeneratorFrequency = new juce::Label("labelGeneratorFrequency",
-                                                                      "Oscillator Frequency"));
+    addAndMakeVisible(labelSignalGeneratorFrequency = new juce::Label("labelGeneratorFrequency", "Oscillator Frequency"));
     labelSignalGeneratorFrequency->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelSignalGeneratorFrequency->setJustificationType(juce::Justification::centredLeft);
     labelSignalGeneratorFrequency->setEditable(false, false, false);
@@ -233,15 +238,16 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelSignalGeneratorFrequency->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(sliderSignalGeneratorFrequency = new juce::Slider("sliderGeneratorFrequency"));
-    sliderSignalGeneratorFrequency->setTooltip("Oscillator Frequency");
     sliderSignalGeneratorFrequency->setExplicitFocusOrder(7);
     sliderSignalGeneratorFrequency->setRange(10, 22000, 1);
     sliderSignalGeneratorFrequency->setSliderStyle(juce::Slider::LinearHorizontal);
     sliderSignalGeneratorFrequency->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 50, 25);
     sliderSignalGeneratorFrequency->addListener(this);
+    sliderSignalGeneratorFrequency->setTooltip(
+        "Sets the frequency of the\n"
+        "build-in signal generator/oscillator.");
 
-    addAndMakeVisible(labelLogF = new juce::Label("labelLogF",
-                                                  "Frequency Scale"));
+    addAndMakeVisible(labelLogF = new juce::Label("labelLogF", "Frequency Scale"));
     labelLogF->setFont(juce::Font(15.0000f, juce::Font::plain));
     labelLogF->setJustificationType(juce::Justification::centredLeft);
     labelLogF->setEditable(false, false, false);
@@ -263,7 +269,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelLogA->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxLogF = new juce::ComboBox("comboBoxLogF"));
-    comboBoxLogF->setTooltip("Frequency Scale");
+    comboBoxLogF->setTooltip("Set the frequency scale to linear or logarithmic.");
     comboBoxLogF->setEditableText(false);
     comboBoxLogF->setJustificationType(juce::Justification::centredLeft);
     comboBoxLogF->setTextWhenNothingSelected(juce::String());
@@ -271,7 +277,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxLogF->addListener(this);
 
     addAndMakeVisible(comboBoxLogA = new juce::ComboBox("comboBoxLogA"));
-    comboBoxLogA->setTooltip("Magnitude Scale");
+    comboBoxLogA->setTooltip("Set the magnitude scale to linear or logarithmic.");
     comboBoxLogA->setEditableText(false);
     comboBoxLogA->setJustificationType(juce::Justification::centredLeft);
     comboBoxLogA->setTextWhenNothingSelected(juce::String());
@@ -290,16 +296,16 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelColorMode->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxColorMode = new juce::ComboBox("comboBoxColorMode"));
-    comboBoxColorMode->setTooltip("Color Mode");
     comboBoxColorMode->setEditableText(false);
     comboBoxColorMode->setJustificationType(juce::Justification::centredLeft);
     comboBoxColorMode->setTextWhenNothingSelected(juce::String());
     comboBoxColorMode->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxColorMode->addListener(this);
+    comboBoxColorMode->setTooltip("Sets the colors that reflect the magnitude of the signal.");
 
     addAndMakeVisible(tooltipWindow = new juce::TooltipWindow(this));
     tooltipWindow->setLookAndFeel(&tooltipWindowLookAndFeel);
-
+    setTooltip("Right click to get more information about this plugin.");
     //[UserPreSize]
     fillComboBoxes();
     //[/UserPreSize]
