@@ -62,21 +62,22 @@ allowed by permission of the copyright holders.
 https://github.com/dmoulding/vld   
 GNU Lesser General Public License v2.1
 
-### References for modernization
+## References
+
+### Digital Signal Processing
+
+- [&#11088; Window Functions and Their Applications in Signal Processing (PDF)](https://library.oapen.org/handle/20.500.12657/41686)
+- [Understanding FFT Windows (PDF, 2013)](https://www.egr.msu.edu/classes/me451/me451_labs/Fall_2013/Understanding_FFT_Windows.pdf)
+### Templates and Examples
 
 - [&#11088; Pamplejuce](https://github.com/sudara/pamplejuce)
-- [Example using CPM package manager with JUCE](https://github.com/robbert-vdh/diopser/blob/master/CMakeLists.txt)
-- [C++ Singleton](https://stackoverflow.com/questions/1008019/c-singleton-design-pattern)
-- [10 Cmake Tips & Tricks](https://medium.com/codex/10-cmake-tips-tricks-7f00d407923d)
-- [JUCE CMake Repo Prototype](https://github.com/eyalamirmusic/JUCECmakeRepoPrototype/blob/master/CMakeLists.txt)
 - [Cross-platform CI for JUCE audio plugins with Github Actions](https://github.com/maxwellpollack/juce-plugin-ci)
-- [Reference to non-static member function must be called](https://stackoverflow.com/questions/26331628/reference-to-non-static-member-function-must-be-called)
-- [Pointer-to-Member Function](http://www.codeguru.com/cpp/cpp/article.php/c17401/C-Tutorial-PointertoMember-Function.htm)
+- [JUCE CMake Repo Prototype](https://github.com/eyalamirmusic/JUCECmakeRepoPrototype/blob/master/CMakeLists.txt)
+- [Example using CPM package manager with JUCE](https://github.com/robbert-vdh/diopser/blob/master/CMakeLists.txt)
 - [CLAP CLever Audio Plugin](https://github.com/free-audio/clap)
-- [Commit Message Guidelines](https://gist.github.com/robertpainsi/b632364184e70900af4ab688decf6f53)
-- [Undefined symbol _kIOMainPortDefault](https://forum.juce.com/t/juce-6-1-3-undefined-symbol-kiomainportdefault/49335/9)
+- [Integration of Catch, CMake and CMake CodeCoverage](https://github.com/fkromer/catch_cmake_coverage)
 
-### References regarding Performance Tracing/Logging (Profiling, Instrumentation)
+### Performance Tracing/Logging (Profiling, Instrumentation)
 
 - [Google Chrome Browser Trace Log Viewer](chrome://tracing/)
 - [The Cherno - VISUAL BENCHMARKING in C++ (YouTube)](https://www.youtube.com/watch?v=xlAH4dbMVnU&t=197s)
@@ -84,10 +85,20 @@ GNU Lesser General Public License v2.1
 - [Instrumentor.h David Churchill Mod (Code Snippet)](https://pastebin.com/qw5Neq4U)
 - [Instrumentor.h Mattias Aronsson Mod](https://gist.github.com/maronsson/073840bf94e4d6df94c5f294a6e96e03)
 
-### References regarding unit testing
-- [CMake's CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html)
+### Testing
+- [&#11088; CMake's CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html)
 - [&#11088; Catch2 CMake Integration](https://github.com/catchorg/Catch2/blob/devel/docs/cmake-integration.md)
+- [&#11088; Plugin Validator](https://github.com/Tracktion/pluginval)
 - [Catch2 Data Generators](https://github.com/catchorg/Catch2/blob/devel/docs/generators.md)
-- [Integration of Catch, CMake and CMake CodeCoverage](https://github.com/fkromer/catch_cmake_coverage)
 - [Coverage for tests with cmake and catch2](https://stackoverflow.com/questions/65603144/how-to-get-coverage-for-tests-with-cmake-and-catch2)
 - [Findcodecov.cmake](https://github.com/catchorg/Catch2/blob/devel/CMake/Findcodecov.cmake)
+
+### Other
+
+- [C++ Singleton](https://stackoverflow.com/questions/1008019/c-singleton-design-pattern)
+- [10 Cmake Tips & Tricks](https://medium.com/codex/10-cmake-tips-tricks-7f00d407923d)
+- [Reference to non-static member function must be called](https://stackoverflow.com/questions/26331628/reference-to-non-static-member-function-must-be-called)
+- [Pointer-to-Member Function](http://www.codeguru.com/cpp/cpp/article.php/c17401/C-Tutorial-PointertoMember-Function.htm)
+- [Commit Message Guidelines](https://gist.github.com/robertpainsi/b632364184e70900af4ab688decf6f53)
+- [Undefined symbol _kIOMainPortDefault](https://forum.juce.com/t/juce-6-1-3-undefined-symbol-kiomainportdefault/49335/9)
+- [CheckTypeSize (FFTW failed for multiple architectures)](https://cmake.org/cmake/help/latest/module/CheckTypeSize.html)
