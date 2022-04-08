@@ -1,14 +1,9 @@
 #include "SpecletPluginProcessor.h"
 #include "dsp/SignalGenerator.h"
-#include "dsp/SignalGeneratorParameters.h"
 #include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
-#include "dsp/transformations/TransformationParameters.h"
-#include "dsp/transformations/WaveletParameters.h"
-#include "dsp/windowing/WindowParameters.h"
-#include "ui/ColorGradientsParameters.h"
+#include "juce_core/system/juce_PlatformDefs.h"
 #include "ui/ColourGradients.h"
-#include "ui/SpecletDrawerParameters.h"
 #include "ui/SpecletMainUI.h"
 #include "utilities/PerformanceLogger.h"
 #include <memory>
@@ -37,19 +32,6 @@ SpecletAudioProcessor::SpecletAudioProcessor()
 #if _LOGTOFILE
     juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
 #endif
-
-    //Initialize with default settings
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, enumOptionToFloat(ColorGradientsParameters::ColorMode::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, enumOptionToFloat(SignalGeneratorParameters::Waveform::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, 1000.0);
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, SpecletParameters::RESOLUTION_DEFAULT);
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Routing, SpecletParameters::ROUTING_MID);
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, enumOptionToFloat(TransformationParameters::Type::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, enumOptionToFloat(WaveletParameters::WaveletBase::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBasis, enumOptionToFloat(WaveletParameters::ResolutionRatioOption::DEFAULT));
-    parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, enumOptionToFloat(WindowParameters::WindowFunction::DEFAULT));
 
     //registers itself as listener for parameter-changes
     parameters.addListener(this, true);
@@ -337,12 +319,6 @@ auto SpecletAudioProcessor::getSampleFromRouting(const float *inL, const float *
         default:
             return static_cast<float>((*inL + *inR) / 2.0);
     }
-}
-
-template<class _Tp>
-auto SpecletAudioProcessor::enumOptionToFloat(const _Tp& enumType) const -> float{
-   auto enumValue = static_cast<typename std::underlying_type<_Tp>::type>(enumType);
-   return static_cast<float>(enumValue);
 }
 
 //==============================================================================

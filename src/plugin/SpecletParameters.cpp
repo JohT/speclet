@@ -1,5 +1,11 @@
 #include "SpecletParameters.h"
 #include "../utilities/PerformanceLogger.h"
+#include "../dsp/transformations/TransformationParameters.h"
+#include "../dsp/transformations/WaveletParameters.h"
+#include "../dsp/windowing/WindowParameters.h"
+#include "../ui/ColorGradientsParameters.h"
+#include "../ui/SpecletDrawerParameters.h"
+#include "../dsp/SignalGeneratorParameters.h"
 
 SpecletParameters::SpecletParameters() {
     //create ValueTree object, which stores all parameters as childs in a tree structure
@@ -17,14 +23,30 @@ SpecletParameters::SpecletParameters() {
     properties.addChild(juce::ValueTree(PARAMETER_LOGMAGNITUDE), PARAMETER_INDEX_LogMagnitude, nullptr);
     properties.addChild(juce::ValueTree(PARAMETER_COLORMODE), PARAMETER_INDEX_ColorMode, nullptr);
 
-    //add value zero to every tree child's value property
-    for (int i = 0; i < properties.getNumChildren(); i++) {
-        properties.getChild(i).setProperty(PROPERTY_VALUE, static_cast<float>(0), nullptr);
-    }
+    //Initialize with default settings
+    setParameterInternally(PARAMETER_INDEX_ColorMode, enumOptionToFloat(ColorGradientsParameters::ColorMode::DEFAULT));
+    setParameterInternally(PARAMETER_INDEX_Generator, enumOptionToFloat(SignalGeneratorParameters::Waveform::DEFAULT));
+    setParameterInternally(PARAMETER_INDEX_GeneratorFrequency, 1000.0);
+    setParameterInternally(PARAMETER_INDEX_LogFrequency, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
+    setParameterInternally(PARAMETER_INDEX_LogMagnitude, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
+    setParameterInternally(PARAMETER_INDEX_Resolution, RESOLUTION_DEFAULT);
+    setParameterInternally(PARAMETER_INDEX_Routing, ROUTING_MID);
+    setParameterInternally(PARAMETER_INDEX_Transformation, enumOptionToFloat(TransformationParameters::Type::DEFAULT));
+    setParameterInternally(PARAMETER_INDEX_Wavelet, enumOptionToFloat(WaveletParameters::WaveletBase::DEFAULT));
+    setParameterInternally(PARAMETER_INDEX_WaveletPacketBasis, enumOptionToFloat(WaveletParameters::ResolutionRatioOption::DEFAULT));
+    setParameterInternally(PARAMETER_INDEX_Windowing, enumOptionToFloat(WindowParameters::WindowFunction::DEFAULT));
 
+    assert(getResolution() > 0);
     waitForParameterChange.signal();
 }
 
+template<class _Tp>
+auto SpecletParameters::enumOptionToFloat(const _Tp& enumType) const -> float{
+   auto enumValue = static_cast<typename std::underlying_type<_Tp>::type>(enumType);
+   return static_cast<float>(enumValue);
+}
+
+//TODO (JohT) Does it really need to be a singleton? Is classic dependency injection a viable alternative?
 auto SpecletParameters::getSingletonInstance() -> SpecletParameters & {
     static SpecletParameters singletonInstance;
     return singletonInstance;
@@ -37,6 +59,7 @@ auto SpecletParameters::isTransformationParameter(const juce::String &parameterI
 auto SpecletParameters::getParameter(int index) -> float {
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
+        DBG("SpecletParameters::getParameter: Invalid child index: " + juce::String(index));
         return 0.0F;
     }
     return child.getProperty(PROPERTY_VALUE);
@@ -50,7 +73,13 @@ auto SpecletParameters::getParameter(const juce::String &name) -> float {
     return child.getProperty(PROPERTY_VALUE, 0.0F);
 }
 
+//TODO (JohT) Declare a int type for parameter values and use it instead of float?
 void SpecletParameters::setParameter(int index, float newValue) {
+    assert(index >= 0 && index < properties.getNumChildren());
+    if (newValue < 1.0F) {
+        DBG("SpecletParameters::setParameter: Value < 1.0F, parameter " << index << " will not be set");
+        return;
+    }
     const juce::ScopedLock myScopedLock(criticalSection);
     {
         LOG_PERFORMANCE_OF_SCOPE("SpecletParameters setParameter waitForParameterChange(index)");
@@ -59,8 +88,30 @@ void SpecletParameters::setParameter(int index, float newValue) {
             DBG("SpecletParameters::setParameter: Timeout during wait!");
         }
     }
+    if (index == PARAMETER_INDEX_Resolution) {
+        if (newValue < enumOptionToFloat(RESOLUTION_256)) {
+            DBG("SpecletParameters::setParameter: Resolution might not be smaller than the minimum value, so it's set to 256");
+            newValue = enumOptionToFloat(RESOLUTION_256);
+        }
+    }
+    newValue = sanitizeParameter(index, newValue);
+    setParameterInternally(index, newValue);
+}
+
+auto SpecletParameters::sanitizeParameter(int index, float newValue) -> float{
+    if (index == PARAMETER_INDEX_Resolution) {
+        if (newValue < enumOptionToFloat(RESOLUTION_256)) {
+            DBG("SpecletParameters::setParameter: Resolution might not be smaller than the minimum value, so it's set to 256");
+            return enumOptionToFloat(RESOLUTION_256);
+        }
+    }
+    return newValue;
+}
+
+void SpecletParameters::setParameterInternally(int index, juce::var newValue) {
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
+        DBG("SpecletParameters::setParameter: Invalid child index: " + juce::String(index));
         return;
     }
     child.setProperty(PROPERTY_VALUE, newValue, nullptr);
@@ -68,7 +119,6 @@ void SpecletParameters::setParameter(int index, float newValue) {
 
 void SpecletParameters::setParameter(const juce::String &name, float newValue) {
     const juce::ScopedLock myScopedLock(criticalSection);
-
     {
         LOG_PERFORMANCE_OF_SCOPE("SpecletParameters setParameter waitForParameterChange(name)");
         bool timeoutDuringWait = waitForParameterChange.wait(TIMEOUT_WAIT_BEFORE_SET);
@@ -80,6 +130,8 @@ void SpecletParameters::setParameter(const juce::String &name, float newValue) {
     if (!child.isValid()) {
         return;
     }
+    auto parameterIndex = properties.indexOf(child);
+    newValue = sanitizeParameter(parameterIndex, newValue);
     child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 

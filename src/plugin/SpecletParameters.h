@@ -68,7 +68,7 @@ public:
         ROUTING_SIDE,
 
         ROUTING_NumOptions,
-        ROUTING_DEFAUTL = ROUTING_MID
+        ROUTING_DEFAULT = ROUTING_MID
     };
 
     //"Initialization ... with static storage duration may throw an exception that cannot be caught"
@@ -131,11 +131,11 @@ public:
     auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties.createXml(); }
 
 private:
-    enum ChildIndizes {
-        CHILD_INDEX_Parameters = 0,
-        CHILD_INDEX_Metadata,
+    enum class ChildIndices {
+        CHILD_INDEX_PARAMETERS = 0,
+        CHILD_INDEX_METADATA,
 
-        CHILD_INDEX_NumIndizes
+        NUMBER_OF_INDICES
     };
 
     // --------------- members --------------- //
@@ -144,6 +144,10 @@ private:
     juce::CriticalSection criticalSection;
 
     // --------------- methods --------------- //
+    auto sanitizeParameter(int index, float newValue) -> float;
+    void setParameterInternally(int index, juce::var newValue);
+    template<class _Tp>
+    auto enumOptionToFloat(const _Tp& enumType) const -> float;
 
     SpecletParameters();
     ~SpecletParameters() = default;

@@ -104,9 +104,6 @@ private:
     //==============================================================================
     auto getSampleFromRouting(const float *inL, const float *inR) -> float;
 
-    template<class _Tp>
-    auto enumOptionToFloat(const _Tp& enumType) const -> float;
-
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(SpecletAudioProcessor)
 };
