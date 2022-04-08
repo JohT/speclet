@@ -4,6 +4,7 @@
 #include "juce_core/juce_core.h"
 #include "../../utilities/PerformanceLogger.h"
 #include <assert.h>
+#include <cmath>
 
 Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowParameters::WindowFunction newWindowFunction)
     : transformationType(newTransformationType),
@@ -11,7 +12,7 @@ Transformation::Transformation(double newSamplingRate, ResolutionType newResolut
       ready(false),
       calculated(false),
       transformResultsListener(nullptr) {
-    
+    assert(newResolution >= 256);
     waitForDestruction.signal();
 
     setWindowFunction(newWindowFunction);
@@ -53,6 +54,9 @@ auto Transformation::getInputQueue() -> std::queue<double> & {
 
 void Transformation::setNextInputSample(const double &sample) {
     if (!ready) {
+        return;
+    }
+    if (std::isinf(sample) || std::isnan(sample)) {
         return;
     }
     inputQueue.push(sample);
