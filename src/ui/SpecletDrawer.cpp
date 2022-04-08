@@ -42,25 +42,10 @@ SpecletDrawer::SpecletDrawer() {
     //[UserPreSize]
     //[/UserPreSize]
 
-    setSize(100, 360);
+    setSize(sizeX, sizeY);
 
     //[Constructor] You can add your own custom stuff here..
 
-    sizeX = SIZE_X;
-    sizeY = getHeight();
-    setSize(sizeX, sizeY);
-
-    currentCursorXPos = 0;
-    currentTimeResolution = 0;
-
-    //creates and prepares the axislayer image
-    axisImage = juce::Image(juce::Image::PixelFormat::ARGB, sizeX, sizeY, true);
-
-    //registers itself as a transformation-result-lister
-    // Transformation *transformation = TransformationFactory::getSingletonInstance().getCurrentTransformation();
-    // if (transformation != nullptr) {
-    //     transformation->setTransformResultListener(this);
-    // }
     //registers itself also as a transformation-result-lister for every transformation that will be created in future
     TransformationFactory::getSingletonInstance().registerForTransformationResults(this);
     //registers itself as listener for parameter-changes
@@ -76,6 +61,7 @@ SpecletDrawer::~SpecletDrawer() {
     //[/Destructor_pre]
 
     //[Destructor]. You can add your own custom destruction code here..
+    TransformationFactory::getSingletonInstance().registerForTransformationResults(nullptr);
     SpecletParameters::getSingletonInstance().removeListener(this);
     DBG("SpecletDrawer as parameter listener removed");
     //[/Destructor]
@@ -293,7 +279,23 @@ void SpecletDrawer::updateTimeAxisImage(double timeresolution) {
     currentTimeResolution = timeresolution;
 
     //clears the part of the axis image, where the time resolution is drawn at
-    juce::Rectangle<int> areaToClear(axisImage.getBounds().withLeft(xPosStart).withTop(yPosStart));
+    auto axisImageBounds = axisImage.getBounds();
+    auto rectangleToClear = axisImageBounds.withLeft(xPosStart).withTop(yPosStart);
+    
+    if (rectangleToClear.getWidth() <= 0) {
+        DBG("updateTimeAxisImage: Time axis width is 0. Skip axis update.");
+
+        auto topLeftX = axisImageBounds.getTopLeft().getX();
+        auto topLeftY = axisImageBounds.getTopLeft().getY();
+        DBG("image topLeftX to clear: " << topLeftX << " image topLeftY to clear: " << topLeftY);
+
+        auto rectangleTopLeftX = rectangleToClear.getTopLeft().getX();
+        auto rectangleTopLeftY = rectangleToClear.getTopLeft().getY();
+        DBG("rectangle topLeftX to clear: " << rectangleTopLeftX << " rectangle topLeftY to clear: " << rectangleTopLeftY);
+
+        return;
+    }
+    juce::Rectangle<int> areaToClear(rectangleToClear);
     axisImage.clear(areaToClear, juce::Colours::transparentBlack);
 
     //get drawing context

@@ -49,6 +49,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     enum Constants {
         SIZE_X = 528,
+        SIZE_Y = 360,
         TIMER = 20
     };
 
@@ -76,16 +77,16 @@ private :
     void appendSpectralImage(TransformationResult *result);
     juce::Viewport *getParentViewPort() const { return static_cast<juce::Viewport *>(getParentComponent()); }
 
-    int sizeX;
-    int sizeY;
-    double currentTimeResolution;
+    int sizeX = Constants::SIZE_X;
+    int sizeY = Constants::SIZE_Y;
+    double currentTimeResolution = 0;
     double currentSamplingFrequency = 0.0;
-    RenderingHelper::TAnalyzerSettings settings;
-    RenderingHelper renderingHelper;
-    int currentCursorXPos;
-    juce::Image spectrumImage;
-    juce::Image axisImage;
-    juce::CriticalSection criticalSection;
+    RenderingHelper::TAnalyzerSettings settings = {};
+    RenderingHelper renderingHelper = {};
+    int currentCursorXPos = 0;
+    juce::Image spectrumImage = {juce::Image::RGB, sizeX, sizeY, true};
+    juce::Image axisImage = {juce::Image::PixelFormat::ARGB, sizeX, sizeY, true};
+    juce::CriticalSection criticalSection = {};
 
     //[/UserVariables]
 
