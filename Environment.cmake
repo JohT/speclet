@@ -8,7 +8,7 @@ endif ()
 # Set C++ Language Standard to C++20
 set(CMAKE_CXX_STANDARD 20)
 
-# Generates a JSON file containing compile info like include paths, defines, etc. for clangd (IDE support)
+# Generates a JSON file containing compile info like include paths, defines, etc. for clangd (IDE support e.g. VSCode)
 # Reference: https://stackoverflow.com/questions/39455090/clang-tidy-cant-find-my-header-files
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
@@ -29,6 +29,7 @@ option(UniversalBinary "Build universal binary for mac" OFF)
 
 if (UniversalBinary)
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE INTERNAL "")
+    message(STATUS "Building universal binary for mac")
 endif()
 
 #static linking in Windows

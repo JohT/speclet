@@ -38,7 +38,10 @@
             // if you want to build AAX, set PATH for SDK here.
             //  "-DAAX_SDK_PATH="
             // if you want to build AudioPluginHost to Test VST Plugin, uncomment this.
-            "-DJUCE_BUILD_EXTRAS=ON"
+            // You can also build e.g. AudioPluginHost directly via its cmake to test VST Plugin(s).
+            // "-DJUCE_BUILD_EXTRAS=ON"
+            // Uncomment this line to build for macOS x86
+            //"-DCMAKE_OSX_ARCHITECTURES=x86_64"
         ],
         "cmake.preferredGenerators": [
            "Ninja",
@@ -95,7 +98,7 @@
                 "type": "lldb",
                 "request": "launch",
                 "name": "VST3 AudioPluginHost",
-                "program": "${workspaceFolder}/build/lib/JUCE/extras/AudioPluginHost/AudioPluginHost_artefacts/Debug/AudioPluginHost.app/Contents/MacOS/AudioPluginHost",
+                "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Debug/AudioPluginHost.app/Contents/MacOS/AudioPluginHost",
                 "args": ["JuceAudioPluginHost.filtergraph"],
                 "cwd": "${workspaceFolder}"
             },
