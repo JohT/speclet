@@ -79,9 +79,9 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxResolution->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxResolution->addListener(this);
     comboBoxResolution->setTooltip(
-        "Sets the block size for the analysis.\n"
-        "Higher values lead to better frequency resolution, lower time resolution and more cpu consumption. "
-        "For efficient calculation, all values are a power of 2."
+            "Sets the block size for the analysis.\n"
+            "Higher values lead to better frequency resolution, lower time resolution and more cpu consumption. "
+            "For efficient calculation, all values are a power of 2."
     );
 
     addAndMakeVisible(spectralviewport = new juce::Viewport("spectralviewport"));
@@ -128,10 +128,10 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWindowing->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWindowing->addListener(this);
     comboBoxWindowing->setTooltip(
-        "Window functions are like fades at the beginning and end of the block of input samples.\n"
-        "They reduce 'leakage' in the frequency spectrum. "
-        "Choose a sine input and use different windows to see the impact. "
-        "The rectangular window shows how the spectrum is affected when there is no smoothing.\n"
+            "Window functions are like fades at the beginning and end of the block of input samples.\n"
+            "They reduce 'leakage' in the frequency spectrum. "
+            "Choose a sine input and use different windows to see the impact. "
+            "The rectangular window shows how the spectrum is affected when there is no smoothing.\n"
     );
 
     addAndMakeVisible(labelWindowing = new juce::Label("labelWindowing", "Window Function"));
@@ -151,9 +151,9 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWavelet->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWavelet->addListener(this);
     comboBoxWavelet->setTooltip(
-        "Wavelets are represented by their high- and low-pass filter coefficients.\n"
-        "The number in the parentheses is the number of coefficients.\n"
-        "More coefficients lead to more precise results, less aliasing and higher cpu consuption.\n"
+            "Wavelets are represented by their high- and low-pass filter coefficients.\n"
+            "The number in the parentheses is the number of coefficients.\n"
+            "More coefficients lead to more precise results, less aliasing and higher cpu consuption.\n"
     );
 
     addAndMakeVisible(labelWavelet = new juce::Label("labelWavelet", "Wavelet"));
@@ -173,9 +173,9 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWaveletPacketBasis->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxWaveletPacketBasis->addListener(this);
     comboBoxWaveletPacketBasis->setTooltip(
-        "The wavelet packet transform (WPT) also uses the output of the high pass filter (details) and splits it up further.\n"
-        "This results in evenly/linear spaced frequency bands in contrast to the ""dyadic"" wavelet transform.\n"
-        "More levels lead to finer frequency resolution and less time resolution."
+            "The wavelet packet transform (WPT) also uses the output of the high pass filter (details) and splits it up further.\n"
+            "This results in evenly/linear spaced frequency bands in contrast to the dyadic wavelet transform.\n"
+            "More levels lead to finer frequency resolution and less time resolution."
     );
 
     addAndMakeVisible(labelWaveletPacketBasis = new juce::Label("labelWaveletPacketBasis", "Wavelet Packet Basis"));
@@ -213,9 +213,9 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxRouting->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxRouting->addListener(this);
     comboBoxRouting->setTooltip(
-        "Sets the input audio source to\n"
-        "either one of the input channels\n"
-        "or the build-in signal generator/oscillator.");
+            "Sets the input audio source to\n"
+            "either one of the input channels\n"
+            "or the build-in signal generator/oscillator.");
 
     addAndMakeVisible(labelRouting = new juce::Label("labelRouting", "Audio Source"));
     labelRouting->setFont(juce::Font(15.0000f, juce::Font::plain));
@@ -244,8 +244,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     sliderSignalGeneratorFrequency->setTextBoxStyle(juce::Slider::TextBoxLeft, false, 50, 25);
     sliderSignalGeneratorFrequency->addListener(this);
     sliderSignalGeneratorFrequency->setTooltip(
-        "Sets the frequency of the\n"
-        "build-in signal generator/oscillator.");
+            "Sets the frequency of the\n"
+            "build-in signal generator/oscillator.");
 
     addAndMakeVisible(labelLogF = new juce::Label("labelLogF", "Frequency Scale"));
     labelLogF->setFont(juce::Font(15.0000f, juce::Font::plain));
@@ -377,6 +377,7 @@ void SpecletAnalyzerComponent::paint(juce::Graphics &g) {
 }
 
 void SpecletAnalyzerComponent::resized() {
+    //TODO (JohT) Had been generated by "Projucer". Could be adapted to be resizeable.
     comboBoxResolution->setBounds((128) + 0, (8) + 32, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
     spectralviewport->setBounds(256, 8, 528, 344);
     labelResolution->setBounds((8) + 0, (8) + 32, juce::roundToInt((120) * 1.0000f), juce::roundToInt((24) * 1.0000f));
@@ -410,7 +411,7 @@ void SpecletAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasCh
 
     if (comboBoxThatHasChanged == comboBoxResolution) {
         //[UserComboBoxCode_comboBoxResolution] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, comboBoxResolution->getText().getIntValue());
+        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, comboBoxResolution->getText().getFloatValue());
         //[/UserComboBoxCode_comboBoxResolution]
     } else if (comboBoxThatHasChanged == comboBoxTransformation) {
         //[UserComboBoxCode_comboBoxTransformation] -- add your combo box handling code here..
