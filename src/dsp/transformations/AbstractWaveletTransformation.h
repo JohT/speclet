@@ -20,7 +20,7 @@
 #include "WaveletParameters.h"
 #include "TransformationParameters.h"
 #include <memory>
-#include <span>
+#include "tcb/span.hpp"
 
 class AbstractWaveletTransformation : public Transformation {
 public:
@@ -118,7 +118,7 @@ private:
      */
     static void swapWaveletFilterTreeChilds(const ArrayTreePer &tree, const WaveletLevelType &level, const unsigned int &block);
 
-    void extractSpectrum(int transformResultClass, std::span<real_number> origin, const HedgePer &levelsHedge);
-    auto getValue(int transformResultClass, std::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double;
-    auto getAvgValue(int transformResultClass, std::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockposStart, unsigned long blockposEnd) -> double;
+    void extractSpectrum(int transformResultClass, tcb::span<real_number> origin, const HedgePer &levelsHedge);
+    auto getValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double;
+    auto getAvgValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockposStart, unsigned long blockposEnd) -> double;
 };

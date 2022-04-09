@@ -39,7 +39,7 @@
             //  "-DAAX_SDK_PATH="
             // if you want to build AudioPluginHost to Test VST Plugin, uncomment this.
             // You can also build e.g. AudioPluginHost directly via its cmake to test VST Plugin(s).
-            // "-DJUCE_BUILD_EXTRAS=ON"
+            "-DJUCE_BUILD_EXTRAS=ON"
             // Uncomment this line to build for macOS x86
             //"-DCMAKE_OSX_ARCHITECTURES=x86_64"
         ],

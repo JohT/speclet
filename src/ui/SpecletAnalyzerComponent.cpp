@@ -650,7 +650,7 @@ void SpecletAnalyzerComponent::updateSlider(
     slider->setValue(changedParameterValue, juce::dontSendNotification);
 }
 
-void SpecletAnalyzerComponent::transformationChanged(auto selectedOption) {
+void SpecletAnalyzerComponent::transformationChanged(float selectedOption) {
     if (selectedOption == enumOptionToFloat(TransformationParameters::Type::BYPASS)) {
         //Analyzer is turned off (bypass). Disable all related controls.
         comboBoxResolution->setEnabled(false);
@@ -720,7 +720,7 @@ void SpecletAnalyzerComponent::transformationChanged(auto selectedOption) {
     }
 }
 
-void SpecletAnalyzerComponent::routingChanged(auto selectedOption) {
+void SpecletAnalyzerComponent::routingChanged(float selectedOption) {
     if (selectedOption == enumOptionToFloat(SpecletParameters::OptionsRouting::ROUTING_GENERATOR)) {
         //Audio source is set to generator. Enable all related controls.
         comboBoxSignalGenerator->setEnabled(true);
