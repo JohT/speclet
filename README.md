@@ -134,3 +134,4 @@ arch -x86_64 /usr/local/bin/brew install llvm
 - [Commit Message Guidelines](https://gist.github.com/robertpainsi/b632364184e70900af4ab688decf6f53)
 - [Undefined symbol _kIOMainPortDefault](https://forum.juce.com/t/juce-6-1-3-undefined-symbol-kiomainportdefault/49335/9)
 - [CheckTypeSize (FFTW failed for multiple architectures)](https://cmake.org/cmake/help/latest/module/CheckTypeSize.html)
+- [std::span implementation for C++11 and later](https://github.com/tcbrindle/span)
