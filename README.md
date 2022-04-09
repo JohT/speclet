@@ -3,13 +3,12 @@
 (c)2011 by Johannes Troppacher (Austria)
 For graduation at HS Mittweida - university of applied science (Germany)
 
-### Used Tools
+## This is not working yet
 
-- [The LLVM Compiler Infrastructure](https://github.com/llvm/llvm-project)
-- [Ninja](https://github.com/ninja-build/ninja)
-- [CMake](https://gitlab.kitware.com/cmake/cmake)
-- [Setup-free CMake dependency management](https://github.com/cpm-cmake/CPM.cmake)
-
+This version is not ready yet. 
+It contains the code from back then, that doesn't compile any more.   
+It also contains the plugin made with the tutorial [Learn Modern C++ by Building an Audio Plugin (w/ JUCE Framework) - Full Course YouTube](https://www.youtube.com/watch?v=i_Iq4_Kd7Rc&list=PLi4rQ_T_X31Gd4pyUbvPltTVSyw8v_yYT&index=5&t=1051s)
+as a template to start the modernization.
 ### Used Libraries
 
 This plugin was made using the following frameworks and libraries:
@@ -45,7 +44,3 @@ allowed by permission of the copyright holders.
 (c) 2005-2011 Dan Moulding, Arkadiy Shapkin, Laurent Lessieux   
 https://github.com/dmoulding/vld   
 GNU Lesser General Public License v2.1
-
-### References
-
-[Example using CPM package manager with JUCE](https://github.com/robbert-vdh/diopser/blob/master/CMakeLists.txt)
