@@ -24,35 +24,15 @@ set(CURRENT_VERSION "1.0.0")
 # For simplilicity, the name of the project is also the name of the targe.
 project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 
-# Generates a JSON file containing compile info like include paths, defines, etc.
-# Reference: https://stackoverflow.com/questions/39455090/clang-tidy-cant-find-my-header-files
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Enable diagnostic colors in CMake output
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  add_compile_options(-fdiagnostics-color=always)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  add_compile_options(-fcolor-diagnostics)
-endif()
-
-# Download "cpm", the setup-free CMake dependency management 
-# https://github.com/cpm-cmake/CPM.cmake
-set(CPM_DOWNLOAD_VERSION 0.35.0)
-set(CPM_DOWNLOAD_LOCATION "${CMAKE_BINARY_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
-    message(STATUS "Downloading CPM.cmake")
-    file(DOWNLOAD https://github.com/TheLartians/CPM.cmake/releases/download/v${CPM_DOWNLOAD_VERSION}/CPM.cmake ${CPM_DOWNLOAD_LOCATION})
-endif()
-include(${CPM_DOWNLOAD_LOCATION})
+include(Environment.cmake)
 
 # Import dependencies
+#CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
 CPMAddPackage("gh:juce-framework/JUCE#6.1.5")
 CPMAddPackage("https://www.fftw.org/fftw-3.3.10.tar.gz#MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c")
 CPMAddPackage("gh:dmoulding/vld#v1.9h")
-#CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") #Online not available anymore
-
-# Import test dependencies
-CPMAddPackage("gh:catchorg/Catch2@2.13.8")
+CPMAddPackage("gh:tcbrindle/span#master")
+# CPMAddPackage("gh:Neargye/magic_enum#v0.7.3") # simplifies enum handling, not yet needed
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
 # target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've
@@ -75,22 +55,51 @@ CPMAddPackage("gh:catchorg/Catch2@2.13.8")
 # the formats specified by the FORMATS arguments. This function accepts many optional arguments.
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
 
-juce_add_plugin(Speclet
-    VERSION 0.9.0                               # Set this if the plugin version is different to the project version
+#CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
+CPMAddPackage("gh:juce-framework/JUCE#6.1.6")
+CPMAddPackage("https://www.fftw.org/fftw-3.3.10.tar.gz#MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c")
+CPMAddPackage("gh:dmoulding/vld#v1.9h")
+# CPMAddPackage("gh:Neargye/magic_enum#v0.7.3") # simplifies enum handling, not yet needed
+
+# If you've installed JUCE somehow (via a package manager, or directly using the CMake install
+# target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've
+# included JUCE directly in your source tree (perhaps as a submodule), you'll need to tell CMake to
+# include that subdirectory as part of the build.
+
+# find_package(JUCE CONFIG REQUIRED)        # If you've installed JUCE to your system
+# or
+# add_subdirectory(${JUCE_SOURCE_DIR})      # If you've put JUCE in a subdirectory called JUCE
+
+# If you are building a VST2 or AAX plugin, CMake needs to be told where to find these SDKs on your
+# system. This setup should be done before calling `juce_add_plugin`.
+
+# juce_set_vst2_sdk_path(...)
+# juce_set_aax_sdk_path(...)
+
+# `juce_add_plugin` adds a static library target with the name passed as the first argument
+# (Speclet here). This target is a normal CMake target, but has a lot of extra properties set
+# up by default. As well as this shared code static library, this function adds targets for each of
+# the formats specified by the FORMATS arguments. This function accepts many optional arguments.
+# Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
+
+juce_add_plugin("${PROJECT_NAME}"
+    PRODUCT_NAME "${PROJECT_NAME}"              # The name of the final executable, which can differ from the target name
+    COMPANY_NAME "Johannes Troppacher"          # Specify the name of the plugin's author
+    # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
+    FORMATS VST3 AU AUv3 Standalone             # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
+
+    PLUGIN_MANUFACTURER_CODE JohT               # A four-character manufacturer id with at least one upper-case character
+    PLUGIN_CODE SpcJ                            # A unique four-character plugin id with exactly one upper-case character
+                                                # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
     # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
     # ICON_SMALL ...
-    COMPANY_NAME Johannes Troppacher            # Specify the name of the plugin's author
     IS_SYNTH FALSE                              # Is this a synth or an effect?
     NEEDS_MIDI_INPUT FALSE                      # Does the plugin need midi input?
     NEEDS_MIDI_OUTPUT FALSE                     # Does the plugin need midi output?
     IS_MIDI_EFFECT FALSE                        # Is this plugin a MIDI effect?
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE           # Does the editor need keyboard focus?
     # COPY_PLUGIN_AFTER_BUILD TRUE/FALSE        # Should the plugin be installed to a default location after building?
-    PLUGIN_MANUFACTURER_CODE JohT               # A four-character manufacturer id with at least one upper-case character
-    PLUGIN_CODE SpcJ                            # A unique four-character plugin id with exactly one upper-case character
-                                                # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
-    FORMATS VST3 Standalone                     # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-    PRODUCT_NAME "Speclet")          # The name of the final executable, which can differ from the target name
+)
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. This should be included with `#include <JuceHeader.h>`. The include path for
@@ -129,30 +138,14 @@ if (fftw_ADDED)
     endforeach()
 endif()
 
-target_sources(Speclet
-    PRIVATE
-        src/ui/SpectronMainUI.cpp
-        src/PluginProcessor.cpp
-        src/dsp/transformations/Transformation.cpp
-        src/dsp/transformations/AbstractWaveletTransformation.cpp
-        src/dsp/transformations/FourierTransformation.cpp
-        src/dsp/transformations/WaveletTransformation.cpp
-        src/dsp/transformations/WaveletPacketTransformation.cpp
-        src/dsp/transformations/WaveletPacketBestBasisTransformation.cpp
-        src/dsp/SignalGenerator.cpp
-        src/dsp/WindowFunctions.cpp
-)
-
-# Import fftw3 api headers like fftw3.h:
-if (fftw_ADDED)
-    target_include_directories(Speclet PRIVATE "${fftw_SOURCE_DIR}/api")	 
-    message(STATUS "FFTW api (headers) directory included: ${fftw_SOURCE_DIR}/api")
-    # Get all include directories for the target.
-    # get_target_property(SPECLET_INCLUDES Speclet INCLUDE_DIRECTORIES)
-    # foreach(dir ${SPECLET_INCLUDES})
-    #     message(STATUS "Speclet_include_dir='${dir}'")
-    # endforeach()
+if (span_ADDED)
+    include_directories("${PROJECT_NAME}" PRIVATE "${span_SOURCE_DIR}/include")
+    message(VERBOSE "tcb span headers directory included for all targets: ${span_SOURCE_DIR}/include")
 endif()
+
+# Add libraries to the target, that needed to be included inside the repository:
+add_subdirectory(lib/wave++)
+include_directories("${PROJECT_NAME}" PRIVATE "lib/wave++/source")
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use
@@ -163,9 +156,12 @@ endif()
 target_compile_definitions("${PROJECT_NAME}"
     PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
-        # JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
-        # JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
-        JUCE_VST3_CAN_REPLACE_VST2=0)
+        JUCE_DISPLAY_SPLASH_SCREEN=0 # Disable the splash screen on startup under GPL license
+        JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
+        JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
+        JUCE_VST3_CAN_REPLACE_VST2=0
+        LOG_PERFORMANCE=1
+        )
 
 # If your target needs extra binary assets, you can add them here. The first argument is the name of
 # a new static library target that will include all the binary resources. There is an optional
@@ -195,9 +191,7 @@ set(MAIN_LINK_LIBRARIES
 target_link_libraries("${PROJECT_NAME}"
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
-        juce::juce_dsp
-        juce::juce_audio_utils
-        fftw3
+        ${MAIN_LINK_LIBRARIES}
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags

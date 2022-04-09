@@ -1,7 +1,6 @@
 #include "AbstractWaveletTransformation.h"
 #include "../../utilities/PerformanceLogger.h"
 #include <memory>
-#include <span>
 #include <string>
 #include <type_traits>
 #include <vector>
@@ -40,7 +39,7 @@ auto AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) -> Wa
     }
     long minBestBasisLevel = 0;
 
-    auto levels = std::span(bestBasis.levels, static_cast<size_t>(bestBasis.num_of_levels));
+    auto levels = tcb::span(bestBasis.levels, static_cast<size_t>(bestBasis.num_of_levels));
     for (auto &level : levels) {
         assert(level >= 0);
         if (level == 1) {
@@ -205,8 +204,8 @@ void AbstractWaveletTransformation::swapWaveletFilterTreeChilds(const ArrayTreeP
 
     auto *leftChild = tree.left_child(level, block);
     auto *rightChild = tree.right_child(level, block);
-    auto leftChildSpan = std::span<real_number>(leftChild, maxIndex);
-    auto rightChildSpan = std::span<real_number>(rightChild, maxIndex);
+    auto leftChildSpan = tcb::span<real_number>(leftChild, maxIndex);
+    auto rightChildSpan = tcb::span<real_number>(rightChild, maxIndex);
 
     //swap child elements and underlying sublevel-elements
     for (unsigned long sublevel = 0; sublevel < maxSubLevel; sublevel++) {
@@ -228,7 +227,7 @@ void AbstractWaveletTransformation::analyse(Interval &analysisResult) {
 void AbstractWaveletTransformation::extractSpectrum(const Interval &outDWT) {
     assert(outDWT.length > 0);
     assert(outDWT.origin != nullptr);
-    auto waveletTransformOutput = std::span<real_number>(outDWT.origin, static_cast<unsigned long>(outDWT.length));
+    auto waveletTransformOutput = tcb::span<real_number>(outDWT.origin, static_cast<unsigned long>(outDWT.length));
     extractSpectrum(TRANSFORM_RESULT_CLASS_INTERVAL, waveletTransformOutput, *dWTLevelsHedge);
 }
 
@@ -241,11 +240,11 @@ void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &outWavel
     assert(outWaveletPacketTree.dim > 0);
     assert(outWaveletPacketTree.origin != nullptr);
     auto dataLength = outWaveletPacketTree.dim * (outWaveletPacketTree.maxlevel + 1);
-    auto waveletTransformOutput = std::span<real_number>(outWaveletPacketTree.origin, static_cast<unsigned long>(dataLength));
+    auto waveletTransformOutput = tcb::span<real_number>(outWaveletPacketTree.origin, static_cast<unsigned long>(dataLength));
     extractSpectrum(TRANSFORM_RESULT_CLASS_ARRAYTREE, waveletTransformOutput, levelsHedge);
 }
 
-void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, std::span<real_number> origin, const HedgePer &levelsHedge) {
+void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, tcb::span<real_number> origin, const HedgePer &levelsHedge) {
     LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation extractSpectrum");
 
     SpectralDataBuffer::ItemType spectrum;
@@ -262,7 +261,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, st
     auto timeStepSize = timeResolution / TIME_RESOLUTION_LIMIT;
     auto frequencyResolution = getSpectralDataInfo().getFrequencyResolution();
     auto realToFullResolution = static_cast<double>(frequencyResolution) / static_cast<double>(getResolution());
-    auto levels = std::span(levelsHedge.levels, static_cast<unsigned long>(levelsHedge.num_of_levels));
+    auto levels = tcb::span(levelsHedge.levels, static_cast<unsigned long>(levelsHedge.num_of_levels));
 
     double value = 0.0;
     double timeResolutionPerSample = 0.0;
@@ -303,7 +302,7 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, st
 //returns the average value of the specified result tree positions
 auto AbstractWaveletTransformation::getAvgValue(
         int transformResultClass,
-        std::span<real_number> origin,
+        tcb::span<real_number> origin,
         WaveletLevelType level,
         unsigned long blockNumber,
         unsigned long blockposStart,
@@ -313,7 +312,7 @@ auto AbstractWaveletTransformation::getAvgValue(
     
     auto count = 0;
     auto averageValue = 0.0;
-    std::span<real_number> values;
+    tcb::span<real_number> values;
 
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         auto resolution = getResolution();
@@ -336,7 +335,7 @@ auto AbstractWaveletTransformation::getAvgValue(
 }
 
 //returns the value of the specified result tree position
-auto AbstractWaveletTransformation::getValue(int transformResultClass, std::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double {
+auto AbstractWaveletTransformation::getValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double {
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         auto resolution = getResolution();
         auto offset = (level * resolution + blockNumber * ((resolution) >> (level))) + blockPosition;

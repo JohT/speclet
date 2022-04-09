@@ -89,8 +89,8 @@ public:
 
     void updateComboBox(const juce::String &parameterName, juce::ComboBox *comboBox, const juce::ValueTree &treeWhosePropertyHasChanged);
     static void updateSlider(const juce::String &parameterName, juce::Slider *slider, const juce::ValueTree &treeWhosePropertyHasChanged);
-    void transformationChanged(auto selectedOption);
-    void routingChanged(auto selectedOption);
+    void transformationChanged(float selectedOption);
+    void routingChanged(float selectedOption);
 
     template<class _Tp>
     auto enumOptionToFloat(const _Tp &enumType) const -> float;
