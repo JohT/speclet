@@ -20,14 +20,15 @@
 */
 
 //[Headers] You can add your own extra header files here...
+#include "SpecletDrawer.h"
 #include "../dsp/transformations/TransformationFactory.h"
 #include "../utilities/PerformanceLogger.h"
 #include "ColourGradients.h"
-#include "SpecletDrawer.h"
 #include "SpecletDrawerParameters.h"
-#include "juce_core/juce_core.h"
 #include "juce_audio_utils/juce_audio_utils.h"
+#include "juce_core/juce_core.h"
 #include <type_traits>
+
 //[/Headers]
 
 
@@ -53,17 +54,28 @@ SpecletDrawer::SpecletDrawer() {
     DBG("SpecletDrawer as parameter listener added");
 
     startTimer(TIMER);
+    ready = true;
+    waitForDestruction.signal();
     //[/Constructor]
 }
 
 SpecletDrawer::~SpecletDrawer() {
     //[Destructor_pre]. You can add your own custom destruction code here..
+    ready = false;
+    {
+        LOG_PERFORMANCE_OF_SCOPE("SpecletDrawer waitForDestruction");
+        bool timeoutDuringWait = waitForDestruction.wait(WAIT_FOR_DESTRUCTION_TIMEOUT);
+        if (!timeoutDuringWait) {
+            DBG("SpecletDrawer destruction: Timeout during wait!");
+        }
+    }
     //[/Destructor_pre]
 
     //[Destructor]. You can add your own custom destruction code here..
     TransformationFactory::getSingletonInstance().registerForTransformationResults(nullptr);
     SpecletParameters::getSingletonInstance().removeListener(this);
-    DBG("SpecletDrawer as parameter listener removed");
+    waitForDestruction.signal();
+    DBG("SpecletDrawer removed as parameter and transformation results listener and finally destructed");
     //[/Destructor]
 }
 
@@ -104,6 +116,9 @@ void SpecletDrawer::resized() {
 //[MiscUserCode] You can add your own definitions of your custom methods or any other code here...
 void SpecletDrawer::timerCallback() {
     stopTimer();
+    if (!ready) {
+        return;
+    }
     repaint();
     startTimer(TIMER);
 }
@@ -113,7 +128,13 @@ void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
     //as far as it had been successfully been registered as a listener by "SpecletJuceMainUI"
     int watchDog = 200;
     while (result->isOutputAvailable()) {
+        waitForDestruction.reset();
         appendSpectralImage(result);
+        waitForDestruction.signal();
+        if (!ready) {
+            DBG("SpecletDrawer: Transformation result received, but not ready to draw.");
+            return;
+        }
         watchDog--;
         if (watchDog <= 0) {
             //prevents endless loop
@@ -281,7 +302,7 @@ void SpecletDrawer::updateTimeAxisImage(double timeresolution) {
     //clears the part of the axis image, where the time resolution is drawn at
     auto axisImageBounds = axisImage.getBounds();
     auto rectangleToClear = axisImageBounds.withLeft(xPosStart).withTop(yPosStart);
-    
+
     if (rectangleToClear.getWidth() <= 0) {
         DBG("updateTimeAxisImage: Time axis width is 0. Skip axis update.");
 

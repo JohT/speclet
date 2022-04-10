@@ -47,12 +47,6 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
-    enum Constants {
-        SIZE_X = 528,
-        SIZE_Y = 360,
-        TIMER = 20
-    };
-
     void timerCallback() override;
     void onTransformationEvent(TransformationResult *result) override;
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
@@ -71,7 +65,12 @@ public:
 private :
     //[UserVariables]   -- You can add your own custom variables in this section.
     static const juce::Colour AXIS_COLOR;
-
+    enum Constants {
+        SIZE_X = 528,
+        SIZE_Y = 360,
+        TIMER = 20,
+        WAIT_FOR_DESTRUCTION_TIMEOUT = 3000
+    };
     void updateFrequencyAxisImage();
     void updateTimeAxisImage(double timeresolution);
     void appendSpectralImage(TransformationResult *result);
@@ -87,6 +86,8 @@ private :
     juce::Image spectrumImage = {juce::Image::RGB, sizeX, sizeY, true};
     juce::Image axisImage = {juce::Image::PixelFormat::ARGB, sizeX, sizeY, true};
     juce::CriticalSection criticalSection = {};
+    juce::WaitableEvent waitForDestruction{true};
+    bool ready = false;
 
     //[/UserVariables]
 
