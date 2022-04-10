@@ -525,7 +525,8 @@ void SpecletAnalyzerComponent::mouseDown(const juce::MouseEvent &e) {
                         "- FFT-Library 'FFTW' by MIT (Matteo Frigo and Steven G. Johnson)\n"
                         "- Wavelet-Library 'wave++'\n"
                         "   by Ryerson Computrational Signal Analysis Group\n"
-                        "   (S. E. Ferrando, L. A. Kolasa and N. Kovacevic)";
+                        "   (S. E. Ferrando, L. A. Kolasa and N. Kovacevic)\n"
+                        "- std::span for C++11 by Tristan Brindle (2019)\n";
 
                 juce::AlertWindow::showMessageBoxAsync(icon, "About Speclet", message, "OK");
             }

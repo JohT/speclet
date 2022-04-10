@@ -15,7 +15,7 @@ Modernized 2022 using the following tools:
 - [Ninja](https://github.com/ninja-build/ninja)
 - [CMake](https://gitlab.kitware.com/cmake/cmake)
 - [Setup-free CMake dependency management](https://github.com/cpm-cmake/CPM.cmake)
-- [MagicEnumC++ - static reflection for enums](https://github.com/Neargye/magic_enum)
+- [Plugin Validator](https://github.com/Tracktion/pluginval)
 
 This version is not ready yet. 
 It contains the code from back then, that doesn't compile any more.   
@@ -62,6 +62,11 @@ allowed by permission of the copyright holders.
 https://github.com/dmoulding/vld   
 GNU Lesser General Public License v2.1
 
+- Implementation of C++20's std::span for older compilers
+(c) 2019 by Tristan Brindle
+https://github.com/tcbrindle/span
+Boost Software License 1.0
+
 ## References
 
 ### Digital Signal Processing
@@ -92,39 +97,6 @@ GNU Lesser General Public License v2.1
 - [Catch2 Data Generators](https://github.com/catchorg/Catch2/blob/devel/docs/generators.md)
 - [Coverage for tests with cmake and catch2](https://stackoverflow.com/questions/65603144/how-to-get-coverage-for-tests-with-cmake-and-catch2)
 - [Findcodecov.cmake](https://github.com/catchorg/Catch2/blob/devel/CMake/Findcodecov.cmake)
-
-### Build x86 on Mac M1 (not working)
-
-These are the references used to build x86_64 on a mac m1 (arm). After trying these and several other things it didn't work.
-
-- [Run x86 Terminal Apps (Like Homebrew) on Your New M1 Mac](https://medium.com/swlh/run-x86-terminal-apps-like-homebrew-on-your-new-m1-mac-73bdc9b0f343)
-- [StackTrace - x86 installation of brew](https://stackoverflow.com/questions/67386941/using-x86-libraries-and-openmp-on-macos-arm64-architecture#67418208)
-```shell
-# launch x86_64 shell
-arch -x86_64 zsh  
-# install x86_64 variant of brew 
-arch -x86_64 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
-# install x86_64 variant of clang
-arch -x86_64 /usr/local/bin/brew install llvm 
-# compile using x86_64 variant of clang
-/usr/local/opt/llvm/bin/clang++ -arch x86_64 omp_ex.cpp
-```
-```shell
-# arm64 (default) location
-/opt/homebrew/bin/brew
-# x86_64 location
-/usr/local/bin/brew
-```
-```shell
-# Apple arm64 (default) location
-/usr/bin/clang
-# brew arm64 location
-/opt/homebrew/opt/llvm/bin/clang
-# brew x86_64 location
-/usr/local/opt/llvm/bin/clang
-```
-- [StackTrace - proper way to build for macOS-x86_64 using cmake on Apple M1](https://stackoverflow.com/questions/69803659/what-is-the-proper-way-to-build-for-macos-x86-64-using-cmake-on-apple-m1-arm)
-
 ### Other
 
 - [C++ Singleton](https://stackoverflow.com/questions/1008019/c-singleton-design-pattern)
