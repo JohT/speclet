@@ -23,10 +23,6 @@
 #include <type_traits>
 
 
-enum Channel {
-    Left = 0,
-    Right = 1
-};
 
 //==============================================================================
 class SpecletAudioProcessor : public juce::AudioProcessor, public juce::ValueTree::Listener {

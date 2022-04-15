@@ -6,6 +6,7 @@
 #include "../ui/ColorGradientsParameters.h"
 #include "../ui/SpecletDrawerParameters.h"
 #include "../dsp/SignalGeneratorParameters.h"
+#include <cassert>
 
 SpecletParameters::SpecletParameters() {
     //create ValueTree object, which stores all parameters as childs in a tree structure
