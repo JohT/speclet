@@ -32,7 +32,10 @@ if (UniversalBinary)
     message(STATUS "Building universal binary for mac")
 endif()
 
-#static linking in Windows
+# Set runtime library for windows when using Microsoft Visual Studio (Build Tools)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+message(VERBOSE "CMAKE_SYSTEM_VERSION: ${CMAKE_SYSTEM_VERSION}")
+message(VERBOSE "CMAKE_FIND_LIBRARY_SUFFIXES: ${CMAKE_FIND_LIBRARY_SUFFIXES}")
 
 message(STATUS "Environment setup finished")

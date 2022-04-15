@@ -26,6 +26,11 @@ project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 
 include(Environment.cmake)
 
+# Build Options
+option(JUCE_BUILD_EXTRAS "Build JUCE Extras" OFF)
+option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF) # needed for fftw to not depend on dll
+
 # Import dependencies
 #CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
 CPMAddPackage("gh:juce-framework/JUCE#6.1.6")
@@ -61,8 +66,8 @@ juce_add_plugin("${PROJECT_NAME}"
     # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
     FORMATS VST3 AU AUv3 Standalone             # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
 
-    PLUGIN_MANUFACTURER_CODE JohT               # A four-character manufacturer id with at least one upper-case character
-    PLUGIN_CODE SpcJ                            # A unique four-character plugin id with exactly one upper-case character
+    PLUGIN_MANUFACTURER_CODE "JohT"             # A four-character manufacturer id with at least one upper-case character
+    PLUGIN_CODE "SpcJ"                          # A unique four-character plugin id with exactly one upper-case character
                                                 # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
     # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
     # ICON_SMALL ...
@@ -72,6 +77,7 @@ juce_add_plugin("${PROJECT_NAME}"
     IS_MIDI_EFFECT FALSE                        # Is this plugin a MIDI effect?
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE           # Does the editor need keyboard focus?
     # COPY_PLUGIN_AFTER_BUILD TRUE/FALSE        # Should the plugin be installed to a default location after building?
+    VST3_CATEGORIES "Analyzer"                  # VST3 Plugin Category
 )
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
@@ -100,7 +106,7 @@ endforeach()
 # CMake command.
 target_sources("${PROJECT_NAME}" PRIVATE ${project_sources})
 
-# Import fftw3 api headers like fftw3.h:
+# Import fftw3 api headers to include with #include "fftw3.h"
 if (fftw_ADDED)
     include_directories("${PROJECT_NAME}" PRIVATE "${fftw_SOURCE_DIR}/api")	 
     message(VERBOSE "FFTW api (headers) directory included for all targets: ${fftw_SOURCE_DIR}/api")
@@ -111,12 +117,13 @@ if (fftw_ADDED)
     endforeach()
 endif()
 
+# Import span header to include with #include "tcb/span.hpp"
 if (span_ADDED)
     include_directories("${PROJECT_NAME}" PRIVATE "${span_SOURCE_DIR}/include")
     message(VERBOSE "tcb span headers directory included for all targets: ${span_SOURCE_DIR}/include")
 endif()
 
-# Add libraries to the target, that needed to be included inside the repository:
+# Add libraries to the target that needed to be included inside the repository:
 add_subdirectory(lib/wave++)
 include_directories("${PROJECT_NAME}" PRIVATE "lib/wave++/source")
 
@@ -134,6 +141,7 @@ target_compile_definitions("${PROJECT_NAME}"
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
         JUCE_VST3_CAN_REPLACE_VST2=0
         LOG_PERFORMANCE=1
+        _USE_MATH_DEFINES
         )
 
 # If your target needs extra binary assets, you can add them here. The first argument is the name of

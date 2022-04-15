@@ -1,10 +1,10 @@
 {
-	"folders": [
+    "folders": [
         {
             "path": "."
         }
     ],
-	"extensions": {
+    "extensions": {
         "recommendations": [
             "ms-vscode.cmake-tools",
             "twxs.cmake",
@@ -14,7 +14,7 @@
             "matepek.vscode-catch2-test-adapter"
         ]
     },
-	"settings": {
+    "settings": {
         "C_Cpp.intelliSenseEngine": "Disabled",
         "C_Cpp.autocomplete": "Disabled", // Autocomplete only from clangd
         "C_Cpp.errorSquiggles": "Disabled", // Error squiggles only from clangd
@@ -44,10 +44,10 @@
             //"-DCMAKE_OSX_ARCHITECTURES=x86_64"
         ],
         "cmake.preferredGenerators": [
-           "Ninja",
-           "Unix Makefiles"
+            "Ninja",
+            "Unix Makefiles"
         ],
-		"cSpell.words": [
+        "cSpell.words": [
             "Beylkin",
             "bugprone",
             "Constexpr",
@@ -83,8 +83,8 @@
         // ],
         // clang-tidy settings included in Microsoft C++ Extension:
         "C_Cpp.codeAnalysis.clangTidy.enabled": true
-	},
-	"launch": {
+    },
+    "launch": {
         "configurations": [
             {
                 "type": "lldb",
@@ -97,9 +97,29 @@
             {
                 "type": "lldb",
                 "request": "launch",
-                "name": "VST3 AudioPluginHost",
+                "name": "MacOS VST3",
                 "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Debug/AudioPluginHost.app/Contents/MacOS/AudioPluginHost",
-                "args": ["JuceAudioPluginHost.filtergraph"],
+                "args": [
+                    "JuceAudioPluginHost.filtergraph"
+                ],
+                "cwd": "${workspaceFolder}"
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "Windows VST3",
+                "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Debug/AudioPluginHost.exe",
+                "args": [
+                    "JuceAudioPluginHost.filtergraph"
+                ],
+                "cwd": "${workspaceFolder}"
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "Windows Tests",
+                "program": "${workspaceFolder}/build/test/SpecletTests.exe",
+                "args": [],
                 "cwd": "${workspaceFolder}"
             },
         ]
