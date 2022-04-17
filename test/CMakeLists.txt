@@ -52,9 +52,20 @@ if (NOT MAIN_TARGET_COMPILE_DEFINITIONS STREQUAL MAIN_TARGET_COMPILE_DEFINITIONS
    message (VERBOSE "Using compiler definitions from ${PROJECT_NAME}: ${MAIN_TARGET_COMPILE_DEFINITIONS}")
 endif()
 
+# Use the same link options as the main target and add the verbose output option
+set(TEST_PROJECT_LINK_OPTIONS "-v")
+get_target_property (MAIN_TARGET_LINK_OPTIONS "${PROJECT_NAME}" LINK_OPTIONS)
+if (NOT MAIN_TARGET_LINK_OPTIONS STREQUAL MAIN_TARGET_LINK_OPTIONS-NOTFOUND)
+   set(TEST_PROJECT_LINK_OPTIONS "${MAIN_TARGET_LINK_OPTIONS}LINKER:,{TEST_PROJECT_LINK_OPTIONS}")
+endif()
+target_link_options ("${TEST_PROJECT_NAME}" PRIVATE "LINKER:${TEST_PROJECT_LINK_OPTIONS}")
+message (VERBOSE "Using link options including those of ${PROJECT_NAME}: ${TEST_PROJECT_LINK_OPTIONS}")
+
 # Additionally use the same link libraries as the main target
 get_target_property (MAIN_TARGET_LINK_LIBRARIES "${PROJECT_NAME}" LINK_LIBRARIES)
-if (MAIN_TARGET_LINK_LIBRARIES STREQUAL "MAIN_TARGET_LINK_LIBRARIES-NOTFOUND")
+if (NOT MAIN_TARGET_LINK_LIBRARIES STREQUAL "MAIN_TARGET_LINK_LIBRARIES-NOTFOUND")
+   message (VERBOSE "Using link libraries from ${PROJECT_NAME}: ${MAIN_TARGET_LINK_LIBRARIES}")
+elseif()
    message (FATAL_ERROR "Link Libraries of main target not found.")
 endif()
 
