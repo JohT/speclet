@@ -554,27 +554,27 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxResolution->addItem("65536", SpecletParameters::RESOLUTION_65536);
 
     using TransformationTypeValue = std::underlying_type<TransformationParameters::Type>::type;
-    for (auto entry : TransformationParameters::typeNames) {
+    for (auto entry : TransformationParameters::TypeNames::map) {
         comboBoxTransformation->addItem(std::string(entry.second), static_cast<TransformationTypeValue>(entry.first));
     }
 
     using WindowFunctionValue = std::underlying_type<WindowParameters::WindowFunction>::type;
-    for (auto entry : WindowParameters::windowFunctionNames) {
+    for (auto entry : WindowParameters::WindowFunctionNames::map) {
         comboBoxWindowing->addItem(std::string(entry.second), static_cast<WindowFunctionValue>(entry.first));
     }
 
     using WaveletBaseValue = std::underlying_type<WaveletParameters::WaveletBase>::type;
-    for (auto entry : WaveletParameters::waveletBaseNames) {
+    for (auto entry : WaveletParameters::WaveletBaseNames::map) {
         comboBoxWavelet->addItem(std::string(entry.second), static_cast<WaveletBaseValue>(entry.first));
     }
 
     using ResolutionRatioValue = std::underlying_type<WaveletParameters::ResolutionRatioOption>::type;
-    for (auto entry : WaveletParameters::resolutionRatioOptionNames) {
+    for (auto entry : WaveletParameters::ResolutionRatioOptionNames::map) {
         comboBoxWaveletPacketBasis->addItem(std::string(entry.second), static_cast<ResolutionRatioValue>(entry.first));
     }
 
     using SignalGeneratorValue = std::underlying_type<SignalGeneratorParameters::Waveform>::type;
-    for (auto entry : SignalGeneratorParameters::typeNames) {
+    for (auto entry : SignalGeneratorParameters::WaveformNames::map) {
         comboBoxSignalGenerator->addItem(std::string(entry.second), static_cast<SignalGeneratorValue>(entry.first));
     }
 
@@ -585,13 +585,13 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxRouting->addItem("Oscillator", SpecletParameters::ROUTING_GENERATOR);
 
     using AxisValue = std::underlying_type<SpecletDrawerParameters::Axis>::type;
-    for (auto entry : SpecletDrawerParameters::axisNames) {
+    for (auto entry : SpecletDrawerParameters::AxisNames::map) {
         comboBoxLogF->addItem(std::string(entry.second), static_cast<AxisValue>(entry.first));
         comboBoxLogA->addItem(std::string(entry.second), static_cast<AxisValue>(entry.first));
     }
 
     using ColorGradientValue = std::underlying_type<ColorGradientsParameters::ColorMode>::type;
-    for (auto entry : ColorGradientsParameters::colorModeNames) {
+    for (auto entry : ColorGradientsParameters::ColorModeNames::map) {
         comboBoxColorMode->addItem(std::string(entry.second), static_cast<ColorGradientValue>(entry.first));
     }
 }

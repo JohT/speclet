@@ -43,7 +43,7 @@ void Transformation::setWindowFunction(const WindowParameters::WindowFunction& n
     setReady(false);
     windowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(newWindowFunction, resolution);
     assert(windowFunction);
-    auto windowFunctionName = std::string(WindowParameters::windowFunctionNames.find(newWindowFunction)->second);
+    auto windowFunctionName = std::string(WindowParameters::WindowFunctionNames::map.find(newWindowFunction)->second);
     DBG("Transformation::setWindowFunction done with windowFunctionNr=" + windowFunctionName);
     setReady(true);
 }

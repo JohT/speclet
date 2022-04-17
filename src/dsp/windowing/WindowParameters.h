@@ -23,14 +23,22 @@ namespace WindowParameters {
         DEFAULT = BLACKMAN_HARRIS
     };
 
-    inline static const std::map<WindowFunction, std::string_view> windowFunctionNames = {
-            {WindowFunction::BARLETT, "Barlett"},
-            {WindowFunction::BLACKMAN, "Blackman"},
-            {WindowFunction::BLACKMAN_HARRIS, "Blackman-Harris"},
-            {WindowFunction::HAMMING, "Hamming"},
-            {WindowFunction::HANN, "Hann"},
-            {WindowFunction::PARZEN, "Parzen"},
-            {WindowFunction::WELCH, "Welch"},
-            {WindowFunction::RECTANGULAR, "Rectangular"}};
+    struct WindowFunctionNames {
+        static std::map<WindowFunction, std::string_view> createMap() {
+            return {
+                    {WindowFunction::BARLETT, "Barlett"},
+                    {WindowFunction::BLACKMAN, "Blackman"},
+                    {WindowFunction::BLACKMAN_HARRIS, "Blackman-Harris"},
+                    {WindowFunction::HAMMING, "Hamming"},
+                    {WindowFunction::HANN, "Hann"},
+                    {WindowFunction::PARZEN, "Parzen"},
+                    {WindowFunction::WELCH, "Welch"},
+                    {WindowFunction::RECTANGULAR, "Rectangular"},
+                };
+        }
+        static const std::map<WindowFunction, std::string_view> map;
+    };
+
+    inline const std::map<WindowFunction, std::string_view> WindowFunctionNames::map = WindowFunctionNames::createMap();
 
 }// namespace WindowParameters

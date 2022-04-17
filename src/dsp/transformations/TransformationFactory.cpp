@@ -43,7 +43,7 @@ auto TransformationFactory::createTransformation(
         WaveletParameters::WaveletBase waveletBase,
         WaveletParameters::ResolutionRatioOption resolutionRatio) -> Transformation * {
 
-    auto newTransformationTypeName = std::string(TransformationParameters::typeNames.find(newTransformationType)->second);
+    auto newTransformationTypeName = std::string(TransformationParameters::TypeNames::map.find(newTransformationType)->second);
     DBG("TransformationFactory::createTransformation started. transformationType=" +  newTransformationTypeName +
         ", old transformation=" + (currentTransformation != nullptr ? currentTransformation->getName() : "does not exist"));
 

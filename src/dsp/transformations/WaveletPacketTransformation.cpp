@@ -69,7 +69,7 @@ auto WaveletPacketTransformation::getWaveletPacketResultTreeLevel(WaveletLevelTy
 }
 
 void WaveletPacketTransformation::setResolutionRatioOption(WaveletParameters::ResolutionRatioOption newResolutionRatio) {
-    DBG("WaveletPacketTransformation::setResolutionRatioOption to " + std::string(WaveletParameters::resolutionRatioOptionNames.at(newResolutionRatio)));
+    DBG("WaveletPacketTransformation::setResolutionRatioOption to " + std::string(WaveletParameters::ResolutionRatioOptionNames::map.at(newResolutionRatio)));
     timeFrequencyResolutionTreeLevelOffset = toTimeFrequencyResolutionTreeLevelOffset(newResolutionRatio);
     resultTreeLevel = getWaveletPacketResultTreeLevel(getWaveletFilterTreeMaxLevel(), timeFrequencyResolutionTreeLevelOffset);
     spectralDataInfo = calculateSpectralDataInfo();

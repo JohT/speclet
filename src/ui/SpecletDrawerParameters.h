@@ -13,10 +13,16 @@ namespace SpecletDrawerParameters {
         DEFAULT = LOGARITHMIC
     };
 
-    inline static const std::map<Axis, std::string_view> axisNames = {
-            {Axis::LINEAR, "linear"},
-            {Axis::LOGARITHMIC, "logarithmic"},
-
+    struct AxisNames {
+        static std::map<Axis, std::string_view> createMap() {
+            return {
+                    {Axis::LINEAR, "linear"},
+                    {Axis::LOGARITHMIC, "logarithmic"},
+            };
+        }
+        static const std::map<Axis, std::string_view> map;
     };
+
+    inline const std::map<Axis, std::string_view> AxisNames::map = AxisNames::createMap();
 
 }// namespace SpecletDrawerParameters

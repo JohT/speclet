@@ -16,7 +16,7 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
     updateConstantLevelsHedge(waveletFilterTreeMaxLevel / 2);
     updateDWTLevelsHedge();
 
-    DBG("AbstractWaveletTransformation::initialize done with waveletNr=" + std::string(WaveletParameters::waveletBaseNames.at(newWaveletBase)) + "maxLevel=" + std::to_string(waveletFilterTreeMaxLevel));
+    DBG("AbstractWaveletTransformation::initialize done with waveletNr=" + std::string(WaveletParameters::WaveletBaseNames::map.at(newWaveletBase)) + "maxLevel=" + std::to_string(waveletFilterTreeMaxLevel));
 }
 
 AbstractWaveletTransformation::~AbstractWaveletTransformation() {
@@ -149,7 +149,7 @@ void AbstractWaveletTransformation::setWaveletBase(const WaveletParameters::Wave
     }
 
     DBG("AbstractWaveletTransformation::setWaveletBase done with waveletBaseNr=" +
-        std::string(WaveletParameters::waveletBaseNames.at(newWaveletBase)) + ",coeffSize=" + std::to_string(mDwtFilterG.pcoef_size));
+        std::string(WaveletParameters::WaveletBaseNames::map.at(newWaveletBase)) + ",coeffSize=" + std::to_string(mDwtFilterG.pcoef_size));
 
     setReady(true);
 }
