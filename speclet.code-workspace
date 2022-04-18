@@ -107,6 +107,21 @@
             {
                 "type": "lldb",
                 "request": "launch",
+                "name": "MacOS Tests",
+                "program": "${workspaceFolder}/build/test/SpecletTests",
+                "args": [
+                    "--break",
+                    "--success",
+                    "--list-tests",
+                    "--list-tags",
+                    "--list-reporters",
+                    "--verbosity high"
+                ],
+                "cwd": "${workspaceFolder}"
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
                 "name": "Windows VST3",
                 "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Debug/AudioPluginHost.exe",
                 "args": [
