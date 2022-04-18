@@ -316,17 +316,19 @@ auto AbstractWaveletTransformation::getAvgValue(
 
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         auto resolution = getResolution();
-        auto offset = (level * resolution + blockNumber * ((resolution) >> (level)));
+        auto offset = (level * resolution + blockNumber * (resolution >> level));
         values = origin.subspan(offset);
     }
     if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
         auto offset = (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1);
         values = origin.subspan(offset);
     }
-    if (blockposStart >= blockposEnd) {
-        return values[blockposStart];
+    if (blockposEnd > values.size()) {
+        blockposEnd = values.size();
     }
-
+    if (blockposStart >= blockposEnd) {
+        return values[blockposEnd];
+    }
     for (auto blockpos = blockposStart; blockpos < blockposEnd; blockpos++) {
         averageValue += abs(values[blockpos]);
         count++;
