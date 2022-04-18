@@ -7,7 +7,54 @@ VST Audio Spectrum Analyzer Plugin using Fourier- and Wavelet-Transformation.
 - Paper (german): [Echtzeitspektralanalyse auf Basis der Fourier- und Wavelet-Transformation implementiert als VST-Plugin](https://monami.hs-mittweida.de/frontdoor/deliver/index/docId/3216/file/J.Troppacher_2011_Diplomarbeit.pdf)  
 - License: [GNU GENERAL PUBLIC LICENSE v3](./LICENSE)
 
-### Used Tools
+## Build the project
+
+### Prerequisites
+- [Installing GIT](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Installing CMake](https://cmake.org/install/)
+- [Download Ninja](https://github.com/ninja-build/ninja/releases)
+- (Windows only) [Install Visual Studio Build Tools](https://visualstudio.microsoft.com/de/downloads/?q=build+tools) with Visual Studio Installer, select Desktop Development for C++ and add all optional "Clang" components
+- (Optional) [Download Visual Studio Code](https://code.visualstudio.com/download)
+
+### Clone
+Download the project as [zip](https://github.com/JohT/speclet/archive/refs/heads/main.zip)
+or clone it using GIT:
+```shell
+git clone https://github.com/JohT/speclet.git
+```
+
+### Command Line
+
+See [COMMANDS.md](./COMMANDS.md) if you prefer to use the command line.
+
+### Visual Studio Code (MacOS)
+- [Using Clang in Visual Studio Code](https://code.visualstudio.com/docs/cpp/config-clang-mac)
+- Install recommended extensions specified in [speclet.code-workspace](./speclet.code-workspace)
+- Select the kit that fits to your machine (`STRG+SHIFT+P`, Type "CMAKE kit")
+
+### Visual Studio Code (Windows)
+- Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/de/downloads/?q=build+tools) with Visual Studio Installer, select Desktop Development for C++ and add all optional Clang Features
+- Install recommended extensions specified in [speclet.code-workspace](./speclet.code-workspace)
+- Select the kit that fits your machine (e.g. amd64) (`STRG+SHIFT+P`, Type "CMAKE kit").
+Successfully tested with "Visual Studio Build Tools 2022 Release - amd64".
+
+## Testing
+
+### Run Unit Tests within your command line interface (CLI):
+```shell
+ctest --test-dir build/test
+```
+
+### Run Unit Tests in Visual Studio Code
+Build the project and use extension "matepek.vscode-catch2-test-adapter" to show all the Catch2 CTest cases
+under "Testing" (left "activity bar", below extensions button).
+
+### Build AudioPluginHost for exploratory testing
+```shell
+cmake.exe --build build --config Debug --target AudioPluginHost
+```
+
+## Used Tools
 
 Modernized 2022 using the following tools:
 
@@ -21,7 +68,8 @@ This version is not ready yet.
 It contains the code from back then, that doesn't compile any more.   
 It also contains the plugin made with the tutorial [Learn Modern C++ by Building an Audio Plugin (w/ JUCE Framework) - Full Course YouTube](https://www.youtube.com/watch?v=i_Iq4_Kd7Rc&list=PLi4rQ_T_X31Gd4pyUbvPltTVSyw8v_yYT&index=5&t=1051s)
 as a template to start the modernization.
-### Used Libraries
+
+## Used Libraries
 
 This plugin was made in 2011 (modernized 2022) using the following frameworks and libraries:
 
@@ -70,11 +118,10 @@ Boost Software License 1.0
 ## References
 
 ### Digital Signal Processing
-
 - [&#11088; Window Functions and Their Applications in Signal Processing (PDF)](https://library.oapen.org/handle/20.500.12657/41686)
 - [Understanding FFT Windows (PDF, 2013)](https://www.egr.msu.edu/classes/me451/me451_labs/Fall_2013/Understanding_FFT_Windows.pdf)
-### Templates and Examples
 
+### Templates and Examples
 - [&#11088; Pamplejuce](https://github.com/sudara/pamplejuce)
 - [Cross-platform CI for JUCE audio plugins with Github Actions](https://github.com/maxwellpollack/juce-plugin-ci)
 - [JUCE CMake Repo Prototype](https://github.com/eyalamirmusic/JUCECmakeRepoPrototype/blob/master/CMakeLists.txt)
@@ -83,7 +130,6 @@ Boost Software License 1.0
 - [Integration of Catch, CMake and CMake CodeCoverage](https://github.com/fkromer/catch_cmake_coverage)
 
 ### Performance Tracing/Logging (Profiling, Instrumentation)
-
 - [Google Chrome Browser Trace Log Viewer](chrome://tracing/)
 - [The Cherno - VISUAL BENCHMARKING in C++ (YouTube)](https://www.youtube.com/watch?v=xlAH4dbMVnU&t=197s)
 - [&#11088; Instrumentor.h (Code Snippet)](https://gist.github.com/TheCherno/31f135eea6ee729ab5f26a6908eb3a5e)
@@ -97,8 +143,11 @@ Boost Software License 1.0
 - [Catch2 Data Generators](https://github.com/catchorg/Catch2/blob/devel/docs/generators.md)
 - [Coverage for tests with cmake and catch2](https://stackoverflow.com/questions/65603144/how-to-get-coverage-for-tests-with-cmake-and-catch2)
 - [Findcodecov.cmake](https://github.com/catchorg/Catch2/blob/devel/CMake/Findcodecov.cmake)
-### Other
 
+### Windows Build
+- [Visual Studio Build Tools Download](https://visualstudio.microsoft.com/de/downloads/?q=build+tools)
+
+### Other
 - [C++ Singleton](https://stackoverflow.com/questions/1008019/c-singleton-design-pattern)
 - [10 Cmake Tips & Tricks](https://medium.com/codex/10-cmake-tips-tricks-7f00d407923d)
 - [Reference to non-static member function must be called](https://stackoverflow.com/questions/26331628/reference-to-non-static-member-function-must-be-called)
@@ -107,3 +156,4 @@ Boost Software License 1.0
 - [Undefined symbol _kIOMainPortDefault](https://forum.juce.com/t/juce-6-1-3-undefined-symbol-kiomainportdefault/49335/9)
 - [CheckTypeSize (FFTW failed for multiple architectures)](https://cmake.org/cmake/help/latest/module/CheckTypeSize.html)
 - [std::span implementation for C++11 and later](https://github.com/tcbrindle/span)
+- [Article CMake Ninja Combo: The Gist](https://www.incredibuild.com/blog/cmake-ninja-combo-the-gist)

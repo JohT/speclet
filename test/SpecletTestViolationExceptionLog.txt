@@ -1,0 +1,51 @@
+[build] CMake Error at D:/Engineering/Repositories/git/speclet/build/_deps/catch2-src/extras/CatchAddTests.cmake:45 (message):
+[build]   Error running test executable
+[build]   'D:/Engineering/Repositories/git/speclet/build/test/SpecletTests.exe':
+[build] 
+[build]     Result: Access violation
+[build]     Output: 
+[build] 
+[build] 
+[build] 
+[build] ninja: build stopped: subcommand failed.
+[build] Build finished with exit code 1
+
+----------------------------------------------------------------------------------------------------
+
+Console is in 'commands' mode, prefix expressions with '?'.
+Launching: D:\Engineering\Repositories\git\speclet\build\test\SpecletTests.exe --break --success --list-tests --list-tags --list-reporters --verbosity high
+Launched process 5952
+Stop reason: Exception 0xc0000005 encountered at address 0x7ff7f61c457c: Access violation reading location 0x00000000
+
+----------------------------------------------------------------------------------------------------
+
+configuration: {
+  type: 'lldb',
+  request: 'launch',
+  name: 'Windows Tests',
+  program: '${workspaceFolder}/build/test/SpecletTests.exe',
+  args: [
+    '--break',
+    '--success',
+    '--list-tests',
+    '--list-tags',
+    '--list-reporters',
+    '--verbosity high'
+  ],
+  cwd: '${workspaceFolder}',
+  __configurationTarget: 4,
+  relativePathBase: 'd:\\Engineering\\Repositories\\git\\speclet'
+}
+[adapter\src\terminal.rs:104] FreeConsole() = 1
+[adapter\src\terminal.rs:105] AttachConsole(pid) = 1
+[adapter\src\terminal.rs:109] FreeConsole() = 1
+error: SpecletTests.exe :: Class 'std::strong_ordering' has a member 'less' of type 'const std::strong_ordering' which does not have a complete definition.
+error: SpecletTests.exe :: Class 'std::partial_ordering' has a member 'less' of type 'const std::partial_ordering' which does not have a complete definition.
+error: SpecletTests.exe :: Class 'std::weak_ordering' has a member 'less' of type 'const std::weak_ordering' which does not have a complete definition.
+error: SpecletTests.exe :: Class 'juce::Identifier' has a member 'null' of type 'juce::Identifier' which does not have a complete definition.
+error: SpecletTests.exe :: Class 'juce::DynamicObject' has a member 'properties' of type 'juce::NamedValueSet' which does not have a complete definition.
+error: SpecletTests.exe :: Class 'juce::XmlElement::XmlAttributeNode' has a member 'nextListItem' of type 'juce::LinkedListPointer<juce::XmlElement::XmlAttributeNode>' which does not have a complete definition.
+error: SpecletTests.exe :: Class 'juce::FileInputStream' has a member 'file' of type 'const juce::File' which does not have a complete definition.
+error: SpecletTests.exe :: Class 'const juce::AffineTransform' has a member 'identity' of type 'const juce::AffineTransform' which does not have a complete definition.
+error: SpecletTests.exe :: Class 'const juce::ModifierKeys' has a member 'currentModifiers' of type 'juce::ModifierKeys' which does not have a complete definition.
+Debug adapter exit code=3221225477, signal=null.

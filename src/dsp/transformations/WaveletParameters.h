@@ -30,27 +30,33 @@ namespace WaveletParameters {
         DEFAULT = VAIDYANATHAN_18
     };
 
-    inline static const std::map<WaveletBase, std::string_view> waveletBaseNames = {
-            {WaveletBase::HAAR, "Haar (2)"},
-            {WaveletBase::DAUBECHIES_02, "Daubechies (2)"},
-            {WaveletBase::DAUBECHIES_04, "Daubechies (4)"},
-            {WaveletBase::DAUBECHIES_06, "Daubechies (6)"},
-            {WaveletBase::DAUBECHIES_08, "Daubechies (8)"},
-            {WaveletBase::DAUBECHIES_10, "Daubechies (10)"},
-            {WaveletBase::DAUBECHIES_12, "Daubechies (12)"},
-            {WaveletBase::DAUBECHIES_14, "Daubechies (14)"},
-            {WaveletBase::DAUBECHIES_16, "Daubechies (16)"},
-            {WaveletBase::DAUBECHIES_18, "Daubechies (18)"},
-            {WaveletBase::DAUBECHIES_20, "Daubechies (20)"},
-            {WaveletBase::COIFMAN_06, "Coifman (6)"},
-            {WaveletBase::COIFMAN_12, "Coifman (12)"},
-            {WaveletBase::COIFMAN_18, "Coifman (18)"},
-            {WaveletBase::COIFMAN_24, "Coifman (24)"},
-            {WaveletBase::COIFMAN_30, "Coifman (30)"},
-            {WaveletBase::BEYLKIN_18, "Beylkin (18)"},
-            {WaveletBase::VAIDYANATHAN_18, "Vaidyanathan (18)"},
-
+    struct WaveletBaseNames {
+        static std::map<WaveletBase, std::string_view> createMap() {
+            return {
+                    {WaveletBase::HAAR, "Haar (2)"},
+                    {WaveletBase::DAUBECHIES_02, "Daubechies (2)"},
+                    {WaveletBase::DAUBECHIES_04, "Daubechies (4)"},
+                    {WaveletBase::DAUBECHIES_06, "Daubechies (6)"},
+                    {WaveletBase::DAUBECHIES_08, "Daubechies (8)"},
+                    {WaveletBase::DAUBECHIES_10, "Daubechies (10)"},
+                    {WaveletBase::DAUBECHIES_12, "Daubechies (12)"},
+                    {WaveletBase::DAUBECHIES_14, "Daubechies (14)"},
+                    {WaveletBase::DAUBECHIES_16, "Daubechies (16)"},
+                    {WaveletBase::DAUBECHIES_18, "Daubechies (18)"},
+                    {WaveletBase::DAUBECHIES_20, "Daubechies (20)"},
+                    {WaveletBase::COIFMAN_06, "Coifman (6)"},
+                    {WaveletBase::COIFMAN_12, "Coifman (12)"},
+                    {WaveletBase::COIFMAN_18, "Coifman (18)"},
+                    {WaveletBase::COIFMAN_24, "Coifman (24)"},
+                    {WaveletBase::COIFMAN_30, "Coifman (30)"},
+                    {WaveletBase::BEYLKIN_18, "Beylkin (18)"},
+                    {WaveletBase::VAIDYANATHAN_18, "Vaidyanathan (18)"},
+            };
+        }
+        static const std::map<WaveletBase, std::string_view> map;
     };
+
+    inline const std::map<WaveletBase, std::string_view> WaveletBaseNames::map = WaveletBaseNames::createMap();
 
     enum class ResolutionRatioOption {
         TIME_X4 = -2,
@@ -63,14 +69,20 @@ namespace WaveletParameters {
         DEFAULT = EQUAL
     };
 
-    // Map is created in inverse enum value order using std::greater to ensure that the default value (99) is the first one followed by decreasing frequency resolutions and ascending time resolutions.
-    inline static const std::map<ResolutionRatioOption, std::string_view, std::greater<ResolutionRatioOption>> resolutionRatioOptionNames = {
-            {ResolutionRatioOption::TIME_X4, "Time x4"},
-            {ResolutionRatioOption::TIME_X2, "Time x2"},
-            {ResolutionRatioOption::FREQUENCY_X2, "Freq x2"},
-            {ResolutionRatioOption::FREQUENCY_X4, "Freq x4"},
-            {ResolutionRatioOption::EQUAL, "Freq/Time x1"},
-
+    struct ResolutionRatioOptionNames {    
+        // Map is created in inverse enum value order using std::greater to ensure that the default value (99) is the first one followed by decreasing frequency resolutions and ascending time resolutions.
+        static std::map<ResolutionRatioOption, std::string_view, std::greater<ResolutionRatioOption>> createMap() {
+            return {
+                    {ResolutionRatioOption::TIME_X4, "Time x4"},
+                    {ResolutionRatioOption::TIME_X2, "Time x2"},
+                    {ResolutionRatioOption::FREQUENCY_X2, "Freq x2"},
+                    {ResolutionRatioOption::FREQUENCY_X4, "Freq x4"},
+                    {ResolutionRatioOption::EQUAL, "Freq/Time x1"},
+            };
+        }
+        static const std::map<ResolutionRatioOption, std::string_view, std::greater<ResolutionRatioOption>> map;
     };
 
-}// namespace WaveletParameter
+    inline const std::map<ResolutionRatioOption, std::string_view, std::greater<ResolutionRatioOption>> ResolutionRatioOptionNames::map = ResolutionRatioOptionNames::createMap();
+
+}// namespace WaveletParameters

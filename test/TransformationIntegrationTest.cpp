@@ -46,7 +46,7 @@ unsigned long getExpectedSpectralDataSize(const SpectralDataInfo &spectralDataIn
     } else if (transformationType == TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM) {
         expectedSpectralDataSize = spectralDataInfo.getResolution() / 16;// Because of 4x frequency resolution ratio
     }
-    auto transformationTypeName = std::string(TransformationParameters::typeNames.at(transformationType));
+    auto transformationTypeName = std::string(TransformationParameters::TypeNames::map.at(transformationType));
     INFO("Expected spectral data size: " << expectedSpectralDataSize << " for transformation type: " << transformationTypeName << " and resolution: " << spectralDataInfo.getResolution());
     return expectedSpectralDataSize;
 }
@@ -60,7 +60,7 @@ double getFrequencyDeviationToleranceFactor(const TransformationParameters::Type
     } else if (transformationType == TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM) {
         frequencyDeviationToleranceFactor = 9.0F;
     }
-    auto transformationTypeName = std::string(TransformationParameters::typeNames.at(transformationType));
+    auto transformationTypeName = std::string(TransformationParameters::TypeNames::map.at(transformationType));
     INFO("Frequency deviation tolerance factor: " << frequencyDeviationToleranceFactor << " for transformation type: " << transformationTypeName);
     return frequencyDeviationToleranceFactor;
 }
@@ -102,7 +102,7 @@ SCENARIO("Transformations Integration Test", "[integration]") {
 
     // Generates a list of all transformation except for the last one ("BYPASS") out of the typeNames Map (first value = transformation type) and uses them to call the tests methods below for each of them.
     // See: https://github.com/catchorg/Catch2/blob/devel/docs/generators.md
-    auto transformationType = GENERATE(from_range(TransformationParameters::typeNames.begin(), std::prev(TransformationParameters::typeNames.end()))).first;
+    auto transformationType = GENERATE(from_range(TransformationParameters::TypeNames::map.begin(), std::prev(TransformationParameters::TypeNames::map.end()))).first;
     Transformation *transformation = TransformationFactory::getSingletonInstance().createTransformation(
             transformationType,
             samplingRate,

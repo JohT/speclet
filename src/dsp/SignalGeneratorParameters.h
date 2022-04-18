@@ -16,12 +16,18 @@ namespace SignalGeneratorParameters {
         DEFAULT = SINE
     };
 
-    inline static const std::map<Waveform, std::string_view> typeNames = {
-            {Waveform::SINE, "Sine"},
-            {Waveform::TRIANGLE, "Triangle"},
-            {Waveform::RAMP, "Sawtooth"},
-            {Waveform::SQUARE, "Rectangle"},
-            {Waveform::NOISE, "Noise"}
+    struct WaveformNames {
+        static std::map<Waveform, std::string_view> createMap() {
+            return {
+                    {Waveform::SINE, "Sine"},
+                    {Waveform::TRIANGLE, "Triangle"},
+                    {Waveform::RAMP, "Sawtooth"},
+                    {Waveform::SQUARE, "Rectangle"},
+                    {Waveform::NOISE, "Noise"},
+            };
+        }
+        static const std::map<Waveform, std::string_view> map;
     };
 
-}
+    inline const std::map<Waveform, std::string_view> WaveformNames::map = WaveformNames::createMap();
+}// namespace SignalGeneratorParameters

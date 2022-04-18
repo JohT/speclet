@@ -16,7 +16,7 @@ AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingR
     updateConstantLevelsHedge(waveletFilterTreeMaxLevel / 2);
     updateDWTLevelsHedge();
 
-    DBG("AbstractWaveletTransformation::initialize done with waveletNr=" + std::string(WaveletParameters::waveletBaseNames.at(newWaveletBase)) + "maxLevel=" + std::to_string(waveletFilterTreeMaxLevel));
+    DBG("AbstractWaveletTransformation::initialize done with waveletNr=" + std::string(WaveletParameters::WaveletBaseNames::map.at(newWaveletBase)) + "maxLevel=" + std::to_string(waveletFilterTreeMaxLevel));
 }
 
 AbstractWaveletTransformation::~AbstractWaveletTransformation() {
@@ -149,7 +149,7 @@ void AbstractWaveletTransformation::setWaveletBase(const WaveletParameters::Wave
     }
 
     DBG("AbstractWaveletTransformation::setWaveletBase done with waveletBaseNr=" +
-        std::string(WaveletParameters::waveletBaseNames.at(newWaveletBase)) + ",coeffSize=" + std::to_string(mDwtFilterG.pcoef_size));
+        std::string(WaveletParameters::WaveletBaseNames::map.at(newWaveletBase)) + ",coeffSize=" + std::to_string(mDwtFilterG.pcoef_size));
 
     setReady(true);
 }
@@ -316,17 +316,19 @@ auto AbstractWaveletTransformation::getAvgValue(
 
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         auto resolution = getResolution();
-        auto offset = (level * resolution + blockNumber * ((resolution) >> (level)));
+        auto offset = (level * resolution + blockNumber * (resolution >> level));
         values = origin.subspan(offset);
     }
     if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
         auto offset = (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1);
         values = origin.subspan(offset);
     }
-    if (blockposStart >= blockposEnd) {
-        return values[blockposStart];
+    if (blockposEnd > values.size()) {
+        blockposEnd = values.size();
     }
-
+    if (blockposStart >= blockposEnd) {
+        return values[blockposEnd];
+    }
     for (auto blockpos = blockposStart; blockpos < blockposEnd; blockpos++) {
         averageValue += abs(values[blockpos]);
         count++;

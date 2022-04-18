@@ -2,6 +2,7 @@
 #include "../../utilities/PerformanceLogger.h"
 #include "TransformationParameters.h"
 #include <cstddef>
+#include <cassert>
 
 FourierTransformation::FourierTransformation(double newSamplingRate, ResolutionType newResolution, WindowParameters::WindowFunction newWindowFunction)
     : Transformation(newSamplingRate, newResolution, TransformationParameters::Type::FAST_FOURIER_TRANSFORM, newWindowFunction),
