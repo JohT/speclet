@@ -77,8 +77,8 @@ auto SpecletParameters::getParameter(const juce::String &name) -> float {
 //TODO (JohT) Declare a int type for parameter values and use it instead of float?
 void SpecletParameters::setParameter(int index, float newValue) {
     assert(index >= 0 && index < properties.getNumChildren());
-    if (newValue < 1.0F) {
-        DBG("SpecletParameters::setParameter: Value < 1.0F, parameter " << index << " will not be set");
+    if (newValue == 0.0F) {
+        DBG("SpecletParameters::setParameter: Value == 0.0F, parameter " << index << " will not be set");
         return;
     }
     const juce::ScopedLock myScopedLock(criticalSection);
