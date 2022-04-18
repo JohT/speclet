@@ -119,7 +119,14 @@
                 "request": "launch",
                 "name": "Windows Tests",
                 "program": "${workspaceFolder}/build/test/SpecletTests.exe",
-                "args": [],
+                "args": [
+                    "--break",
+                    "--success",
+                    "--list-tests",
+                    "--list-tags",
+                    "--list-reporters",
+                    "--verbosity high"
+                ],
                 "cwd": "${workspaceFolder}"
             },
         ]

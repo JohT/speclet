@@ -28,6 +28,12 @@ cmake -Bbuild -DJUCE_BUILD_EXTRAS=ON -DJUCE_BUILD_EXAMPLES=ON -DCMAKE_OSX_ARCHIT
 cmake --build build
 ```
 
+## Build AudioPluginHost to test the plugin:
+
+```shell
+cmake.exe --build build --config Debug --target AudioPluginHost
+```
+
 ## Run Unit-Tests
 
 From this directory start the unit test with the following command. 
