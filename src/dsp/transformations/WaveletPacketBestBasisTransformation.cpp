@@ -56,14 +56,14 @@ void WaveletPacketBestBasisTransformation::calculate() {
 
 // ----------------------------------------------------------------------------
 
-void WaveletPacketBestBasisTransformation::getCosts(const ArrayTreePer &a, Tree &t, costFunAdv costFunction, const real_number &sigma, const real_number &factor) {
+void WaveletPacketBestBasisTransformation::getCosts(const ArrayTreePer &a, Tree &t, const costFunAdv& costFunction, const real_number &sigma, const real_number &factor) {
     getCostsHelp(a, &(t.root), costFunction, sigma, factor, 0, 0);
     t.maxlevel = a.maxlevel;
 }
 
 
 void WaveletPacketBestBasisTransformation::getCostsHelp(const ArrayTreePer &a, Node<real_number> **ptr,
-                                                        costFunAdv costFunction, const real_number &sigma, const real_number &factor,
+                                                        const costFunAdv& costFunction, const real_number &sigma, const real_number &factor,
                                                         const integer_number &level, const integer_number &b) {
     if (level <= a.maxlevel) {
         real_number cost = (this->*costFunction)(a.block_start(level, b), a.block_length(level), sigma, factor, a.dim);

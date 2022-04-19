@@ -100,34 +100,34 @@ public:
 
     static auto isTransformationParameter(const juce::String& parameterID) -> bool;
 
-    void blockParameterChanges() { waitForParameterChange.reset(); }
-    void unblockParameterChanges() { waitForParameterChange.signal(); }
+    void blockParameterChanges() const { waitForParameterChange.reset(); }
+    void unblockParameterChanges() const { waitForParameterChange.signal(); }
 
-    void setParameter(int index, float newValue);
-    void setParameter(const juce::String &name, float newValue);
-    auto getParameter(int index) -> float;
-    auto getParameter(const juce::String &name) -> float;
-    auto getParameterName(int index) -> const juce::String;
-    auto getParameterIndex(const juce::String &name) -> int;
+    void setParameter(int index, float newValue) const;
+    void setParameter(const juce::String &name, float newValue) const;
+    auto getParameter(int index) const -> float;
+    auto getParameter(const juce::String &name) const -> float;
+    auto getParameterName(int index) const -> const juce::String;
+    auto getParameterIndex(const juce::String &name) const -> int;
 
-    auto getColorMode() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_ColorMode)); }
-    auto getGenerator() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Generator)); }
-    auto getGeneratorFrequency() -> float { return getParameter(PARAMETER_INDEX_GeneratorFrequency); }
-    auto getLogMagnitude() -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogMagnitude)); }
-    auto getLogFrequency() -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogFrequency)); }
-    auto getResolution() -> unsigned long { return static_cast<unsigned long>(getParameter(PARAMETER_INDEX_Resolution)); }
-    auto getRouting() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Routing)); }
-    auto getTransformation() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Transformation)); }
-    auto getWavelet() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Wavelet)); }
-    auto getWaveletPacketBasis() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_WaveletPacketBasis)); }
-    auto getWindowing() -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Windowing)); }
+    auto getColorMode() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_ColorMode)); }
+    auto getGenerator() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Generator)); }
+    auto getGeneratorFrequency() const -> float { return getParameter(PARAMETER_INDEX_GeneratorFrequency); }
+    auto getLogMagnitude() const -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogMagnitude)); }
+    auto getLogFrequency() const -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogFrequency)); }
+    auto getResolution() const -> unsigned long { return static_cast<unsigned long>(getParameter(PARAMETER_INDEX_Resolution)); }
+    auto getRouting() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Routing)); }
+    auto getTransformation() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Transformation)); }
+    auto getWavelet() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Wavelet)); }
+    auto getWaveletPacketBasis() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_WaveletPacketBasis)); }
+    auto getWindowing() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Windowing)); }
 
     //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
     void addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation = true);
     //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
     void removeListener(juce::ValueTree::Listener *listener);
     //read and write to XML
-    void readFromXML(const juce::XmlElement &xml);
+    void readFromXML(const juce::XmlElement &xml) const;
     auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties.createXml(); }
 
 private:
@@ -144,8 +144,8 @@ private:
     juce::CriticalSection criticalSection;
 
     // --------------- methods --------------- //
-    auto sanitizeParameter(int index, float newValue) -> float;
-    void setParameterInternally(int index, juce::var newValue);
+    auto sanitizeParameter(int index, float newValue) const -> float;
+    void setParameterInternally(int index, juce::var newValue) const;
     template<class _Tp>
     auto enumOptionToFloat(const _Tp& enumType) const -> float;
 

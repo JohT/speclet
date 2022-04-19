@@ -23,9 +23,7 @@ SpecletAudioProcessor::SpecletAudioProcessor()
                              .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                              ),
-      parameters(SpecletParameters::getSingletonInstance()),
       parameterRouting(parameters.getRouting()),
-      currentTransformation(nullptr),
       signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGeneratorParameters::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
 
     LOG_PERFORMANCE_BEGIN("SpecletAudioProcessor");

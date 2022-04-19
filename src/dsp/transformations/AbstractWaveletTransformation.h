@@ -55,14 +55,14 @@ protected:
      * 
      * @param analysisResult 
      */
-    void analyse(ArrayTreePer &analysisResult);
+    void analyse(ArrayTreePer &analysisResult) const;
 
     /**
      * @brief Executes the dyadic wavelet transform analysis.
      * 
      * @param analysisResult 
      */
-    void analyse(Interval &analysisResult);
+    void analyse(Interval &analysisResult) const;
 
     void extractSpectrum(const Interval &outDWT);                                               // For "classic" (dyadic) Discrete Wavelet Transform
     void extractSpectrum(const ArrayTreePer &outWaveletPacketTree);                             // For Discrete Wavelet Packet Transform
@@ -72,9 +72,9 @@ protected:
      * @brief Updates the member "constantLevelsHedge" for a given level (e.g. 4,4,4,4).
      * @param level WaveletLevelType
      */
-    virtual void updateConstantLevelsHedge(WaveletLevelType level);
+    void updateConstantLevelsHedge(WaveletLevelType level);
 
-    auto getDwtInput() -> const Interval & {
+    auto getDwtInput() const -> const Interval & {
         return dwtInput;
     }
     auto getWaveletFilterTreeMaxLevel() const -> WaveletLevelType {
@@ -90,11 +90,11 @@ private:
     WaveletLevelType waveletFilterTreeMaxLevel;//Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
     Interval dwtInput;                         //wavelet transformation input data of wave++ library
 
-    PQMF mDwtFilterH;//DWT/DWPT lowpass filter coeffs (result=scaling function);
-    PQMF mDwtFilterG;//DWT/DWPT hipass  filter coeffs (result=wavelet function);
+    PQMF mDwtFilterH; //Wavelet lowpass filter coefficients (result=scaling function);
+    PQMF mDwtFilterG; //Wavelet highpass  filter coefficients (result=wavelet function);
 
-    std::unique_ptr<HedgePer> constantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
-    std::unique_ptr<HedgePer> dWTLevelsHedge;     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
+    std::unique_ptr<HedgePer> constantLevelsHedge = {};//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
+    std::unique_ptr<HedgePer> dWTLevelsHedge = {};     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
 
     static auto getMaxLevel(ResolutionType resolution) -> WaveletLevelType;
     static auto getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType;
@@ -120,5 +120,5 @@ private:
 
     void extractSpectrum(int transformResultClass, tcb::span<real_number> origin, const HedgePer &levelsHedge);
     auto getValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double;
-    auto getAvgValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockposStart, unsigned long blockposEnd) -> double;
+    auto getAvgValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockposStart, unsigned long blockposEnd) const -> double;
 };

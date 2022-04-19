@@ -37,8 +37,8 @@ auto WaveletPacketTransformation::getFrequencyResolution(WaveletLevelType wavele
     return 1U << waveletPacketResultTreeLevel;
 }
 
-auto WaveletPacketTransformation::getTimeResolution() -> Transformation::ResolutionType {
-    return 1U << static_cast<unsigned int>(getWaveletFilterTreeMaxLevel() - resultTreeLevel);
+auto WaveletPacketTransformation::getTimeResolution() const -> Transformation::ResolutionType {
+    return 1U << (getWaveletFilterTreeMaxLevel() - resultTreeLevel);
 }
 
 auto WaveletPacketTransformation::getWaveletPacketResultTreeLevel(WaveletLevelType maxLevel, int resolutionRatioOffset) -> WaveletLevelType {
@@ -61,7 +61,6 @@ auto WaveletPacketTransformation::getWaveletPacketResultTreeLevel(WaveletLevelTy
     assert(maxLevel > 0);
     assert(resolutionRatioOffset != 99);
     auto waveletPacketResultTreeLevel = maxLevel / 2 + resolutionRatioOffset;
-    //auto waveletPacketResultTreeLevel   static_cast<unsigned int>(ceil(static_cast<double>(maxLevel) * 0.5F) + resolutionRatioDWPT);
     DBG("AbstractWaveletTransformation::getWaveletPacketResultTreeLevel: maxLevel=" + juce::String(maxLevel) +
         ",resolutionRatio=" + juce::String(resolutionRatioOffset) +
         ",WaveletPacketResultTreeLevel=" + juce::String(waveletPacketResultTreeLevel));
@@ -75,7 +74,7 @@ void WaveletPacketTransformation::setResolutionRatioOption(WaveletParameters::Re
     spectralDataInfo = calculateSpectralDataInfo();
 }
 
-auto WaveletPacketTransformation::calculateSpectralDataInfo() -> SpectralDataInfo {
+auto WaveletPacketTransformation::calculateSpectralDataInfo() const -> SpectralDataInfo {
     DBG("WaveletPacketTransformation::calculateSpectralDataInfo: waveletTreeLevel=" + juce::String(resultTreeLevel));
     return {samplingRate, getResolution(), getFrequencyResolution(resultTreeLevel), getTimeResolution()};
 }
@@ -84,7 +83,7 @@ auto WaveletPacketTransformation::toTimeFrequencyResolutionTreeLevelOffset(const
     if (resolutionRatioOption == WaveletParameters::ResolutionRatioOption::EQUAL) {
         return 0;
     }
-    using ResolutionRatioOptionValueType = std::underlying_type<WaveletParameters::ResolutionRatioOption>::type;
+    using ResolutionRatioOptionValueType = std::underlying_type_t<WaveletParameters::ResolutionRatioOption>;
     return static_cast<ResolutionRatioOptionValueType>(resolutionRatioOption);
 }
 
@@ -93,15 +92,8 @@ void WaveletPacketTransformation::calculate() {
     fillDWTInput();
 
     //to hold the result of the wavelet packet transformation (=DWPT coeffs)
-    ArrayTreePer outDWPT(getWaveletFilterTreeMaxLevel());
-    //DBG("WaveletPacketTransformation::calculate before with mDWT_maxLevel= "	+
-    //							  juce::String(mDWT_maxLevel)			+
-    //	",inLen="		+ juce::String(mDWT_Input->length)	+
-    //	",outDim="		+ juce::String(out_DWPT.dim)
-    //);
-
-    //DWPT (discrete wavelet packet transform), periodic
-    analyse(outDWPT);
-    sortWaveletFilterTreeByScaleDescending(outDWPT);
-    extractSpectrum(outDWPT);
+    ArrayTreePer outDWT(getWaveletFilterTreeMaxLevel());
+    analyse(outDWT);
+    sortWaveletFilterTreeByScaleDescending(outDWT);
+    extractSpectrum(outDWT);
 }

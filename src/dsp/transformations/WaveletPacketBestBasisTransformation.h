@@ -66,7 +66,7 @@ private:
      * @param sigma 
      * @param factor 
      */
-    void getCosts(const ArrayTreePer &a, Tree &t, costFunAdv costFunction, const real_number &sigma, const real_number &factor);
+    void getCosts(const ArrayTreePer &a, Tree &t, const costFunAdv& costFunction, const real_number &sigma, const real_number &factor);
 
     /**
      * @brief Advanced function to integrate the cost function used in wave++ demo "demoWavPack.cpp"
@@ -80,7 +80,7 @@ private:
      * @param b 
      */
     void getCostsHelp(const ArrayTreePer &a, Node<real_number> **ptr,
-                      costFunAdv costFunction, const real_number &sigma, const real_number &factor,
+                      const costFunAdv& costFunction, const real_number &sigma, const real_number &factor,
                       const integer_number &level, const integer_number &b);
 
     /**

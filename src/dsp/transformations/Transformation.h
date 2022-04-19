@@ -28,6 +28,7 @@
 class TransformationListener;
 class TransformationResult {
 public:
+    virtual ~TransformationResult() = default;
     virtual auto isOutputAvailable() -> bool = 0;
     virtual auto getSpectralDataBuffer() -> SpectralDataBuffer * = 0;
     virtual void getNextSpectrum(SpectralDataBuffer::ItemType *item) = 0;
@@ -118,10 +119,10 @@ private:
     std::queue<double> inputQueue;
     SpectralDataBuffer outputBuffer;
 
-    bool ready;     //Signalizes internally "ready for new calculation"
-    bool calculated;//Signalizes internally "calculation finished"
+    bool ready = false;     //Signalizes internally "ready for new calculation"
+    bool calculated = false;//Signalizes internally "calculation finished"
 
-    TransformationListener *transformResultsListener;
+    TransformationListener *transformResultsListener = nullptr;
     juce::CriticalSection criticalSection;
     juce::WaitableEvent waitForDestruction{true};
 
@@ -137,5 +138,6 @@ private:
 
 class TransformationListener {
 public:
+    virtual ~TransformationListener() = default;
     virtual void onTransformationEvent(TransformationResult *result) = 0;
 };

@@ -8,10 +8,7 @@
 
 Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowParameters::WindowFunction newWindowFunction)
     : transformationType(newTransformationType),
-      resolution(newResolution),
-      ready(false),
-      calculated(false),
-      transformResultsListener(nullptr) {
+      resolution(newResolution) {
     assert(newResolution >= 256);
     waitForDestruction.signal();
 
