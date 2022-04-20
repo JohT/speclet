@@ -140,9 +140,12 @@ target_compile_definitions("${PROJECT_NAME}"
         JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
         JUCE_VST3_CAN_REPLACE_VST2=0
-        LOG_PERFORMANCE=1
+        $<$<CONFIG:Debug>:LOG_PERFORMANCE> # Create performancelog.json in Debug build for google chrome tracing 
         _USE_MATH_DEFINES
-        )
+)
+get_target_property(MAIN_TARGET_COMPILE_OPTIONS ${PROJECT_NAME} COMPILE_DEFINITIONS)
+message(VERBOSE "Compiler definitions added to target ${PROJECT_NAME}: ${MAIN_TARGET_COMPILE_OPTIONS}")
+
 
 # If your target needs extra binary assets, you can add them here. The first argument is the name of
 # a new static library target that will include all the binary resources. There is an optional
@@ -153,16 +156,6 @@ target_compile_definitions("${PROJECT_NAME}"
 
 # juce_add_binary_data(AudioPluginData SOURCES ...)
 
-# We'll need to link to these from our plugin as well as our tests
-set(MAIN_LINK_LIBRARIES
-    juce::juce_core
-    juce::juce_dsp
-    juce::juce_audio_utils
-    juce::juce_gui_basics
-    fftw3
-    wave++
-)
-
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
 # we're linking our executable target to the `juce::juce_audio_utils` module. Inter-module
 # dependencies are resolved automatically, so `juce_core`, `juce_events` and so on will also be
@@ -172,7 +165,12 @@ set(MAIN_LINK_LIBRARIES
 target_link_libraries("${PROJECT_NAME}"
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
-        ${MAIN_LINK_LIBRARIES}
+        juce::juce_core
+        juce::juce_dsp
+        juce::juce_audio_utils
+        juce::juce_gui_basics
+        fftw3
+        wave++
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
