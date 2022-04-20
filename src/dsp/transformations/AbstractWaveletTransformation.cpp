@@ -323,8 +323,8 @@ auto AbstractWaveletTransformation::getAvgValue(
         auto offset = (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1);
         values = origin.subspan(offset);
     }
-    if (blockposEnd > values.size()) {
-        blockposEnd = values.size();
+    if (blockposEnd >= values.size()) {
+        blockposEnd = values.size() - 1;
     }
     if (blockposStart >= blockposEnd) {
         return values[blockposEnd];
