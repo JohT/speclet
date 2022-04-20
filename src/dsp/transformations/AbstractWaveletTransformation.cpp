@@ -8,9 +8,7 @@
 AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowParameters::WindowFunction newWindowFunction, WaveletParameters::WaveletBase newWaveletBase)
     : Transformation(newSamplingRate, newResolution, newTransformationType, newWindowFunction),
       waveletFilterTreeMaxLevel(getMaxLevel(newResolution)),
-      dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))),
-      constantLevelsHedge(nullptr),
-      dWTLevelsHedge(nullptr) {
+      dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))) {
     
     setWaveletBase(newWaveletBase);
     updateConstantLevelsHedge(waveletFilterTreeMaxLevel / 2);
@@ -164,7 +162,7 @@ void AbstractWaveletTransformation::fillDWTInput() {
     auto *windowFunction = getWindowFunction();
     for (unsigned int i = 0; i < getResolution(); i++) {
         auto nextSample = getInputQueue().front();
-        (dwtInput)[i] = nextSample * windowFunction->getFactor(i);
+        dwtInput[i] = nextSample * windowFunction->getFactor(i);
         getInputQueue().pop();
     }
 }
@@ -216,11 +214,11 @@ void AbstractWaveletTransformation::swapWaveletFilterTreeChilds(const ArrayTreeP
     }
 }
 
-void AbstractWaveletTransformation::analyse(ArrayTreePer &analysisResult) {
+void AbstractWaveletTransformation::analyse(ArrayTreePer &analysisResult) const {
     Analysis(getDwtInput(), analysisResult, mDwtFilterH, mDwtFilterG, ConvDecPer);
 }
 
-void AbstractWaveletTransformation::analyse(Interval &analysisResult) {
+void AbstractWaveletTransformation::analyse(Interval &analysisResult) const {
     WaveTrans(getDwtInput(), analysisResult, mDwtFilterH, mDwtFilterG, ConvDecPer);
 }
 
@@ -289,7 +287,6 @@ void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, tc
         }
         getSpectralDataBuffer()->write(spectrum);
 
-        //DBG("AbstractWaveletTransformation::extractSpectrum spectrum-size=",(int)spectrum.size();
         //(*1) since the full time resolution causes serious performance problems
         //and is too big for the display,
         //it must be currently limited for high settings.
@@ -306,7 +303,7 @@ auto AbstractWaveletTransformation::getAvgValue(
         WaveletLevelType level,
         unsigned long blockNumber,
         unsigned long blockposStart,
-        unsigned long blockposEnd) -> double {
+        unsigned long blockposEnd) const -> double {
 
     LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation getAvgValue");
     
@@ -323,8 +320,8 @@ auto AbstractWaveletTransformation::getAvgValue(
         auto offset = (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1);
         values = origin.subspan(offset);
     }
-    if (blockposEnd > values.size()) {
-        blockposEnd = values.size();
+    if (blockposEnd >= values.size()) {
+        blockposEnd = values.size() - 1;
     }
     if (blockposStart >= blockposEnd) {
         return values[blockposEnd];
@@ -340,7 +337,7 @@ auto AbstractWaveletTransformation::getAvgValue(
 auto AbstractWaveletTransformation::getValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double {
     if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
         auto resolution = getResolution();
-        auto offset = (level * resolution + blockNumber * ((resolution) >> (level))) + blockPosition;
+        auto offset = (level * resolution + blockNumber * (resolution >> level)) + blockPosition;
         return origin[offset];
     }
     if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {

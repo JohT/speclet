@@ -49,8 +49,8 @@ private:
 
     void setResolutionRatioOption(WaveletParameters::ResolutionRatioOption newResolutionRatio);
 
-    auto getTimeResolution() -> ResolutionType;
-    auto calculateSpectralDataInfo() -> SpectralDataInfo;
+    auto getTimeResolution() const -> ResolutionType;
+    auto calculateSpectralDataInfo() const -> SpectralDataInfo;
 
     /**
      * @brief Takes a ResolutionRatioOption and returns the offset (+/- int) to the filter tree level

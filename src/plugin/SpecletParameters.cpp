@@ -57,7 +57,7 @@ auto SpecletParameters::isTransformationParameter(const juce::String &parameterI
     return parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_RESOLUTION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_TRANSFORMATION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELET) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELETPACKETBASIS) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WINDOWING);
 }
 
-auto SpecletParameters::getParameter(int index) -> float {
+auto SpecletParameters::getParameter(int index) const -> float {
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         DBG("SpecletParameters::getParameter: Invalid child index: " + juce::String(index));
@@ -66,7 +66,7 @@ auto SpecletParameters::getParameter(int index) -> float {
     return child.getProperty(PROPERTY_VALUE);
 }
 
-auto SpecletParameters::getParameter(const juce::String &name) -> float {
+auto SpecletParameters::getParameter(const juce::String &name) const -> float {
     juce::ValueTree child = properties.getChildWithName(name);
     if (!child.isValid()) {
         return 0.0F;
@@ -75,7 +75,7 @@ auto SpecletParameters::getParameter(const juce::String &name) -> float {
 }
 
 //TODO (JohT) Declare a int type for parameter values and use it instead of float?
-void SpecletParameters::setParameter(int index, float newValue) {
+void SpecletParameters::setParameter(int index, float newValue) const {
     assert(index >= 0 && index < properties.getNumChildren());
     if (newValue == 0.0F) {
         DBG("SpecletParameters::setParameter: Value == 0.0F, parameter " << index << " will not be set");
@@ -89,27 +89,23 @@ void SpecletParameters::setParameter(int index, float newValue) {
             DBG("SpecletParameters::setParameter: Timeout during wait!");
         }
     }
-    if (index == PARAMETER_INDEX_Resolution) {
-        if (newValue < enumOptionToFloat(RESOLUTION_256)) {
-            DBG("SpecletParameters::setParameter: Resolution might not be smaller than the minimum value, so it's set to 256");
-            newValue = enumOptionToFloat(RESOLUTION_256);
-        }
+    if ((index == PARAMETER_INDEX_Resolution) && (newValue < enumOptionToFloat(RESOLUTION_256))) {
+        DBG("SpecletParameters::setParameter: Resolution might not be smaller than the minimum value, so it's set to 256");
+        newValue = enumOptionToFloat(RESOLUTION_256);
     }
     newValue = sanitizeParameter(index, newValue);
     setParameterInternally(index, newValue);
 }
 
-auto SpecletParameters::sanitizeParameter(int index, float newValue) -> float{
-    if (index == PARAMETER_INDEX_Resolution) {
-        if (newValue < enumOptionToFloat(RESOLUTION_256)) {
-            DBG("SpecletParameters::setParameter: Resolution might not be smaller than the minimum value, so it's set to 256");
-            return enumOptionToFloat(RESOLUTION_256);
-        }
+auto SpecletParameters::sanitizeParameter(int index, float newValue) const -> float{
+    if ((index == PARAMETER_INDEX_Resolution) && (newValue < enumOptionToFloat(RESOLUTION_256))) {
+        DBG("SpecletParameters::setParameter: Resolution might not be smaller than the minimum value, so it's set to 256");
+        return enumOptionToFloat(RESOLUTION_256);
     }
     return newValue;
 }
 
-void SpecletParameters::setParameterInternally(int index, juce::var newValue) {
+void SpecletParameters::setParameterInternally(int index, juce::var newValue) const {
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         DBG("SpecletParameters::setParameter: Invalid child index: " + juce::String(index));
@@ -118,7 +114,7 @@ void SpecletParameters::setParameterInternally(int index, juce::var newValue) {
     child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
-void SpecletParameters::setParameter(const juce::String &name, float newValue) {
+void SpecletParameters::setParameter(const juce::String &name, float newValue) const {
     const juce::ScopedLock myScopedLock(criticalSection);
     {
         LOG_PERFORMANCE_OF_SCOPE("SpecletParameters setParameter waitForParameterChange(name)");
@@ -136,7 +132,7 @@ void SpecletParameters::setParameter(const juce::String &name, float newValue) {
     child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
-auto SpecletParameters::getParameterIndex(const juce::String &name) -> int {
+auto SpecletParameters::getParameterIndex(const juce::String &name) const -> int {
     juce::ValueTree child = properties.getChildWithName(name);
     if (!child.isValid()) {
         return -1;
@@ -144,7 +140,7 @@ auto SpecletParameters::getParameterIndex(const juce::String &name) -> int {
     return properties.indexOf(child);
 }
 
-auto SpecletParameters::getParameterName(int index) -> const juce::String {
+auto SpecletParameters::getParameterName(int index) const -> const juce::String {
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         return {};
@@ -173,7 +169,7 @@ void SpecletParameters::removeListener(juce::ValueTree::Listener *listener) {
 }
 
 //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
-void SpecletParameters::readFromXML(const juce::XmlElement &xml) {
+void SpecletParameters::readFromXML(const juce::XmlElement &xml) const {
     const juce::ScopedLock myScopedLock(criticalSection);
     juce::ValueTree importedProperties = juce::ValueTree::fromXml(xml);
 

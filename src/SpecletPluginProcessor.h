@@ -70,8 +70,7 @@ public:
     //==============================================================================
     //these methods are called, when parameter changes were recognised
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
-    void valueTreeChildrenChanged(juce::ValueTree &) {}
-    void valueTreeParentChanged(juce::ValueTree &) override {}
+    void valueTreeParentChanged(juce::ValueTree &) override {/*not used*/}
 
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;

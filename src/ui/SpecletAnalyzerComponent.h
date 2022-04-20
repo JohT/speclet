@@ -78,14 +78,13 @@ public:
             POPUPMENU_INDEX_1_ABOUT = 1
         };
 
-    SpecletParameters *parameters;
+    SpecletParameters *parameters = &SpecletParameters::getSingletonInstance();
     juce::CriticalSection criticalSection;
     juce::PopupMenu popupMenu;
 
     void fillComboBoxes();
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
-    void valueTreeChildrenChanged(juce::ValueTree & /*unused*/) {}
-    void valueTreeParentChanged(juce::ValueTree & /*treeWhoseParentHasChanged*/) override {}
+    void valueTreeParentChanged(juce::ValueTree & /*treeWhoseParentHasChanged*/) override {/*not used*/}
 
     void updateComboBox(const juce::String &parameterName, juce::ComboBox *comboBox, const juce::ValueTree &treeWhosePropertyHasChanged);
     static void updateSlider(const juce::String &parameterName, juce::Slider *slider, const juce::ValueTree &treeWhosePropertyHasChanged);
@@ -98,34 +97,34 @@ public:
     //[/UserVariables]
 
     //==============================================================================
-    juce::ComboBox *comboBoxResolution;
-    juce::Viewport *spectralviewport;
-    juce::Label *labelResolution;
-    juce::ComboBox *comboBoxTransformation;
-    juce::Label *labelTransformation;
-    juce::ComboBox *comboBoxWindowing;
-    juce::Label *labelWindowing;
-    juce::ComboBox *comboBoxWavelet;
-    juce::Label *labelWavelet;
-    juce::ComboBox *comboBoxWaveletPacketBasis;
-    juce::Label *labelWaveletPacketBasis;
-    juce::ComboBox *comboBoxSignalGenerator;
-    juce::Label *labelSignalGenerator;
-    juce::ComboBox *comboBoxRouting;
-    juce::Label *labelRouting;
-    juce::Label *labelSignalGeneratorFrequency;
-    juce::Slider *sliderSignalGeneratorFrequency;
-    juce::Label *labelLogF;
-    juce::Label *labelLogA;
-    juce::ComboBox *comboBoxLogF;
-    juce::ComboBox *comboBoxLogA;
-    juce::Label *labelColorMode;
-    juce::ComboBox *comboBoxColorMode;
+    juce::ComboBox *comboBoxResolution = nullptr;
+    juce::Viewport *spectralviewport = nullptr;
+    juce::Label *labelResolution = nullptr;
+    juce::ComboBox *comboBoxTransformation = nullptr;
+    juce::Label *labelTransformation = nullptr;
+    juce::ComboBox *comboBoxWindowing = nullptr;
+    juce::Label *labelWindowing = nullptr;
+    juce::ComboBox *comboBoxWavelet = nullptr;
+    juce::Label *labelWavelet = nullptr;
+    juce::ComboBox *comboBoxWaveletPacketBasis = nullptr;
+    juce::Label *labelWaveletPacketBasis = nullptr;
+    juce::ComboBox *comboBoxSignalGenerator = nullptr;
+    juce::Label *labelSignalGenerator = nullptr;
+    juce::ComboBox *comboBoxRouting = nullptr;
+    juce::Label *labelRouting = nullptr;
+    juce::Label *labelSignalGeneratorFrequency = nullptr;
+    juce::Slider *sliderSignalGeneratorFrequency = nullptr;
+    juce::Label *labelLogF = nullptr;
+    juce::Label *labelLogA = nullptr;
+    juce::ComboBox *comboBoxLogF = nullptr;
+    juce::ComboBox *comboBoxLogA = nullptr;
+    juce::Label *labelColorMode = nullptr;
+    juce::ComboBox *comboBoxColorMode = nullptr;
 
-    juce::TooltipWindow *tooltipWindow;
+    juce::TooltipWindow *tooltipWindow = nullptr;
     SpecletTooltipWindowLookAndFeel tooltipWindowLookAndFeel;
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
-    SpecletAnalyzerComponent(const SpecletAnalyzerComponent &);
-    auto operator=(const SpecletAnalyzerComponent &) -> const SpecletAnalyzerComponent &;
+    SpecletAnalyzerComponent(const SpecletAnalyzerComponent &) = delete;
+    auto operator=(const SpecletAnalyzerComponent &) -> SpecletAnalyzerComponent & = delete;
 };

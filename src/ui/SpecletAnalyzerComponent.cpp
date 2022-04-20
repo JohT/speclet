@@ -46,32 +46,7 @@ void SpecletTooltipWindowLookAndFeel::drawTooltip(juce::Graphics &g, const juce:
 
 //==============================================================================
 SpecletAnalyzerComponent::SpecletAnalyzerComponent()
-    : Component("SpecletAnalyzerComponent"),
-      comboBoxResolution(nullptr),
-      spectralviewport(nullptr),
-      labelResolution(nullptr),
-      comboBoxTransformation(nullptr),
-      labelTransformation(nullptr),
-      comboBoxWindowing(nullptr),
-      labelWindowing(nullptr),
-      comboBoxWavelet(nullptr),
-      labelWavelet(nullptr),
-      comboBoxWaveletPacketBasis(nullptr),
-      labelWaveletPacketBasis(nullptr),
-      comboBoxSignalGenerator(nullptr),
-      labelSignalGenerator(nullptr),
-      comboBoxRouting(nullptr),
-      labelRouting(nullptr),
-      labelSignalGeneratorFrequency(nullptr),
-      sliderSignalGeneratorFrequency(nullptr),
-      labelLogF(nullptr),
-      labelLogA(nullptr),
-      comboBoxLogF(nullptr),
-      comboBoxLogA(nullptr),
-      labelColorMode(nullptr),
-      comboBoxColorMode(nullptr),
-      tooltipWindow(nullptr) {
-
+    : Component("SpecletAnalyzerComponent") {
     addAndMakeVisible(comboBoxResolution = new juce::ComboBox("comboBoxResolution"));
     comboBoxResolution->setEditableText(false);
     comboBoxResolution->setJustificationType(juce::Justification::centredLeft);
@@ -305,7 +280,6 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
 
     addAndMakeVisible(tooltipWindow = new juce::TooltipWindow(this));
     tooltipWindow->setLookAndFeel(&tooltipWindowLookAndFeel);
-    setTooltip("Right click to get more information about this plugin.");
     //[UserPreSize]
     fillComboBoxes();
     //[/UserPreSize]
@@ -314,8 +288,6 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
 
     //[Constructor] You can add your own custom stuff here..
 
-    //gets the pointer to the parameters singelton - for a better readability
-    parameters = &SpecletParameters::getSingletonInstance();
     //registers itself as listener for parameter-changes
     SpecletParameters::getSingletonInstance().addListener(this);
     DBG("SpecletAnalyzerComponent as parameter listener added");
@@ -415,7 +387,7 @@ void SpecletAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasCh
         //[/UserComboBoxCode_comboBoxResolution]
     } else if (comboBoxThatHasChanged == comboBoxTransformation) {
         //[UserComboBoxCode_comboBoxTransformation] -- add your combo box handling code here..
-        float selectedOption = static_cast<float>(comboBoxTransformation->getSelectedId());
+        auto selectedOption = static_cast<float>(comboBoxTransformation->getSelectedId());
         parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, selectedOption);
         transformationChanged(selectedOption);
         //[/UserComboBoxCode_comboBoxTransformation]
@@ -553,29 +525,29 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxResolution->addItem("32768", SpecletParameters::RESOLUTION_32768);
     comboBoxResolution->addItem("65536", SpecletParameters::RESOLUTION_65536);
 
-    using TransformationTypeValue = std::underlying_type<TransformationParameters::Type>::type;
-    for (auto entry : TransformationParameters::TypeNames::map) {
-        comboBoxTransformation->addItem(std::string(entry.second), static_cast<TransformationTypeValue>(entry.first));
+    using TransformationTypeValue = std::underlying_type_t<TransformationParameters::Type>;
+    for (auto const& [value, name] : TransformationParameters::TypeNames::map) {
+        comboBoxTransformation->addItem(std::string(name), static_cast<TransformationTypeValue>(value));
     }
 
-    using WindowFunctionValue = std::underlying_type<WindowParameters::WindowFunction>::type;
-    for (auto entry : WindowParameters::WindowFunctionNames::map) {
-        comboBoxWindowing->addItem(std::string(entry.second), static_cast<WindowFunctionValue>(entry.first));
+    using WindowFunctionValue = std::underlying_type_t<WindowParameters::WindowFunction>;
+    for (auto const& [value, name] : WindowParameters::WindowFunctionNames::map) {
+        comboBoxWindowing->addItem(std::string(name), static_cast<WindowFunctionValue>(value));
     }
 
-    using WaveletBaseValue = std::underlying_type<WaveletParameters::WaveletBase>::type;
-    for (auto entry : WaveletParameters::WaveletBaseNames::map) {
-        comboBoxWavelet->addItem(std::string(entry.second), static_cast<WaveletBaseValue>(entry.first));
+    using WaveletBaseValue = std::underlying_type_t<WaveletParameters::WaveletBase>;
+    for (auto const& [value, name] : WaveletParameters::WaveletBaseNames::map) {
+        comboBoxWavelet->addItem(std::string(name), static_cast<WaveletBaseValue>(value));
     }
 
-    using ResolutionRatioValue = std::underlying_type<WaveletParameters::ResolutionRatioOption>::type;
-    for (auto entry : WaveletParameters::ResolutionRatioOptionNames::map) {
-        comboBoxWaveletPacketBasis->addItem(std::string(entry.second), static_cast<ResolutionRatioValue>(entry.first));
+    using ResolutionRatioValue = std::underlying_type_t<WaveletParameters::ResolutionRatioOption>;
+    for (auto const& [value, name] : WaveletParameters::ResolutionRatioOptionNames::map) {
+        comboBoxWaveletPacketBasis->addItem(std::string(name), static_cast<ResolutionRatioValue>(value));
     }
 
-    using SignalGeneratorValue = std::underlying_type<SignalGeneratorParameters::Waveform>::type;
-    for (auto entry : SignalGeneratorParameters::WaveformNames::map) {
-        comboBoxSignalGenerator->addItem(std::string(entry.second), static_cast<SignalGeneratorValue>(entry.first));
+    using SignalGeneratorValue = std::underlying_type_t<SignalGeneratorParameters::Waveform>;
+    for (auto const& [value, name] : SignalGeneratorParameters::WaveformNames::map) {
+        comboBoxSignalGenerator->addItem(std::string(name), static_cast<SignalGeneratorValue>(value));
     }
 
     comboBoxRouting->addItem("Mid", SpecletParameters::ROUTING_MID);
@@ -584,15 +556,15 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxRouting->addItem("Right", SpecletParameters::ROUTING_R);
     comboBoxRouting->addItem("Oscillator", SpecletParameters::ROUTING_GENERATOR);
 
-    using AxisValue = std::underlying_type<SpecletDrawerParameters::Axis>::type;
-    for (auto entry : SpecletDrawerParameters::AxisNames::map) {
-        comboBoxLogF->addItem(std::string(entry.second), static_cast<AxisValue>(entry.first));
-        comboBoxLogA->addItem(std::string(entry.second), static_cast<AxisValue>(entry.first));
+    using AxisValue = std::underlying_type_t<SpecletDrawerParameters::Axis>;
+    for (auto const& [value, name] : SpecletDrawerParameters::AxisNames::map) {
+        comboBoxLogF->addItem(std::string(name), static_cast<AxisValue>(value));
+        comboBoxLogA->addItem(std::string(name), static_cast<AxisValue>(value));
     }
 
-    using ColorGradientValue = std::underlying_type<ColorGradientsParameters::ColorMode>::type;
-    for (auto entry : ColorGradientsParameters::ColorModeNames::map) {
-        comboBoxColorMode->addItem(std::string(entry.second), static_cast<ColorGradientValue>(entry.first));
+    using ColorGradientValue = std::underlying_type_t<ColorGradientsParameters::ColorMode>;
+    for (auto const& [value, name] : ColorGradientsParameters::ColorModeNames::map) {
+        comboBoxColorMode->addItem(std::string(name), static_cast<ColorGradientValue>(value));
     }
 }
 
@@ -688,13 +660,8 @@ void SpecletAnalyzerComponent::transformationChanged(float selectedOption) {
         routingChanged(comboBoxRouting->getSelectedId());
     }
 
-    if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_FOURIER_TRANSFORM)) {
-        //Disable all wavelet related controls for the Fast Fourier Transform (FFT).
-        comboBoxWavelet->setEnabled(false);
-        labelWavelet->setEnabled(false);
-        comboBoxWaveletPacketBasis->setEnabled(false);
-        labelWaveletPacketBasis->setEnabled(false);
-    } else if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_TRANSFORM)) {
+    if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_TRANSFORM) ||
+        selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM)) {
         //Disable Wavelet Tree/Packet related control for the dyadic Fast Wavelet Transform.
         comboBoxWavelet->setEnabled(true);
         labelWavelet->setEnabled(true);
@@ -706,14 +673,8 @@ void SpecletAnalyzerComponent::transformationChanged(float selectedOption) {
         labelWavelet->setEnabled(true);
         comboBoxWaveletPacketBasis->setEnabled(true);
         labelWaveletPacketBasis->setEnabled(true);
-    } else if (selectedOption == enumOptionToFloat(TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM)) {
-        //Disable Wavelet Packet Basis controls when the best basis (based on a cost function) is chosen dynamically for the Fast Wavelet Packet Best Basis Transform
-        comboBoxWavelet->setEnabled(true);
-        labelWavelet->setEnabled(true);
-        comboBoxWaveletPacketBasis->setEnabled(false);
-        labelWaveletPacketBasis->setEnabled(false);
     } else {
-        //Disable all wavelet related controls otherwise (e.g. when analyzer is bypassed)
+        //Disable all wavelet related controls for FFT or otherwise (e.g. when analyzer is bypassed)
         comboBoxWavelet->setEnabled(false);
         labelWavelet->setEnabled(false);
         comboBoxWaveletPacketBasis->setEnabled(false);
@@ -739,7 +700,7 @@ void SpecletAnalyzerComponent::routingChanged(float selectedOption) {
 
 template<class _Tp>
 auto SpecletAnalyzerComponent::enumOptionToFloat(const _Tp &enumType) const -> float {
-    auto enumValue = static_cast<typename std::underlying_type<_Tp>::type>(enumType);
+    auto enumValue = static_cast<typename std::underlying_type_t<_Tp>>(enumType);
     return static_cast<float>(enumValue);
 }
 //[/MiscUserCode]

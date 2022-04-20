@@ -67,12 +67,11 @@ public:
         }
         activeSession = false;
         writeFooter();
-        outputStream.close();
         profileCount = 0;
     }
 
     void writeProfile(const PerformanceLogEntry &entry) {
-        std::lock_guard<std::mutex> lock(mutex);
+        std::scoped_lock<std::mutex> lock(mutex);
 
         if (profileCount++ > 0) {
             outputStream << ",";
@@ -89,17 +88,14 @@ public:
         outputStream << "\"tid\":" << entry.threadID << ",";
         outputStream << "\"ts\":" << entry.start;
         outputStream << "}";
-        //outputStream.flush();
     }
 
     void writeHeader() {
         outputStream << "{\"otherData\": {},\"traceEvents\":[";
-        //outputStream.flush();
     }
 
     void writeFooter() {
         outputStream << "]}";
-        //outputStream.flush();
     }
 
     static PerformanceLogger &getInstance() {
@@ -113,6 +109,12 @@ private:
     const char *name;
     std::chrono::time_point<std::chrono::high_resolution_clock> startTimestamp;
     bool stopped = false;
+
+    PerformanceLogTimer() = default;
+    PerformanceLogTimer(const PerformanceLogTimer &) = delete;           // No copy constructor
+    PerformanceLogTimer(PerformanceLogTimer &&) = delete;                // No move constructor
+    PerformanceLogTimer &operator=(const PerformanceLogTimer &) = delete;// No copy assignment
+    PerformanceLogTimer &operator=(PerformanceLogTimer &&) = delete;     // No move assignment
 
 public:
     explicit PerformanceLogTimer(const char *newName)
