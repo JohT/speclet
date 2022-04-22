@@ -1,8 +1,9 @@
 #include "../src/dsp/transformations/WaveletTransformation.h"
 #include "../src/dsp/transformations/WaveletParameters.h"
 #include "../src/dsp/windowing/WindowParameters.h"
-#include "catch2/matchers/catch_matchers.hpp"
-#include <catch2/catch_all.hpp>
+
+#include <catch2/catch_test_macros.hpp>
+
 #include <string>
 
 SCENARIO("Wavelet Transformation") {
@@ -12,7 +13,7 @@ SCENARIO("Wavelet Transformation") {
     auto waveletBase = WaveletParameters::WaveletBase::VAIDYANATHAN_18;
 
     GIVEN("Wavelet Transform is created") {
-        WaveletTransformation transformation = WaveletTransformation(samplingRate, resolution, windowFunction, waveletBase);
+        auto transformation = WaveletTransformation(samplingRate, resolution, windowFunction, waveletBase);
         WHEN("name is requested") {
             THEN("it should return the correct name") {
                 REQUIRE(transformation.getName() == std::string("Fast Wavelet Transformation"));

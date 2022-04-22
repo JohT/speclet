@@ -1,5 +1,6 @@
 #include "../src/utilities/RenderingHelper.h"
-#include <catch2/catch_all.hpp>
+
+#include <catch2/catch_test_macros.hpp>
 
 SCENARIO("Rendering Helper") {
     GIVEN("pixel to index") {

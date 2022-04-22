@@ -2,9 +2,12 @@
 #include "../src/dsp/transformations/TransformationParameters.h"
 #include "../src/dsp/transformations/WaveletParameters.h"
 #include "../src/dsp/windowing/WindowParameters.h"
+
 #include "catch2/generators/catch_generators.hpp"
 #include "catch2/generators/catch_generators_range.hpp"
-#include <catch2/catch_all.hpp>
+#include <catch2/benchmark/catch_benchmark.hpp>
+#include <catch2/catch_test_macros.hpp>
+
 #include <iterator>
 #include <memory>
 #include <string>

@@ -1,9 +1,12 @@
-#include "../src/dsp/windowing/WindowParameters.h"
 #include "../src/dsp/windowing/WindowFunctionFactory.h"
+#include "../src/dsp/windowing/WindowParameters.h"
+
 #include "catch2/matchers/catch_matchers.hpp"
 #include "catch2/matchers/catch_matchers_contains.hpp"
 #include "catch2/matchers/catch_matchers_string.hpp"
-#include <catch2/catch_all.hpp>
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/generators/catch_generators_range.hpp>
+
 #include <exception>
 
 SCENARIO("Window Function Factory") {
@@ -15,7 +18,7 @@ SCENARIO("Window Function Factory") {
         WHEN("window functions are cached") {
             // Generates a list of all window functions/methods and calls the tests methods below for each of them.
             // See: https://github.com/catchorg/Catch2/blob/devel/docs/generators.md
-            WindowParameters::WindowFunction windowMethod = static_cast<WindowParameters::WindowFunction>(GENERATE(range(1, static_cast<int>(WindowParameters::WindowFunction::NUMBER_OF_OPTIONS))));
+            auto windowMethod = static_cast<WindowParameters::WindowFunction>(GENERATE(range(1, static_cast<int>(WindowParameters::WindowFunction::NUMBER_OF_OPTIONS))));
             auto window = factory.getWindow(windowMethod, resolution);
             REQUIRE(window != nullptr);
 
