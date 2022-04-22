@@ -60,6 +60,7 @@
             "jmin",
             "juce",
             "NOLINT",
+            "Speclet",
             "Struct",
             "Vaidyanathan"
         ],
@@ -82,7 +83,7 @@
         //     ".*\/lib\/.*"
         // ],
         // clang-tidy settings included in Microsoft C++ Extension:
-        "C_Cpp.codeAnalysis.clangTidy.enabled": true
+        "C_Cpp.codeAnalysis.clangTidy.enabled": true,
     },
     "launch": {
         "configurations": [
@@ -97,8 +98,18 @@
             {
                 "type": "lldb",
                 "request": "launch",
-                "name": "MacOS VST3",
+                "name": "MacOS Debug VST3",
                 "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Debug/AudioPluginHost.app/Contents/MacOS/AudioPluginHost",
+                "args": [
+                    "JuceAudioPluginHost.filtergraph"
+                ],
+                "cwd": "${workspaceFolder}"
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "MacOS Release VST3",
+                "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Release/AudioPluginHost.app/Contents/MacOS/AudioPluginHost",
                 "args": [
                     "JuceAudioPluginHost.filtergraph"
                 ],
@@ -122,8 +133,18 @@
             {
                 "type": "lldb",
                 "request": "launch",
-                "name": "Windows VST3",
+                "name": "Windows Debug VST3",
                 "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Debug/AudioPluginHost.exe",
+                "args": [
+                    "JuceAudioPluginHost.filtergraph"
+                ],
+                "cwd": "${workspaceFolder}"
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "Windows Release VST3",
+                "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Release/AudioPluginHost.exe",
                 "args": [
                     "JuceAudioPluginHost.filtergraph"
                 ],
