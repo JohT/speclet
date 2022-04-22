@@ -3,11 +3,18 @@
 VST Audio Spectrum Analyzer Plugin using Fourier- and Wavelet-Transformation.
 
 - (c)2011 by Johannes Troppacher (Austria)   
-- For graduation at HS Mittweida - University of applied science (Germany)  
+- For graduation at [Hochschule Mittweida - University of Applied Science](https://www.hs-mittweida.de/en) (Germany)  
 - Paper (german): [Echtzeitspektralanalyse auf Basis der Fourier- und Wavelet-Transformation implementiert als VST-Plugin](https://monami.hs-mittweida.de/frontdoor/deliver/index/docId/3216/file/J.Troppacher_2011_Diplomarbeit.pdf)  
 - License: [GNU GENERAL PUBLIC LICENSE v3](./LICENSE)
 
-## Build the project
+## User Interface
+
+<img src="./doc/image/Speclet-WaveletPacketBestBasisTransform.png" width="600">
+
+## User Guide
+Have a look at the [User Guide](./USERGUIDE.md) for further screenshots and to get started using the analyzer.
+
+## Build the Project
 
 ### Prerequisites
 - [Installing GIT](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -120,6 +127,8 @@ Boost Software License 1.0
 ### Digital Signal Processing
 - [&#11088; Window Functions and Their Applications in Signal Processing (PDF)](https://library.oapen.org/handle/20.500.12657/41686)
 - [Understanding FFT Windows (PDF, 2013)](https://www.egr.msu.edu/classes/me451/me451_labs/Fall_2013/Understanding_FFT_Windows.pdf)
+- [Comparison of Matching Pursuit Algorithm with Other Signal Processing Techniques for Computation of the Time-Frequency Power Spectrum of Brain Signals](https://www.jneurosci.org/content/36/12/3399)
+- [Fourier uncertainty principle](https://www.johndcook.com/blog/2021/03/17/fourier-uncertainty-principle)
 
 ### Templates and Examples
 - [&#11088; Pamplejuce](https://github.com/sudara/pamplejuce)
@@ -148,6 +157,7 @@ Boost Software License 1.0
 - [Visual Studio Build Tools Download](https://visualstudio.microsoft.com/de/downloads/?q=build+tools)
 
 ### Other
+- [&#11088; std::span implementation for C++11 and later](https://github.com/tcbrindle/span)
 - [C++ Singleton](https://stackoverflow.com/questions/1008019/c-singleton-design-pattern)
 - [10 Cmake Tips & Tricks](https://medium.com/codex/10-cmake-tips-tricks-7f00d407923d)
 - [Reference to non-static member function must be called](https://stackoverflow.com/questions/26331628/reference-to-non-static-member-function-must-be-called)
@@ -155,5 +165,4 @@ Boost Software License 1.0
 - [Commit Message Guidelines](https://gist.github.com/robertpainsi/b632364184e70900af4ab688decf6f53)
 - [Undefined symbol _kIOMainPortDefault](https://forum.juce.com/t/juce-6-1-3-undefined-symbol-kiomainportdefault/49335/9)
 - [CheckTypeSize (FFTW failed for multiple architectures)](https://cmake.org/cmake/help/latest/module/CheckTypeSize.html)
-- [std::span implementation for C++11 and later](https://github.com/tcbrindle/span)
 - [Article CMake Ninja Combo: The Gist](https://www.incredibuild.com/blog/cmake-ninja-combo-the-gist)
