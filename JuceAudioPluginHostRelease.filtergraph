@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FILTERGRAPH>
+  <FILTER uid="1" x="0.5" y="0.09959349593495935">
+    <PLUGIN name="Audio Input" descriptiveName="" format="Internal" category="I/O devices"
+            manufacturer="JUCE" version="1.0" file="" uniqueId="246006c0"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
+            numOutputs="2" isShell="0" uid="246006c0"/>
+    <STATE>0.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="disabled"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="disabled"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="2" x="0.25" y="0.1">
+    <PLUGIN name="MIDI Input" descriptiveName="" format="Internal" category="I/O devices"
+            manufacturer="JUCE" version="1.0" file="" uniqueId="a9e4f9eb"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
+            numOutputs="0" isShell="0" uid="a9e4f9eb"/>
+    <STATE>0.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="disabled"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="disabled"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="3" x="0.5" y="0.9">
+    <PLUGIN name="Audio Output" descriptiveName="" format="Internal" category="I/O devices"
+            manufacturer="JUCE" version="1.0" file="" uniqueId="724248cb"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
+            numOutputs="0" isShell="0" uid="724248cb"/>
+    <STATE>0.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="L R"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="disabled"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="4" x="0.25" y="0.9">
+    <PLUGIN name="MIDI Output" descriptiveName="" format="Internal" category="I/O devices"
+            manufacturer="JUCE" version="1.0" file="" uniqueId="9d5bbb00"
+            isInstrument="0" fileTime="0" infoUpdateTime="0" numInputs="0"
+            numOutputs="0" isShell="0" uid="9d5bbb00"/>
+    <STATE>0.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="disabled"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="disabled"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <FILTER uid="10" x="0.50375" y="0.4858870967741936" uiLastX_Normal="322"
+          uiLastY_Normal="213" uiopen_Normal="0">
+    <PLUGIN name="Speclet" format="VST3" category="Fx|Analyzer" manufacturer="Johannes Troppacher"
+            version="1.0.0" file="D:\Engineering\Repositories\git\speclet\build\Speclet_artefacts\Release\VST3\Speclet.vst3\Contents\x86_64-win\Speclet.vst3"
+            uniqueId="a5561700" isInstrument="0" fileTime="18054d25e1d" infoUpdateTime="18054ed3fb9"
+            numInputs="2" numOutputs="2" isShell="0" uid="8a3f801f"/>
+    <STATE>696.VMjLg7p....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9PyL33hUMoFSmQzUt3hKt7zJlcUXxEDZisVRxH1a3vVX3fjTLQmKogjYTwVXogiQY8FMwjENHIUUTkEUKMCR38TNtHzSSEzUYk1cVkkdAUEV3UjUgsVTWkEdM01S2fjLgASTWoEciYDRwTjQgASUV8DZDk1R1gDdKkicCMFdEwVX4kULggGLFgTLEYTXvTkUOgFQosjcHg2R4XWZhsVSxDlbUczXugCagYFVWgkbUcUV3fjTLYGRC0DctjFR0MyPOISQrM1Z2YUV5EzUXk1bVkkdIYEV4sVLhYFVWgkbUcUV3fDZLQmKogTcyLzSxrFagoFNwL1azDSVlg0UXIWUWkENHgGSz4RZHU2LC8jLEw1XqcmUYoWPnM1Y2Y0XqASZHcmXosjcHg2R4XWdYsFMVkEdEYzX0kzQHESQFEFLUY0SnQTZKYGR3sTN1kWVqQiUYgWQFMVcI0VV3UkUhASUrEVZqcDRwTjQgASUV8DZPMjSyLiPLg1Mn8zM1ESXskEahsVQWM1ZzDCVzDDZic1cVM1ZvjFR3MiPLg1Mn8zM1ESXsAiUX0FMVokdUcTVqEDZic1cVM1ZvjFR3MiPLg1Mn8zMLESXxgCahMGNFk0ZAg1XmcmUisFLogzcyHDSncCZOcyM3QkcUECVxUkQiAUQrI1YvXUV5UEahkGMC4hKt3hKt3hKt3hKlIUUMQUTPkzUZESQFM1ZQQEV5UjQtDDQlAEMAcEV40zQtDDQ14hK5EjKt3hKt3hKt3hRUACTEEzZh8VVWgkdUYTTmE0UXwyKIMzasA2atUlaz4COuX0TTMCTrU2Yo41TzEFck4C.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="L R"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="L R"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+</FILTERGRAPH>

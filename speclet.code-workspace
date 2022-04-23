@@ -146,7 +146,7 @@
                 "name": "Windows Release VST3",
                 "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Release/AudioPluginHost.exe",
                 "args": [
-                    "JuceAudioPluginHost.filtergraph"
+                    "JuceAudioPluginHostRelease.filtergraph"
                 ],
                 "cwd": "${workspaceFolder}"
             },
