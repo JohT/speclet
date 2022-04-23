@@ -6,6 +6,7 @@ VST Audio Spectrum Analyzer Plugin using Fourier- and Wavelet-Transformation.
 - For graduation at [Hochschule Mittweida - University of Applied Science](https://www.hs-mittweida.de/en) (Germany)  
 - Paper (german): [Echtzeitspektralanalyse auf Basis der Fourier- und Wavelet-Transformation implementiert als VST-Plugin](https://monami.hs-mittweida.de/frontdoor/deliver/index/docId/3216/file/J.Troppacher_2011_Diplomarbeit.pdf)  
 - License: [GNU GENERAL PUBLIC LICENSE v3](./LICENSE)
+- For prototyping and experimentation without programming visit [JoWa Wavelet Library in Native Instruments Reaktor User Library](https://www.native-instruments.com/en/reaktor-community/reaktor-user-library/entry/show/11541)
 
 ## User Interface
 
@@ -129,6 +130,7 @@ Boost Software License 1.0
 - [Understanding FFT Windows (PDF, 2013)](https://www.egr.msu.edu/classes/me451/me451_labs/Fall_2013/Understanding_FFT_Windows.pdf)
 - [Comparison of Matching Pursuit Algorithm with Other Signal Processing Techniques for Computation of the Time-Frequency Power Spectrum of Brain Signals](https://www.jneurosci.org/content/36/12/3399)
 - [Fourier uncertainty principle](https://www.johndcook.com/blog/2021/03/17/fourier-uncertainty-principle)
+- [JoWa Wavelet Library in Native Instruments Reaktor User Library](https://www.native-instruments.com/en/reaktor-community/reaktor-user-library/entry/show/11541)
 
 ### Templates and Examples
 - [&#11088; Pamplejuce](https://github.com/sudara/pamplejuce)
