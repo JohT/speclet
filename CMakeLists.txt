@@ -14,12 +14,21 @@ cmake_minimum_required(VERSION 3.15)
 # `project()` command. `project()` sets up some helpful variables that describe source/binary
 # directories, and the current project version. This is a standard CMake command.
 
+# Set message log level to VERBOSE to see more details about what CMake is doing.
+#set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE)
+
 # Name of the project and the plugin. Avoid spaces and special characters.
 set(PROJECT_NAME "Speclet")
 set(CURRENT_VERSION "1.0.0")
 
-# Set message log level to VERBOSE to see more details about what CMake is doing.
-#set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE)
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+
+set(PRODUCT_NAME_POSTFIX "")
+string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
+if (NOT "${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "RELEASE")
+    set(PRODUCT_NAME_POSTFIX "${CMAKE_BUILD_TYPE}")
+    message(STATUS "PRODUCT_NAME_POSTFIX: ${PRODUCT_NAME_POSTFIX}")
+endif()
 
 # For simplilicity, the name of the project is also the name of the targe.
 project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
@@ -59,9 +68,8 @@ CPMAddPackage("gh:tcbrindle/span#master")
 # up by default. As well as this shared code static library, this function adds targets for each of
 # the formats specified by the FORMATS arguments. This function accepts many optional arguments.
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
-
 juce_add_plugin("${PROJECT_NAME}"
-    PRODUCT_NAME "${PROJECT_NAME}"              # The name of the final executable, which can differ from the target name
+    PRODUCT_NAME "${PROJECT_NAME} ${PRODUCT_NAME_POSTFIX}" # The name of the final executable, which can differ from the target name
     COMPANY_NAME "Johannes Troppacher"          # Specify the name of the plugin's author
     # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
     FORMATS VST3 AU AUv3 Standalone             # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
