@@ -26,7 +26,7 @@ message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 set(PRODUCT_NAME_POSTFIX "")
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
 if (NOT "${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "RELEASE")
-    set(PRODUCT_NAME_POSTFIX "${CMAKE_BUILD_TYPE}")
+    set(PRODUCT_NAME_POSTFIX "-${CMAKE_BUILD_TYPE}")
     message(STATUS "PRODUCT_NAME_POSTFIX: ${PRODUCT_NAME_POSTFIX}")
 endif()
 
@@ -69,7 +69,7 @@ CPMAddPackage("gh:tcbrindle/span#master")
 # the formats specified by the FORMATS arguments. This function accepts many optional arguments.
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
 juce_add_plugin("${PROJECT_NAME}"
-    PRODUCT_NAME "${PROJECT_NAME} ${PRODUCT_NAME_POSTFIX}" # The name of the final executable, which can differ from the target name
+    PRODUCT_NAME "${PROJECT_NAME}${PRODUCT_NAME_POSTFIX}" # The name of the final executable, which can differ from the target name
     COMPANY_NAME "Johannes Troppacher"          # Specify the name of the plugin's author
     # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
     FORMATS VST3 AU AUv3 Standalone             # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
@@ -130,6 +130,12 @@ if (span_ADDED)
     include_directories("${PROJECT_NAME}" PRIVATE "${span_SOURCE_DIR}/include")
     message(VERBOSE "tcb span headers directory included for all targets: ${span_SOURCE_DIR}/include")
 endif()
+
+# Import magic_enum header to include with #include "magic_enum.hpp"
+#if (magic_enum_ADDED)
+#    include_directories("${PROJECT_NAME}" PRIVATE "${magic_enum_SOURCE_DIR}/include")
+#    message(VERBOSE "magic_enum headers directory included for all targets: ${magic_enum_SOURCE_DIR}/include")
+#endif()
 
 # Add libraries to the target that needed to be included inside the repository:
 add_subdirectory(lib/wave++)

@@ -8,5 +8,5 @@ const SpecletAudioProcessor testPlugin;
 TEST_CASE("Plugin instance name", "[name]")
 {
   CHECK_THAT(testPlugin.getName().toStdString(),
-             Catch::Matchers::Equals("Speclet"));
+             Catch::Matchers::StartsWith("Speclet"));
 }
