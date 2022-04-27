@@ -1,12 +1,13 @@
 #include "SpecletParameters.h"
-#include "../utilities/PerformanceLogger.h"
+#include "../dsp/SignalGeneratorParameters.h"
 #include "../dsp/transformations/TransformationParameters.h"
 #include "../dsp/transformations/WaveletParameters.h"
 #include "../dsp/windowing/WindowParameters.h"
 #include "../ui/ColorGradientsParameters.h"
 #include "../ui/SpecletDrawerParameters.h"
-#include "../dsp/SignalGeneratorParameters.h"
+#include "../utilities/PerformanceLogger.h"
 #include <cassert>
+
 
 SpecletParameters::SpecletParameters() {
     //create ValueTree object, which stores all parameters as childs in a tree structure
@@ -42,9 +43,9 @@ SpecletParameters::SpecletParameters() {
 }
 
 template<class _Tp>
-auto SpecletParameters::enumOptionToFloat(const _Tp& enumType) const -> float{
-   auto enumValue = static_cast<typename std::underlying_type<_Tp>::type>(enumType);
-   return static_cast<float>(enumValue);
+auto SpecletParameters::enumOptionToFloat(const _Tp &enumType) const -> float {
+    auto enumValue = static_cast<typename std::underlying_type_t<_Tp>>(enumType);
+    return static_cast<float>(enumValue);
 }
 
 //TODO (JohT) Does it really need to be a singleton? Is classic dependency injection a viable alternative?
@@ -97,7 +98,7 @@ void SpecletParameters::setParameter(int index, float newValue) const {
     setParameterInternally(index, newValue);
 }
 
-auto SpecletParameters::sanitizeParameter(int index, float newValue) const -> float{
+auto SpecletParameters::sanitizeParameter(int index, float newValue) const -> float {
     if ((index == PARAMETER_INDEX_Resolution) && (newValue < enumOptionToFloat(RESOLUTION_256))) {
         DBG("SpecletParameters::setParameter: Resolution might not be smaller than the minimum value, so it's set to 256");
         return enumOptionToFloat(RESOLUTION_256);
@@ -140,7 +141,7 @@ auto SpecletParameters::getParameterIndex(const juce::String &name) const -> int
     return properties.indexOf(child);
 }
 
-auto SpecletParameters::getParameterName(int index) const -> const juce::String {
+auto SpecletParameters::getParameterName(int index) const -> juce::String {
     juce::ValueTree child = properties.getChild(index);
     if (!child.isValid()) {
         return {};
@@ -201,4 +202,58 @@ void SpecletParameters::readFromXML(const juce::XmlElement &xml) const {
         juce::var newParameterValue = newParameter.getProperty(PROPERTY_VALUE);
         setParameter(paramterIdentifier.toString(), static_cast<float>(newParameterValue));
     }
+}
+
+template<typename Param>
+static void add(juce::AudioProcessorValueTreeState::ParameterLayout &group, std::unique_ptr<Param> param) {
+    group.add(std::move(param));
+}
+
+template<typename Param, typename Group, typename... Ts>
+static Param &addToLayout(Group &layout, Ts &&...ts) {
+    auto param = std::make_unique<Param>(std::forward<Ts>(ts)...);
+    auto &ref = *param;
+    add(layout, std::move(param));
+    return ref;
+}
+
+auto SpecletParameters::createParameterLayout() -> juce::AudioProcessorValueTreeState::ParameterLayout {
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+
+    //TODO (JohT) Adjust routing values
+    //ROUTING_GENERATOR = 1, ROUTING_L, ROUTING_R, ROUTING_MID, ROUTING_SIDE
+    auto routingOptions = {"Mid", "Side", "Left", "Right", "Oscillator"};
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_ROUTING, PARAMETER_ROUTING, routingOptions, 0, "Audio Source");
+
+    auto transformationOptions = {"FFT", "FWT", "WPT", "WPT BestBasis", "Off"};
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_TRANSFORMATION, PARAMETER_TRANSFORMATION, transformationOptions, 0, "Transformation");
+
+    auto resolutionOptions = {"256", "512", "1024", "2048", "4096", "8192", "16384", "32768", "65536"};
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_RESOLUTION, PARAMETER_RESOLUTION, resolutionOptions, 3, "Resolution");
+
+    //TODO (JohT) Adjust packet basis resolution ratio values
+    //TIME_X4 = -2, TIME_X2 = -1, FREQUENCY_X2 = 1, FREQUENCY_X4 = 2, EQUAL = 99,
+    auto waveletPacketBasisOptions = {"Time x4", "Time x2", "Freq/Time x1", "Freq x2", "Freq x4"};
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_WAVELETPACKETBASIS, PARAMETER_WAVELETPACKETBASIS, waveletPacketBasisOptions, 2, "Wavelet Packet Basis");
+
+    auto windowingOptions = {"Barlett", "Blackman", "Blackman-Harris", "Hamming", "Hann", "Parzen", "Welch", "Rectangular"};
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_WINDOWING, PARAMETER_WINDOWING, windowingOptions, 2, "Window Function");
+
+    auto waveletOptions = {"Haar (2)", "Daubechies (2)", "Daubechies (4)", "Daubechies (6)", "Daubechies (8)", "Daubechies (10)", "Daubechies (12)", "Daubechies (14)", "Daubechies (16)", "Daubechies (18)", "Daubechies (20)", "Coifman (6)", "Coifman (12)", "Coifman (18)", "Coifman (24)", "Coifman (30)", "Beylkin (18)", "Vaidyanathan (18)"};
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_WAVELET, PARAMETER_WAVELET, waveletOptions, 17, "Wavelet");
+
+    auto generatorFrequencyRange = juce::NormalisableRange<float>(10.0F, 20000.0F, 1.0F, 0.25F);
+    addToLayout<juce::AudioParameterFloat>(layout, PARAMETER_GENERATORFREQUENCY, PARAMETER_GENERATORFREQUENCY, generatorFrequencyRange, 100.0f, "Oscillator Frequency");
+
+    auto generatorOptions = {"Sine", "Triangle", "Sawtooth", "Rectangle", "Noise"};
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_GENERATOR, PARAMETER_GENERATOR, generatorOptions, 0, "Oscillator");
+
+    auto axisOptions = {"linear", "logarithmic"};
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_LOGFREQUENCY, PARAMETER_LOGFREQUENCY, axisOptions, 1, "Frequency Scale");
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_LOGMAGNITUDE, PARAMETER_LOGMAGNITUDE, axisOptions, 1, "Magnitude Scale");
+
+    auto colorModeOptions = {"Blue", "Green", "Rainbow", "Fire"};
+    addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_COLORMODE, PARAMETER_COLORMODE, colorModeOptions, 3, "Color Mode");
+
+    return layout;
 }

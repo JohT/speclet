@@ -107,7 +107,7 @@ public:
     void setParameter(const juce::String &name, float newValue) const;
     auto getParameter(int index) const -> float;
     auto getParameter(const juce::String &name) const -> float;
-    auto getParameterName(int index) const -> const juce::String;
+    auto getParameterName(int index) const -> juce::String;
     auto getParameterIndex(const juce::String &name) const -> int;
 
     auto getColorMode() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_ColorMode)); }
@@ -142,12 +142,16 @@ private:
     juce::ValueTree properties = juce::ValueTree("SpecletParameters");
     juce::WaitableEvent waitForParameterChange = juce::WaitableEvent(true);
     juce::CriticalSection criticalSection;
+    //TODO (JohT) Only createable with a reference to the audio processor
+    //juce::AudioProcessorValueTreeState parameters {*this, nullptr, "Parameters", createParameterLayout()};
 
     // --------------- methods --------------- //
     auto sanitizeParameter(int index, float newValue) const -> float;
     void setParameterInternally(int index, juce::var newValue) const;
     template<class _Tp>
     auto enumOptionToFloat(const _Tp& enumType) const -> float;
+    
+    static auto createParameterLayout() -> juce::AudioProcessorValueTreeState::ParameterLayout;
 
     SpecletParameters();
     ~SpecletParameters() = default;
