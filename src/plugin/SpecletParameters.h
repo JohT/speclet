@@ -90,13 +90,12 @@ public:
 
     // --------------- methods --------------- //
 
-    // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
-    SpecletParameters(const SpecletParameters& other) = delete;
-    SpecletParameters(SpecletParameters&& other) = delete;
-    auto operator=(const SpecletParameters& other) -> SpecletParameters& = delete;
-    auto operator=(SpecletParameters&& other) -> SpecletParameters& = delete;
-
-    static auto getSingletonInstance() -> SpecletParameters &;
+    explicit SpecletParameters(juce::AudioProcessor & audioProcessor);
+    ~SpecletParameters() = default;
+    SpecletParameters(const SpecletParameters& other) = delete; //non-copyable
+    SpecletParameters(SpecletParameters&& other) = delete; //non-moveable
+    auto operator=(const SpecletParameters& other) -> SpecletParameters& = delete; //non-copyable
+    auto operator=(SpecletParameters&& other) -> SpecletParameters& = delete; //non-moveable
 
     static auto isTransformationParameter(const juce::String& parameterID) -> bool;
 
@@ -110,25 +109,25 @@ public:
     auto getParameterName(int index) const -> juce::String;
     auto getParameterIndex(const juce::String &name) const -> int;
 
-    auto getColorMode() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_ColorMode)); }
-    auto getGenerator() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Generator)); }
-    auto getGeneratorFrequency() const -> float { return getParameter(PARAMETER_INDEX_GeneratorFrequency); }
-    auto getLogMagnitude() const -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogMagnitude)); }
-    auto getLogFrequency() const -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogFrequency)); }
-    auto getResolution() const -> unsigned long { return static_cast<unsigned long>(getParameter(PARAMETER_INDEX_Resolution)); }
-    auto getRouting() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Routing)); }
-    auto getTransformation() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Transformation)); }
-    auto getWavelet() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Wavelet)); }
-    auto getWaveletPacketBasis() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_WaveletPacketBasis)); }
-    auto getWindowing() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Windowing)); }
-
+    auto getColorMode() const -> int { return static_cast<int>(getParameter(PARAMETER_COLORMODE)); }
+    auto getGenerator() const -> int { return static_cast<int>(getParameter(PARAMETER_GENERATOR)); }
+    auto getGeneratorFrequency() const -> float { return getParameter(PARAMETER_GENERATORFREQUENCY); }
+    auto getLogMagnitude() const -> bool { return static_cast<bool>(getParameter(PARAMETER_LOGMAGNITUDE)); }
+    auto getLogFrequency() const -> bool { return static_cast<bool>(getParameter(PARAMETER_LOGFREQUENCY)); }
+    auto getResolution() const -> unsigned long;
+    auto getRouting() const -> int { return static_cast<int>(getParameter(PARAMETER_ROUTING)) + 1; }
+    auto getTransformation() const -> int { return static_cast<int>(getParameter(PARAMETER_TRANSFORMATION)) + 1; }
+    auto getWavelet() const -> int { return static_cast<int>(getParameter(PARAMETER_WAVELET)) + 1; }
+    auto getWaveletPacketBasis() const -> int { return static_cast<int>(getParameter(PARAMETER_WAVELETPACKETBASIS)) - 2; }
+    auto getWindowing() const -> int { return static_cast<int>(getParameter(PARAMETER_WINDOWING)) + 1; }
+    auto getParameters() -> juce::AudioProcessorValueTreeState & { return parameters; }
     //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
     void addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation = true);
     //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
     void removeListener(juce::ValueTree::Listener *listener);
     //read and write to XML
     void readFromXML(const juce::XmlElement &xml) const;
-    auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties.createXml(); }
+    auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return parameters.state.createXml(); }
 
 private:
     enum class ChildIndices {
@@ -142,8 +141,7 @@ private:
     juce::ValueTree properties = juce::ValueTree("SpecletParameters");
     juce::WaitableEvent waitForParameterChange = juce::WaitableEvent(true);
     juce::CriticalSection criticalSection;
-    //TODO (JohT) Only createable with a reference to the audio processor
-    //juce::AudioProcessorValueTreeState parameters {*this, nullptr, "Parameters", createParameterLayout()};
+    juce::AudioProcessorValueTreeState parameters;
 
     // --------------- methods --------------- //
     auto sanitizeParameter(int index, float newValue) const -> float;
@@ -152,7 +150,4 @@ private:
     auto enumOptionToFloat(const _Tp& enumType) const -> float;
     
     static auto createParameterLayout() -> juce::AudioProcessorValueTreeState::ParameterLayout;
-
-    SpecletParameters();
-    ~SpecletParameters() = default;
 };

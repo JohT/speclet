@@ -49,9 +49,6 @@ SpecletDrawer::SpecletDrawer() {
 
     //registers itself also as a transformation-result-lister for every transformation that will be created in future
     TransformationFactory::getSingletonInstance().registerForTransformationResults(this);
-    //registers itself as listener for parameter-changes
-    SpecletParameters::getSingletonInstance().addListener(this);
-    DBG("SpecletDrawer as parameter listener added");
 
     startTimer(TIMER);
     ready = true;
@@ -73,7 +70,6 @@ SpecletDrawer::~SpecletDrawer() {
 
     //[Destructor]. You can add your own custom destruction code here..
     TransformationFactory::getSingletonInstance().registerForTransformationResults(nullptr);
-    SpecletParameters::getSingletonInstance().removeListener(this);
     waitForDestruction.signal();
     DBG("SpecletDrawer removed as parameter and transformation results listener and finally destructed");
     //[/Destructor]

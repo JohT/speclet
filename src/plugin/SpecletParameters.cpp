@@ -6,39 +6,43 @@
 #include "../ui/ColorGradientsParameters.h"
 #include "../ui/SpecletDrawerParameters.h"
 #include "../utilities/PerformanceLogger.h"
+#include "juce_core/system/juce_PlatformDefs.h"
 #include <cassert>
 
-
-SpecletParameters::SpecletParameters() {
+SpecletParameters::SpecletParameters(juce::AudioProcessor &audioProcessor)
+    : parameters(audioProcessor, nullptr, "Parameters", createParameterLayout()) {
     //create ValueTree object, which stores all parameters as childs in a tree structure
-
+    
+    //TODO (JohT) delete if not needed any more
     //add parameters as tree childs (must start with zero and use ascending indices -> enum)
-    properties.addChild(juce::ValueTree(PARAMETER_ROUTING), PARAMETER_INDEX_Routing, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_TRANSFORMATION), PARAMETER_INDEX_Transformation, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_RESOLUTION), PARAMETER_INDEX_Resolution, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_WAVELETPACKETBASIS), PARAMETER_INDEX_WaveletPacketBasis, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_WINDOWING), PARAMETER_INDEX_Windowing, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_WAVELET), PARAMETER_INDEX_Wavelet, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_GENERATOR), PARAMETER_INDEX_Generator, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_GENERATORFREQUENCY), PARAMETER_INDEX_GeneratorFrequency, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_LOGFREQUENCY), PARAMETER_INDEX_LogFrequency, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_LOGMAGNITUDE), PARAMETER_INDEX_LogMagnitude, nullptr);
-    properties.addChild(juce::ValueTree(PARAMETER_COLORMODE), PARAMETER_INDEX_ColorMode, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_ROUTING), PARAMETER_INDEX_Routing, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_TRANSFORMATION), PARAMETER_INDEX_Transformation, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_RESOLUTION), PARAMETER_INDEX_Resolution, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_WAVELETPACKETBASIS), PARAMETER_INDEX_WaveletPacketBasis, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_WINDOWING), PARAMETER_INDEX_Windowing, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_WAVELET), PARAMETER_INDEX_Wavelet, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_GENERATOR), PARAMETER_INDEX_Generator, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_GENERATORFREQUENCY), PARAMETER_INDEX_GeneratorFrequency, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_LOGFREQUENCY), PARAMETER_INDEX_LogFrequency, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_LOGMAGNITUDE), PARAMETER_INDEX_LogMagnitude, nullptr);
+    // properties.addChild(juce::ValueTree(PARAMETER_COLORMODE), PARAMETER_INDEX_ColorMode, nullptr);
 
     //Initialize with default settings
-    setParameterInternally(PARAMETER_INDEX_ColorMode, enumOptionToFloat(ColorGradientsParameters::ColorMode::DEFAULT));
-    setParameterInternally(PARAMETER_INDEX_Generator, enumOptionToFloat(SignalGeneratorParameters::Waveform::DEFAULT));
-    setParameterInternally(PARAMETER_INDEX_GeneratorFrequency, 1000.0);
-    setParameterInternally(PARAMETER_INDEX_LogFrequency, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
-    setParameterInternally(PARAMETER_INDEX_LogMagnitude, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
-    setParameterInternally(PARAMETER_INDEX_Resolution, RESOLUTION_DEFAULT);
-    setParameterInternally(PARAMETER_INDEX_Routing, ROUTING_MID);
-    setParameterInternally(PARAMETER_INDEX_Transformation, enumOptionToFloat(TransformationParameters::Type::DEFAULT));
-    setParameterInternally(PARAMETER_INDEX_Wavelet, enumOptionToFloat(WaveletParameters::WaveletBase::DEFAULT));
-    setParameterInternally(PARAMETER_INDEX_WaveletPacketBasis, enumOptionToFloat(WaveletParameters::ResolutionRatioOption::DEFAULT));
-    setParameterInternally(PARAMETER_INDEX_Windowing, enumOptionToFloat(WindowParameters::WindowFunction::DEFAULT));
+    //TODO (JohT) delete if not needed any more
+    // setParameterInternally(PARAMETER_INDEX_ColorMode, enumOptionToFloat(ColorGradientsParameters::ColorMode::DEFAULT));
+    // setParameterInternally(PARAMETER_INDEX_Generator, enumOptionToFloat(SignalGeneratorParameters::Waveform::DEFAULT));
+    // setParameterInternally(PARAMETER_INDEX_GeneratorFrequency, 1000.0);
+    // setParameterInternally(PARAMETER_INDEX_LogFrequency, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
+    // setParameterInternally(PARAMETER_INDEX_LogMagnitude, enumOptionToFloat(SpecletDrawerParameters::Axis::DEFAULT));
+    // setParameterInternally(PARAMETER_INDEX_Resolution, RESOLUTION_DEFAULT);
+    // setParameterInternally(PARAMETER_INDEX_Routing, ROUTING_MID);
+    // setParameterInternally(PARAMETER_INDEX_Transformation, enumOptionToFloat(TransformationParameters::Type::DEFAULT));
+    // setParameterInternally(PARAMETER_INDEX_Wavelet, enumOptionToFloat(WaveletParameters::WaveletBase::DEFAULT));
+    // setParameterInternally(PARAMETER_INDEX_WaveletPacketBasis, enumOptionToFloat(WaveletParameters::ResolutionRatioOption::DEFAULT));
+    // setParameterInternally(PARAMETER_INDEX_Windowing, enumOptionToFloat(WindowParameters::WindowFunction::DEFAULT));
 
     assert(getResolution() > 0);
+
     waitForParameterChange.signal();
 }
 
@@ -48,31 +52,32 @@ auto SpecletParameters::enumOptionToFloat(const _Tp &enumType) const -> float {
     return static_cast<float>(enumValue);
 }
 
-//TODO (JohT) Does it really need to be a singleton? Is classic dependency injection a viable alternative?
-auto SpecletParameters::getSingletonInstance() -> SpecletParameters & {
-    static SpecletParameters singletonInstance;
-    return singletonInstance;
-}
-
 auto SpecletParameters::isTransformationParameter(const juce::String &parameterID) -> bool {
     return parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_RESOLUTION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_TRANSFORMATION) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELET) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WAVELETPACKETBASIS) || parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_WINDOWING);
 }
 
 auto SpecletParameters::getParameter(int index) const -> float {
-    juce::ValueTree child = properties.getChild(index);
-    if (!child.isValid()) {
-        DBG("SpecletParameters::getParameter: Invalid child index: " + juce::String(index));
-        return 0.0F;
-    }
-    return child.getProperty(PROPERTY_VALUE);
+    return getParameter(getParameterName(index));
+    //TODO (JohT) delete if not needed any more
+    // juce::ValueTree child = properties.getChild(index);
+    // if (!child.isValid()) {
+    //     DBG("SpecletParameters::getParameter: Invalid child index: " + juce::String(index));
+    //     return 0.0F;
+    // }
+    // return child.getProperty(PROPERTY_VALUE);
 }
 
 auto SpecletParameters::getParameter(const juce::String &name) const -> float {
-    juce::ValueTree child = properties.getChildWithName(name);
-    if (!child.isValid()) {
-        return 0.0F;
-    }
-    return child.getProperty(PROPERTY_VALUE, 0.0F);
+    auto defaultValue = parameters.getParameter(name)->getDefaultValue();
+    auto value = parameters.getRawParameterValue(name)->load();
+    DBG("SpecletParameters::getParameter: " + name + ": " + juce::String(value) + " (default: " + juce::String(defaultValue) + ")");
+    return value;
+    //TODO (JohT) delete if not needed any more
+    // juce::ValueTree child = properties.getChildWithName(name);
+    // if (!child.isValid()) {
+    //     return 0.0F;
+    // }
+    // return child.getProperty(PROPERTY_VALUE, 0.0F);
 }
 
 //TODO (JohT) Declare a int type for parameter values and use it instead of float?
@@ -107,12 +112,14 @@ auto SpecletParameters::sanitizeParameter(int index, float newValue) const -> fl
 }
 
 void SpecletParameters::setParameterInternally(int index, juce::var newValue) const {
-    juce::ValueTree child = properties.getChild(index);
-    if (!child.isValid()) {
-        DBG("SpecletParameters::setParameter: Invalid child index: " + juce::String(index));
-        return;
-    }
-    child.setProperty(PROPERTY_VALUE, newValue, nullptr);
+    parameters.getParameterAsValue(getParameterName(index)).setValue(newValue);
+    //TODO (JohT) delete if not needed any more
+    // juce::ValueTree child = properties.getChild(index);
+    // if (!child.isValid()) {
+    //     DBG("SpecletParameters::setParameter: Invalid child index: " + juce::String(index));
+    //     return;
+    // }
+    // child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
 void SpecletParameters::setParameter(const juce::String &name, float newValue) const {
@@ -124,33 +131,100 @@ void SpecletParameters::setParameter(const juce::String &name, float newValue) c
             DBG("SpecletParameters::setParameter: Timeout during wait!");
         }
     }
-    juce::ValueTree child = properties.getChildWithName(name);
-    if (!child.isValid()) {
-        return;
-    }
-    auto parameterIndex = properties.indexOf(child);
+    //TODO (JohT) delete commented lines if not needed any more
+    //parameters.getParameterAsValue(name).setValue(newValue);
+    //if (!child.isValid()) {
+    //    return;
+    //}
+    auto parameterIndex = getParameterIndex(name);
     newValue = sanitizeParameter(parameterIndex, newValue);
-    child.setProperty(PROPERTY_VALUE, newValue, nullptr);
+    parameters.getParameterAsValue(name).setValue(newValue);
+    //juce::ValueTree child = properties.getChildWithName(name);
+    //child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
 auto SpecletParameters::getParameterIndex(const juce::String &name) const -> int {
-    juce::ValueTree child = properties.getChildWithName(name);
-    if (!child.isValid()) {
+    if (name.equalsIgnoreCase(PARAMETER_ROUTING)) {
+        return PARAMETER_INDEX_Routing;
+    } else if (name.equalsIgnoreCase(PARAMETER_TRANSFORMATION)) {
+        return PARAMETER_INDEX_Transformation;
+    } else if (name.equalsIgnoreCase(PARAMETER_RESOLUTION)) {
+        return PARAMETER_INDEX_Resolution;
+    } else if (name.equalsIgnoreCase(PARAMETER_WAVELETPACKETBASIS)) {
+        return PARAMETER_INDEX_WaveletPacketBasis;
+    } else if (name.equalsIgnoreCase(PARAMETER_WINDOWING)) {
+        return PARAMETER_INDEX_Windowing;
+    } else if (name.equalsIgnoreCase(PARAMETER_WAVELET)) {
+        return PARAMETER_INDEX_Wavelet;
+    } else if (name.equalsIgnoreCase(PARAMETER_GENERATOR)) {
+        return PARAMETER_INDEX_Generator;
+    } else if (name.equalsIgnoreCase(PARAMETER_GENERATORFREQUENCY)) {
+        return PARAMETER_INDEX_GeneratorFrequency;
+    } else if (name.equalsIgnoreCase(PARAMETER_LOGFREQUENCY)) {
+        return PARAMETER_INDEX_LogFrequency;
+    } else if (name.equalsIgnoreCase(PARAMETER_LOGMAGNITUDE)) {
+        return PARAMETER_INDEX_LogMagnitude;
+    } else if (name.equalsIgnoreCase(PARAMETER_COLORMODE)) {
+        return PARAMETER_INDEX_ColorMode;
+    } else {
+        DBG("SpecletParameters::getParameterIndex: Unknown parameter name: " << name);
         return -1;
     }
-    return properties.indexOf(child);
+    //TODO (JohT) delete if not needed any more
+    // juce::ValueTree child = properties.getChildWithName(name);
+    // if (!child.isValid()) {
+    //     return -1;
+    // }
+    // return properties.indexOf(child);
 }
 
 auto SpecletParameters::getParameterName(int index) const -> juce::String {
-    juce::ValueTree child = properties.getChild(index);
-    if (!child.isValid()) {
-        return {};
+    switch (index) {
+        case PARAMETER_INDEX_Routing:
+            return PARAMETER_ROUTING;
+        case PARAMETER_INDEX_Transformation:
+            return PARAMETER_TRANSFORMATION;
+        case PARAMETER_INDEX_Resolution:
+            return PARAMETER_RESOLUTION;
+        case PARAMETER_INDEX_WaveletPacketBasis:
+            return PARAMETER_WAVELETPACKETBASIS;
+        case PARAMETER_INDEX_Windowing:
+            return PARAMETER_WINDOWING;
+        case PARAMETER_INDEX_Wavelet:
+            return PARAMETER_WAVELET;
+        case PARAMETER_INDEX_Generator:
+            return PARAMETER_GENERATOR;
+        case PARAMETER_INDEX_GeneratorFrequency:
+            return PARAMETER_GENERATORFREQUENCY;
+        case PARAMETER_INDEX_LogFrequency:
+            return PARAMETER_LOGFREQUENCY;
+        case PARAMETER_INDEX_LogMagnitude:
+            return PARAMETER_LOGMAGNITUDE;
+        case PARAMETER_INDEX_ColorMode:
+            return PARAMETER_COLORMODE;
+        default:
+            DBG("SpecletParameters::getParameterName: Unknown parameter index: " << index);
+            return "";
     }
-    return child.getType().toString();
+    //TODO (JohT) delete if not needed any more
+    // juce::ValueTree child = properties.getChild(index);
+    // if (!child.isValid()) {
+    //     return {};
+    // }
+    // return child.getType().toString();
+}
+
+auto SpecletParameters::getResolution() const -> unsigned long {
+    auto choice = getParameter(PARAMETER_RESOLUTION);
+    //choice = 0 means resolution = 256 (2 ^ 8) so the exponent is 8 + choice.
+    auto resolutionShiftValue = (8U + static_cast<unsigned int>(choice));
+    //instead of using pow(2, resolutionShiftValue) we shift the value 1 to the left
+    return 1U << resolutionShiftValue;
 }
 
 //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
 void SpecletParameters::addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation) {
+    //TODO (JohT) Revisit listener implementation
     properties.addListener(listener);
 
     //if selected, the already added listener will be informed about every parameter as if it had been changed
@@ -178,6 +252,7 @@ void SpecletParameters::readFromXML(const juce::XmlElement &xml) const {
     if (!importedProperties.isValid()) {
         return;
     }
+
     if (importedProperties.getNumChildren() < properties.getNumChildren()) {
         return;
     }
@@ -239,7 +314,7 @@ auto SpecletParameters::createParameterLayout() -> juce::AudioProcessorValueTree
     auto windowingOptions = {"Barlett", "Blackman", "Blackman-Harris", "Hamming", "Hann", "Parzen", "Welch", "Rectangular"};
     addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_WINDOWING, PARAMETER_WINDOWING, windowingOptions, 2, "Window Function");
 
-    auto waveletOptions = {"Haar (2)", "Daubechies (2)", "Daubechies (4)", "Daubechies (6)", "Daubechies (8)", "Daubechies (10)", "Daubechies (12)", "Daubechies (14)", "Daubechies (16)", "Daubechies (18)", "Daubechies (20)", "Coifman (6)", "Coifman (12)", "Coifman (18)", "Coifman (24)", "Coifman (30)", "Beylkin (18)", "Vaidyanathan (18)"};
+    auto waveletOptions = {"Haar (2)", "Daubechies (4)", "Daubechies (6)", "Daubechies (8)", "Daubechies (10)", "Daubechies (12)", "Daubechies (14)", "Daubechies (16)", "Daubechies (18)", "Daubechies (20)", "Coifman (6)", "Coifman (12)", "Coifman (18)", "Coifman (24)", "Coifman (30)", "Beylkin (18)", "Vaidyanathan (18)"};
     addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_WAVELET, PARAMETER_WAVELET, waveletOptions, 17, "Wavelet");
 
     auto generatorFrequencyRange = juce::NormalisableRange<float>(10.0F, 20000.0F, 1.0F, 0.25F);

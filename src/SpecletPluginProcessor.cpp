@@ -3,6 +3,7 @@
 #include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "juce_core/system/juce_PlatformDefs.h"
+#include "plugin/SpecletParameters.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpecletMainUI.h"
 #include "utilities/PerformanceLogger.h"
@@ -23,6 +24,7 @@ SpecletAudioProcessor::SpecletAudioProcessor()
                              .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                              ),
+      parameters(*this),
       parameterRouting(parameters.getRouting()),
       signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGeneratorParameters::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
 
@@ -31,14 +33,16 @@ SpecletAudioProcessor::SpecletAudioProcessor()
     juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
 #endif
 
+    //TODO (JohT) delete if not needed any more
     //registers itself as listener for parameter-changes
-    parameters.addListener(this, true);
-    DBG("SpecletAudioProcessor as parameter listener added");
+    // parameters.addListener(this, true);
+    //DBG("SpecletAudioProcessor as parameter listener added");
 }
 
 SpecletAudioProcessor::~SpecletAudioProcessor() {
-    SpecletParameters::getSingletonInstance().removeListener(this);
-    DBG("SpecletAudioProcessor as parameter listener removed");
+    //TODO (JohT) delete if not needed any more
+    //parameters.removeListener(this);
+    //DBG("SpecletAudioProcessor as parameter listener removed");
     currentTransformation = nullptr;
 
     TransformationFactory::getSingletonInstance().destruct();
@@ -256,24 +260,36 @@ void SpecletAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
+    juce::MemoryOutputStream memoryOutputStream(destData, true);
+    parameters.getParameters().state.writeToStream(memoryOutputStream);
 
+    //TODO (JohT) delete if not used any more
     // Create an outer XML element..
-    std::unique_ptr<juce::XmlElement> xml = parameters.writeToXML();
+    //std::unique_ptr<juce::XmlElement> xml = parameters.writeToXML();
 
     // then use this helper function to stuff it into the binary blob and return it..
-    copyXmlToBinary(*xml, destData);
+    //copyXmlToBinary(*xml, destData);
+
 }
 
 void SpecletAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
-
-    // This getXmlFromBinary() helper function retrieves our XML from the binary blob..
-    std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
-
-    if (xmlState) {
-        parameters.readFromXML(*xmlState);
+    auto tree = juce::ValueTree::readFromData(data, static_cast<size_t>(sizeInBytes));
+    if (tree.isValid()) {
+        parameters.getParameters().replaceState(tree);
+        if (currentTransformation == nullptr) {
+            updateTransformation();
+        }
     }
+
+    //TODO (JohT) delete if not used any more
+    // This getXmlFromBinary() helper function retrieves our XML from the binary blob..
+    //std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
+
+    //if (xmlState) {
+    //    parameters.readFromXML(*xmlState);
+    //}
 }
 
 //==============================================================================

@@ -61,10 +61,10 @@ namespace WaveletParameters {
     enum class ResolutionRatioOption {
         TIME_X4 = -2,
         TIME_X2 = -1,
+        EQUAL   = 0,
         FREQUENCY_X2 = 1,
         FREQUENCY_X4 = 2,
 
-        EQUAL = 99,
         NUMBER_OF_OPTIONS = 5,
         DEFAULT = EQUAL
     };

@@ -86,8 +86,10 @@ public:
     int lastUIHeight = 360;//NOLINT(readability-magic-numbers)
     //==============================================================================
 
+    auto getSpecletParameters() -> SpecletParameters & { return parameters; }
+
 private:
-    SpecletParameters &parameters = SpecletParameters::getSingletonInstance();
+    SpecletParameters parameters;
 
     //Some parameter need to be kept local (as copy),
     //since they are called in critical sections

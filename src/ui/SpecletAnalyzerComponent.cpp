@@ -28,7 +28,6 @@
 #include "../ui/SpecletDrawerParameters.h"
 #include "SpecletDrawer.h"
 
-
 //[/Headers]
 
 #include "SpecletAnalyzerComponent.h"
@@ -45,9 +44,33 @@ void SpecletTooltipWindowLookAndFeel::drawTooltip(juce::Graphics &g, const juce:
 //[/MiscUserDefs]
 
 //==============================================================================
-SpecletAnalyzerComponent::SpecletAnalyzerComponent()
-    : Component("SpecletAnalyzerComponent") {
-    addAndMakeVisible(comboBoxResolution = new juce::ComboBox("comboBoxResolution"));
+SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parametersToAttach)
+    : Component("SpecletAnalyzerComponent"),
+      parameters(parametersToAttach),
+      spectralviewport(new juce::Viewport("spectralviewport")),
+      comboBoxResolution(new juce::ComboBox(SpecletParameters::PARAMETER_RESOLUTION)),
+      comboBoxTransformation(new juce::ComboBox("comboBoxTransformation")),
+      comboBoxWindowing(new juce::ComboBox("comboBoxWindowing")),
+      comboBoxWavelet(new juce::ComboBox("comboBoxWavelet")),
+      comboBoxWaveletPacketBasis(new juce::ComboBox("comboBoxWaveletPacketBasis")),
+      comboBoxSignalGenerator(new juce::ComboBox("comboBoxSignalgenerator")),
+      comboBoxRouting(new juce::ComboBox("comboBoxRouting")),
+      comboBoxLogF(new juce::ComboBox("comboBoxLogF")),
+      comboBoxLogA(new juce::ComboBox("comboBoxLogA")),
+      comboBoxColorMode(new juce::ComboBox("comboBoxColorMode")),
+
+      resolutionParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_RESOLUTION, *comboBoxResolution),
+      transformationParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_TRANSFORMATION, *comboBoxTransformation),
+      windowingParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_WINDOWING, *comboBoxWindowing),
+      waveletParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_WAVELET, *comboBoxWavelet),
+      waveletPacketBasisParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_WAVELETPACKETBASIS, *comboBoxWaveletPacketBasis),
+      signalGeneratorParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_GENERATOR, *comboBoxSignalGenerator),
+      routingParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_ROUTING, *comboBoxRouting),
+      logFParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_LOGFREQUENCY, *comboBoxLogF),
+      logAParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_LOGMAGNITUDE, *comboBoxLogA),
+      colorModeParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_COLORMODE, *comboBoxColorMode) {
+
+    addAndMakeVisible(comboBoxResolution);
     comboBoxResolution->setEditableText(false);
     comboBoxResolution->setJustificationType(juce::Justification::centredLeft);
     comboBoxResolution->setTextWhenNothingSelected(juce::String());
@@ -56,10 +79,9 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxResolution->setTooltip(
             "Sets the block size for the analysis.\n"
             "Higher values lead to better frequency resolution, lower time resolution and more cpu consumption. "
-            "For efficient calculation, all values are a power of 2."
-    );
+            "For efficient calculation, all values are a power of 2.");
 
-    addAndMakeVisible(spectralviewport = new juce::Viewport("spectralviewport"));
+    addAndMakeVisible(spectralviewport);
     spectralviewport->setScrollBarsShown(false, true);
     spectralviewport->setScrollBarThickness(10);
 
@@ -73,7 +95,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelResolution->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelResolution->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxTransformation = new juce::ComboBox("comboBoxTransformation"));
+    addAndMakeVisible(comboBoxTransformation);
     comboBoxTransformation->setEditableText(false);
     comboBoxTransformation->setJustificationType(juce::Justification::centredLeft);
     comboBoxTransformation->setTextWhenNothingSelected(juce::String());
@@ -96,7 +118,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelTransformation->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelTransformation->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxWindowing = new juce::ComboBox("comboBoxWindowing"));
+    addAndMakeVisible(comboBoxWindowing);
     comboBoxWindowing->setEditableText(false);
     comboBoxWindowing->setJustificationType(juce::Justification::centredLeft);
     comboBoxWindowing->setTextWhenNothingSelected(juce::String());
@@ -106,8 +128,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
             "Window functions are like fades at the beginning and end of the block of input samples.\n"
             "They reduce 'leakage' in the frequency spectrum. "
             "Choose a sine input and use different windows to see the impact. "
-            "The rectangular window shows how the spectrum is affected when there is no smoothing.\n"
-    );
+            "The rectangular window shows how the spectrum is affected when there is no smoothing.\n");
 
     addAndMakeVisible(labelWindowing = new juce::Label("labelWindowing", "Window Function"));
     labelWindowing->setFont(juce::Font(15.0000f, juce::Font::plain));
@@ -119,7 +140,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelWindowing->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelWindowing->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxWavelet = new juce::ComboBox("comboBoxWavelet"));
+    addAndMakeVisible(comboBoxWavelet);
     comboBoxWavelet->setEditableText(false);
     comboBoxWavelet->setJustificationType(juce::Justification::centredLeft);
     comboBoxWavelet->setTextWhenNothingSelected(juce::String());
@@ -128,8 +149,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWavelet->setTooltip(
             "Wavelets are represented by their high- and low-pass filter coefficients.\n"
             "The number in the parentheses is the number of coefficients.\n"
-            "More coefficients lead to more precise results, less aliasing and higher cpu consuption.\n"
-    );
+            "More coefficients lead to more precise results, less aliasing and higher cpu consuption.\n");
 
     addAndMakeVisible(labelWavelet = new juce::Label("labelWavelet", "Wavelet"));
     labelWavelet->setFont(juce::Font(15.0000f, juce::Font::plain));
@@ -141,7 +161,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelWavelet->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelWavelet->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxWaveletPacketBasis = new juce::ComboBox("comboBoxWaveletPacketBasis"));
+    addAndMakeVisible(comboBoxWaveletPacketBasis);
     comboBoxWaveletPacketBasis->setEditableText(false);
     comboBoxWaveletPacketBasis->setJustificationType(juce::Justification::centredLeft);
     comboBoxWaveletPacketBasis->setTextWhenNothingSelected(juce::String());
@@ -150,8 +170,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxWaveletPacketBasis->setTooltip(
             "The wavelet packet transform (WPT) also uses the output of the high pass filter (details) and splits it up further.\n"
             "This results in evenly/linear spaced frequency bands in contrast to the dyadic wavelet transform.\n"
-            "More levels lead to finer frequency resolution and less time resolution."
-    );
+            "More levels lead to finer frequency resolution and less time resolution.");
 
     addAndMakeVisible(labelWaveletPacketBasis = new juce::Label("labelWaveletPacketBasis", "Wavelet Packet Basis"));
     labelWaveletPacketBasis->setFont(juce::Font(15.0000f, juce::Font::plain));
@@ -163,7 +182,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelWaveletPacketBasis->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelWaveletPacketBasis->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxSignalGenerator = new juce::ComboBox("comboBoxSignalgenerator"));
+    addAndMakeVisible(comboBoxSignalGenerator);
     comboBoxSignalGenerator->setEditableText(false);
     comboBoxSignalGenerator->setJustificationType(juce::Justification::centredLeft);
     comboBoxSignalGenerator->setTextWhenNothingSelected(juce::String());
@@ -181,7 +200,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelSignalGenerator->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelSignalGenerator->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxRouting = new juce::ComboBox("comboBoxRouting"));
+    addAndMakeVisible(comboBoxRouting);
     comboBoxRouting->setEditableText(false);
     comboBoxRouting->setJustificationType(juce::Justification::centredLeft);
     comboBoxRouting->setTextWhenNothingSelected(juce::String());
@@ -243,7 +262,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelLogA->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelLogA->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxLogF = new juce::ComboBox("comboBoxLogF"));
+    addAndMakeVisible(comboBoxLogF);
     comboBoxLogF->setTooltip("Set the frequency scale to linear or logarithmic.");
     comboBoxLogF->setEditableText(false);
     comboBoxLogF->setJustificationType(juce::Justification::centredLeft);
@@ -251,7 +270,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     comboBoxLogF->setTextWhenNoChoicesAvailable(juce::String());
     comboBoxLogF->addListener(this);
 
-    addAndMakeVisible(comboBoxLogA = new juce::ComboBox("comboBoxLogA"));
+    addAndMakeVisible(comboBoxLogA);
     comboBoxLogA->setTooltip("Set the magnitude scale to linear or logarithmic.");
     comboBoxLogA->setEditableText(false);
     comboBoxLogA->setJustificationType(juce::Justification::centredLeft);
@@ -270,7 +289,7 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     labelColorMode->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelColorMode->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(comboBoxColorMode = new juce::ComboBox("comboBoxColorMode"));
+    addAndMakeVisible(comboBoxColorMode);
     comboBoxColorMode->setEditableText(false);
     comboBoxColorMode->setJustificationType(juce::Justification::centredLeft);
     comboBoxColorMode->setTextWhenNothingSelected(juce::String());
@@ -281,18 +300,21 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent()
     addAndMakeVisible(tooltipWindow = new juce::TooltipWindow(this));
     tooltipWindow->setLookAndFeel(&tooltipWindowLookAndFeel);
     //[UserPreSize]
-    fillComboBoxes();
+    // TODO (JohT) delete the following line if not needed any more
+    // fillComboBoxes();
     //[/UserPreSize]
 
     setSize(800, 360);
 
     //[Constructor] You can add your own custom stuff here..
 
+    //TODO(JohT) delete if not needed any more
     //registers itself as listener for parameter-changes
-    SpecletParameters::getSingletonInstance().addListener(this);
-    DBG("SpecletAnalyzerComponent as parameter listener added");
+    //SpecletParameters::getSingletonInstance().addListener(this);
+    //DBG("SpecletAnalyzerComponent as parameter listener added");
     //adds spectrum drawing component to the scrollable view
-    spectralviewport->setViewedComponent(new SpecletDrawer());
+    spectralviewport->setViewedComponent(&specletDrawer);
+    parameters.addListener(&specletDrawer);
 
     //adds entries to the popup/context menu
     popupMenu.addItem(POPUPMENU_INDEX_1_ABOUT, "about");
@@ -330,10 +352,11 @@ SpecletAnalyzerComponent::~SpecletAnalyzerComponent() {
     deleteAndZero(tooltipWindow);
 
     //[Destructor]. You can add your own custom destruction code here..
+    //TODO (JohT) delete if not needed any more
     //unregisteres itself as listener for parameter-changes
-    SpecletParameters::getSingletonInstance().removeListener(this);
-    DBG("SpecletAnalyzerComponent as parameter listener removed");
-    parameters = nullptr;
+    //parameters.removeListener(this);
+    //DBG("SpecletAnalyzerComponent as parameter listener removed");
+    //parameters = nullptr;
     //[/Destructor]
 }
 
@@ -383,47 +406,47 @@ void SpecletAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasCh
 
     if (comboBoxThatHasChanged == comboBoxResolution) {
         //[UserComboBoxCode_comboBoxResolution] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, comboBoxResolution->getText().getFloatValue());
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, comboBoxResolution->getText().getFloatValue());
         //[/UserComboBoxCode_comboBoxResolution]
     } else if (comboBoxThatHasChanged == comboBoxTransformation) {
         //[UserComboBoxCode_comboBoxTransformation] -- add your combo box handling code here..
         auto selectedOption = static_cast<float>(comboBoxTransformation->getSelectedId());
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, selectedOption);
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, selectedOption);
         transformationChanged(selectedOption);
         //[/UserComboBoxCode_comboBoxTransformation]
     } else if (comboBoxThatHasChanged == comboBoxWindowing) {
         //[UserComboBoxCode_comboBoxWindowing] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, comboBoxWindowing->getSelectedId());
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, comboBoxWindowing->getSelectedId());
         //[/UserComboBoxCode_comboBoxWindowing]
     } else if (comboBoxThatHasChanged == comboBoxWavelet) {
         //[UserComboBoxCode_comboBoxWavelet] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, comboBoxWavelet->getSelectedId());
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, comboBoxWavelet->getSelectedId());
         //[/UserComboBoxCode_comboBoxWavelet]
     } else if (comboBoxThatHasChanged == comboBoxWaveletPacketBasis) {
         //[UserComboBoxCode_comboBoxWaveletPacketBasis] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBasis, comboBoxWaveletPacketBasis->getSelectedId());
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBasis, comboBoxWaveletPacketBasis->getSelectedId());
         //[/UserComboBoxCode_comboBoxWaveletPacketBasis]
     } else if (comboBoxThatHasChanged == comboBoxSignalGenerator) {
         //[UserComboBoxCode_comboBoxSignalgenerator] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Generator, comboBoxSignalGenerator->getSelectedId());
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, comboBoxSignalGenerator->getSelectedId());
         //[/UserComboBoxCode_comboBoxSignalgenerator]
     } else if (comboBoxThatHasChanged == comboBoxRouting) {
         //[UserComboBoxCode_comboBoxRouting] -- add your combo box handling code here..
         float selectedOption = static_cast<float>(comboBoxRouting->getSelectedId());
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_Routing, selectedOption);
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Routing, selectedOption);
         routingChanged(selectedOption);
         //[/UserComboBoxCode_comboBoxRouting]
     } else if (comboBoxThatHasChanged == comboBoxLogF) {
         //[UserComboBoxCode_comboBoxLogF] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, comboBoxLogF->getSelectedId());
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, comboBoxLogF->getSelectedId());
         //[/UserComboBoxCode_comboBoxLogF]
     } else if (comboBoxThatHasChanged == comboBoxLogA) {
         //[UserComboBoxCode_comboBoxLogA] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, comboBoxLogA->getSelectedId());
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, comboBoxLogA->getSelectedId());
         //[/UserComboBoxCode_comboBoxLogA]
     } else if (comboBoxThatHasChanged == comboBoxColorMode) {
         //[UserComboBoxCode_comboBoxColorMode] -- add your combo box handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, comboBoxColorMode->getSelectedId());
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, comboBoxColorMode->getSelectedId());
         //[/UserComboBoxCode_comboBoxColorMode]
     }
 
@@ -437,7 +460,7 @@ void SpecletAnalyzerComponent::sliderValueChanged(juce::Slider *sliderThatWasMov
 
     if (sliderThatWasMoved == sliderSignalGeneratorFrequency) {
         //[UserSliderCode_sliderGeneratorFrequenz] -- add your slider handling code here..
-        parameters->setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, sliderSignalGeneratorFrequency->getValue());
+        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, sliderSignalGeneratorFrequency->getValue());
         //[/UserSliderCode_sliderGeneratorFrequenz]
     }
 
@@ -526,27 +549,27 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxResolution->addItem("65536", SpecletParameters::RESOLUTION_65536);
 
     using TransformationTypeValue = std::underlying_type_t<TransformationParameters::Type>;
-    for (auto const& [value, name] : TransformationParameters::TypeNames::map) {
+    for (auto const &[value, name] : TransformationParameters::TypeNames::map) {
         comboBoxTransformation->addItem(std::string(name), static_cast<TransformationTypeValue>(value));
     }
 
     using WindowFunctionValue = std::underlying_type_t<WindowParameters::WindowFunction>;
-    for (auto const& [value, name] : WindowParameters::WindowFunctionNames::map) {
+    for (auto const &[value, name] : WindowParameters::WindowFunctionNames::map) {
         comboBoxWindowing->addItem(std::string(name), static_cast<WindowFunctionValue>(value));
     }
 
     using WaveletBaseValue = std::underlying_type_t<WaveletParameters::WaveletBase>;
-    for (auto const& [value, name] : WaveletParameters::WaveletBaseNames::map) {
+    for (auto const &[value, name] : WaveletParameters::WaveletBaseNames::map) {
         comboBoxWavelet->addItem(std::string(name), static_cast<WaveletBaseValue>(value));
     }
 
     using ResolutionRatioValue = std::underlying_type_t<WaveletParameters::ResolutionRatioOption>;
-    for (auto const& [value, name] : WaveletParameters::ResolutionRatioOptionNames::map) {
+    for (auto const &[value, name] : WaveletParameters::ResolutionRatioOptionNames::map) {
         comboBoxWaveletPacketBasis->addItem(std::string(name), static_cast<ResolutionRatioValue>(value));
     }
 
     using SignalGeneratorValue = std::underlying_type_t<SignalGeneratorParameters::Waveform>;
-    for (auto const& [value, name] : SignalGeneratorParameters::WaveformNames::map) {
+    for (auto const &[value, name] : SignalGeneratorParameters::WaveformNames::map) {
         comboBoxSignalGenerator->addItem(std::string(name), static_cast<SignalGeneratorValue>(value));
     }
 
@@ -557,13 +580,13 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
     comboBoxRouting->addItem("Oscillator", SpecletParameters::ROUTING_GENERATOR);
 
     using AxisValue = std::underlying_type_t<SpecletDrawerParameters::Axis>;
-    for (auto const& [value, name] : SpecletDrawerParameters::AxisNames::map) {
+    for (auto const &[value, name] : SpecletDrawerParameters::AxisNames::map) {
         comboBoxLogF->addItem(std::string(name), static_cast<AxisValue>(value));
         comboBoxLogA->addItem(std::string(name), static_cast<AxisValue>(value));
     }
 
     using ColorGradientValue = std::underlying_type_t<ColorGradientsParameters::ColorMode>;
-    for (auto const& [value, name] : ColorGradientsParameters::ColorModeNames::map) {
+    for (auto const &[value, name] : ColorGradientsParameters::ColorModeNames::map) {
         comboBoxColorMode->addItem(std::string(name), static_cast<ColorGradientValue>(value));
     }
 }

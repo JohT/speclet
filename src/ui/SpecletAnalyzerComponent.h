@@ -23,6 +23,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "../dsp/transformations/Transformation.h"
 #include "../plugin/SpecletParameters.h"
+#include "SpecletDrawer.h"
 #include "juce_core/juce_core.h"
 
 //[/Headers]
@@ -30,8 +31,8 @@
 class SpecletTooltipWindowLookAndFeel : public juce::LookAndFeel_V4 {
 public:
     SpecletTooltipWindowLookAndFeel() = default;
-    virtual ~SpecletTooltipWindowLookAndFeel() override = default;
-    virtual void drawTooltip(juce::Graphics &g, const juce::String &text, int width, int height) override;
+    ~SpecletTooltipWindowLookAndFeel() override = default;
+    void drawTooltip(juce::Graphics &g, const juce::String &text, int width, int height) override;
 };
 
 //==============================================================================
@@ -49,7 +50,7 @@ class SpecletAnalyzerComponent : public juce::Component,
                                  public juce::SettableTooltipClient {
 public:
     //==============================================================================
-    SpecletAnalyzerComponent();
+    explicit SpecletAnalyzerComponent(SpecletParameters & parametersToAttach);
     ~SpecletAnalyzerComponent() override;
 
     //==============================================================================
@@ -72,15 +73,16 @@ public:
     //==============================================================================
     juce_UseDebuggingNewOperator
 
-            private :
+private :
         //[UserVariables]   -- You can add your own custom variables in this section.
         enum PopupMenuEntryIndizes {
             POPUPMENU_INDEX_1_ABOUT = 1
         };
 
-    SpecletParameters *parameters = &SpecletParameters::getSingletonInstance();
+    SpecletParameters &parameters;
     juce::CriticalSection criticalSection;
     juce::PopupMenu popupMenu;
+    SpecletDrawer specletDrawer = {};
 
     void fillComboBoxes();
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
@@ -97,8 +99,8 @@ public:
     //[/UserVariables]
 
     //==============================================================================
-    juce::ComboBox *comboBoxResolution = nullptr;
     juce::Viewport *spectralviewport = nullptr;
+    juce::ComboBox *comboBoxResolution = nullptr;
     juce::Label *labelResolution = nullptr;
     juce::ComboBox *comboBoxTransformation = nullptr;
     juce::Label *labelTransformation = nullptr;
@@ -120,6 +122,18 @@ public:
     juce::ComboBox *comboBoxLogA = nullptr;
     juce::Label *labelColorMode = nullptr;
     juce::ComboBox *comboBoxColorMode = nullptr;
+
+    using ParameterAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
+    ParameterAttachment resolutionParameterAttachment;
+    ParameterAttachment transformationParameterAttachment;
+    ParameterAttachment windowingParameterAttachment;
+    ParameterAttachment waveletParameterAttachment;
+    ParameterAttachment waveletPacketBasisParameterAttachment;
+    ParameterAttachment signalGeneratorParameterAttachment;
+    ParameterAttachment routingParameterAttachment;
+    ParameterAttachment logFParameterAttachment;
+    ParameterAttachment logAParameterAttachment;
+    ParameterAttachment colorModeParameterAttachment;
 
     juce::TooltipWindow *tooltipWindow = nullptr;
     SpecletTooltipWindowLookAndFeel tooltipWindowLookAndFeel;
