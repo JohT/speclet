@@ -45,14 +45,6 @@ public:
     auto hasEditor() const -> bool override;
 
     //==============================================================================
-    //these methods are called, when parameter changes were recognised
-    auto getNumParameters() -> int override;
-    auto getParameter(int index) -> float override;
-    void setParameter(int index, float newValue) override;
-    auto getParameterName(int index) -> const juce::String override;
-    auto getParameterText(int index) -> const juce::String override;
-
-    //==============================================================================
     auto getName() const -> const juce::String override;
 
     auto acceptsMidi() const -> bool override;
@@ -96,7 +88,7 @@ private:
     //e.g. during Audioprocessing on every sample
     int parameterRouting;
     Transformation *currentTransformation = nullptr;
-    SignalGenerator signalGenerator;
+    SignalGenerator signalGenerator = SignalGenerator();
     juce::CriticalSection criticalSection;
     //==============================================================================
     auto getSampleFromRouting(const float *inL, const float *inR) -> float;

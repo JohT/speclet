@@ -25,24 +25,21 @@ SpecletAudioProcessor::SpecletAudioProcessor()
 #endif
                              ),
       parameters(*this),
-      parameterRouting(parameters.getRouting()),
-      signalGenerator(SignalGenerator(getSampleRate(), static_cast<SignalGeneratorParameters::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency())) {
+      parameterRouting(parameters.getRouting()) {
 
     LOG_PERFORMANCE_BEGIN("SpecletAudioProcessor");
 #if _LOGTOFILE
     juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
 #endif
 
-    //TODO (JohT) delete if not needed any more
     //registers itself as listener for parameter-changes
-    // parameters.addListener(this, true);
-    //DBG("SpecletAudioProcessor as parameter listener added");
+    parameters.addListener(this, true);
+    DBG("SpecletAudioProcessor as parameter listener added");
 }
 
 SpecletAudioProcessor::~SpecletAudioProcessor() {
-    //TODO (JohT) delete if not needed any more
-    //parameters.removeListener(this);
-    //DBG("SpecletAudioProcessor as parameter listener removed");
+    parameters.removeListener(this);
+    DBG("SpecletAudioProcessor as parameter listener removed");
     currentTransformation = nullptr;
 
     TransformationFactory::getSingletonInstance().destruct();
@@ -51,33 +48,6 @@ SpecletAudioProcessor::~SpecletAudioProcessor() {
     juce::Logger::setCurrentLogger(0, true);
 #endif
     LOG_PERFORMANCE_END();
-}
-
-//==============================================================================
-auto SpecletAudioProcessor::getNumParameters() -> int {
-    return parameters.TOTAL_NUMBER_OF_PARAMS;
-}
-
-auto SpecletAudioProcessor::getParameter(int index) -> float {
-    // This method will be called by the host, probably on the audio thread, so
-    // it's absolutely time-critical. Don't use critical sections or anything
-    // UI-related, or anything at all that may block in any way!
-    return parameters.getParameter(index);
-}
-
-void SpecletAudioProcessor::setParameter(int index, float newValue) {
-    // This method will be called by the host, probably on the audio thread, so
-    // it's absolutely time-critical. Don't use critical sections or anything
-    // UI-related, or anything at all that may block in any way!
-    parameters.setParameter(index, newValue);
-}
-
-auto SpecletAudioProcessor::getParameterName(int index) -> const juce::String {
-    return parameters.getParameterName(index);
-}
-
-auto SpecletAudioProcessor::getParameterText(int index) -> const juce::String {
-    return juce::String(getParameter(index), 2);
 }
 
 //==============================================================================
@@ -154,11 +124,14 @@ void SpecletAudioProcessor::valueTreePropertyChanged(juce::ValueTree &treeWhoseP
 }
 
 //==============================================================================
-void SpecletAudioProcessor::prepareToPlay(double /*sampleRate*/, int /*samplesPerBlock*/) {
+void SpecletAudioProcessor::prepareToPlay(double sampleRate, int /*samplesPerBlock*/) {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
     if (currentTransformation == nullptr) {
         updateTransformation();
+    }
+    if (signalGenerator.getSamplingRate() != sampleRate) {
+        signalGenerator = SignalGenerator(sampleRate, static_cast<SignalGeneratorParameters::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency());
     }
 }
 
@@ -269,7 +242,6 @@ void SpecletAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
 
     // then use this helper function to stuff it into the binary blob and return it..
     //copyXmlToBinary(*xml, destData);
-
 }
 
 void SpecletAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {

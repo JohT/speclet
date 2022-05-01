@@ -26,6 +26,9 @@ public:
             double newSignalFrequency = DEFAULT_GENERATOR_FREQUENCY);
 
     auto getNextSample() -> double;
+    auto getSamplingRate() const -> double {
+      return samplingFrequency;
+    }
 
 private:
     constexpr static const double DEFAULT_GENERATOR_FREQUENCY = 441.0;
