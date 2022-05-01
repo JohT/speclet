@@ -47,15 +47,15 @@ public:
         TOTAL_NUMBER_OF_PARAMS
     };
     enum OptionsResolution {
-        RESOLUTION_256 = 256,
-        RESOLUTION_512 = 512,
-        RESOLUTION_1024 = 1024,
-        RESOLUTION_2048 = 2048,
-        RESOLUTION_4096 = 4096,
-        RESOLUTION_8192 = 8192,
-        RESOLUTION_16384 = 16384,
-        RESOLUTION_32768 = 32768,
-        RESOLUTION_65536 = 65536,
+        RESOLUTION_256 = 1,
+        RESOLUTION_512,
+        RESOLUTION_1024,
+        RESOLUTION_2048,
+        RESOLUTION_4096,
+        RESOLUTION_8192,
+        RESOLUTION_16384,
+        RESOLUTION_32768,
+        RESOLUTION_65536,
 
         RESOLUTION_MAX = RESOLUTION_65536,
         RESOLUTION_DEFAULT = RESOLUTION_4096
@@ -102,15 +102,12 @@ public:
     void blockParameterChanges() const { waitForParameterChange.reset(); }
     void unblockParameterChanges() const { waitForParameterChange.signal(); }
 
-    void setParameter(int index, float newValue) const;
     void setParameter(const juce::String &name, float newValue) const;
-    auto getParameter(int index) const -> float;
     auto getParameter(const juce::String &name) const -> float;
-    auto getParameterName(int index) const -> juce::String;
     auto getParameterIndex(const juce::String &name) const -> int;
 
-    auto getColorMode() const -> int { return static_cast<int>(getParameter(PARAMETER_COLORMODE)); }
-    auto getGenerator() const -> int { return static_cast<int>(getParameter(PARAMETER_GENERATOR)); }
+    auto getColorMode() const -> int { return static_cast<int>(getParameter(PARAMETER_COLORMODE)) + 1; }
+    auto getGenerator() const -> int { return static_cast<int>(getParameter(PARAMETER_GENERATOR)) + 1; }
     auto getGeneratorFrequency() const -> float { return getParameter(PARAMETER_GENERATORFREQUENCY); }
     auto getLogMagnitude() const -> bool { return static_cast<bool>(getParameter(PARAMETER_LOGMAGNITUDE)); }
     auto getLogFrequency() const -> bool { return static_cast<bool>(getParameter(PARAMETER_LOGFREQUENCY)); }
@@ -122,9 +119,9 @@ public:
     auto getWindowing() const -> int { return static_cast<int>(getParameter(PARAMETER_WINDOWING)) + 1; }
     auto getParameters() -> juce::AudioProcessorValueTreeState & { return parameters; }
     //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
-    void addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation = true);
+    void addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation = true) const;
     //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
-    void removeListener(juce::ValueTree::Listener *listener);
+    void removeListener(juce::ValueTree::Listener *listener) const;
     //read and write to XML
     void readFromXML(const juce::XmlElement &xml) const;
     auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return parameters.state.createXml(); }
@@ -144,8 +141,7 @@ private:
     juce::AudioProcessorValueTreeState parameters;
 
     // --------------- methods --------------- //
-    auto sanitizeParameter(int index, float newValue) const -> float;
-    void setParameterInternally(int index, juce::var newValue) const;
+    auto sanitizeParameter(const juce::String &name, float newValue) const -> float;
     template<class _Tp>
     auto enumOptionToFloat(const _Tp& enumType) const -> float;
     

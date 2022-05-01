@@ -47,30 +47,34 @@ void SpecletTooltipWindowLookAndFeel::drawTooltip(juce::Graphics &g, const juce:
 SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parametersToAttach)
     : Component("SpecletAnalyzerComponent"),
       parameters(parametersToAttach),
+      comboBoxResolution(new juce::ComboBox("comboBoxResolution")),
       spectralviewport(new juce::Viewport("spectralviewport")),
-      comboBoxResolution(new juce::ComboBox(SpecletParameters::PARAMETER_RESOLUTION)),
       comboBoxTransformation(new juce::ComboBox("comboBoxTransformation")),
       comboBoxWindowing(new juce::ComboBox("comboBoxWindowing")),
       comboBoxWavelet(new juce::ComboBox("comboBoxWavelet")),
       comboBoxWaveletPacketBasis(new juce::ComboBox("comboBoxWaveletPacketBasis")),
       comboBoxSignalGenerator(new juce::ComboBox("comboBoxSignalgenerator")),
       comboBoxRouting(new juce::ComboBox("comboBoxRouting")),
+      sliderSignalGeneratorFrequency(new juce::Slider("sliderGeneratorFrequency")),
       comboBoxLogF(new juce::ComboBox("comboBoxLogF")),
       comboBoxLogA(new juce::ComboBox("comboBoxLogA")),
       comboBoxColorMode(new juce::ComboBox("comboBoxColorMode")),
 
-      resolutionParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_RESOLUTION, *comboBoxResolution),
-      transformationParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_TRANSFORMATION, *comboBoxTransformation),
-      windowingParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_WINDOWING, *comboBoxWindowing),
-      waveletParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_WAVELET, *comboBoxWavelet),
-      waveletPacketBasisParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_WAVELETPACKETBASIS, *comboBoxWaveletPacketBasis),
-      signalGeneratorParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_GENERATOR, *comboBoxSignalGenerator),
-      routingParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_ROUTING, *comboBoxRouting),
-      logFParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_LOGFREQUENCY, *comboBoxLogF),
-      logAParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_LOGMAGNITUDE, *comboBoxLogA),
-      colorModeParameterAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_COLORMODE, *comboBoxColorMode) {
+      resolutionParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_RESOLUTION, *comboBoxResolution)),
+      transformationParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_TRANSFORMATION, *comboBoxTransformation)),
+      windowingParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_WINDOWING, *comboBoxWindowing)),
+      waveletParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_WAVELET, *comboBoxWavelet)),
+      waveletPacketBasisParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_WAVELETPACKETBASIS, *comboBoxWaveletPacketBasis)),
+      signalGeneratorParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_GENERATOR, *comboBoxSignalGenerator)),
+      routingParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_ROUTING, *comboBoxRouting)),
+      logFParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_LOGFREQUENCY, *comboBoxLogF)),
+      logAParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_LOGMAGNITUDE, *comboBoxLogA)),
+      colorModeParameterAttachment(new ComboBoxAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_COLORMODE, *comboBoxColorMode)),
+      signalGeneratorFrequencyParameterAttachment(new SliderAttachment(parametersToAttach.getParameters(), SpecletParameters::PARAMETER_GENERATORFREQUENCY, *sliderSignalGeneratorFrequency)) {
 
     addAndMakeVisible(comboBoxResolution);
+    comboBoxResolution->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_RESOLUTION)->getAllValueStrings(), 1);
+    comboBoxResolution->setSelectedId(parameters.getParameter(SpecletParameters::PARAMETER_RESOLUTION) + 1, juce::dontSendNotification);
     comboBoxResolution->setEditableText(false);
     comboBoxResolution->setJustificationType(juce::Justification::centredLeft);
     comboBoxResolution->setTextWhenNothingSelected(juce::String());
@@ -96,6 +100,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     labelResolution->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxTransformation);
+    comboBoxTransformation->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_TRANSFORMATION)->getAllValueStrings(), 1);
+    comboBoxTransformation->setSelectedItemIndex(parameters.getParameter(SpecletParameters::PARAMETER_TRANSFORMATION) + 1, juce::dontSendNotification);
     comboBoxTransformation->setEditableText(false);
     comboBoxTransformation->setJustificationType(juce::Justification::centredLeft);
     comboBoxTransformation->setTextWhenNothingSelected(juce::String());
@@ -119,6 +125,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     labelTransformation->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxWindowing);
+    comboBoxWindowing->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_WINDOWING)->getAllValueStrings(), 1);
+    comboBoxWindowing->setSelectedItemIndex(parameters.getParameter(SpecletParameters::PARAMETER_WINDOWING) + 1, juce::dontSendNotification);
     comboBoxWindowing->setEditableText(false);
     comboBoxWindowing->setJustificationType(juce::Justification::centredLeft);
     comboBoxWindowing->setTextWhenNothingSelected(juce::String());
@@ -141,6 +149,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     labelWindowing->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxWavelet);
+    comboBoxWavelet->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_WAVELET)->getAllValueStrings(), 1);
+    comboBoxWavelet->setSelectedItemIndex(parameters.getParameter(SpecletParameters::PARAMETER_WAVELET), juce::dontSendNotification);
     comboBoxWavelet->setEditableText(false);
     comboBoxWavelet->setJustificationType(juce::Justification::centredLeft);
     comboBoxWavelet->setTextWhenNothingSelected(juce::String());
@@ -162,6 +172,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     labelWavelet->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxWaveletPacketBasis);
+    comboBoxWaveletPacketBasis->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_WAVELETPACKETBASIS)->getAllValueStrings(), 1);
+    comboBoxWaveletPacketBasis->setSelectedItemIndex(parameters.getParameter(SpecletParameters::PARAMETER_WAVELETPACKETBASIS) + 1, juce::dontSendNotification);
     comboBoxWaveletPacketBasis->setEditableText(false);
     comboBoxWaveletPacketBasis->setJustificationType(juce::Justification::centredLeft);
     comboBoxWaveletPacketBasis->setTextWhenNothingSelected(juce::String());
@@ -183,6 +195,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     labelWaveletPacketBasis->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxSignalGenerator);
+    comboBoxSignalGenerator->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_GENERATOR)->getAllValueStrings(), 1);
+    comboBoxSignalGenerator->setSelectedItemIndex(parameters.getParameter(SpecletParameters::PARAMETER_GENERATOR) + 1, juce::dontSendNotification);
     comboBoxSignalGenerator->setEditableText(false);
     comboBoxSignalGenerator->setJustificationType(juce::Justification::centredLeft);
     comboBoxSignalGenerator->setTextWhenNothingSelected(juce::String());
@@ -201,6 +215,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     labelSignalGenerator->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxRouting);
+    comboBoxRouting->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_ROUTING)->getAllValueStrings(), 1);
+    comboBoxRouting->setSelectedItemIndex(parameters.getParameter(SpecletParameters::PARAMETER_ROUTING) + 1, juce::dontSendNotification);
     comboBoxRouting->setEditableText(false);
     comboBoxRouting->setJustificationType(juce::Justification::centredLeft);
     comboBoxRouting->setTextWhenNothingSelected(juce::String());
@@ -231,7 +247,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     labelSignalGeneratorFrequency->setColour(juce::TextEditor::textColourId, juce::Colours::black);
     labelSignalGeneratorFrequency->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
-    addAndMakeVisible(sliderSignalGeneratorFrequency = new juce::Slider("sliderGeneratorFrequency"));
+    addAndMakeVisible(sliderSignalGeneratorFrequency);
+    sliderSignalGeneratorFrequency->setValue(parameters.getParameter(SpecletParameters::PARAMETER_GENERATORFREQUENCY), juce::dontSendNotification);
     sliderSignalGeneratorFrequency->setExplicitFocusOrder(7);
     sliderSignalGeneratorFrequency->setRange(10, 22000, 1);
     sliderSignalGeneratorFrequency->setSliderStyle(juce::Slider::LinearHorizontal);
@@ -263,6 +280,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     labelLogA->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxLogF);
+    comboBoxLogF->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_LOGFREQUENCY)->getAllValueStrings(), 1);
+    comboBoxLogF->setSelectedItemIndex(parameters.getParameter(SpecletParameters::PARAMETER_LOGFREQUENCY), juce::dontSendNotification);
     comboBoxLogF->setTooltip("Set the frequency scale to linear or logarithmic.");
     comboBoxLogF->setEditableText(false);
     comboBoxLogF->setJustificationType(juce::Justification::centredLeft);
@@ -271,6 +290,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     comboBoxLogF->addListener(this);
 
     addAndMakeVisible(comboBoxLogA);
+    comboBoxLogA->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_LOGMAGNITUDE)->getAllValueStrings(), 1);
+    comboBoxLogA->setSelectedItemIndex(parameters.getParameter(SpecletParameters::PARAMETER_LOGMAGNITUDE), juce::dontSendNotification);
     comboBoxLogA->setTooltip("Set the magnitude scale to linear or logarithmic.");
     comboBoxLogA->setEditableText(false);
     comboBoxLogA->setJustificationType(juce::Justification::centredLeft);
@@ -290,6 +311,8 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
     labelColorMode->setColour(juce::TextEditor::backgroundColourId, juce::Colour(0x0));
 
     addAndMakeVisible(comboBoxColorMode);
+    comboBoxColorMode->addItemList(parameters.getParameters().getParameter(SpecletParameters::PARAMETER_COLORMODE)->getAllValueStrings(), 1);
+    comboBoxColorMode->setSelectedItemIndex(parameters.getParameter(SpecletParameters::PARAMETER_COLORMODE), juce::dontSendNotification);
     comboBoxColorMode->setEditableText(false);
     comboBoxColorMode->setJustificationType(juce::Justification::centredLeft);
     comboBoxColorMode->setTextWhenNothingSelected(juce::String());
@@ -308,13 +331,12 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
 
     //[Constructor] You can add your own custom stuff here..
 
-    //TODO(JohT) delete if not needed any more
     //registers itself as listener for parameter-changes
-    //SpecletParameters::getSingletonInstance().addListener(this);
-    //DBG("SpecletAnalyzerComponent as parameter listener added");
+    parameters.addListener(this);
+    DBG("SpecletAnalyzerComponent as parameter listener added");
     //adds spectrum drawing component to the scrollable view
-    spectralviewport->setViewedComponent(&specletDrawer);
-    parameters.addListener(&specletDrawer);
+    spectralviewport->setViewedComponent(specletDrawer);
+    parameters.addListener(specletDrawer);
 
     //adds entries to the popup/context menu
     popupMenu.addItem(POPUPMENU_INDEX_1_ABOUT, "about");
@@ -324,10 +346,20 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
 
 SpecletAnalyzerComponent::~SpecletAnalyzerComponent() {
     //[Destructor_pre]. You can add your own custom destruction code here..
-    //[/Destructor_pre]
+    deleteAndZero(resolutionParameterAttachment);
+    deleteAndZero(transformationParameterAttachment);
+    deleteAndZero(windowingParameterAttachment);
+    deleteAndZero(waveletParameterAttachment);
+    deleteAndZero(waveletPacketBasisParameterAttachment);
+    deleteAndZero(signalGeneratorParameterAttachment);
+    deleteAndZero(routingParameterAttachment);
+    deleteAndZero(logFParameterAttachment);
+    deleteAndZero(logAParameterAttachment);
+    deleteAndZero(colorModeParameterAttachment);
+    deleteAndZero(signalGeneratorFrequencyParameterAttachment);
 
+    //[/Destructor_pre]
     deleteAndZero(comboBoxResolution);
-    deleteAndZero(spectralviewport);
     deleteAndZero(labelResolution);
     deleteAndZero(comboBoxTransformation);
     deleteAndZero(labelTransformation);
@@ -350,13 +382,13 @@ SpecletAnalyzerComponent::~SpecletAnalyzerComponent() {
     deleteAndZero(labelColorMode);
     deleteAndZero(comboBoxColorMode);
     deleteAndZero(tooltipWindow);
+    deleteAndZero(specletDrawer);
+    deleteAndZero(spectralviewport);
 
     //[Destructor]. You can add your own custom destruction code here..
-    //TODO (JohT) delete if not needed any more
     //unregisteres itself as listener for parameter-changes
-    //parameters.removeListener(this);
-    //DBG("SpecletAnalyzerComponent as parameter listener removed");
-    //parameters = nullptr;
+    parameters.removeListener(this);
+    DBG("SpecletAnalyzerComponent as parameter listener removed");
     //[/Destructor]
 }
 
@@ -404,51 +436,52 @@ void SpecletAnalyzerComponent::comboBoxChanged(juce::ComboBox *comboBoxThatHasCh
     //[UsercomboBoxChanged_Pre]
     //[/UsercomboBoxChanged_Pre]
 
-    if (comboBoxThatHasChanged == comboBoxResolution) {
-        //[UserComboBoxCode_comboBoxResolution] -- add your combo box handling code here..
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Resolution, comboBoxResolution->getText().getFloatValue());
-        //[/UserComboBoxCode_comboBoxResolution]
-    } else if (comboBoxThatHasChanged == comboBoxTransformation) {
-        //[UserComboBoxCode_comboBoxTransformation] -- add your combo box handling code here..
-        auto selectedOption = static_cast<float>(comboBoxTransformation->getSelectedId());
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Transformation, selectedOption);
-        transformationChanged(selectedOption);
-        //[/UserComboBoxCode_comboBoxTransformation]
-    } else if (comboBoxThatHasChanged == comboBoxWindowing) {
-        //[UserComboBoxCode_comboBoxWindowing] -- add your combo box handling code here..
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Windowing, comboBoxWindowing->getSelectedId());
-        //[/UserComboBoxCode_comboBoxWindowing]
-    } else if (comboBoxThatHasChanged == comboBoxWavelet) {
-        //[UserComboBoxCode_comboBoxWavelet] -- add your combo box handling code here..
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Wavelet, comboBoxWavelet->getSelectedId());
-        //[/UserComboBoxCode_comboBoxWavelet]
-    } else if (comboBoxThatHasChanged == comboBoxWaveletPacketBasis) {
-        //[UserComboBoxCode_comboBoxWaveletPacketBasis] -- add your combo box handling code here..
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_WaveletPacketBasis, comboBoxWaveletPacketBasis->getSelectedId());
-        //[/UserComboBoxCode_comboBoxWaveletPacketBasis]
-    } else if (comboBoxThatHasChanged == comboBoxSignalGenerator) {
-        //[UserComboBoxCode_comboBoxSignalgenerator] -- add your combo box handling code here..
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Generator, comboBoxSignalGenerator->getSelectedId());
-        //[/UserComboBoxCode_comboBoxSignalgenerator]
-    } else if (comboBoxThatHasChanged == comboBoxRouting) {
-        //[UserComboBoxCode_comboBoxRouting] -- add your combo box handling code here..
-        float selectedOption = static_cast<float>(comboBoxRouting->getSelectedId());
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_Routing, selectedOption);
-        routingChanged(selectedOption);
-        //[/UserComboBoxCode_comboBoxRouting]
-    } else if (comboBoxThatHasChanged == comboBoxLogF) {
-        //[UserComboBoxCode_comboBoxLogF] -- add your combo box handling code here..
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogFrequency, comboBoxLogF->getSelectedId());
-        //[/UserComboBoxCode_comboBoxLogF]
-    } else if (comboBoxThatHasChanged == comboBoxLogA) {
-        //[UserComboBoxCode_comboBoxLogA] -- add your combo box handling code here..
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_LogMagnitude, comboBoxLogA->getSelectedId());
-        //[/UserComboBoxCode_comboBoxLogA]
-    } else if (comboBoxThatHasChanged == comboBoxColorMode) {
-        //[UserComboBoxCode_comboBoxColorMode] -- add your combo box handling code here..
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_ColorMode, comboBoxColorMode->getSelectedId());
-        //[/UserComboBoxCode_comboBoxColorMode]
-    }
+    //TODO (JohT) delete if not needed any more
+    // if (comboBoxThatHasChanged == comboBoxResolution) {
+    //     //[UserComboBoxCode_comboBoxResolution] -- add your combo box handling code here..
+    //     parameters.setParameter(SpecletParameters::PARAMETER_RESOLUTION, comboBoxResolution->getText().getFloatValue());
+    //     //[/UserComboBoxCode_comboBoxResolution]
+    // } else if (comboBoxThatHasChanged == comboBoxTransformation) {
+    //     //[UserComboBoxCode_comboBoxTransformation] -- add your combo box handling code here..
+    //     auto selectedOption = static_cast<float>(comboBoxTransformation->getSelectedId());
+    //     parameters.setParameter(SpecletParameters::PARAMETER_TRANSFORMATION, selectedOption);
+    //     transformationChanged(selectedOption);
+    //     //[/UserComboBoxCode_comboBoxTransformation]
+    // } else if (comboBoxThatHasChanged == comboBoxWindowing) {
+    //     //[UserComboBoxCode_comboBoxWindowing] -- add your combo box handling code here..
+    //     parameters.setParameter(SpecletParameters::PARAMETER_WINDOWING, comboBoxWindowing->getSelectedId());
+    //     //[/UserComboBoxCode_comboBoxWindowing]
+    // } else if (comboBoxThatHasChanged == comboBoxWavelet) {
+    //     //[UserComboBoxCode_comboBoxWavelet] -- add your combo box handling code here..
+    //     parameters.setParameter(SpecletParameters::PARAMETER_WAVELET, comboBoxWavelet->getSelectedId());
+    //     //[/UserComboBoxCode_comboBoxWavelet]
+    // } else if (comboBoxThatHasChanged == comboBoxWaveletPacketBasis) {
+    //     //[UserComboBoxCode_comboBoxWaveletPacketBasis] -- add your combo box handling code here..
+    //     parameters.setParameter(SpecletParameters::PARAMETER_WAVELETPACKETBASIS, comboBoxWaveletPacketBasis->getSelectedId());
+    //     //[/UserComboBoxCode_comboBoxWaveletPacketBasis]
+    // } else if (comboBoxThatHasChanged == comboBoxSignalGenerator) {
+    //     //[UserComboBoxCode_comboBoxSignalgenerator] -- add your combo box handling code here..
+    //     parameters.setParameter(SpecletParameters::PARAMETER_GENERATOR, comboBoxSignalGenerator->getSelectedId());
+    //     //[/UserComboBoxCode_comboBoxSignalgenerator]
+    // } else if (comboBoxThatHasChanged == comboBoxRouting) {
+    //     //[UserComboBoxCode_comboBoxRouting] -- add your combo box handling code here..
+    //     float selectedOption = static_cast<float>(comboBoxRouting->getSelectedId());
+    //     parameters.setParameter(SpecletParameters::PARAMETER_ROUTING, selectedOption);
+    //     routingChanged(selectedOption);
+    //     //[/UserComboBoxCode_comboBoxRouting]
+    // } else if (comboBoxThatHasChanged == comboBoxLogF) {
+    //     //[UserComboBoxCode_comboBoxLogF] -- add your combo box handling code here..
+    //     parameters.setParameter(SpecletParameters::PARAMETER_LOGFREQUENCY, comboBoxLogF->getSelectedId());
+    //     //[/UserComboBoxCode_comboBoxLogF]
+    // } else if (comboBoxThatHasChanged == comboBoxLogA) {
+    //     //[UserComboBoxCode_comboBoxLogA] -- add your combo box handling code here..
+    //     parameters.setParameter(SpecletParameters::PARAMETER_LOGMAGNITUDE, comboBoxLogA->getSelectedId());
+    //     //[/UserComboBoxCode_comboBoxLogA]
+    // } else if (comboBoxThatHasChanged == comboBoxColorMode) {
+    //     //[UserComboBoxCode_comboBoxColorMode] -- add your combo box handling code here..
+    //     parameters.setParameter(SpecletParameters::PARAMETER_COLORMODE, comboBoxColorMode->getSelectedId());
+    //     //[/UserComboBoxCode_comboBoxColorMode]
+    // }
 
     //[UsercomboBoxChanged_Post]
     //[/UsercomboBoxChanged_Post]
@@ -458,11 +491,12 @@ void SpecletAnalyzerComponent::sliderValueChanged(juce::Slider *sliderThatWasMov
     //[UsersliderValueChanged_Pre]
     //[/UsersliderValueChanged_Pre]
 
-    if (sliderThatWasMoved == sliderSignalGeneratorFrequency) {
-        //[UserSliderCode_sliderGeneratorFrequenz] -- add your slider handling code here..
-        parameters.setParameter(SpecletParameters::PARAMETER_INDEX_GeneratorFrequency, sliderSignalGeneratorFrequency->getValue());
-        //[/UserSliderCode_sliderGeneratorFrequenz]
-    }
+    //TODO (JohT) delete if not needed any more
+    // if (sliderThatWasMoved == sliderSignalGeneratorFrequency) {
+    //     //[UserSliderCode_sliderGeneratorFrequenz] -- add your slider handling code here..
+    //     parameters.setParameter(SpecletParameters::PARAMETER_GENERATORFREQUENCY, sliderSignalGeneratorFrequency->getValue());
+    //     //[/UserSliderCode_sliderGeneratorFrequenz]
+    // }
 
     //[UsersliderValueChanged_Post]
     //[/UsersliderValueChanged_Post]

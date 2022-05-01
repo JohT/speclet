@@ -82,7 +82,6 @@ private :
     SpecletParameters &parameters;
     juce::CriticalSection criticalSection;
     juce::PopupMenu popupMenu;
-    SpecletDrawer specletDrawer = {};
 
     void fillComboBoxes();
     void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
@@ -96,11 +95,12 @@ private :
     template<class _Tp>
     auto enumOptionToFloat(const _Tp &enumType) const -> float;
 
+    SpecletDrawer *specletDrawer = new SpecletDrawer();
     //[/UserVariables]
 
     //==============================================================================
-    juce::Viewport *spectralviewport = nullptr;
     juce::ComboBox *comboBoxResolution = nullptr;
+    juce::Viewport *spectralviewport = nullptr;
     juce::Label *labelResolution = nullptr;
     juce::ComboBox *comboBoxTransformation = nullptr;
     juce::Label *labelTransformation = nullptr;
@@ -123,17 +123,20 @@ private :
     juce::Label *labelColorMode = nullptr;
     juce::ComboBox *comboBoxColorMode = nullptr;
 
-    using ParameterAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
-    ParameterAttachment resolutionParameterAttachment;
-    ParameterAttachment transformationParameterAttachment;
-    ParameterAttachment windowingParameterAttachment;
-    ParameterAttachment waveletParameterAttachment;
-    ParameterAttachment waveletPacketBasisParameterAttachment;
-    ParameterAttachment signalGeneratorParameterAttachment;
-    ParameterAttachment routingParameterAttachment;
-    ParameterAttachment logFParameterAttachment;
-    ParameterAttachment logAParameterAttachment;
-    ParameterAttachment colorModeParameterAttachment;
+    using ComboBoxAttachment = juce::AudioProcessorValueTreeState::ComboBoxAttachment;
+    ComboBoxAttachment * resolutionParameterAttachment;
+    ComboBoxAttachment * transformationParameterAttachment;
+    ComboBoxAttachment * windowingParameterAttachment;
+    ComboBoxAttachment * waveletParameterAttachment;
+    ComboBoxAttachment * waveletPacketBasisParameterAttachment;
+    ComboBoxAttachment * signalGeneratorParameterAttachment;
+    ComboBoxAttachment * routingParameterAttachment;
+    ComboBoxAttachment * logFParameterAttachment;
+    ComboBoxAttachment * logAParameterAttachment;
+    ComboBoxAttachment * colorModeParameterAttachment;
+
+    using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
+    SliderAttachment * signalGeneratorFrequencyParameterAttachment;
 
     juce::TooltipWindow *tooltipWindow = nullptr;
     SpecletTooltipWindowLookAndFeel tooltipWindowLookAndFeel;
