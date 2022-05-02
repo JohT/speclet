@@ -108,7 +108,7 @@ void SpecletAudioProcessor::changeProgramName(int index, const juce::String &new
 //This method is called when a parameter changes (listener)
 void SpecletAudioProcessor::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
     const juce::ScopedLock myScopedLock(criticalSection);
-    juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
+    juce::String changedParameterName = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_ID);
     DBG("SpecletAudioProcessor::valueTreePropertyChanged: " + changedParameterName);
 
     if (SpecletParameters::isTransformationParameter(changedParameterName)) {
