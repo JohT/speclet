@@ -80,11 +80,9 @@ auto WaveletPacketTransformation::calculateSpectralDataInfo() const -> SpectralD
 }
 
 auto WaveletPacketTransformation::toTimeFrequencyResolutionTreeLevelOffset(const WaveletParameters::ResolutionRatioOption &resolutionRatioOption) -> int {
-    if (resolutionRatioOption == WaveletParameters::ResolutionRatioOption::EQUAL) {
-        return 0;
-    }
     using ResolutionRatioOptionValueType = std::underlying_type_t<WaveletParameters::ResolutionRatioOption>;
-    return static_cast<ResolutionRatioOptionValueType>(resolutionRatioOption);
+    // Option 1: Time x 4 = -2 Offset, Option 2: Time x 2 = -1 Offset, Option 3: Equal Time/Frequency = 0 Offset, ...
+    return static_cast<ResolutionRatioOptionValueType>(resolutionRatioOption) - 3;
 }
 
 void WaveletPacketTransformation::calculate() {
