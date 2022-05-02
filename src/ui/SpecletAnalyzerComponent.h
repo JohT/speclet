@@ -55,6 +55,9 @@ public:
 
     //==============================================================================
     //[UserMethods]     -- You can add your own custom methods in this section.
+    auto createComboBox(const juce::String& componentName, const juce::String& parameterName) -> juce::ComboBox *;
+    auto createLabel(const juce::String& componentName, const juce::String& labelText) -> juce::Label *;
+    auto createSlider(const juce::String& componentName, const juce::String& parameterName) -> juce::Slider *;
     //[/UserMethods]
 
     void paint(juce::Graphics &g) override;
@@ -99,8 +102,8 @@ private :
     //[/UserVariables]
 
     //==============================================================================
-    juce::ComboBox *comboBoxResolution = nullptr;
     juce::Viewport *spectralviewport = nullptr;
+    juce::ComboBox *comboBoxResolution = nullptr;
     juce::Label *labelResolution = nullptr;
     juce::ComboBox *comboBoxTransformation = nullptr;
     juce::Label *labelTransformation = nullptr;
