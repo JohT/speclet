@@ -12,7 +12,7 @@ void RenderingHelper::renderVerticalPoints(
         TransformationResult *transformationResult,
         TAnalyzerSettings settings,
         int currentXPos,
-        juce::Image *spectralImage) {
+        juce::Image *spectralImage) const {
 
     LOG_PERFORMANCE_OF_SCOPE("RenderingHelper renderVerticalPoints");
 
@@ -38,7 +38,7 @@ void RenderingHelper::renderVerticalPoints(
     }
 
     // --- get statistics of spectrum (min, max, ...)
-    SpectralDataBuffer::ItemStatisticsType statistics = SpectralDataBuffer::ItemStatisticsType(spectrum);
+    auto statistics = SpectralDataBuffer::ItemStatisticsType(spectrum);
 
     // --- get info about spectral data (frequency/time-resolution...)
     SpectralDataInfo spectralDataInfo = transformationResult->getSpectralDataInfo();
@@ -69,7 +69,7 @@ auto RenderingHelper::getColorAmount(
         double magnitude,
         double minMagnitude,
         double maxMagnitude,
-        bool logMagnitude) -> double {
+        bool logMagnitude) const -> double {
     if (logMagnitude) {
         maxMagnitude = 20 * log(maxMagnitude);
         minMagnitude = 20 * log(minMagnitude);
@@ -86,7 +86,7 @@ auto RenderingHelper::pixelToIndex(
         int pixel,
         int height,
         const SpectralDataInfo &spectralDataInfo,
-        bool logFrequency) -> unsigned long {
+        bool logFrequency) const -> unsigned long {
     if (pixel <= 0) {
         return 0;//DC in spectrum always on index = 0
     }
@@ -117,7 +117,7 @@ auto RenderingHelper::pixelToIndex(
     return static_cast<unsigned int>(index);
 }
 
-auto RenderingHelper::assureBorders(const juce::String & /*paramName*/, double value, double min, double max) -> double {
+auto RenderingHelper::assureBorders(const juce::String & /*paramName*/, double value, double min, double max) const -> double {
     if (value < min) {
         //DBG(T("RenderingHelper::assureBorders: <")
         //	+ paramName					+ T(">")

@@ -30,30 +30,30 @@ public:
     RenderingHelper();
     ~RenderingHelper() = default;
 
-    void setColourGradient(juce::ColourGradient value) { colourGradient = value; }
+    void setColourGradient(const juce::ColourGradient& value) { colourGradient = value; }
 
     void renderVerticalPoints(
             TransformationResult *transformationResult,
             TAnalyzerSettings settings,
             int currentXPos,
-            juce::Image *spectralImage);
+            juce::Image *spectralImage) const;
 
-    //Normally, this method would be defined as "privat".
-    //But since it is directly adressed in a unit-test, it remains
+    //Normally, this method would be defined as "private".
+    //But since it is directly addressed in a unit-test, it remains
     //(until the test gets deprecated) "public"
     auto pixelToIndex(
             int pixel,
             int height,
             const SpectralDataInfo &spectralDataInfo,
-            bool logFrequency) -> unsigned long;
+            bool logFrequency) const -> unsigned long;
 
 private:
     auto getColorAmount(
             double magnitude,
             double minMagnitude,
             double maxMagnitude,
-            bool logMagnitude) -> double;
-    auto assureBorders(const juce::String &paramName, double value, double min, double max) -> double;
+            bool logMagnitude) const -> double;
+    auto assureBorders(const juce::String &paramName, double value, double min, double max) const -> double;
 
     std::vector<juce::Colour> mColorTable;//color table
     juce::ColourGradient colourGradient;  //color gradient object

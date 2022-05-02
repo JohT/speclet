@@ -135,12 +135,11 @@ void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
         if (watchDog <= 0) {
             //prevents endless loop
             DBG("SpecletDrawer::onTransformationEvent watchDog canceled drawing!");
-            watchDog = 200;
             break;
         }
     }
     //if effective timeresolution didn't change, the timeresolution-axis needn't to be redrawn
-    auto spectralDataInfo = result->getSpectralDataInfo();
+    auto const& spectralDataInfo = result->getSpectralDataInfo();
     auto timeResolution = spectralDataInfo.getTimeResolutionMs();
     if (timeResolution != currentTimeResolution) {
         updateTimeAxisImage(timeResolution);
@@ -152,15 +151,15 @@ void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
 void SpecletDrawer::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
     const juce::ScopedLock myScopedLock(criticalSection);
 
-    juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
+    juce::String changedParameterName = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_ID);
     juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_VALUE);
 
     if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGFREQUENCY)) {
-        settings.logFrequency = changedParameterValue.equals(static_cast<std::underlying_type<SpecletDrawerParameters::Axis>::type>(SpecletDrawerParameters::Axis::LOGARITHMIC));
+        settings.logFrequency = changedParameterValue.equals(static_cast<std::underlying_type_t<SpecletDrawerParameters::Axis>>(SpecletDrawerParameters::Axis::LOGARITHMIC));
         updateFrequencyAxisImage();
     }
     if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGMAGNITUDE)) {
-        settings.logMagnitude = changedParameterValue.equals(static_cast<std::underlying_type<SpecletDrawerParameters::Axis>::type>(SpecletDrawerParameters::Axis::LOGARITHMIC));
+        settings.logMagnitude = changedParameterValue.equals(static_cast<std::underlying_type_t<SpecletDrawerParameters::Axis>>(SpecletDrawerParameters::Axis::LOGARITHMIC));
     }
     if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_COLORMODE)) {
         renderingHelper.setColourGradient(ColourGradients::forIndex(changedParameterValue));
