@@ -66,6 +66,18 @@ auto SpecletParameters::getParameter(const juce::String &name) const -> float {
     // return child.getProperty(PROPERTY_VALUE, 0.0F);
 }
 
+auto SpecletParameters::getParameterAsSelection(const juce::String &name) const -> int {
+    return static_cast<int>(getParameter(name)) + 1;
+}
+
+void SpecletParameters::setParameterFromSelection(const juce::String &name, int selectedId) const {
+    setParameter(name, static_cast<float>(selectedId - 1));
+}
+
+auto SpecletParameters::getParameterList(const juce::String &name) const -> juce::StringArray {
+   return parameters.getParameter(name)->getAllValueStrings();
+}
+
 auto SpecletParameters::sanitizeParameter(const juce::String &name, float newValue) const -> float {
     if ((name == PARAMETER_RESOLUTION) && (newValue < enumOptionToFloat(RESOLUTION_256))) {
         DBG("SpecletParameters::setParameter: Resolution might not be smaller than the minimum value, so it's set to 256");
@@ -89,50 +101,15 @@ void SpecletParameters::setParameter(const juce::String &name, float newValue) c
     //    return;
     //}
     newValue = sanitizeParameter(name, newValue);
-    parameters.getParameterAsValue(name).setValue(newValue);
+    parameters.getRawParameterValue(name)->store(newValue);
     //juce::ValueTree child = properties.getChildWithName(name);
     //child.setProperty(PROPERTY_VALUE, newValue, nullptr);
 }
 
-auto SpecletParameters::getParameterIndex(const juce::String &name) const -> int {
-    if (name.equalsIgnoreCase(PARAMETER_ROUTING)) {
-        return PARAMETER_INDEX_Routing;
-    } else if (name.equalsIgnoreCase(PARAMETER_TRANSFORMATION)) {
-        return PARAMETER_INDEX_Transformation;
-    } else if (name.equalsIgnoreCase(PARAMETER_RESOLUTION)) {
-        return PARAMETER_INDEX_Resolution;
-    } else if (name.equalsIgnoreCase(PARAMETER_WAVELETPACKETBASIS)) {
-        return PARAMETER_INDEX_WaveletPacketBasis;
-    } else if (name.equalsIgnoreCase(PARAMETER_WINDOWING)) {
-        return PARAMETER_INDEX_Windowing;
-    } else if (name.equalsIgnoreCase(PARAMETER_WAVELET)) {
-        return PARAMETER_INDEX_Wavelet;
-    } else if (name.equalsIgnoreCase(PARAMETER_GENERATOR)) {
-        return PARAMETER_INDEX_Generator;
-    } else if (name.equalsIgnoreCase(PARAMETER_GENERATORFREQUENCY)) {
-        return PARAMETER_INDEX_GeneratorFrequency;
-    } else if (name.equalsIgnoreCase(PARAMETER_LOGFREQUENCY)) {
-        return PARAMETER_INDEX_LogFrequency;
-    } else if (name.equalsIgnoreCase(PARAMETER_LOGMAGNITUDE)) {
-        return PARAMETER_INDEX_LogMagnitude;
-    } else if (name.equalsIgnoreCase(PARAMETER_COLORMODE)) {
-        return PARAMETER_INDEX_ColorMode;
-    } else {
-        DBG("SpecletParameters::getParameterIndex: Unknown parameter name: " << name);
-        return -1;
-    }
-    //TODO (JohT) delete if not needed any more
-    // juce::ValueTree child = properties.getChildWithName(name);
-    // if (!child.isValid()) {
-    //     return -1;
-    // }
-    // return properties.indexOf(child);
-}
-
 auto SpecletParameters::getResolution() const -> unsigned long {
-    auto choice = getParameter(PARAMETER_RESOLUTION);
-    //choice = 0 means resolution = 256 (2 ^ 8) so the exponent is 8 + choice.
-    auto resolutionShiftValue = (8U + static_cast<unsigned int>(choice));
+    auto choice = getParameterAsSelection(PARAMETER_RESOLUTION);
+    //choice = 1 means resolution = 256 (2 ^ 8) so the exponent is 7 + choice.
+    auto resolutionShiftValue = 7 + choice;
     //instead of using pow(2, resolutionShiftValue) we shift the value 1 to the left
     return 1U << resolutionShiftValue;
 }
@@ -145,6 +122,7 @@ void SpecletParameters::addListener(juce::ValueTree::Listener *listener, bool se
             DBG("SpecletParameters::addListener: Invalid parameter: " << parameter.getType().toString() << "(index: " << i << ")");
             continue;
         }
+        DBG("SpecletParameters::addListener: Adding listener to parameter: " << parameter.getProperty(PROPERTY_VALUE).toString() << "(id: " << parameter.getProperty("id").toString() << ")");
         parameter.addListener(listener);
         if (sendAllParametersForInitialisation) {
             listener->valueTreePropertyChanged(parameter, PROPERTY_VALUE);
@@ -181,41 +159,6 @@ void SpecletParameters::removeListener(juce::ValueTree::Listener *listener) cons
     }
     //TODO (JohT) delete commented lines if not needed any more
     //properties.removeListener(listener);
-}
-
-void SpecletParameters::readFromXML(const juce::XmlElement &xml) const {
-    const juce::ScopedLock myScopedLock(criticalSection);
-    juce::ValueTree importedProperties = juce::ValueTree::fromXml(xml);
-
-    //validate imported data (skip import if invalid)
-    if (!importedProperties.isValid()) {
-        return;
-    }
-
-    if (importedProperties.getNumChildren() < properties.getNumChildren()) {
-        return;
-    }
-
-    //reads all currently defined parameters and overwrites their values,
-    //if the same parameter is found in the imported ValueTree
-    for (int i = 0; i < properties.getNumChildren(); i++) {
-        //get current parameter, skip if invalid
-        juce::ValueTree oldParameter = properties.getChild(i);
-        if (!oldParameter.isValid()) {
-            continue;
-        }
-
-        //get new parameter with same name, skip if invalid
-        juce::Identifier paramterIdentifier = oldParameter.getType();
-        juce::ValueTree newParameter = importedProperties.getChildWithName(paramterIdentifier);
-        if (!newParameter.isValid()) {
-            continue;
-        }
-
-        //overwrite old parameter using the public setter, which will lead to listener notification
-        juce::var newParameterValue = newParameter.getProperty(PROPERTY_VALUE);
-        setParameter(paramterIdentifier.toString(), static_cast<float>(newParameterValue));
-    }
 }
 
 template<typename Param>

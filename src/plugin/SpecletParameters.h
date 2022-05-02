@@ -74,6 +74,7 @@ public:
     //"Initialization ... with static storage duration may throw an exception that cannot be caught"
     //Juce doesn't support string_view yet, constexpr doesn't work with string literals and the exception is very unlikely to happen
     //NOLINTBEGIN
+    inline const static juce::String PROPERTY_ID{"id"};
     inline const static juce::String PROPERTY_VALUE{"value"};
     inline const static juce::String PARAMETER_COLORMODE{"colormode"};
     inline const static juce::String PARAMETER_LOGMAGNITUDE{"logmagnitude"};
@@ -104,27 +105,26 @@ public:
 
     void setParameter(const juce::String &name, float newValue) const;
     auto getParameter(const juce::String &name) const -> float;
-    auto getParameterIndex(const juce::String &name) const -> int;
-
-    auto getColorMode() const -> int { return static_cast<int>(getParameter(PARAMETER_COLORMODE)) + 1; }
-    auto getGenerator() const -> int { return static_cast<int>(getParameter(PARAMETER_GENERATOR)) + 1; }
+    auto getParameterAsSelection(const juce::String &name) const -> int;
+    void setParameterFromSelection(const juce::String &name, int selectedId) const;
+    auto getParameterList(const juce::String &name) const -> juce::StringArray;
+    
+    auto getColorMode() const -> int { return getParameterAsSelection(PARAMETER_COLORMODE); }
+    auto getGenerator() const -> int { return getParameterAsSelection(PARAMETER_GENERATOR); }
     auto getGeneratorFrequency() const -> float { return getParameter(PARAMETER_GENERATORFREQUENCY); }
-    auto getLogMagnitude() const -> bool { return static_cast<bool>(getParameter(PARAMETER_LOGMAGNITUDE)); }
-    auto getLogFrequency() const -> bool { return static_cast<bool>(getParameter(PARAMETER_LOGFREQUENCY)); }
+    auto getLogMagnitude() const -> bool { return getParameterAsSelection(PARAMETER_LOGMAGNITUDE); }
+    auto getLogFrequency() const -> bool { return getParameterAsSelection(PARAMETER_LOGFREQUENCY); }
     auto getResolution() const -> unsigned long;
-    auto getRouting() const -> int { return static_cast<int>(getParameter(PARAMETER_ROUTING)) + 1; }
-    auto getTransformation() const -> int { return static_cast<int>(getParameter(PARAMETER_TRANSFORMATION)) + 1; }
-    auto getWavelet() const -> int { return static_cast<int>(getParameter(PARAMETER_WAVELET)) + 1; }
-    auto getWaveletPacketBasis() const -> int { return static_cast<int>(getParameter(PARAMETER_WAVELETPACKETBASIS)) - 2; }
-    auto getWindowing() const -> int { return static_cast<int>(getParameter(PARAMETER_WINDOWING)) + 1; }
+    auto getRouting() const -> int { return getParameterAsSelection(PARAMETER_ROUTING); }
+    auto getTransformation() const -> int { return getParameterAsSelection(PARAMETER_TRANSFORMATION); }
+    auto getWavelet() const -> int { return getParameterAsSelection(PARAMETER_WAVELET); }
+    auto getWaveletPacketBasis() const -> int { return getParameterAsSelection(PARAMETER_WAVELETPACKETBASIS); }
+    auto getWindowing() const -> int { return getParameterAsSelection(PARAMETER_WINDOWING); }
     auto getParameters() -> juce::AudioProcessorValueTreeState & { return parameters; }
     //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
     void addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation = true) const;
     //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
     void removeListener(juce::ValueTree::Listener *listener) const;
-    //read and write to XML
-    void readFromXML(const juce::XmlElement &xml) const;
-    auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return parameters.state.createXml(); }
 
 private:
     enum class ChildIndices {
