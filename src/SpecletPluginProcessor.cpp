@@ -296,9 +296,9 @@ auto SpecletAudioProcessor::getSampleFromRouting(const float *inL, const float *
             return *inL - *inR;
         case SpecletParameters::ROUTING_MID:
             return static_cast<float>((*inL + *inR) / 2.0);
-        case SpecletParameters::ROUTING_R:
+        case SpecletParameters::ROUTING_RIGHT:
             return *inR;
-        case SpecletParameters::ROUTING_L:
+        case SpecletParameters::ROUTING_LEFT:
             return *inL;
         case SpecletParameters::ROUTING_GENERATOR:
             return static_cast<float>(signalGenerator.getNextSample());

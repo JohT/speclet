@@ -480,8 +480,8 @@ void SpecletAnalyzerComponent::fillComboBoxes() {
 
     comboBoxRouting->addItem("Mid", SpecletParameters::ROUTING_MID);
     comboBoxRouting->addItem("Side", SpecletParameters::ROUTING_SIDE);
-    comboBoxRouting->addItem("Left", SpecletParameters::ROUTING_L);
-    comboBoxRouting->addItem("Right", SpecletParameters::ROUTING_R);
+    comboBoxRouting->addItem("Left", SpecletParameters::ROUTING_LEFT);
+    comboBoxRouting->addItem("Right", SpecletParameters::ROUTING_RIGHT);
     comboBoxRouting->addItem("Oscillator", SpecletParameters::ROUTING_GENERATOR);
 
     using AxisValue = std::underlying_type_t<SpecletDrawerParameters::Axis>;

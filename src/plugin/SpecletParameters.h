@@ -61,13 +61,13 @@ public:
         RESOLUTION_DEFAULT = RESOLUTION_4096
     };
     enum OptionsRouting {
-        ROUTING_GENERATOR = 1,
-        ROUTING_L,
-        ROUTING_R,
-        ROUTING_MID,
+        ROUTING_MID = 1,
         ROUTING_SIDE,
+        ROUTING_LEFT,
+        ROUTING_RIGHT,
+        ROUTING_GENERATOR,
 
-        ROUTING_NumOptions,
+        ROUTING_NUMBER_OF_OPTIONS,
         ROUTING_DEFAULT = ROUTING_MID
     };
 
