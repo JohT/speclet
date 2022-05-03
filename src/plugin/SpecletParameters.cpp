@@ -124,9 +124,10 @@ void SpecletParameters::addListener(juce::ValueTree::Listener *listener, bool se
         }
         DBG("SpecletParameters::addListener: Adding listener to parameter: " << parameter.getProperty(PROPERTY_VALUE).toString() << "(id: " << parameter.getProperty("id").toString() << ")");
         parameter.addListener(listener);
-        if (sendAllParametersForInitialisation) {
-            listener->valueTreePropertyChanged(parameter, PROPERTY_VALUE);
-        }
+        //TODO (JohT) delete commented lines if not needed any more
+        //if (sendAllParametersForInitialisation) {
+        //    listener->valueTreePropertyChanged(parameter, PROPERTY_VALUE);
+        //}
     }
 
     //TODO (JohT) delete commented lines if not needed any more
@@ -177,8 +178,6 @@ static Param &addToLayout(Group &layout, Ts &&...ts) {
 auto SpecletParameters::createParameterLayout() -> juce::AudioProcessorValueTreeState::ParameterLayout {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
-    //TODO (JohT) Adjust routing values
-    //ROUTING_GENERATOR = 1, ROUTING_L, ROUTING_R, ROUTING_MID, ROUTING_SIDE
     auto routingOptions = {"Mid", "Side", "Left", "Right", "Oscillator"};
     addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_ROUTING, PARAMETER_ROUTING, routingOptions, 0, "Audio Source");
 
@@ -188,8 +187,6 @@ auto SpecletParameters::createParameterLayout() -> juce::AudioProcessorValueTree
     auto resolutionOptions = {"256", "512", "1024", "2048", "4096", "8192", "16384", "32768", "65536"};
     addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_RESOLUTION, PARAMETER_RESOLUTION, resolutionOptions, 3, "Resolution");
 
-    //TODO (JohT) Adjust packet basis resolution ratio values
-    //TIME_X4 = -2, TIME_X2 = -1, FREQUENCY_X2 = 1, FREQUENCY_X4 = 2, EQUAL = 99,
     auto waveletPacketBasisOptions = {"Time x4", "Time x2", "Freq/Time x1", "Freq x2", "Freq x4"};
     addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_WAVELETPACKETBASIS, PARAMETER_WAVELETPACKETBASIS, waveletPacketBasisOptions, 2, "Wavelet Packet Basis");
 
