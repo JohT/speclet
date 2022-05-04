@@ -103,10 +103,8 @@ public:
     void blockParameterChanges() const { waitForParameterChange.reset(); }
     void unblockParameterChanges() const { waitForParameterChange.signal(); }
 
-    void setParameter(const juce::String &name, float newValue) const;
     auto getParameter(const juce::String &name) const -> float;
     auto getParameterAsSelection(const juce::String &name) const -> int;
-    void setParameterFromSelection(const juce::String &name, int selectedId) const;
     auto getParameterList(const juce::String &name) const -> juce::StringArray;
     
     auto getColorMode() const -> int { return getParameterAsSelection(PARAMETER_COLORMODE); }
@@ -121,10 +119,10 @@ public:
     auto getWaveletPacketBasis() const -> int { return getParameterAsSelection(PARAMETER_WAVELETPACKETBASIS); }
     auto getWindowing() const -> int { return getParameterAsSelection(PARAMETER_WINDOWING); }
     auto getParameters() -> juce::AudioProcessorValueTreeState & { return parameters; }
-    //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
-    void addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation = true) const;
-    //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
-    void removeListener(juce::ValueTree::Listener *listener) const;
+    //Adds a listener for all parameters by delegating it to juce::AudioProcessorValueTreeState (see juce API documentation)
+    void addListener(juce::AudioProcessorValueTreeState::Listener *listener);
+    //Removes a listener by delegating it to juce::AudioProcessorValueTreeState (see juce API documentation)
+    void removeListener(juce::AudioProcessorValueTreeState::Listener *listener);
 
 private:
     enum class ChildIndices {
@@ -141,7 +139,6 @@ private:
     juce::AudioProcessorValueTreeState parameters;
 
     // --------------- methods --------------- //
-    auto sanitizeParameter(const juce::String &name, float newValue) const -> float;
     template<class _Tp>
     auto enumOptionToFloat(const _Tp& enumType) const -> float;
     
