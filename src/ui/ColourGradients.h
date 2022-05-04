@@ -16,6 +16,12 @@
 #pragma once
 #include "juce_audio_utils/juce_audio_utils.h"
 namespace ColourGradients {
+    /**
+     * @brief A colour gradient for the spectrum analyzer for the given index.
+     * 
+     * @param index int starting with 1 for the first colour gradient (blue)
+     * @return juce::ColourGradient 
+     */
     auto forIndex(int index) -> juce::ColourGradient;
 
     auto fadeToBlack(const juce::Colour &colour) noexcept -> juce::ColourGradient;
