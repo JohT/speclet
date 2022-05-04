@@ -32,8 +32,8 @@ SpecletAudioProcessor::SpecletAudioProcessor()
     juce::Logger::setCurrentLogger(new juce::FileLogger(juce::File("c:/temp/speclet.log"), "Speclet LogFile"), true);
 #endif
 
-    //registers itself as listener for parameter-changes
-    parameters.addListener(this, true);
+    //registers itself as a listener for parameter-changes
+    parameters.addListener(this);
     DBG("SpecletAudioProcessor as parameter listener added");
 }
 
@@ -105,20 +105,18 @@ void SpecletAudioProcessor::changeProgramName(int index, const juce::String &new
     juce::ignoreUnused(index, newName);
 }
 
-//This method is called when a parameter changes (listener)
-void SpecletAudioProcessor::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
+void SpecletAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue) {
     const juce::ScopedLock myScopedLock(criticalSection);
-    juce::String changedParameterName = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_ID);
-    DBG("SpecletAudioProcessor::valueTreePropertyChanged: " + changedParameterName);
+    DBG("SpecletAudioProcessor::parameterChanged: " + parameterID);
 
-    if (SpecletParameters::isTransformationParameter(changedParameterName)) {
+    if (SpecletParameters::isTransformationParameter(parameterID)) {
         updateTransformation();
     }
-    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_ROUTING)) {
+    if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_ROUTING)) {
         parameterRouting = parameters.getRouting();
     }
-    if ((changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_GENERATOR))//
-        || (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_GENERATORFREQUENCY))) {
+    if ((parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_GENERATOR))//
+        || (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_GENERATORFREQUENCY))) {
         updateSignalGenerator();
     }
 }
@@ -229,19 +227,13 @@ auto SpecletAudioProcessor::createEditor() -> juce::AudioProcessorEditor * {
 }
 
 //==============================================================================
+//TODO (JohT) Move to SpecletParameters
 void SpecletAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
     juce::MemoryOutputStream memoryOutputStream(destData, true);
     parameters.getParameters().state.writeToStream(memoryOutputStream);
-
-    //TODO (JohT) delete if not used any more
-    // Create an outer XML element..
-    //std::unique_ptr<juce::XmlElement> xml = parameters.writeToXML();
-
-    // then use this helper function to stuff it into the binary blob and return it..
-    //copyXmlToBinary(*xml, destData);
 }
 
 void SpecletAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
@@ -254,14 +246,6 @@ void SpecletAudioProcessor::setStateInformation(const void *data, int sizeInByte
             updateTransformation();
         }
     }
-
-    //TODO (JohT) delete if not used any more
-    // This getXmlFromBinary() helper function retrieves our XML from the binary blob..
-    //std::unique_ptr<juce::XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
-
-    //if (xmlState) {
-    //    parameters.readFromXML(*xmlState);
-    //}
 }
 
 //==============================================================================

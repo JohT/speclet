@@ -39,7 +39,7 @@
 class SpecletDrawer : public juce::Component,
                        public TransformationListener,
                        public juce::Timer,
-                       public juce::ValueTree::Listener {
+                       public juce::AudioProcessorValueTreeState::Listener {
 public:
     //==============================================================================
     SpecletDrawer();
@@ -49,9 +49,7 @@ public:
     //[UserMethods]     -- You can add your own custom methods in this section.
     void timerCallback() override;
     void onTransformationEvent(TransformationResult *result) override;
-    void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
-    void valueTreeChildrenChanged(juce::ValueTree &) {}
-    void valueTreeParentChanged(juce::ValueTree &) override {}
+    void parameterChanged(const juce::String& parameterID, float newValue) override;
     //==============================================================================
     //[/UserMethods]
 

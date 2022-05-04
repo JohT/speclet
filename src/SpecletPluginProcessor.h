@@ -25,7 +25,8 @@
 
 
 //==============================================================================
-class SpecletAudioProcessor : public juce::AudioProcessor, public juce::ValueTree::Listener {
+class SpecletAudioProcessor : public juce::AudioProcessor, public juce::AudioProcessorValueTreeState::Listener
+{
 public:
     //==============================================================================
     SpecletAudioProcessor();
@@ -61,9 +62,7 @@ public:
 
     //==============================================================================
     //these methods are called, when parameter changes were recognised
-    void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
-    void valueTreeParentChanged(juce::ValueTree &) override {/*not used*/}
-
+    void parameterChanged (const juce::String& parameterID, float newValue) override;
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;

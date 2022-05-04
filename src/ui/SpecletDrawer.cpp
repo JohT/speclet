@@ -148,21 +148,19 @@ void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
 }
 
 //This method is called when a parameter changes (listener)
-void SpecletDrawer::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
+void SpecletDrawer::parameterChanged(const juce::String& parameterID, float newValue) {
     const juce::ScopedLock myScopedLock(criticalSection);
+    auto newIndex = static_cast<int>(newValue) + 1; //+1 because 0 is not a valid combo box selection id
 
-    juce::String changedParameterName = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_ID);
-    juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_VALUE);
-
-    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGFREQUENCY)) {
-        settings.logFrequency = changedParameterValue.equals(static_cast<std::underlying_type_t<SpecletDrawerParameters::Axis>>(SpecletDrawerParameters::Axis::LOGARITHMIC));
+    if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGFREQUENCY)) {
+        settings.logFrequency = (newIndex == static_cast<std::underlying_type_t<SpecletDrawerParameters::Axis>>(SpecletDrawerParameters::Axis::LOGARITHMIC));
         updateFrequencyAxisImage();
     }
-    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGMAGNITUDE)) {
-        settings.logMagnitude = changedParameterValue.equals(static_cast<std::underlying_type_t<SpecletDrawerParameters::Axis>>(SpecletDrawerParameters::Axis::LOGARITHMIC));
+    if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGMAGNITUDE)) {
+        settings.logMagnitude = (newIndex == static_cast<std::underlying_type_t<SpecletDrawerParameters::Axis>>(SpecletDrawerParameters::Axis::LOGARITHMIC));
     }
-    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_COLORMODE)) {
-        renderingHelper.setColourGradient(ColourGradients::forIndex(changedParameterValue));
+    if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_COLORMODE)) {
+        renderingHelper.setColourGradient(ColourGradients::forIndex(newIndex));
     }
 }
 
