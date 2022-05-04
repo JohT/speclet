@@ -44,9 +44,7 @@ public:
                                                                     //[/Comments]
 */
 class SpecletAnalyzerComponent : public juce::Component,
-                                 public juce::ValueTree::Listener,
-                                 public juce::ComboBox::Listener,
-                                 public juce::Slider::Listener,
+                                 public juce::AudioProcessorValueTreeState::Listener,
                                  public juce::SettableTooltipClient {
 public:
     //==============================================================================
@@ -58,12 +56,11 @@ public:
     auto createComboBox(const juce::String& componentName, const juce::String& parameterName) -> juce::ComboBox *;
     auto createLabel(const juce::String& componentName, const juce::String& labelText) -> juce::Label *;
     auto createSlider(const juce::String& componentName, const juce::String& parameterName) -> juce::Slider *;
+    auto getComponents() -> std::vector<juce::Component *>;
     //[/UserMethods]
 
     void paint(juce::Graphics &g) override;
     void resized() override;
-    void comboBoxChanged(juce::ComboBox *comboBoxThatHasChanged) override;
-    void sliderValueChanged(juce::Slider *sliderThatWasMoved) override;
     void visibilityChanged() override;
     void parentSizeChanged() override;
     void broughtToFront() override;
@@ -78,7 +75,7 @@ public:
 
 private :
         //[UserVariables]   -- You can add your own custom variables in this section.
-        enum PopupMenuEntryIndizes {
+        enum PopupMenuEntryIndices {
             POPUPMENU_INDEX_1_ABOUT = 1
         };
 
@@ -86,23 +83,22 @@ private :
     juce::CriticalSection criticalSection;
     juce::PopupMenu popupMenu;
 
-    void fillComboBoxes();
-    void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
-    void valueTreeParentChanged(juce::ValueTree & /*treeWhoseParentHasChanged*/) override {/*not used*/}
-
-    void updateComboBox(const juce::String &parameterName, juce::ComboBox *comboBox, const juce::ValueTree &treeWhosePropertyHasChanged);
-    static void updateSlider(const juce::String &parameterName, juce::Slider *slider, const juce::ValueTree &treeWhosePropertyHasChanged);
-    void transformationChanged(float selectedOption);
-    void routingChanged(float selectedOption);
+    void parameterChanged(const juce::String& parameterID, float newValue) override;
+    void transformationChanged(int selectedOption);
+    void routingChanged(int selectedOption);
 
     template<class _Tp>
-    auto enumOptionToFloat(const _Tp &enumType) const -> float;
+    auto enumOptionIntValue(const _Tp &enumType) const -> int;
 
     SpecletDrawer *specletDrawer = new SpecletDrawer();
     //[/UserVariables]
 
     //==============================================================================
     juce::Viewport *spectralviewport = nullptr;
+
+    juce::TooltipWindow *tooltipWindow = nullptr;
+    SpecletTooltipWindowLookAndFeel tooltipWindowLookAndFeel;
+
     juce::ComboBox *comboBoxResolution = nullptr;
     juce::Label *labelResolution = nullptr;
     juce::ComboBox *comboBoxTransformation = nullptr;
@@ -141,8 +137,6 @@ private :
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     SliderAttachment * signalGeneratorFrequencyParameterAttachment;
 
-    juce::TooltipWindow *tooltipWindow = nullptr;
-    SpecletTooltipWindowLookAndFeel tooltipWindowLookAndFeel;
     //==============================================================================
     // (prevent copy constructor and operator= being generated..)
     SpecletAnalyzerComponent(const SpecletAnalyzerComponent &) = delete;
