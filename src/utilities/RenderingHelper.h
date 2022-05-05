@@ -27,7 +27,7 @@ public:
         bool logMagnitude;//false=lin, true=log
     };
 
-    RenderingHelper();
+    explicit RenderingHelper(const juce::ColourGradient &initialColourGradient);
     ~RenderingHelper() = default;
 
     void setColourGradient(const juce::ColourGradient& value) { colourGradient = value; }

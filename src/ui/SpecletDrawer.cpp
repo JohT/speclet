@@ -38,7 +38,9 @@ const juce::Colour SpecletDrawer::AXIS_COLOR(0xffffffc0);
 //[/MiscUserDefs]
 
 //==============================================================================
-SpecletDrawer::SpecletDrawer() {
+SpecletDrawer::SpecletDrawer(bool logFrequency, bool logMagnitude, const juce::ColourGradient &initialColourGradient)
+    : settings({logFrequency, logMagnitude}),
+      renderingHelper(initialColourGradient) {
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -51,6 +53,7 @@ SpecletDrawer::SpecletDrawer() {
     TransformationFactory::getSingletonInstance().registerForTransformationResults(this);
 
     startTimer(TIMER);
+    updateFrequencyAxisImage();
     ready = true;
     waitForDestruction.signal();
     //[/Constructor]
@@ -159,6 +162,9 @@ void SpecletDrawer::parameterChanged(const juce::String& parameterID, float newV
     if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGMAGNITUDE)) {
         settings.logMagnitude = (newIndex == static_cast<std::underlying_type_t<SpecletDrawerParameters::Axis>>(SpecletDrawerParameters::Axis::LOGARITHMIC));
     }
+    // The colour gradient change could be moved to the RenderingHelper (thus making it a listener too).
+    // But registering it as a listener leads to additional coupling while initialization (add the listener).
+    // So it stays here for now.
     if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_COLORMODE)) {
         renderingHelper.setColourGradient(ColourGradients::forIndex(newIndex));
     }
@@ -216,14 +222,14 @@ void SpecletDrawer::updateFrequencyAxisImage() {
         double maxFrequencyLog = log10(maxSpectralFrequency);
         double minFrequencyLog = 1.0;
 
-        for (double logFreqDecade = 1; logFreqDecade <= 4; logFreqDecade++) {
+        for (auto logFreqDecade = 1; logFreqDecade <= 4; logFreqDecade++) {
             for (auto i = 0; i < (numberOfSubDivisions - 1); i++) {
                 double logFreq = logSubDivisionsPerDecade[i] + logFreqDecade;
                 if (logFreq > maxFrequencyLog) {
                     break;
                 }
                 double posPercent = (logFreq - minFrequencyLog) / (maxFrequencyLog - minFrequencyLog);
-                int yPos = static_cast<int>(lrint((sizeY - 1) * (1.0f - posPercent)));
+                auto yPos = static_cast<int>(lrint((sizeY - 1) * (1.0f - posPercent)));
                 double freqDouble = pow(10, logFreq);
                 double freqCeil = ceil(freqDouble);
                 double freqFloor = floor(freqDouble);

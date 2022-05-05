@@ -134,6 +134,9 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
 
     //[Constructor] You can add your own custom stuff here..
 
+    transformationChanged(parameters.getTransformation());
+    routingChanged(parameters.getRouting());
+
     //registers itself as listener for parameter-changes
     parameters.addListener(this);
     DBG("SpecletAnalyzerComponent as parameter listener added");

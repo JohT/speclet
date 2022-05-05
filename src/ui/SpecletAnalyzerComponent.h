@@ -23,6 +23,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "../dsp/transformations/Transformation.h"
 #include "../plugin/SpecletParameters.h"
+#include "ColourGradients.h"
 #include "SpecletDrawer.h"
 #include "juce_core/juce_core.h"
 
@@ -90,7 +91,7 @@ private :
     template<class _Tp>
     auto enumOptionIntValue(const _Tp &enumType) const -> int;
 
-    SpecletDrawer *specletDrawer = new SpecletDrawer();
+    SpecletDrawer *specletDrawer = new SpecletDrawer(parameters.getLogFrequency(), parameters.getLogMagnitude(), ColourGradients::forIndex(parameters.getColorMode()));
     //[/UserVariables]
 
     //==============================================================================

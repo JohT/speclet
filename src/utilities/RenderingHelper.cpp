@@ -3,8 +3,8 @@
 #include "PerformanceLogger.h"
 #include <assert.h>
 
-RenderingHelper::RenderingHelper()
-    : colourGradient(ColourGradients::BLUE) {
+RenderingHelper::RenderingHelper(const juce::ColourGradient &initialColourGradient)
+    : colourGradient(initialColourGradient) {
 }
 
 //method for rendering one column of spectral data

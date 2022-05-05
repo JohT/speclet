@@ -23,6 +23,7 @@
 //[Headers]     -- You can add your own extra header files here --
 #include "../dsp/transformations/Transformation.h"
 #include "../utilities/RenderingHelper.h"
+#include "ColourGradients.h"
 #include "juce_core/juce_core.h"
 
 //[/Headers]
@@ -37,12 +38,12 @@
 																						  //[/Comments]
 */
 class SpecletDrawer : public juce::Component,
-                       public TransformationListener,
-                       public juce::Timer,
-                       public juce::AudioProcessorValueTreeState::Listener {
+                      public TransformationListener,
+                      public juce::Timer,
+                      public juce::AudioProcessorValueTreeState::Listener {
 public:
     //==============================================================================
-    SpecletDrawer();
+    SpecletDrawer(bool logFrequency = true, bool logMagnitude = true, const juce::ColourGradient & initialColourGradient = ColourGradients::BLUE);
     ~SpecletDrawer() override;
 
     //==============================================================================
@@ -55,7 +56,6 @@ public:
 
     void paint(juce::Graphics &g) override;
     void resized() override;
-
 
     //==============================================================================
     juce_UseDebuggingNewOperator
@@ -78,8 +78,8 @@ private :
     int sizeY = Constants::SIZE_Y;
     double currentTimeResolution = 0;
     double currentSamplingFrequency = 0.0;
-    RenderingHelper::TAnalyzerSettings settings = {};
-    RenderingHelper renderingHelper = {};
+    RenderingHelper::TAnalyzerSettings settings;
+    RenderingHelper renderingHelper;
     int currentCursorXPos = 0;
     juce::Image spectrumImage = {juce::Image::RGB, sizeX, sizeY, true};
     juce::Image axisImage = {juce::Image::PixelFormat::ARGB, sizeX, sizeY, true};
