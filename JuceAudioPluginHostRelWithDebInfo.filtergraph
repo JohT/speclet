@@ -65,9 +65,9 @@
           uiLastY_Normal="438" uiopen_Normal="0">
     <PLUGIN name="AUAudioFilePlayer" format="AudioUnit" category="Generator"
             manufacturer="Apple" version="1.6.0" file="AudioUnit:Generators/augn,afpl,appl"
-            uniqueId="6163676e" isInstrument="0" fileTime="0" infoUpdateTime="18098718685"
+            uniqueId="6163676e" isInstrument="0" fileTime="0" infoUpdateTime="18098151975"
             numInputs="0" numOutputs="2" isShell="0" uid="6163676e"/>
-    <STATE>589.hAGaoMGcv.C1AHv.DTfAGfPBJr.Gc3wGgvUag4VclE1XzUmbkIGUjEFcg8EDarVPUAkbkMWYzAUYxMWZyQWYtQ2TzEFcksTY4c0b0IFc4AWYWYWYxMWZu4FUzkGbk8EDOXVZrUVKxUlYkIWYtMVYyQkag0VYRDFbvwFPgxvzM3vCPDwEXYTZrUlSg0VYWIUYmk1atMmWIM2TkwVYiQWYjYTZrU1WP70KUMWYxM2Kp8FZt4VduPzaiUWak4Fcy8RS0MWZq8xTuYFc2Elbk8hUugWYtc1auX0a3Ulam8FHTUzSTUDHTU1bz8hUugWYtc1aTUzSTUTKOYlYsPjb00Fau8FbtzFbyDpDTOAEUXwEXbgFdIUYmk1atQzakMGSu8FbZIUYmk1atQTXzE1WP.QRyMUYrU1XzUFYRU1Yo8laZIUYmk1at4TXsUVBOAAb..............fv.................A....D..............n0m50rjmfcEbnXkTEWhM4a.....X1zfVB......................................fOHv............9J....9b.kfVNU1cfHUYmk1atkfDgYFbrAA.RDVcm4Vzf.gUFkFakARLXUkazkFcrUFY.f..Y.fI.rB.IAPT.jE.dA.b.TG.5Avd.zG.DBPi.TI.jFfAAfP.QD.HArR.9DPRAnT.8FfuAjb.JGvyADc.VGP1A.N.......f.A.........fH..................P.oC</STATE>
+    <STATE>589.hAGaoMGcv.C1AHv.DTfAGfPBJr.Gc3wGgvUag4VclE1XzUmbkIGUjEFcg8EDarVPUAkbkMWYzAUYxMWZyQWYtQ2TzEFcksTY4c0b0IFc4AWYWYWYxMWZu4FUzkGbk8EDOXVZrUVKxUlYkIWYtMVYyQkag0VYRDFbvwFPgxvzM3vCPDQFXYTZrUlSg0VYWIUYmk1atMmWIM2TkwVYiQWYjYTZrU1WP70KUMWYxM2Kp8FZt4VduPzaiUWak4Fcy8RS0MWZq8xTuYFc2Elbk8hUugWYtc1auX0a3Ulam8FHTUzSTUDHTU1bz8hUugWYtc1aTUzSTUTKOYlYsPjb00Fau8FbtzFbyDpDTOAEUXwEXjQFZIUYmk1at4TXsUlVRU1Yo8laDEFcg8EDPjzbSUFakMFckQlTkcVZu4lWRU1Yo8laD8VYywzauAmVNU1cfHUYmk1at8DDvA..............BC................D....P..............fVepWyRdB1UvghURUbI1juA....fYSCZI.......................................9f.C...........3q....3yATBIjfDgYFbrAA.RDVcm4Vzf.gUFkFakARLXUkazkFcrUFY.f..Y.fI.rB.IAPT.jE.dA.b.TG.5Avd.zG.DBPi.TI.jFfAAfP.QD.GAbR.5DPRAPU.GG.xAjb.JGvyADc.VGP1A.N.......f.A.........fH..................P.oC</STATE>
     <LAYOUT>
       <INPUTS/>
       <OUTPUTS>
@@ -75,13 +75,13 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="12" x="0.5024330900243309" y="0.4369918699186992" uiLastX_Normal="109"
-          uiLastY_Normal="184" uiopen_Normal="0">
-    <PLUGIN name="Speclet" format="VST3" category="Fx|Analyzer" manufacturer="Johannes Troppacher"
-            version="1.0.0" file="/Users/johnny/Repositories/git/speclet/build/Speclet_artefacts/Release/VST3/Speclet.vst3"
-            uniqueId="a5561700" isInstrument="0" fileTime="180520db05d" infoUpdateTime="18098718686"
+  <FILTER uid="11" x="0.5048661800486618" y="0.4573170731707317" uiLastX_Normal="138"
+          uiLastY_Normal="70" uiopen_Normal="0">
+    <PLUGIN name="Speclet-RelWithDebInfo" format="VST3" category="Fx|Analyzer"
+            manufacturer="Johannes Troppacher" version="1.0.0" file="/Users/johnny/Repositories/git/speclet/build/Speclet_artefacts/RelWithDebInfo/VST3/Speclet-RelWithDebInfo.vst3"
+            uniqueId="a5561700" isInstrument="0" fileTime="18097ff44c9" infoUpdateTime="18098151976"
             numInputs="2" numOutputs="2" isShell="0" uid="4de1280b"/>
-    <STATE>855.VMjLg3z....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9TSM23BTEwlXmAiUYoWUrIVdA4hKAImKTETRUAUSAAkKBolQY4BQ1ITQLESXxgCahMGNFk0ZAY1XmcmUisVPP4RRP4hKt3hKt3hKtHjKA4BUAkTUP0TPP4hPpYTVtPjcBUjXVkEcUwlXmEkLggWPlM1Y2Y0XqEDTtjDTt3hKt3hKt3hKt3hKtPUPIUETMEDTtHjZFkkKD4RQEIlUYQWUrI1YQISX3kEahsVQWM1ZzDCVzDjYic1cVM1ZAAkKIAkKt3hKt3hKlUDZtDjKTETRUAUSAAkKBolQY4BQlMTQ1ESXskEahsVQWM1ZzDCVzDjYic1cVM1ZAAkKIAkKt3hKt3hKt3xMq3hKTETRUAUSAAkKBolQY4BQlMTQ1ESXsAiUX0FMVokdUcTVqEjYic1cVM1ZAAkKIAkKt3hKt3hKt3xMq3hKTETRUAUSAAkKBolQY4BQtLTQHcUV4giQgASTWoUczXjKwTjQgASUF4RPp4RPt3hKt3hKt3BRtPjKPUjZTEDLD4RPHAkVpEDTtjDUlIVcUczXuQSLY4BVWgkbUcUVtPDTBQjKt3hKt3hKt3RPP4hKUAkTEQ0TtPjYt7VTF4RPxAUP5kzUXQWSskUcIcUXtf0UXIWUWkkKDAkPD4hKt3hKt3hKt3hKt3RUPIUQTMkKDYlKuEkQtDjZPEjLEw1XqcmUYoWPlM1Y2Y0XqEDTtjDTt3hKt3hKt3hKL4RPtPUPIUETMEDTtHjZFkkKD4RQEI1UXESUFE1ZQcjXm0TLZsVTsg0YMckV4EjYic1cVM1ZAAkKIAkKt3hKt3hKt3BQtDjKTETRUAUSAAkKBolQY4BQ1ITQhckVzEULgIyZrEVaAY1XmcmUisVPP4RRP4hKt3hKt3hKt3hKA4hKt3hKt3hKt3hKtQUUCUEQTg2ZrM1YQcUVDUjQicVPP4RPHQEY1UTLhkWPP4RPL4hKi4hKt3hKt3hKtXlTU0DUQAURWoULEYzXqEEUXoWQFwyKIMzasA2atUlaz4COuX0TTMCTrU2Yo41TzEFck4C.</STATE>
+    <STATE>855.VMjLg3z....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9TSM23BTEwlXmAiUYoWUrIVdA4hKAImKTETRUAUSAAkKBolQY4BQ1ITQLESXxgCahMGNFk0ZAY1XmcmUisVPP4RRP4hKt3hKt3hKtHjKA4BUAkTUP0TPP4hPpYTVtPjcBUjXVkEcUwlXmEkLggWPlM1Y2Y0XqEDTtjDTt3hKt3hKt3hKt3hKtPUPIUETMEDTtHjZFkkKD4RQEIlUYQWUrI1YQISX3kEahsVQWM1ZzDCVzDjYic1cVM1ZAAkKIAkKt3hKt3hKt.kUtDjKTETRUAUSAAkKBolQY4BQlMTQ1ESXskEahsVQWM1ZzDCVzDjYic1cVM1ZAAkKIAkKt3hKt3hKt3xMq3hKTETRUAUSAAkKBolQY4BQlMTQ1ESXsAiUX0FMVokdUcTVqEjYic1cVM1ZAAkKIAkKt3hKt3hKt3xMq3hKTETRUAUSAAkKBolQY4BQtLTQHcUV4giQgASTWoUczXjKwTjQgASUF4RPp4RPt3hKt3hKt3BRtPjKPUjZTEDLD4RPHAkVpEDTtjDUlIVcUczXuQSLY4BVWgkbUcUVtPDTBQjKt3hKt3hKt3hKt3hKUAkTEQ0TtPjYt7VTF4RPxAUP5kzUXQWSskUcIcUXtf0UXIWUWkkKDAkPD4hKt3hKt3hKt3hKt3RUPIUQTMkKDYlKuEkQtDjZPEjLEw1XqcmUYoWPlM1Y2Y0XqEDTtjDTt3hKt3hKt3hKL4RPtPUPIUETMEDTtHjZFkkKD4RQEI1UXESUFE1ZQcjXm0TLZsVTsg0YMckV4EjYic1cVM1ZAAkKIAkKt3hKt3hKt3hKtDjKTETRUAUSAAkKBolQY4BQ1ITQhckVzEULgIyZrEVaAY1XmcmUisVPP4RRP4hKt3hKt3hKt3hKA4hKt3hKt3hKt3hKtQUUCUEQTg2ZrM1YQcUVDUjQicVPP4RPHQEY1UTLhkWPP4RPL4hKi4hKt3hKt3hKtXlTU0DUQAURWoULEYzXqEEUXoWQFwyKIMzasA2atUlaz4COuX0TTMCTrU2Yo41TzEFck4C.</STATE>
     <LAYOUT>
       <INPUTS>
         <BUS index="0" layout="L R"/>
@@ -91,6 +91,6 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="12" dstChannel="0"/>
-  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="12" dstChannel="1"/>
+  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="11" dstChannel="0"/>
+  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="11" dstChannel="1"/>
 </FILTERGRAPH>
