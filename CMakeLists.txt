@@ -45,7 +45,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF) # needed for fftw to not 
 CPMAddPackage("gh:juce-framework/JUCE#6.1.6")
 CPMAddPackage("https://www.fftw.org/fftw-3.3.10.tar.gz#MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c")
 CPMAddPackage("gh:dmoulding/vld#v1.9h")
-CPMAddPackage("gh:tcbrindle/span#master")
+CPMAddPackage("gh:tcbrindle/span#117fbada0f888e1535e3db20c7c9ddd86db129e2")
 # CPMAddPackage("gh:Neargye/magic_enum#v0.7.3") # simplifies enum handling, not yet needed
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
