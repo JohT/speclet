@@ -119,10 +119,30 @@ public:
     auto getWaveletPacketBasis() const -> int { return getParameterAsSelection(PARAMETER_WAVELETPACKETBASIS); }
     auto getWindowing() const -> int { return getParameterAsSelection(PARAMETER_WINDOWING); }
     auto getParameters() -> juce::AudioProcessorValueTreeState & { return parameters; }
-    //Adds a listener for all parameters by delegating it to juce::AudioProcessorValueTreeState (see juce API documentation)
+    /**
+     * @brief Adds the given listener for all parameters so it gets notified when a parameter changes.
+     *
+     * @param listener 
+     */
     void addListener(juce::AudioProcessorValueTreeState::Listener *listener);
-    //Removes a listener by delegating it to juce::AudioProcessorValueTreeState (see juce API documentation)
+    /**
+     * @brief Removes the given listener for all parameters so it won't get notified on parameter changes any more.
+     * 
+     * @param listener 
+     */
     void removeListener(juce::AudioProcessorValueTreeState::Listener *listener);
+    /**
+     * @brief Loads the current state of all parameters into the given memory block.
+     * 
+     * @param destData 
+     */
+    void getStateInformation(juce::MemoryBlock &destData) const;
+    /**
+     * @brief Set the state of all parameters to values of the given value tree.
+     * 
+     * @param tree 
+     */
+    void setStateInformation(const juce::ValueTree & tree);
 
 private:
     enum class ChildIndices {

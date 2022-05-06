@@ -48,21 +48,34 @@ auto SpecletParameters::getResolution() const -> unsigned long {
 
 void SpecletParameters::addListener(juce::AudioProcessorValueTreeState::Listener *listener) {
     for (int i = 0; i < parameters.state.getNumChildren(); i++) {
-       auto parameter = parameters.state.getChild(i);
-       if (parameter.isValid()) {
-           auto parameterId = parameter.getProperty(PROPERTY_ID).toString();
+        auto parameter = parameters.state.getChild(i);
+        if (parameter.isValid()) {
+            auto parameterId = parameter.getProperty(PROPERTY_ID).toString();
             parameters.addParameterListener(parameterId, listener);
         }
     }
 }
 
 void SpecletParameters::removeListener(juce::AudioProcessorValueTreeState::Listener *listener) {
-       for (int i = 0; i < parameters.state.getNumChildren(); i++) {
-       auto parameter = parameters.state.getChild(i);
-       if (parameter.isValid()) {
-           auto parameterId = parameter.getProperty(PROPERTY_ID).toString();
+    for (int i = 0; i < parameters.state.getNumChildren(); i++) {
+        auto parameter = parameters.state.getChild(i);
+        if (parameter.isValid()) {
+            auto parameterId = parameter.getProperty(PROPERTY_ID).toString();
             parameters.removeParameterListener(parameterId, listener);
         }
+    }
+}
+
+void SpecletParameters::getStateInformation(juce::MemoryBlock &destData) const {
+    // You should call this method from the audio processor's getStateInformation to store your parameters in the memory block.
+    juce::MemoryOutputStream memoryOutputStream(destData, true);
+    parameters.state.writeToStream(memoryOutputStream);
+}
+
+void SpecletParameters::setStateInformation(const juce::ValueTree &tree) {
+    // You should call this method from the audio processor's setStateInformation to restore your parameters.
+    if (tree.isValid()) {
+        parameters.replaceState(tree);
     }
 }
 

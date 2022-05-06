@@ -227,24 +227,20 @@ auto SpecletAudioProcessor::createEditor() -> juce::AudioProcessorEditor * {
 }
 
 //==============================================================================
-//TODO (JohT) Move to SpecletParameters
 void SpecletAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
-    juce::MemoryOutputStream memoryOutputStream(destData, true);
-    parameters.getParameters().state.writeToStream(memoryOutputStream);
+    parameters.getStateInformation(destData);
 }
 
 void SpecletAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
     auto tree = juce::ValueTree::readFromData(data, static_cast<size_t>(sizeInBytes));
-    if (tree.isValid()) {
-        parameters.getParameters().replaceState(tree);
-        if (currentTransformation == nullptr) {
-            updateTransformation();
-        }
+    parameters.setStateInformation(tree);
+    if (tree.isValid() && (currentTransformation == nullptr)) {
+        updateTransformation();
     }
 }
 
