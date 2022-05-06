@@ -152,6 +152,9 @@ SpecletAnalyzerComponent::SpecletAnalyzerComponent(SpecletParameters &parameters
 
 SpecletAnalyzerComponent::~SpecletAnalyzerComponent() {
     //[Destructor_pre]. You can add your own custom destruction code here..
+    parameters.removeListener(specletDrawer);
+    parameters.removeListener(this);
+    
     deleteAndZero(resolutionParameterAttachment);
     deleteAndZero(transformationParameterAttachment);
     deleteAndZero(windowingParameterAttachment);
