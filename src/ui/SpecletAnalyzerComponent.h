@@ -22,7 +22,7 @@
 
 //[Headers]     -- You can add your own extra header files here --
 #include "../dsp/transformations/Transformation.h"
-#include "../plugin/SpecletParameters.h"
+#include "../parameter/SpecletParameters.h"
 #include "ColourGradients.h"
 #include "SpecletDrawer.h"
 #include "juce_core/juce_core.h"

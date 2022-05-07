@@ -14,7 +14,7 @@
   ==============================================================================
 */
 #pragma once
-#include "../../plugin/SpecletParameters.h"
+#include "../../parameter/SpecletParameters.h"
 #include "AbstractWaveletTransformation.h"
 #include "WaveletParameters.h"
 

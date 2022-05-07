@@ -1,7 +1,7 @@
 //Most of the window function implementations in this class had been taken out of the fft c program
 //from George B. Moody (GNU General Public License, email: george@mit.edu, http://www.physionet.org/)
 #include "WindowFunctions.h"
-#include "../../plugin/SpecletParameters.h"
+#include "../../parameter/SpecletParameters.h"
 
 /* See Oppenheim & Schafer, Digital Signal Processing, p. 241 (1st ed.) */
 auto WindowBartlett::calculateFactor(unsigned long index) -> double {

@@ -1,5 +1,5 @@
 #include "ColourGradients.h"
-#include "../plugin/SpecletParameters.h"
+#include "../parameter/SpecletParameters.h"
 #include "ColorGradientsParameters.h"
 
 auto ColourGradients::forIndex(int colorModeIndex) -> juce::ColourGradient {

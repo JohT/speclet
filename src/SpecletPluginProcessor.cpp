@@ -3,7 +3,7 @@
 #include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "juce_core/system/juce_PlatformDefs.h"
-#include "plugin/SpecletParameters.h"
+#include "parameter/SpecletParameters.h"
 #include "ui/ColourGradients.h"
 #include "ui/SpecletMainUI.h"
 #include "utilities/PerformanceLogger.h"

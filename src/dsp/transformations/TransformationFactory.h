@@ -15,7 +15,7 @@
 */
 #pragma once
 
-#include "../../plugin/SpecletParameters.h"
+#include "../../parameter/SpecletParameters.h"
 #include "../windowing/WindowParameters.h"
 #include "Transformation.h"
 #include "TransformationParameters.h"

@@ -17,7 +17,7 @@
 
 #include "dsp/SignalGenerator.h"
 #include "dsp/transformations/TransformationFactory.h"
-#include "plugin/SpecletParameters.h"
+#include "parameter/SpecletParameters.h"
 #include <array>
 #include <juce_core/juce_core.h>
 #include <type_traits>
