@@ -7,6 +7,7 @@
 #include <string>
 
 SCENARIO("Wavelet Transformation") {
+    auto gui = juce::ScopedJuceInitialiser_GUI{};
     auto samplingRate = 44100;
     Transformation::ResolutionType resolution = 4096;
     auto windowFunction = WindowParameters::WindowFunction::BLACKMAN_HARRIS;

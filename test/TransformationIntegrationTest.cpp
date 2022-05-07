@@ -99,6 +99,7 @@ double getMaxPowerFrequencyDeviation(Transformation *transformation, double expe
 }
 
 SCENARIO("Transformations Integration Test", "[integration]") {
+    auto gui = juce::ScopedJuceInitialiser_GUI{};
     auto samplingRate = 44100;
     Transformation::ResolutionType resolution = GENERATE(2048U, 4096U);
     auto frequencyResolutionInHz = static_cast<double>(samplingRate) * 0.5 / static_cast<double>(resolution);
