@@ -2,28 +2,27 @@
 #include "../plugin/SpecletParameters.h"
 #include "ColorGradientsParameters.h"
 
-auto ColourGradients::forIndex(int index) -> juce::ColourGradient {
-    auto colorMode = static_cast<ColorGradientsParameters::ColorMode>(index);
+auto ColourGradients::forIndex(int colorModeIndex) -> juce::ColourGradient {
+    auto colorMode = static_cast<ColorGradientsParameters::ColorMode>(colorModeIndex);
     if (colorMode == ColorGradientsParameters::ColorMode::BLUE) {
         return BLUE;
     }
     if (colorMode == ColorGradientsParameters::ColorMode::GREEN) {
         return GREEN;
     }
-    if (colorMode == ColorGradientsParameters::ColorMode::FIRE) {
-        return fire();
-    }
     if (colorMode == ColorGradientsParameters::ColorMode::RAINBOW) {
         return rainbow();
     }
-
-    DBG("juce::ColourGradient ColourGradients::get(): index not found (replaced by blue)! i=" + juce::String(index));
+    if (colorMode == ColorGradientsParameters::ColorMode::FIRE) {
+        return fire();
+    }
+    DBG("juce::ColourGradient ColourGradients::get(): index not found (replaced by blue)! i=" + juce::String(colorModeIndex));
     return BLUE;
 }
 
 auto ColourGradients::fire() noexcept -> juce::ColourGradient {
     DBG("juce::ColourGradient ColourGradients::fire()");
-	juce::ColourGradient gradient = juce::ColourGradient();
+	auto gradient = juce::ColourGradient();
 
     gradient.addColour(1.0F, juce::Colours::yellow);
     gradient.addColour(0.9F, juce::Colours::red);
@@ -36,7 +35,7 @@ auto ColourGradients::fire() noexcept -> juce::ColourGradient {
 
 auto ColourGradients::rainbow() noexcept -> juce::ColourGradient {
     DBG("juce::ColourGradient ColourGradients::rainbow()");
-	juce::ColourGradient gradient = juce::ColourGradient();
+	auto gradient = juce::ColourGradient();
 
     gradient.addColour(1.0F, juce::Colours::red);
     gradient.addColour(0.8F, juce::Colours::yellow);
@@ -50,7 +49,7 @@ auto ColourGradients::rainbow() noexcept -> juce::ColourGradient {
 
 auto ColourGradients::fadeToBlack(const juce::Colour& colour) noexcept -> juce::ColourGradient {
     DBG("juce::ColourGradient ColourGradients::blue()");
-    juce::ColourGradient gradient = juce::ColourGradient();
+    auto gradient = juce::ColourGradient();
     gradient.addColour(1.0F, colour);
     gradient.addColour(0.9F, colour.darker(0.1F));
     gradient.addColour(0.0F, juce::Colours::black);

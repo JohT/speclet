@@ -26,7 +26,7 @@ message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 set(PRODUCT_NAME_POSTFIX "")
 string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
 if (NOT "${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "RELEASE")
-    set(PRODUCT_NAME_POSTFIX "${CMAKE_BUILD_TYPE}")
+    set(PRODUCT_NAME_POSTFIX "-${CMAKE_BUILD_TYPE}")
     message(STATUS "PRODUCT_NAME_POSTFIX: ${PRODUCT_NAME_POSTFIX}")
 endif()
 
@@ -45,7 +45,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF) # needed for fftw to not 
 CPMAddPackage("gh:juce-framework/JUCE#6.1.6")
 CPMAddPackage("https://www.fftw.org/fftw-3.3.10.tar.gz#MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c")
 CPMAddPackage("gh:dmoulding/vld#v1.9h")
-CPMAddPackage("gh:tcbrindle/span#master")
+CPMAddPackage("gh:tcbrindle/span#117fbada0f888e1535e3db20c7c9ddd86db129e2")
 # CPMAddPackage("gh:Neargye/magic_enum#v0.7.3") # simplifies enum handling, not yet needed
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
@@ -69,7 +69,7 @@ CPMAddPackage("gh:tcbrindle/span#master")
 # the formats specified by the FORMATS arguments. This function accepts many optional arguments.
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
 juce_add_plugin("${PROJECT_NAME}"
-    PRODUCT_NAME "${PROJECT_NAME} ${PRODUCT_NAME_POSTFIX}" # The name of the final executable, which can differ from the target name
+    PRODUCT_NAME "${PROJECT_NAME}${PRODUCT_NAME_POSTFIX}" # The name of the final executable, which can differ from the target name
     COMPANY_NAME "Johannes Troppacher"          # Specify the name of the plugin's author
     # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
     FORMATS VST3 AU AUv3 Standalone             # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
@@ -131,6 +131,12 @@ if (span_ADDED)
     message(VERBOSE "tcb span headers directory included for all targets: ${span_SOURCE_DIR}/include")
 endif()
 
+# Import magic_enum header to include with #include "magic_enum.hpp"
+#if (magic_enum_ADDED)
+#    include_directories("${PROJECT_NAME}" PRIVATE "${magic_enum_SOURCE_DIR}/include")
+#    message(VERBOSE "magic_enum headers directory included for all targets: ${magic_enum_SOURCE_DIR}/include")
+#endif()
+
 # Add libraries to the target that needed to be included inside the repository:
 add_subdirectory(lib/wave++)
 include_directories("${PROJECT_NAME}" PRIVATE "lib/wave++/source")
@@ -151,9 +157,27 @@ target_compile_definitions("${PROJECT_NAME}"
         $<$<CONFIG:Debug>:LOG_PERFORMANCE> # Create performancelog.json in Debug build for google chrome tracing 
         _USE_MATH_DEFINES
 )
-get_target_property(MAIN_TARGET_COMPILE_OPTIONS ${PROJECT_NAME} COMPILE_DEFINITIONS)
-message(VERBOSE "Compiler definitions added to target ${PROJECT_NAME}: ${MAIN_TARGET_COMPILE_OPTIONS}")
 
+# Sets compile options for the target:
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # Using GNU or Clang compiler
+    set(GNUCLANG_COMPILE_OPTIONS "-m64;-fPIC")
+    set(GNUCLANG_COMPILE_DEBUG_OPTIONS "${GNUCLANG_COMPILE_OPTIONS};-g;-O0")
+    set(GNUCLANG_COMPILE_RELEASE_OPTIONS "${GNUCLANG_COMPILE_OPTIONS};-O3")
+    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Debug>:${GNUCLANG_COMPILE_DEBUG_OPTIONS}>")
+    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Release>:${GNUCLANG_COMPILE_RELEASE_OPTIONS}>")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # Using Visual Studio C++
+    set(MSVC_COMPILE_OPTIONS "/MP;/W3;/w34710;/Gy;/Zc:wchar_t;/nologo;/std:c++0x /EHsc")
+    set(MSVC_COMPILE_DEBUG_OPTIONS "${MSVC_COMPILE_OPTIONS} /ZI /Od")
+    set(MSVC_COMPILE_RELEASE_OPTIONS "${MSVC_COMPILE_OPTIONS} /O2")
+    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Debug>:${MSVC_COMPILE_DEBUG_OPTIONS}>")
+    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Release>:${MSVC_COMPILE_RELEASE_OPTIONS}>")
+endif()
+
+# Displays the chosen target's compile options:
+get_target_property(MAIN_TARGET_COMPILE_OPTIONS "${PROJECT_NAME}" COMPILE_OPTIONS)
+message(STATUS "Compiler definitions added to target ${PROJECT_NAME} for compiler ${CMAKE_CXX_COMPILER_ID} and build type ${CMAKE_BUILD_TYPE}: ${MAIN_TARGET_COMPILE_OPTIONS}")
 
 # If your target needs extra binary assets, you can add them here. The first argument is the name of
 # a new static library target that will include all the binary resources. There is an optional

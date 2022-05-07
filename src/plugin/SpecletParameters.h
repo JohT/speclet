@@ -47,33 +47,34 @@ public:
         TOTAL_NUMBER_OF_PARAMS
     };
     enum OptionsResolution {
-        RESOLUTION_256 = 256,
-        RESOLUTION_512 = 512,
-        RESOLUTION_1024 = 1024,
-        RESOLUTION_2048 = 2048,
-        RESOLUTION_4096 = 4096,
-        RESOLUTION_8192 = 8192,
-        RESOLUTION_16384 = 16384,
-        RESOLUTION_32768 = 32768,
-        RESOLUTION_65536 = 65536,
+        RESOLUTION_256 = 1,
+        RESOLUTION_512,
+        RESOLUTION_1024,
+        RESOLUTION_2048,
+        RESOLUTION_4096,
+        RESOLUTION_8192,
+        RESOLUTION_16384,
+        RESOLUTION_32768,
+        RESOLUTION_65536,
 
         RESOLUTION_MAX = RESOLUTION_65536,
         RESOLUTION_DEFAULT = RESOLUTION_4096
     };
     enum OptionsRouting {
-        ROUTING_GENERATOR = 1,
-        ROUTING_L,
-        ROUTING_R,
-        ROUTING_MID,
+        ROUTING_MID = 1,
         ROUTING_SIDE,
+        ROUTING_LEFT,
+        ROUTING_RIGHT,
+        ROUTING_GENERATOR,
 
-        ROUTING_NumOptions,
+        ROUTING_NUMBER_OF_OPTIONS,
         ROUTING_DEFAULT = ROUTING_MID
     };
 
     //"Initialization ... with static storage duration may throw an exception that cannot be caught"
     //Juce doesn't support string_view yet, constexpr doesn't work with string literals and the exception is very unlikely to happen
     //NOLINTBEGIN
+    inline const static juce::String PROPERTY_ID{"id"};
     inline const static juce::String PROPERTY_VALUE{"value"};
     inline const static juce::String PARAMETER_COLORMODE{"colormode"};
     inline const static juce::String PARAMETER_LOGMAGNITUDE{"logmagnitude"};
@@ -90,45 +91,58 @@ public:
 
     // --------------- methods --------------- //
 
-    // Copy-constructors and move- and assignment-operator are deleted, because this class is a singleton.
-    SpecletParameters(const SpecletParameters& other) = delete;
-    SpecletParameters(SpecletParameters&& other) = delete;
-    auto operator=(const SpecletParameters& other) -> SpecletParameters& = delete;
-    auto operator=(SpecletParameters&& other) -> SpecletParameters& = delete;
-
-    static auto getSingletonInstance() -> SpecletParameters &;
+    explicit SpecletParameters(juce::AudioProcessor & audioProcessor);
+    ~SpecletParameters() = default;
+    SpecletParameters(const SpecletParameters& other) = delete; //non-copyable
+    SpecletParameters(SpecletParameters&& other) = delete; //non-moveable
+    auto operator=(const SpecletParameters& other) -> SpecletParameters& = delete; //non-copyable
+    auto operator=(SpecletParameters&& other) -> SpecletParameters& = delete; //non-moveable
 
     static auto isTransformationParameter(const juce::String& parameterID) -> bool;
 
     void blockParameterChanges() const { waitForParameterChange.reset(); }
     void unblockParameterChanges() const { waitForParameterChange.signal(); }
 
-    void setParameter(int index, float newValue) const;
-    void setParameter(const juce::String &name, float newValue) const;
-    auto getParameter(int index) const -> float;
     auto getParameter(const juce::String &name) const -> float;
-    auto getParameterName(int index) const -> const juce::String;
-    auto getParameterIndex(const juce::String &name) const -> int;
-
-    auto getColorMode() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_ColorMode)); }
-    auto getGenerator() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Generator)); }
-    auto getGeneratorFrequency() const -> float { return getParameter(PARAMETER_INDEX_GeneratorFrequency); }
-    auto getLogMagnitude() const -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogMagnitude)); }
-    auto getLogFrequency() const -> bool { return static_cast<bool>(getParameter(PARAMETER_INDEX_LogFrequency)); }
-    auto getResolution() const -> unsigned long { return static_cast<unsigned long>(getParameter(PARAMETER_INDEX_Resolution)); }
-    auto getRouting() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Routing)); }
-    auto getTransformation() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Transformation)); }
-    auto getWavelet() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Wavelet)); }
-    auto getWaveletPacketBasis() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_WaveletPacketBasis)); }
-    auto getWindowing() const -> int { return static_cast<int>(getParameter(PARAMETER_INDEX_Windowing)); }
-
-    //Adds a listener by delegating it to juce::ValueTree (see juce API documentation)
-    void addListener(juce::ValueTree::Listener *listener, bool sendAllParametersForInitialisation = true);
-    //Removes a listener by delegating it to juce::ValueTree (see juce API documentation)
-    void removeListener(juce::ValueTree::Listener *listener);
-    //read and write to XML
-    void readFromXML(const juce::XmlElement &xml) const;
-    auto writeToXML() const -> std::unique_ptr<juce::XmlElement> { return properties.createXml(); }
+    auto getParameterAsSelection(const juce::String &name) const -> int;
+    auto getParameterList(const juce::String &name) const -> juce::StringArray;
+    
+    auto getColorMode() const -> int { return getParameterAsSelection(PARAMETER_COLORMODE); }
+    auto getGenerator() const -> int { return getParameterAsSelection(PARAMETER_GENERATOR); }
+    auto getGeneratorFrequency() const -> float { return getParameter(PARAMETER_GENERATORFREQUENCY); }
+    auto getLogMagnitude() const -> bool { return getParameterAsSelection(PARAMETER_LOGMAGNITUDE); }
+    auto getLogFrequency() const -> bool { return getParameterAsSelection(PARAMETER_LOGFREQUENCY); }
+    auto getResolution() const -> unsigned long;
+    auto getRouting() const -> int { return getParameterAsSelection(PARAMETER_ROUTING); }
+    auto getTransformation() const -> int { return getParameterAsSelection(PARAMETER_TRANSFORMATION); }
+    auto getWavelet() const -> int { return getParameterAsSelection(PARAMETER_WAVELET); }
+    auto getWaveletPacketBasis() const -> int { return getParameterAsSelection(PARAMETER_WAVELETPACKETBASIS); }
+    auto getWindowing() const -> int { return getParameterAsSelection(PARAMETER_WINDOWING); }
+    auto getParameters() -> juce::AudioProcessorValueTreeState & { return parameters; }
+    /**
+     * @brief Adds the given listener for all parameters so it gets notified when a parameter changes.
+     *
+     * @param listener 
+     */
+    void addListener(juce::AudioProcessorValueTreeState::Listener *listener);
+    /**
+     * @brief Removes the given listener for all parameters so it won't get notified on parameter changes any more.
+     * 
+     * @param listener 
+     */
+    void removeListener(juce::AudioProcessorValueTreeState::Listener *listener);
+    /**
+     * @brief Loads the current state of all parameters into the given memory block.
+     * 
+     * @param destData 
+     */
+    void getStateInformation(juce::MemoryBlock &destData) const;
+    /**
+     * @brief Set the state of all parameters to values of the given value tree.
+     * 
+     * @param tree 
+     */
+    void setStateInformation(const juce::ValueTree & tree);
 
 private:
     enum class ChildIndices {
@@ -142,13 +156,11 @@ private:
     juce::ValueTree properties = juce::ValueTree("SpecletParameters");
     juce::WaitableEvent waitForParameterChange = juce::WaitableEvent(true);
     juce::CriticalSection criticalSection;
+    juce::AudioProcessorValueTreeState parameters;
 
     // --------------- methods --------------- //
-    auto sanitizeParameter(int index, float newValue) const -> float;
-    void setParameterInternally(int index, juce::var newValue) const;
     template<class _Tp>
     auto enumOptionToFloat(const _Tp& enumType) const -> float;
-
-    SpecletParameters();
-    ~SpecletParameters() = default;
+    
+    static auto createParameterLayout() -> juce::AudioProcessorValueTreeState::ParameterLayout;
 };

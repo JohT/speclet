@@ -6,7 +6,7 @@ set(TEST_PROJECT_NAME "${PROJECT_NAME}Tests")
 
 # Import test dependencies
 # Needs CPM which comes from "Environment.cmake" in the root directory of this repository
-CPMAddPackage("gh:catchorg/Catch2@3.0.0-preview4")
+CPMAddPackage("gh:catchorg/Catch2@3.0.0-preview5")
 
 # Enable testing with Catch2
 enable_testing()

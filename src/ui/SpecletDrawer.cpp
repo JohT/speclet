@@ -38,7 +38,9 @@ const juce::Colour SpecletDrawer::AXIS_COLOR(0xffffffc0);
 //[/MiscUserDefs]
 
 //==============================================================================
-SpecletDrawer::SpecletDrawer() {
+SpecletDrawer::SpecletDrawer(bool logFrequency, bool logMagnitude, const juce::ColourGradient &initialColourGradient)
+    : settings({logFrequency, logMagnitude}),
+      renderingHelper(initialColourGradient) {
 
     //[UserPreSize]
     //[/UserPreSize]
@@ -49,11 +51,9 @@ SpecletDrawer::SpecletDrawer() {
 
     //registers itself also as a transformation-result-lister for every transformation that will be created in future
     TransformationFactory::getSingletonInstance().registerForTransformationResults(this);
-    //registers itself as listener for parameter-changes
-    SpecletParameters::getSingletonInstance().addListener(this);
-    DBG("SpecletDrawer as parameter listener added");
 
     startTimer(TIMER);
+    updateFrequencyAxisImage();
     ready = true;
     waitForDestruction.signal();
     //[/Constructor]
@@ -73,7 +73,6 @@ SpecletDrawer::~SpecletDrawer() {
 
     //[Destructor]. You can add your own custom destruction code here..
     TransformationFactory::getSingletonInstance().registerForTransformationResults(nullptr);
-    SpecletParameters::getSingletonInstance().removeListener(this);
     waitForDestruction.signal();
     DBG("SpecletDrawer removed as parameter and transformation results listener and finally destructed");
     //[/Destructor]
@@ -139,12 +138,11 @@ void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
         if (watchDog <= 0) {
             //prevents endless loop
             DBG("SpecletDrawer::onTransformationEvent watchDog canceled drawing!");
-            watchDog = 200;
             break;
         }
     }
     //if effective timeresolution didn't change, the timeresolution-axis needn't to be redrawn
-    auto spectralDataInfo = result->getSpectralDataInfo();
+    auto const& spectralDataInfo = result->getSpectralDataInfo();
     auto timeResolution = spectralDataInfo.getTimeResolutionMs();
     if (timeResolution != currentTimeResolution) {
         updateTimeAxisImage(timeResolution);
@@ -153,21 +151,22 @@ void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
 }
 
 //This method is called when a parameter changes (listener)
-void SpecletDrawer::valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier & /*changedProperty*/) {
+void SpecletDrawer::parameterChanged(const juce::String& parameterID, float newValue) {
     const juce::ScopedLock myScopedLock(criticalSection);
+    auto newIndex = static_cast<int>(newValue) + 1; //+1 because 0 is not a valid combo box selection id
 
-    juce::String changedParameterName = treeWhosePropertyHasChanged.getType().toString();
-    juce::var changedParameterValue = treeWhosePropertyHasChanged.getProperty(SpecletParameters::PROPERTY_VALUE);
-
-    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGFREQUENCY)) {
-        settings.logFrequency = changedParameterValue.equals(static_cast<std::underlying_type<SpecletDrawerParameters::Axis>::type>(SpecletDrawerParameters::Axis::LOGARITHMIC));
+    if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGFREQUENCY)) {
+        settings.logFrequency = (newIndex == static_cast<std::underlying_type_t<SpecletDrawerParameters::Axis>>(SpecletDrawerParameters::Axis::LOGARITHMIC));
         updateFrequencyAxisImage();
     }
-    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGMAGNITUDE)) {
-        settings.logMagnitude = changedParameterValue.equals(static_cast<std::underlying_type<SpecletDrawerParameters::Axis>::type>(SpecletDrawerParameters::Axis::LOGARITHMIC));
+    if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGMAGNITUDE)) {
+        settings.logMagnitude = (newIndex == static_cast<std::underlying_type_t<SpecletDrawerParameters::Axis>>(SpecletDrawerParameters::Axis::LOGARITHMIC));
     }
-    if (changedParameterName.equalsIgnoreCase(SpecletParameters::PARAMETER_COLORMODE)) {
-        renderingHelper.setColourGradient(ColourGradients::forIndex(changedParameterValue));
+    // The colour gradient change could be moved to the RenderingHelper (thus making it a listener too).
+    // But registering it as a listener leads to additional coupling while initialization (add the listener).
+    // So it stays here for now.
+    if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_COLORMODE)) {
+        renderingHelper.setColourGradient(ColourGradients::forIndex(newIndex));
     }
 }
 
@@ -223,14 +222,14 @@ void SpecletDrawer::updateFrequencyAxisImage() {
         double maxFrequencyLog = log10(maxSpectralFrequency);
         double minFrequencyLog = 1.0;
 
-        for (double logFreqDecade = 1; logFreqDecade <= 4; logFreqDecade++) {
+        for (auto logFreqDecade = 1; logFreqDecade <= 4; logFreqDecade++) {
             for (auto i = 0; i < (numberOfSubDivisions - 1); i++) {
                 double logFreq = logSubDivisionsPerDecade[i] + logFreqDecade;
                 if (logFreq > maxFrequencyLog) {
                     break;
                 }
                 double posPercent = (logFreq - minFrequencyLog) / (maxFrequencyLog - minFrequencyLog);
-                int yPos = static_cast<int>(lrint((sizeY - 1) * (1.0f - posPercent)));
+                auto yPos = static_cast<int>(lrint((sizeY - 1) * (1.0f - posPercent)));
                 double freqDouble = pow(10, logFreq);
                 double freqCeil = ceil(freqDouble);
                 double freqFloor = floor(freqDouble);

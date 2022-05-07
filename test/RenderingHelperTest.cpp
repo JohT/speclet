@@ -1,10 +1,11 @@
 #include "../src/utilities/RenderingHelper.h"
+#include "../src/ui/ColourGradients.h"
 
 #include <catch2/catch_test_macros.hpp>
 
 SCENARIO("Rendering Helper") {
     GIVEN("pixel to index") {
-        RenderingHelper renderingHelper;
+        RenderingHelper renderingHelper(ColourGradients::BLUE);
         SpectralDataInfo info(44100, 4096, 4096);
         const auto windowHeight = 100;
         const bool linearFrequency = false;
@@ -57,7 +58,7 @@ SCENARIO("Rendering Helper") {
 // They are not part of the automated tests.
 SCENARIO("Rendering Helper Debugging", "[.debug]") {
     GIVEN("pixel to index") {
-        RenderingHelper renderingHelper;
+        RenderingHelper renderingHelper(ColourGradients::BLUE);
         SpectralDataInfo info(44100, 4096, 4096);
         const auto windowHeight = 100;
 

@@ -111,7 +111,30 @@
                 "name": "MacOS Release VST3",
                 "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/Release/AudioPluginHost.app/Contents/MacOS/AudioPluginHost",
                 "args": [
-                    "JuceAudioPluginHost.filtergraph"
+                    "JuceAudioPluginHostRelease.filtergraph"
+                ],
+                "cwd": "${workspaceFolder}"
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "MacOS RelWithDebInfo VST3",
+                "program": "${workspaceFolder}/build/_deps/juce-build/extras/AudioPluginHost/AudioPluginHost_artefacts/RelWithDebInfo/AudioPluginHost.app/Contents/MacOS/AudioPluginHost",
+                "args": [
+                    "JuceAudioPluginHostRelWithDebInfo.filtergraph"
+                ],
+                "cwd": "${workspaceFolder}"
+            },
+            {
+                "type": "lldb",
+                "request": "launch",
+                "name": "MacOS PluginVal",
+                "program": "/Applications/pluginval.app/Contents/MacOS/pluginval",
+                "args": [
+                    "--strictnessLevel 10",
+                    "--validate-in-process",
+                    "--verbose",
+                    "--validate \"${workspaceFolder}/build/test/Speclet_artefacts/Debug/Speclet Debug.vst3\"",
                 ],
                 "cwd": "${workspaceFolder}"
             },

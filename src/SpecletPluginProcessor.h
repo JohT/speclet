@@ -25,7 +25,8 @@
 
 
 //==============================================================================
-class SpecletAudioProcessor : public juce::AudioProcessor, public juce::ValueTree::Listener {
+class SpecletAudioProcessor : public juce::AudioProcessor, public juce::AudioProcessorValueTreeState::Listener
+{
 public:
     //==============================================================================
     SpecletAudioProcessor();
@@ -45,14 +46,6 @@ public:
     auto hasEditor() const -> bool override;
 
     //==============================================================================
-    //these methods are called, when parameter changes were recognised
-    auto getNumParameters() -> int override;
-    auto getParameter(int index) -> float override;
-    void setParameter(int index, float newValue) override;
-    auto getParameterName(int index) -> const juce::String override;
-    auto getParameterText(int index) -> const juce::String override;
-
-    //==============================================================================
     auto getName() const -> const juce::String override;
 
     auto acceptsMidi() const -> bool override;
@@ -69,9 +62,7 @@ public:
 
     //==============================================================================
     //these methods are called, when parameter changes were recognised
-    void valueTreePropertyChanged(juce::ValueTree &treeWhosePropertyHasChanged, const juce::Identifier &property) override;
-    void valueTreeParentChanged(juce::ValueTree &) override {/*not used*/}
-
+    void parameterChanged (const juce::String& parameterID, float newValue) override;
     //==============================================================================
     void getStateInformation(juce::MemoryBlock &destData) override;
     void setStateInformation(const void *data, int sizeInBytes) override;
@@ -86,15 +77,17 @@ public:
     int lastUIHeight = 360;//NOLINT(readability-magic-numbers)
     //==============================================================================
 
+    auto getSpecletParameters() -> SpecletParameters & { return parameters; }
+
 private:
-    SpecletParameters &parameters = SpecletParameters::getSingletonInstance();
+    SpecletParameters parameters;
 
     //Some parameter need to be kept local (as copy),
     //since they are called in critical sections
     //e.g. during Audioprocessing on every sample
     int parameterRouting;
     Transformation *currentTransformation = nullptr;
-    SignalGenerator signalGenerator;
+    SignalGenerator signalGenerator = SignalGenerator();
     juce::CriticalSection criticalSection;
     //==============================================================================
     auto getSampleFromRouting(const float *inL, const float *inR) -> float;

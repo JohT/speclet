@@ -8,7 +8,9 @@
 
 //==============================================================================
 SpecletMainUI::SpecletMainUI(SpecletAudioProcessor &ownerAudioProcessor)
-    : AudioProcessorEditor(ownerAudioProcessor), audioProcessor(ownerAudioProcessor) {
+    : AudioProcessorEditor(ownerAudioProcessor),
+      audioProcessor(ownerAudioProcessor),
+      spectralAnalyzerComponent(ownerAudioProcessor.getSpecletParameters()) {
     // set our component's initial size to be the last one that was stored in the filter's settings
     setSize(ownerAudioProcessor.lastUIWidth, ownerAudioProcessor.lastUIHeight);
 

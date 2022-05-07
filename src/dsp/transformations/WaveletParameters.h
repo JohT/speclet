@@ -59,13 +59,13 @@ namespace WaveletParameters {
     inline const std::map<WaveletBase, std::string_view> WaveletBaseNames::map = WaveletBaseNames::createMap();
 
     enum class ResolutionRatioOption {
-        TIME_X4 = -2,
-        TIME_X2 = -1,
-        FREQUENCY_X2 = 1,
-        FREQUENCY_X4 = 2,
+        TIME_X4 = 1,
+        TIME_X2,
+        EQUAL,
+        FREQUENCY_X2,
+        FREQUENCY_X4,
 
-        EQUAL = 99,
-        NUMBER_OF_OPTIONS = 5,
+        NUMBER_OF_OPTIONS,
         DEFAULT = EQUAL
     };
 

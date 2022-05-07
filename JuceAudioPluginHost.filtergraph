@@ -61,27 +61,11 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <FILTER uid="9" x="0.4829683698296837" y="0.459349593495935" uiLastX_Normal="428"
-          uiLastY_Normal="286" uiopen_Normal="1">
-    <PLUGIN name="Speclet" format="VST3" category="Fx" manufacturer="Johannes Troppacher"
-            version="1.0.0" file="/Users/johnny/Repositories/git/speclet/build/Speclet_artefacts/Debug/VST3/Speclet.vst3"
-            uniqueId="a5561700" isInstrument="0" fileTime="17ffd68e7fc" infoUpdateTime="18008c7268d"
-            numInputs="2" numOutputs="2" isShell="0" uid="4de1280b"/>
-    <STATE>696.VMjLg7p....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9PyL33hUMoFSmQzUt3hKt7zJlcUXxEDZisVRxH1a3vVX3fjTLQmKogjYTwVXogiQY8FMwjENHIUUTkEUKMCR38TNtHzSSEzUYk1cVkkdAUEV3UjUgsVTWkEdM01S2fjLgASTWoEciYDRwTjQgASUV8DZDk1R1gDdKkicCMFdEwVX4kULggGLFgTLEYTXvTkUOgFQosjcHg2R4XWZhsVSxDlbUczXugCagYFVWgkbUcUV3fjPMYmZo0DctjFR0MyPOISQrM1Z2YUV5EzUXk1bVkkdIYEV4sVLhYFVWgkbUcUV3fDZLQmKogTcyLzSxrFagoFNwL1azDSVlg0UXIWUWkENHgGSz4RZHU2LC8jLEw1XqcmUYoWPnM1Y2Y0XqASZHcmXosjcHg2R4XWdYsFMVkEdEYzX0kzQHESQFEFLUY0SnQTZKYGR3sTN1kWVqQiUYgWQFMVcI0VV3UkUhASUrEVZqcDRwTjQgASUV8DZPkWSvLiPLg1Mn8zM1ESXskEahsVQWM1ZzDCVzDDZic1cVM1ZvjFR3MiPLg1Mn8zM1ESXsAiUX0FMVokdUcTVqEDZic1cVM1ZvjFR3MiPLg1Mn8zMLESXxgCahMGNFk0ZAg1XmcmUisFLogjdyHDSncCZOcyM3QkcUECVxUkQiAUQrI1YvXUV5UEahkGMC4hKt3hKt3hKt3hKlIUUMQUTPkzUZESQFM1ZQQEV5UjQtDDQlAEMAcEV40zQtDDQ14hK5EjKt3hKt3hKt3hRUACTEEzZh8VVWgkdUYTTmE0UXwyKIMzasA2atUlaz4COuX0TTMCTrU2Yo41TzEFck4C.</STATE>
-    <LAYOUT>
-      <INPUTS>
-        <BUS index="0" layout="L R"/>
-      </INPUTS>
-      <OUTPUTS>
-        <BUS index="0" layout="L R"/>
-      </OUTPUTS>
-    </LAYOUT>
-  </FILTER>
   <FILTER uid="10" x="0.3017031630170317" y="0.2317073170731707" uiLastX_Normal="304"
           uiLastY_Normal="438" uiopen_Normal="0">
     <PLUGIN name="AUAudioFilePlayer" format="AudioUnit" category="Generator"
             manufacturer="Apple" version="1.6.0" file="AudioUnit:Generators/augn,afpl,appl"
-            uniqueId="6163676e" isInstrument="0" fileTime="0" infoUpdateTime="18008c7268d"
+            uniqueId="6163676e" isInstrument="0" fileTime="0" infoUpdateTime="18098671da3"
             numInputs="0" numOutputs="2" isShell="0" uid="6163676e"/>
     <STATE>589.hAGaoMGcv.C1AHv.DTfAGfPBJr.Gc3wGgvUag4VclE1XzUmbkIGUjEFcg8EDarVPUAkbkMWYzAUYxMWZyQWYtQ2TzEFcksTY4c0b0IFc4AWYWYWYxMWZu4FUzkGbk8EDOXVZrUVKxUlYkIWYtMVYyQkag0VYRDFbvwFPgxvzM3vCPDQFXYTZrUlSg0VYWIUYmk1atMmWIM2TkwVYiQWYjYTZrU1WP70KUMWYxM2Kp8FZt4VduPzaiUWak4Fcy8RS0MWZq8xTuYFc2Elbk8hUugWYtc1auX0a3Ulam8FHTUzSTUDHTU1bz8hUugWYtc1aTUzSTUTKOYlYsPjb00Fau8FbtzFbyDpDTOAEUXwEXjQFZIUYmk1at4TXsUlVRU1Yo8laDEFcg8EDPjzbSUFakMFckQlTkcVZu4lWRU1Yo8laD8VYywzauAmVNU1cfHUYmk1at8DDvA..............BC................D....P..............fVepWyRdB1UvghURUbI1juA....fYSCZI.......................................9f.C...........3q....3yATBIjfDgYFbrAA.RDVcm4Vzf.gUFkFakARLXUkazkFcrUFY.f..Y.fI.rB.IAPT.jE.dA.b.TG.5Avd.zG.DBPi.TI.jFfAAfP.QD.GAbR.5DPRAPU.GG.xAjb.JGvyADc.VGP1A.N.......f.A.........fH..................P.oC</STATE>
     <LAYOUT>
@@ -91,6 +75,22 @@
       </OUTPUTS>
     </LAYOUT>
   </FILTER>
-  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="9" dstChannel="0"/>
-  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="9" dstChannel="1"/>
+  <FILTER uid="11" x="0.5060827250608273" y="0.4369918699186992" uiLastX_Normal="91"
+          uiLastY_Normal="419" uiopen_Normal="0">
+    <PLUGIN name="Speclet-Debug" format="VST3" category="Fx|Analyzer" manufacturer="Johannes Troppacher"
+            version="1.0.0" file="/Users/johnny/Repositories/git/speclet/build/Speclet_artefacts/Debug/VST3/Speclet-Debug.vst3"
+            uniqueId="a5561700" isInstrument="0" fileTime="1805a438e81" infoUpdateTime="18098671da4"
+            numInputs="2" numOutputs="2" isShell="0" uid="4de1280b"/>
+    <STATE>855.VMjLg3z....O+fWarAhckI2bo8la8HRLt.iHfTlai8FYo41Y8HRUTYTK3HxO9.BOVMEUy.Ea0cVZtMEcgQWY9vSRC8Vav8lak4Fc9TSM23BTEwlXmAiUYoWUrIVdA4hKAImKTETRUAUSAAkKBolQY4BQ1ITQLESXxgCahMGNFk0ZAY1XmcmUisVPP4RRP4hKt3hKt3hKtHjKA4BUAkTUP0TPP4hPpYTVtPjcBUjXVkEcUwlXmEkLggWPlM1Y2Y0XqEDTtjDTt3hKt3hKt3hKt3hKtPUPIUETMEDTtHjZFkkKD4RQEIlUYQWUrI1YQISX3kEahsVQWM1ZzDCVzDjYic1cVM1ZAAkKIAkKt3hKt3hKt.kUtDjKTETRUAUSAAkKBolQY4BQlMTQ1ESXskEahsVQWM1ZzDCVzDjYic1cVM1ZAAkKIAkKt3hKt3hKt3xMq3hKTETRUAUSAAkKBolQY4BQlMTQ1ESXsAiUX0FMVokdUcTVqEjYic1cVM1ZAAkKIAkKt3hKt3hKt3xMq3hKTETRUAUSAAkKBolQY4BQtLTQHcUV4giQgASTWoUczXjKwTjQgASUF4RPp4RPt3hKt3hKt3BRtPjKPUjZTEDLD4RPHAkVpEDTtjDUlIVcUczXuQSLY4BVWgkbUcUVtPDTBQjKt3hKt3hKt3RPP4hKUAkTEQ0TtPjYt7VTF4RPxAUP5kzUXQWSskUcIcUXtf0UXIWUWkkKDAkPD4hKt3hKt3hKtrxSt3RUPIUQTMkKDYlKuEkQtDjZPEjLEw1XqcmUYoWPlM1Y2Y0XqEDTtjDTt3hKt3hKt3hKL4RPtPUPIUETMEDTtHjZFkkKD4RQEI1UXESUFE1ZQcjXm0TLZsVTsg0YMckV4EjYic1cVM1ZAAkKIAkKt3hKt3hKt3hKtDjKTETRUAUSAAkKBolQY4BQ1ITQhckVzEULgIyZrEVaAY1XmcmUisVPP4RRP4hKt3hKt3hKt3hKA4hKt3hKt3hKt3hKtQUUCUEQTg2ZrM1YQcUVDUjQicVPP4RPHQEY1UTLhkWPP4RPL4hKi4hKt3hKt3hKtXlTU0DUQAURWoULEYzXqEEUXoWQFwyKIMzasA2atUlaz4COuX0TTMCTrU2Yo41TzEFck4C.</STATE>
+    <LAYOUT>
+      <INPUTS>
+        <BUS index="0" layout="L R"/>
+      </INPUTS>
+      <OUTPUTS>
+        <BUS index="0" layout="L R"/>
+      </OUTPUTS>
+    </LAYOUT>
+  </FILTER>
+  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="11" dstChannel="0"/>
+  <CONNECTION srcFilter="1" srcChannel="0" dstFilter="11" dstChannel="1"/>
 </FILTERGRAPH>
