@@ -92,7 +92,9 @@ auto TransformationFactory::createTransformation(
 
 void TransformationFactory::registerForTransformationResults(TransformationListener *value) {
     listenerToHandOverToEveryNewTransformation = value;
-    currentTransformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
+    if (currentTransformation != nullptr) {
+        currentTransformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
+    }
 }
 
 void TransformationFactory::deleteTransformation() {
