@@ -6,6 +6,18 @@
 
 > **Speclet** is for the curious folks getting familiar with spectrum transformation and audio plugin development. 
 
+## Installation
+
+### VST3 on Windows
+Copy the `.vst3` file into `C:\Program Files\Common Files\VST3` as described in
+[VST plug-in locations on Windows](https://helpcenter.steinberg.de/hc/en-us/articles/115000177084-VST-plug-in-locations-on-Windows).
+
+### VST3 on Mac
+Copy the `.vst3` file into `/Library/Audio/Plug-ins/VST3` (for all users) or into the user directory `~/Library/Audio/Plug-Ins/VST3` as described in [VST plug-in locations on Mac OS X and macOS](https://helpcenter.steinberg.de/hc/en-us/articles/115000171310-VST-plug-in-locations-on-Mac-OS-X-and-macOS).
+
+### Audio Unit Plugins on Mac
+Copy the audio unit `.component` file into `/Library/Audio/Plug-Ins/Components` (for all users) or into the user directory `~/Library/Audio/Plug-Ins/Components` as described in [Where are third-party Audio Units plug-ins installed on Mac?](https://support.apple.com/en-al/HT201532).
+
 ## Transformation Methods
 
 All transformation methods are implemented so that the audio samples are processed in blocks. The block size is a power of two (e.g. 2<sup>12</sup>=4096) for efficient calculation.

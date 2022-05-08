@@ -123,6 +123,10 @@ GNU Lesser General Public License v2.1
 https://github.com/tcbrindle/span
 Boost Software License 1.0
 
+## Trademarks
+
+- Steinberg is a registered trademarks of Steinberg Media Technologies GmbH.
+
 ## References
 
 ### Digital Signal Processing
@@ -139,6 +143,7 @@ Boost Software License 1.0
 - [Example using CPM package manager with JUCE](https://github.com/robbert-vdh/diopser/blob/master/CMakeLists.txt)
 - [CLAP CLever Audio Plugin](https://github.com/free-audio/clap)
 - [Integration of Catch, CMake and CMake CodeCoverage](https://github.com/fkromer/catch_cmake_coverage)
+- [The Stochas Sequencer](https://github.com/surge-synthesizer/stochas)
 
 ### Performance Tracing/Logging (Profiling, Instrumentation)
 - [Google Chrome Browser Trace Log Viewer](chrome://tracing/)
@@ -157,6 +162,11 @@ Boost Software License 1.0
 
 ### Windows Build
 - [Visual Studio Build Tools Download](https://visualstudio.microsoft.com/de/downloads/?q=build+tools)
+
+### Installation
+- [VST plug-in locations on Windows](https://helpcenter.steinberg.de/hc/en-us/articles/115000177084-VST-plug-in-locations-on-Windows)
+- [VST plug-in locations on Mac OS X and macOS](https://helpcenter.steinberg.de/hc/en-us/articles/115000171310-VST-plug-in-locations-on-Mac-OS-X-and-macOS)
+- [Where are third-party Audio Units plug-ins installed on Mac?](https://support.apple.com/en-al/HT201532)
 
 ### Other
 - [&#11088; std::span implementation for C++11 and later](https://github.com/tcbrindle/span)
