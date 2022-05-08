@@ -14,51 +14,111 @@
   ==============================================================================
 */
 #pragma once
-#include "Transformation.h"
-#include "..\..\plugin\SpectronParameters.h"
-#include "..\..\utilities\RenderingHelper.h"
 #include "libw.h"
+#include "../../utilities/RenderingHelper.h"
+#include "Transformation.h"
+#include "WaveletParameters.h"
+#include "TransformationParameters.h"
+#include <memory>
+#include "tcb/span.hpp"
 
 class AbstractWaveletTransformation : public Transformation {
 public:
-	AbstractWaveletTransformation(
-		double samplingRate, 
-		long resolution, 
-		int windowFunctionNr		= SpectronParameters::WINDOWING_DEFAULT,
-		int waveletBaseTypeNr	= SpectronParameters::WAVELET_DEFAULT
-	);
-	virtual ~AbstractWaveletTransformation(void);
+    AbstractWaveletTransformation(
+            double newSamplingRate,
+            ResolutionType newResolution,
+            TransformationParameters::Type newTransformationType,
+            WindowParameters::WindowFunction newWindowFunction = WindowParameters::WindowFunction::DEFAULT,
+            WaveletParameters::WaveletBase newWaveletBase =  WaveletParameters::WaveletBase::DEFAULT);
+    ~AbstractWaveletTransformation() override;
 
-	void	setWaveletBase(int waveletBasNr);
+    AbstractWaveletTransformation(const AbstractWaveletTransformation &) = delete;                    //No copy contructor
+    AbstractWaveletTransformation(AbstractWaveletTransformation &&) = delete;                         //No move contructor
+    auto operator=(const AbstractWaveletTransformation &) -> AbstractWaveletTransformation & = delete;//No copy assignment
+    auto operator=(AbstractWaveletTransformation &&) -> AbstractWaveletTransformation & = delete;     //No move assignment
+
+    void setWaveletBase(const WaveletParameters::WaveletBase &newWaveletBase);
+    using WaveletLevelType = unsigned int;
 
 protected:
-	virtual int		getMaxLevel								(int dimension);
-	virtual int		getMinLevel								(const HedgePer &bestBasis);
-	virtual void	fillDWTInput							(void); 
-	virtual void	sortDWPTTreeByScaleDescending		(const ArrayTreePer &tree);
-	virtual void	swapDWPTTreeChilds					(const ArrayTreePer &tree, const integer &L, const integer &B);
+    void fillDWTInput();
 
-	virtual void	extractSpectrum(const Interval &out_DWT);
-	virtual void	extractSpectrum(const ArrayTreePer &out_DWPT, const HedgePer &levelsHedge);
-	virtual void	updateConstantLevelsHedge			(int resolutionRatioDWPT = 0);
-	virtual void	updateDWTLevelsHedge					(void);
+    /**
+     * @brief Sorts the tree by descending scale (ascending frequency)
+     * 
+     * @param tree 
+     */
+    static void sortWaveletFilterTreeByScaleDescending(const ArrayTreePer &tree);
 
-	int			mWaveletBaseTypeNr;	//Waveletbase-type, see enum WAVELET_BASE_NR
-	int			mDWT_maxLevel;			//Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
-	PQMF			mDWT_filter_H;			//DWT/DWPT lowpass filter coeffs (result=scaling function);
-	PQMF			mDWT_filter_G;			//DWT/DWPT hipass  filter coeffs (result=wavelet function);
-	Interval*	mDWT_Input;				//Pointer to wave++'s wavelet transformation input data
+    /**
+     * @brief Executes the wavelet packet transform analysis.
+     * 
+     * @param analysisResult 
+     */
+    void analyse(ArrayTreePer &analysisResult) const;
 
-	HedgePer*	mConstantLevelsHedge;//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
-	HedgePer*	mDWTLevelsHedge;		//Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)  
-	RenderingHelper renderingHelper;
+    /**
+     * @brief Executes the dyadic wavelet transform analysis.
+     * 
+     * @param analysisResult 
+     */
+    void analyse(Interval &analysisResult) const;
+
+    void extractSpectrum(const Interval &outDWT);                                               // For "classic" (dyadic) Discrete Wavelet Transform
+    void extractSpectrum(const ArrayTreePer &outWaveletPacketTree);                             // For Discrete Wavelet Packet Transform
+    void extractSpectrum(const ArrayTreePer &outWaveletPacketTree, const HedgePer &levelsHedge);// For Discrete Wavelet Packet Transform with dynamic (best) basis
+
+    /**
+     * @brief Updates the member "constantLevelsHedge" for a given level (e.g. 4,4,4,4).
+     * @param level WaveletLevelType
+     */
+    void updateConstantLevelsHedge(WaveletLevelType level);
+
+    auto getDwtInput() const -> const Interval & {
+        return dwtInput;
+    }
+    auto getWaveletFilterTreeMaxLevel() const -> WaveletLevelType {
+        return waveletFilterTreeMaxLevel;
+    }
 
 private:
-	static enum TRANSFORM_RESULT_CLASS {
-		TRANSFORM_RESULT_CLASS_INTERVAL =	0,
-		TRANSFORM_RESULT_CLASS_ARRAYTREE
-	};
-	void		extractSpectrum(int transformResultClass, real_DWT* origin, const HedgePer &bestBasis);
-	float		getValue(int transformResultClass, real_DWT* origin, int level, int blocknr, int blockpos);
-	float		getAvgValue(int transformResultClass, real_DWT* origin, int level, int blocknr, int blockpos_start, int blockpos_end);
+    enum TRANSFORM_RESULT_CLASS {
+        TRANSFORM_RESULT_CLASS_INTERVAL = 0,
+        TRANSFORM_RESULT_CLASS_ARRAYTREE
+    };
+
+    WaveletLevelType waveletFilterTreeMaxLevel;//Wavelet dimension (resolution = 2^DWT_MAX_LEVEL)
+    Interval dwtInput;                         //wavelet transformation input data of wave++ library
+
+    PQMF mDwtFilterH; //Wavelet lowpass filter coefficients (result=scaling function);
+    PQMF mDwtFilterG; //Wavelet highpass  filter coefficients (result=wavelet function);
+
+    std::unique_ptr<HedgePer> constantLevelsHedge = {};//Contains constant levels as hedge for a given level (e.g. 4,4,4,4)
+    std::unique_ptr<HedgePer> dWTLevelsHedge = {};     //Contains falling levels (=DWT levels) as hedge (e.g. 8,7,6,5,4,3,2,1)
+
+    static auto getMaxLevel(ResolutionType resolution) -> WaveletLevelType;
+    static auto getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType;
+
+    /**
+     * @brief Updates/fills the member "dWTLevelsHedge" with the levels, that are in use when a dyadic decimated discrete wavelet transform (DWT) is applied.
+     */
+    void updateDWTLevelsHedge();
+
+    /**
+     * @brief Swaps the right and the left child of a wavelet packet transform tree node ("block").
+
+     * This is necessary to get the correct order of frequencies in the wavelet packet transform tree.
+     * The "classic" dyadic decimated discrete wavelet transform only takes the result of the previous low pass filter and splits it into two parts.
+     * The wavelet packet transform also splits the result of the high pass filter (where specified). 
+     * Splitting it into two parts leads to a swapped order of frequencies. The highpass result contains the lower frequency an vice versa.
+     * Therefore these need to be swapped.
+     * @param tree 
+     * @param level 
+     * @param block 
+     */
+    static void swapWaveletFilterTreeChilds(const ArrayTreePer &tree, const WaveletLevelType &level, const unsigned int &block);
+
+    void extractSpectrum(int transformResultClass, tcb::span<real_number> origin, const HedgePer &levelsHedge);
+    auto getValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double;
+    auto getAvgValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockposStart, unsigned long blockposEnd) const -> double;
 };

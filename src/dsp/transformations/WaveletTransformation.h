@@ -14,19 +14,35 @@
   ==============================================================================
 */
 #pragma once
+#include "../../parameter/SpecletParameters.h"
 #include "AbstractWaveletTransformation.h"
-#include "..\..\plugin\SpectronParameters.h"
+#include "../windowing/WindowFunctionFactory.h"
+#include "WaveletParameters.h"
 
 class WaveletTransformation : public AbstractWaveletTransformation {
 public:
-	WaveletTransformation(
-		double samplingRate, 
-		long resolution, 
-		int windowFunctionNr		= SpectronParameters::WINDOWING_DEFAULT,
-		int waveletBaseTypeNr	= SpectronParameters::WAVELET_DEFAULT
-	);
-	virtual ~WaveletTransformation(void);
+    WaveletTransformation() = delete;//No default contructor
+    WaveletTransformation(
+            double newSamplingRate,
+            ResolutionType newResolution,
+            WindowParameters::WindowFunction newWindowFunction = WindowParameters::WindowFunction::DEFAULT,
+            WaveletParameters::WaveletBase newWaveletBase = WaveletParameters::WaveletBase::DEFAULT);
+
+    ~WaveletTransformation() override;
+    WaveletTransformation(WaveletTransformation &) = delete;                     //No copy contructor
+    WaveletTransformation(WaveletTransformation &&) = delete;                    //No move contructor
+    auto operator=(WaveletTransformation &) -> WaveletTransformation & = delete; //No copy assignment
+    auto operator=(WaveletTransformation &&) -> WaveletTransformation & = delete;//No move assignment
+
+    auto getSpectralDataInfo() -> const SpectralDataInfo & override {
+        return spectralDataInfo;
+    }
+
+    auto getName() -> const char * override { return "Fast Wavelet Transformation"; }
 
 protected:
-	virtual void calculate();		
+    void calculate() override;
+
+private:
+    SpectralDataInfo spectralDataInfo;
 };

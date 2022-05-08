@@ -1,83 +1,90 @@
 #include "SpectralDataBuffer.h"
-#include "../utilities/PerformanceManager.h"
+#include "../utilities/PerformanceLogger.h"
+#include "juce_core/juce_core.h"
+#include <assert.h>
 
-SpectralDataBuffer::SpectralDataBuffer() {
-	mWriteAccess	= false;
-	mItemSize		= 0;
-	sizeCheckCounter = 0;
-	buffer = new std::list<ItemType>();
+SpectralDataBuffer::SpectralDataBuffer()
+    : buffer(new std::list<ItemType>()), mWriteAccess(false), sizeCheckCounter(0) {
 }
 
 SpectralDataBuffer::~SpectralDataBuffer() {
-	if (buffer) delete buffer;
-	buffer = 0;
+    delete buffer;
+    buffer = nullptr;
 }
 
-void SpectralDataBuffer::write(ItemType item) {
-//	const ScopedLock myScopedLock (criticalSection);
-	mWriteAccess = true;
-	PerformanceManager::getSingletonInstance()->start(T("bufferWrite"));
+void SpectralDataBuffer::write(const ItemType &item) {
+    //	const ScopedLock myScopedLock (criticalSection);
+    LOG_PERFORMANCE_OF_SCOPE("SpectralDataBuffer write");
+    mWriteAccess = true;
 
-	//if there are too many buffer entries,
-	//delete the old ones to avoid memory problems
-	if (sizeCheckCounter > SIZECHECKCOUNT) {
-		sizeCheckCounter = 0;
-		unsigned int size = buffer->size();
-		if (size > CAPACITY) {
-			if (buffer) buffer->clear();
-			DBG(T("SpectralDataBuffer::write: buffer had to be cleared, size was " ) + juce::String(size));
-		}
-	}
-	sizeCheckCounter++;
+    //if there are too many buffer entries,
+    //delete the old ones to avoid memory problems
+    if (sizeCheckCounter > SIZECHECKCOUNT) {
+        sizeCheckCounter = 0;
+        auto size = buffer->size();
+        if (size > CAPACITY) {
+            if (buffer != nullptr) {
+                buffer->clear();
+            }
+            DBG("SpectralDataBuffer::write: buffer had to be cleared, size was " + juce::String(size));
+        }
+    }
+    sizeCheckCounter++;
 
-	if (buffer) buffer->push_back(item);
-	PerformanceManager::getSingletonInstance()->stop(T("bufferWrite"));
-	mWriteAccess = false;
+    if (buffer != nullptr) {
+        buffer->push_back(item);
+    }
+    mWriteAccess = false;
 }
 
-void SpectralDataBuffer::read(ItemType* pItem) {
-	PerformanceManager::getSingletonInstance()->start(T("bufferRead"));
+void SpectralDataBuffer::read(ItemType *pItem) {
+    LOG_PERFORMANCE_OF_SCOPE("SpectralDataBuffer read");
 
-	assert(pItem);
-	if (mWriteAccess) return;
-	if (!buffer)		return;
-	
-	pItem->assign(buffer->front().begin(), buffer->front().end());
-	if (!buffer->empty()) buffer->pop_front();
-	//TODO faster buffer? threadsafe?
+    assert(pItem);
+    if (mWriteAccess) {
+        return;
+    }
+    if (buffer == nullptr) {
+        return;
+    }
 
-	PerformanceManager::getSingletonInstance()->stop(T("bufferRead"));
+    pItem->assign(buffer->front().begin(), buffer->front().end());
+    if (!buffer->empty()) {
+        buffer->pop_front();
+    }
+    //TODO(JohT) faster buffer? threadsafe? use juce framework solution?
 }
 
-SpectralDataBuffer::ItemSizeType SpectralDataBuffer::size(void) {
-	if (!buffer) return 0;
-	return buffer->size();
+auto SpectralDataBuffer::size() -> SpectralDataBuffer::ItemSizeType {
+    if (buffer == nullptr) {
+        return 0;
+    }
+    return buffer->size();
 }
 
-SpectralDataBuffer::ItemSizeType SpectralDataBuffer::unread(void) {
-	if (!buffer) return 0;
-	return buffer->size();
+auto SpectralDataBuffer::unread() -> SpectralDataBuffer::ItemSizeType {
+    if (buffer == nullptr) {
+        return 0;
+    }
+    return buffer->size();
 }
 
-SpectralDataBuffer::ItemStatisticsType	SpectralDataBuffer::getStatistics(ItemType* pItem) {
-	assert(pItem);
-	ItemStatisticsType statistics;
+SpectralDataBuffer::ItemStatisticsType::ItemStatisticsType(ItemType &item) {
+    if (item.empty()) {
+        return;
+    }
+    min = item.front();
+    max = item.front();
+    double sum = 0.0;
 
-	double value_sum = 0.0;
-
-	for (unsigned int i = 0; i < pItem->size(); i++) {
-		float value = pItem->at(i);
-
-		if (i==0) {
-			statistics.min = value;
-			statistics.max = value;
-		}
-		if (value > statistics.max) statistics.max = value;
-		if (value < statistics.min) statistics.min = value;
-
-		value_sum = value_sum + value;
-	}
-	statistics.avg = value_sum / (float)pItem->size();
-
-	return statistics;
+    for (ValueType &value : item) {
+        if (value < min) {
+            min = value;
+        }
+        if (value > max) {
+            max = value;
+        }
+        sum = sum + value;
+    }
+    avg = static_cast<ValueType>(sum / static_cast<double>(item.size()));
 }

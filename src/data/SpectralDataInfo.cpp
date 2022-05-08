@@ -1,97 +1,52 @@
 #include "SpectralDataInfo.h"
 #include "../dsp/transformations/Transformation.h"
-#include <math.h>
 #include <assert.h>
-#include "../../libs/juce/JuceLibraryCode/JuceHeader.h"
 
 SpectralDataInfo::SpectralDataInfo(
-	double	samplingRate, 
-	long		resolution, 
-	long		frequencyResolution, 
-	long		timeResolution,
-	double	frequencyPartitionSize)
+        double newSamplingRate,
+        ResolutionType newResolution,
+        ResolutionType newFrequencyResolution,
+        ResolutionType newTimeResolution,
+        double newFrequencyPartitionSize)
 
-:	mSamplingFrequency(samplingRate),	
-	mResolution(resolution),
-	mFrequencyResolution(frequencyResolution),
-	mTimeResolution(timeResolution),
-	mFrequencyPartitionSize(frequencyPartitionSize),
-	mMaxFrequency(samplingRate / 2.0),
-	mTimeResolutionMs(mResolution / mTimeResolution / mSamplingFrequency * 1000)
-{
-	if (frequencyResolution == 0) {
-	//default for frequencyResolution (fits for FFT)
-		mFrequencyResolution = (long)((samplingRate/2.0)+1.0);
-	}
-	if (frequencyPartitionSize == 0) {
-		//default for frequencyResolution (fits for FFT)
-		mFrequencyPartitionSize = 1.0/(double)frequencyResolution;
-	}
-	if (mTimeResolution > Transformation::TIME_RESOLUTION_LIMIT) {
-		mTimeResolution = Transformation::TIME_RESOLUTION_LIMIT;
-	}
+    : samplingFrequency(newSamplingRate),
+      resolution(newResolution),
+      frequencyResolution(newFrequencyResolution),
+      timeResolution(newTimeResolution),
+      frequencyPartitionSize(newFrequencyPartitionSize),
+      maxFrequency(newSamplingRate / 2.0),
+      timeResolutionMs(static_cast<double>(newResolution) / static_cast<double>(newTimeResolution) / samplingFrequency * 1000) {
 
-	assert(samplingRate > 100);
-	assert(frequencyResolution >= 1);
-	assert(mFrequencyPartitionSize > 0.0000001);
+    if (newFrequencyResolution == 0) {
+        //default for frequencyResolution (fits for FFT)
+        frequencyResolution = static_cast<ResolutionType>(lrint((newSamplingRate / 2.0) + 1.0));
+    }
+    if (newFrequencyPartitionSize == 0) {
+        //default for frequencyResolution (fits for FFT)
+        frequencyPartitionSize = 1.0 / static_cast<double>(newFrequencyResolution);
+    }
+    if (timeResolution > Transformation::TIME_RESOLUTION_LIMIT) {
+        timeResolution = Transformation::TIME_RESOLUTION_LIMIT;
+    }
+    const auto minFrequencyPartitionSize = 0.0000001;
 
-	DBG(T("SpectralDataInfo constructed with res=")		+ 
-							juce::String(resolution)			+
-		T(",fres=") + juce::String(frequencyResolution) +
-		T(",tres=")	+ juce::String(timeResolution)		+
-		T(",part=")	+ juce::String(mFrequencyPartitionSize)
-	);
-};
+    assert(newSamplingRate > 100);
+    assert(resolution > 0);
+    assert(newFrequencyResolution >= 1);
+    assert(frequencyPartitionSize > minFrequencyPartitionSize);
 
-SpectralDataInfo::~SpectralDataInfo(void) {
+    DBG("SpectralDataInfo constructed" + toString());
 }
 
-bool SpectralDataInfo::operator == (SpectralDataInfo& compareObject) {
-	if (!&compareObject) return false;
-	if (mSamplingFrequency					!= compareObject.getSamplingFrequency())					return false;
-	if (mResolution							!= compareObject.getResolution())							return false;
-	if (mFrequencyResolution				!= compareObject.getFrequencyResolution())				return false;
-	if (mTimeResolution						!= compareObject.getTimeResolution())						return false;
-	if (mFrequencyPartitionSize			!= compareObject.getFrequencyPartitionSize())			return false;
-
-	return true;
+//TODO (JohT) Granular partition size not yet implemented
+auto SpectralDataInfo::constgetSpectralLineFrequencyPartitionSize(ResolutionType /*spectralLineNr*/) const -> double {
+    return frequencyPartitionSize;
 }
 
-double SpectralDataInfo::getSamplingFrequency(void) {
-	return mSamplingFrequency;
-};
-
-double SpectralDataInfo::getMaxFrequency(void) {
-	return mMaxFrequency;
-};
-
-long SpectralDataInfo::getResolution(void) {
-	return mResolution;
-};
-
-//gets the spectral line count within mSamplingFrequency/2 Hz
-long SpectralDataInfo::getFrequencyResolution(void) {
-	return mFrequencyResolution;
-};
-
-//gets the spectral line count within 1/mResolution ms
-long SpectralDataInfo::getTimeResolution(void) {
-	return mTimeResolution;
-};	
-
-//gets the time resolution in ms (best resolution in case of non lin time res.)
-double SpectralDataInfo::getTimeResolutionMs(void) {
-	return mTimeResolutionMs;
-};	
-
-//gets the freq. partition (e.g. 1/32 -> partition [Hz] = mSamplingFrequency/2 split into 1/32)
-double SpectralDataInfo::getFrequencyPartitionSize(void) {
-	return mFrequencyPartitionSize;
-};	
-
-double SpectralDataInfo::getSpectralLineFrequencyPartitionSize (long spectralLineNr) {
-//e.g. FFT mFrequencyPartitionSize=1/16: 1/16, 1/16, 1/16....
-//e.g. DWT mFrequencyPartitionSize=1/16, Progression=2: 1/16, 1/16, 1/8, 1/4, 1/2
-	assert(spectralLineNr >= 0);
-	return mFrequencyPartitionSize;
+auto SpectralDataInfo::toString() const -> std::string {
+    return "SpectralDataInfo(samplingFrequency=" + std::to_string(samplingFrequency) +
+        ",resolution=" + std::to_string(resolution) +
+        ",frequency resolution=" + std::to_string(frequencyResolution) +
+        ",time resolution=" + std::to_string(timeResolution) +
+        ",partition size=" + std::to_string(frequencyPartitionSize) + ")";
 }

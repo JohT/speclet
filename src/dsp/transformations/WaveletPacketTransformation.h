@@ -14,29 +14,51 @@
   ==============================================================================
 */
 #pragma once
+#include "../../parameter/SpecletParameters.h"
 #include "AbstractWaveletTransformation.h"
-#include "..\..\plugin\SpectronParameters.h"
+#include "WaveletParameters.h"
 
 class WaveletPacketTransformation : public AbstractWaveletTransformation {
 public:
-	WaveletPacketTransformation(
-		double samplingRate, 
-		long resolution, 
-		int windowFunctionNr		= SpectronParameters::WINDOWING_DEFAULT,
-		int waveletBaseTypeNr	= SpectronParameters::WAVELET_DEFAULT, 
-		int resolutionRatioDWPT = SpectronParameters::RESOLUTION_RATIO_DEFAULT
-	);
-	virtual ~WaveletPacketTransformation(void);
-	void	setResolutionRatioDWPT	(int resolutionRatioDWPT);
+    WaveletPacketTransformation(
+            double newSamplingRate,
+            ResolutionType newResolution,
+            WindowParameters::WindowFunction newWindowFunction,
+            WaveletParameters::WaveletBase newWaveletBaseType = WaveletParameters::WaveletBase::DEFAULT,
+            WaveletParameters::ResolutionRatioOption newResolutionRatioOption = WaveletParameters::ResolutionRatioOption::DEFAULT);
+    ~WaveletPacketTransformation() override;
+    WaveletPacketTransformation(const WaveletPacketTransformation &) = delete;                    //No copy contructor
+    WaveletPacketTransformation(WaveletPacketTransformation &&) = delete;                         //No move contructor
+    auto operator=(const WaveletPacketTransformation &) -> WaveletPacketTransformation & = delete;//No copy assignment
+    auto operator=(WaveletPacketTransformation &&) -> WaveletPacketTransformation & = delete;     //No move assignment
+
+    auto getSpectralDataInfo() -> const SpectralDataInfo & override {
+        return spectralDataInfo;
+    }
+    auto getName() -> const char * override { return "Fast Wavelet Packet Transform"; }
 
 protected:
-	virtual void calculate();		
-
-	int	getWaveletPacketResultTreeLevel	(int maxLevel, int resolutionRatioDWPT);
-	int	getFrequencyResolution				(int maxLevel);
-	int	getTimeResolution						(void);
+    void calculate() override;
 
 private:
-	int	mDWPT_ResultTreeLevel;		//Wavelet packet transform result tree level, 
-	int	mResolutionRatioDWPT;		//Wavelet packet transform time/freq resolution ratio (0=equal time&freq)
+    double samplingRate;
+    int timeFrequencyResolutionTreeLevelOffset;//Wavelet packet transform time/freq resolution ratio (0=equal time&freq)
+    WaveletLevelType resultTreeLevel;          //Wavelet packet transform result tree level,
+
+    SpectralDataInfo spectralDataInfo;
+
+    void setResolutionRatioOption(WaveletParameters::ResolutionRatioOption newResolutionRatio);
+
+    auto getTimeResolution() const -> ResolutionType;
+    auto calculateSpectralDataInfo() const -> SpectralDataInfo;
+
+    /**
+     * @brief Takes a ResolutionRatioOption and returns the offset (+/- int) to the filter tree level
+     * 
+     * @param resolutionRatioOption 
+     * @return const int 
+     */
+    static auto toTimeFrequencyResolutionTreeLevelOffset(const WaveletParameters::ResolutionRatioOption &resolutionRatioOption) -> int;
+    static auto getFrequencyResolution(WaveletLevelType waveletPacketResultTreeLevel) -> ResolutionType;
+    static auto getWaveletPacketResultTreeLevel(WaveletLevelType maxLevel, int resolutionRatioOffset) -> WaveletLevelType;
 };

@@ -1,160 +1,155 @@
 #include "AbstractWaveletTransformation.h"
-#include "../../libs/juce/JuceLibraryCode/JuceHeader.h"
-#include "../../utilities/PerformanceManager.h"
+#include "../../utilities/PerformanceLogger.h"
+#include <memory>
+#include <string>
+#include <type_traits>
+#include <vector>
 
-AbstractWaveletTransformation::AbstractWaveletTransformation(double samplingRate, long resolution, int windowFunctionNr,	int waveletBaseTypeNr) 
-	: Transformation(samplingRate, resolution, windowFunctionNr) 
-{
-	mDWT_Input					= NULL;
-	mConstantLevelsHedge		= NULL;
-	mDWTLevelsHedge			= NULL;
+AbstractWaveletTransformation::AbstractWaveletTransformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowParameters::WindowFunction newWindowFunction, WaveletParameters::WaveletBase newWaveletBase)
+    : Transformation(newSamplingRate, newResolution, newTransformationType, newWindowFunction),
+      waveletFilterTreeMaxLevel(getMaxLevel(newResolution)),
+      dwtInput(Interval(0, static_cast<integer_number>(newResolution - 1))) {
+    
+    setWaveletBase(newWaveletBase);
+    updateConstantLevelsHedge(waveletFilterTreeMaxLevel / 2);
+    updateDWTLevelsHedge();
 
-	mWaveletBaseTypeNr	= waveletBaseTypeNr;	
-	mDWT_maxLevel			= getMaxLevel(resolution);
-	mDWT_Input				= new Interval(0, resolution-1);		//wavelet transformation input data 
-
-	setWaveletBase(mWaveletBaseTypeNr);
-	updateConstantLevelsHedge(mDWT_maxLevel / 2);
-	updateDWTLevelsHedge();
-
-	DBG(T("AbstractWaveletTransformation::initialize done with waveletNr=") 
-		+ juce::String(mWaveletBaseTypeNr) + T("maxLevel=") + juce::String(mDWT_maxLevel));
-};
+    DBG("AbstractWaveletTransformation::initialize done with waveletNr=" + std::string(WaveletParameters::WaveletBaseNames::map.at(newWaveletBase)) + "maxLevel=" + std::to_string(waveletFilterTreeMaxLevel));
+}
 
 AbstractWaveletTransformation::~AbstractWaveletTransformation() {
-	if (mDWT_Input)				delete (mDWT_Input);	
-	if (mConstantLevelsHedge)	delete (mConstantLevelsHedge);	
-	if (mDWTLevelsHedge)			delete (mDWTLevelsHedge);	
+    constantLevelsHedge = nullptr;
+    dWTLevelsHedge = nullptr;
 
-	mDWT_Input					= NULL;
-	mConstantLevelsHedge		= NULL;
-	mDWTLevelsHedge			= NULL;
-
-	DBG(T("AbstractWaveletTransformation destructed"));
+    DBG("AbstractWaveletTransformation destructed");
 }
 
-int AbstractWaveletTransformation::getMaxLevel(int dimension) {
-	int maxlevel = (int)(log((double)dimension) / log((double)2.0));
-//	DBG(T("AbstractWaveletTransformation::getMaxLevel calc: logDim/log(2)", log((double)dimension), log((double)2.0));
-//	DBG(T("AbstractWaveletTransformation::getMaxLevel result: dim/maxLevel=", dimension, maxlevel);
-	return maxlevel;
+auto AbstractWaveletTransformation::getMaxLevel(ResolutionType resolution) -> WaveletLevelType {
+    assert(resolution > 0);
+    auto maxlevel = log(resolution) / log(2.0F);
+    DBG("AbstractWaveletTransformation::getMaxLevel resolution " + juce::String(resolution) + " leads to max level " + juce::String(maxlevel));
+    return static_cast<WaveletLevelType>(lrint(maxlevel));
 }
 
-int AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) {
-	if ((&bestBasis == NULL) || (bestBasis.num_of_levels <= 0)) return 1;
-	//return 1;
+auto AbstractWaveletTransformation::getMinLevel(const HedgePer &bestBasis) -> WaveletLevelType {
+    if (bestBasis.num_of_levels <= 0) {
+        return 1;
+    }
+    long minBestBasisLevel = 0;
 
-	int minBestBasisLevel, level	= 0;
-
-	for(int levelNr = 0; levelNr < bestBasis.num_of_levels; levelNr++) {
-		level = bestBasis.levels[levelNr];
-		if (level == 1) return 1;
-		if ((levelNr == 0) || (level < minBestBasisLevel)) {
-			minBestBasisLevel = level;
-		}
-	}
-	return minBestBasisLevel;
+    auto levels = tcb::span(bestBasis.levels, static_cast<size_t>(bestBasis.num_of_levels));
+    for (auto &level : levels) {
+        assert(level >= 0);
+        if (level == 1) {
+            return 1;
+        }
+        if ((minBestBasisLevel == 0) || (level < minBestBasisLevel)) {
+            minBestBasisLevel = level;
+        }
+    }
+    return static_cast<WaveletLevelType>(minBestBasisLevel);
 }
 
-void AbstractWaveletTransformation::setWaveletBase(int waveletBaseNr) {
-	ready = false;
+void AbstractWaveletTransformation::setWaveletBase(const WaveletParameters::WaveletBase &newWaveletBase) {
+    setReady(false);
 
-	switch (waveletBaseNr) {
-	case SpectronParameters::WAVELET_DAUBECHIES_02: {
-		mDWT_filter_G.Set(d02doqf, d02dalpha, d02domega);
-		mDWT_filter_H.Set(d02soqf, d02salpha, d02somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_DAUBECHIES_04: {
-		mDWT_filter_G.Set(d04doqf, d04dalpha, d04domega);
-		mDWT_filter_H.Set(d04soqf, d04salpha, d04somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_DAUBECHIES_06: {
-		mDWT_filter_G.Set(d06doqf, d06dalpha, d06domega);
-		mDWT_filter_H.Set(d06soqf, d06salpha, d06somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_DAUBECHIES_08: {
-		mDWT_filter_G.Set(d08doqf, d08dalpha, d08domega);
-		mDWT_filter_H.Set(d08soqf, d08salpha, d08somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_DAUBECHIES_10: {
-		mDWT_filter_G.Set(d10doqf, d10dalpha, d10domega);
-		mDWT_filter_H.Set(d10soqf, d10salpha, d10somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_DAUBECHIES_12: {
-		mDWT_filter_G.Set(d12doqf, d12dalpha, d12domega);
-		mDWT_filter_H.Set(d12soqf, d12salpha, d12somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_DAUBECHIES_14: {
-		mDWT_filter_G.Set(d14doqf, d14dalpha, d14domega);
-		mDWT_filter_H.Set(d14soqf, d14salpha, d14somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_DAUBECHIES_16: {
-		mDWT_filter_G.Set(d16doqf, d16dalpha, d16domega);
-		mDWT_filter_H.Set(d16soqf, d16salpha, d16somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_DAUBECHIES_18: {
-		mDWT_filter_G.Set(d18doqf, d18dalpha, d18domega);
-		mDWT_filter_H.Set(d18soqf, d18salpha, d18somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_DAUBECHIES_20: {
-		mDWT_filter_G.Set(d20doqf, d20dalpha, d20domega);
-		mDWT_filter_H.Set(d20soqf, d20salpha, d20somega);
-		break;
-										 }
-	case SpectronParameters::WAVELET_COIFMAN_06: {
-		mDWT_filter_G.Set(c06doqf, c06dalpha, c06domega);
-		mDWT_filter_H.Set(c06soqf, c06salpha, c06somega);
-		break;
-									 }
-	case SpectronParameters::WAVELET_COIFMAN_12: {
-		mDWT_filter_G.Set(c12doqf, c12dalpha, c12domega);
-		mDWT_filter_H.Set(c12soqf, c12salpha, c12somega);
-		break;
-									 }
-	case SpectronParameters::WAVELET_COIFMAN_18: {
-		mDWT_filter_G.Set(c18doqf, c18dalpha, c18domega);
-		mDWT_filter_H.Set(c18soqf, c18salpha, c18somega);
-		break;
-									 }
-	case SpectronParameters::WAVELET_COIFMAN_24: {
-		mDWT_filter_G.Set(c24doqf, c24dalpha, c24domega);
-		mDWT_filter_H.Set(c24soqf, c24salpha, c24somega);
-		break;
-									 }
-	case SpectronParameters::WAVELET_COIFMAN_30: {
-		mDWT_filter_G.Set(c30doqf, c30dalpha, c30domega);
-		mDWT_filter_H.Set(c30soqf, c30salpha, c30somega);
-		break;
-									 }
-	case SpectronParameters::WAVELET_BEYLKIN_18: {
-		mDWT_filter_G.Set(b18doqf, b18dalpha, b18domega);
-		mDWT_filter_H.Set(b18soqf, b18salpha, b18somega);
-		break;
-									 }
-	case SpectronParameters::WAVELET_VAIDYANATHAN_18: {
-		mDWT_filter_G.Set(v24doqf, v24dalpha, v24domega);
-		mDWT_filter_H.Set(v24soqf, v24salpha, v24somega);
-		break;
-											}
-	default: {
-		bool unbekanntes_wavelet = false;
-		assert(unbekanntes_wavelet);
-				}
-	}
+    switch (newWaveletBase) {
+        case WaveletParameters::WaveletBase::DAUBECHIES_02: {
+            mDwtFilterG.Set(d02doqf, d02dalpha, d02domega);
+            mDwtFilterH.Set(d02soqf, d02salpha, d02somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::DAUBECHIES_04: {
+            mDwtFilterG.Set(d04doqf, d04dalpha, d04domega);
+            mDwtFilterH.Set(d04soqf, d04salpha, d04somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::DAUBECHIES_06: {
+            mDwtFilterG.Set(d06doqf, d06dalpha, d06domega);
+            mDwtFilterH.Set(d06soqf, d06salpha, d06somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::DAUBECHIES_08: {
+            mDwtFilterG.Set(d08doqf, d08dalpha, d08domega);
+            mDwtFilterH.Set(d08soqf, d08salpha, d08somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::DAUBECHIES_10: {
+            mDwtFilterG.Set(d10doqf, d10dalpha, d10domega);
+            mDwtFilterH.Set(d10soqf, d10salpha, d10somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::DAUBECHIES_12: {
+            mDwtFilterG.Set(d12doqf, d12dalpha, d12domega);
+            mDwtFilterH.Set(d12soqf, d12salpha, d12somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::DAUBECHIES_14: {
+            mDwtFilterG.Set(d14doqf, d14dalpha, d14domega);
+            mDwtFilterH.Set(d14soqf, d14salpha, d14somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::DAUBECHIES_16: {
+            mDwtFilterG.Set(d16doqf, d16dalpha, d16domega);
+            mDwtFilterH.Set(d16soqf, d16salpha, d16somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::DAUBECHIES_18: {
+            mDwtFilterG.Set(d18doqf, d18dalpha, d18domega);
+            mDwtFilterH.Set(d18soqf, d18salpha, d18somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::DAUBECHIES_20: {
+            mDwtFilterG.Set(d20doqf, d20dalpha, d20domega);
+            mDwtFilterH.Set(d20soqf, d20salpha, d20somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::COIFMAN_06: {
+            mDwtFilterG.Set(c06doqf, c06dalpha, c06domega);
+            mDwtFilterH.Set(c06soqf, c06salpha, c06somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::COIFMAN_12: {
+            mDwtFilterG.Set(c12doqf, c12dalpha, c12domega);
+            mDwtFilterH.Set(c12soqf, c12salpha, c12somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::COIFMAN_18: {
+            mDwtFilterG.Set(c18doqf, c18dalpha, c18domega);
+            mDwtFilterH.Set(c18soqf, c18salpha, c18somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::COIFMAN_24: {
+            mDwtFilterG.Set(c24doqf, c24dalpha, c24domega);
+            mDwtFilterH.Set(c24soqf, c24salpha, c24somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::COIFMAN_30: {
+            mDwtFilterG.Set(c30doqf, c30dalpha, c30domega);
+            mDwtFilterH.Set(c30soqf, c30salpha, c30somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::BEYLKIN_18: {
+            mDwtFilterG.Set(b18doqf, b18dalpha, b18domega);
+            mDwtFilterH.Set(b18soqf, b18salpha, b18somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::VAIDYANATHAN_18: {
+            mDwtFilterG.Set(v24doqf, v24dalpha, v24domega);
+            mDwtFilterH.Set(v24soqf, v24salpha, v24somega);
+            break;
+        }
+        case WaveletParameters::WaveletBase::NUMBER_OF_OPTIONS:
+        default: {
+            bool unknownWavelet = false;
+            assert(unknownWavelet);
+        }
+    }
 
-	DBG(T("AbstractWaveletTransformation::setWaveletBase done with waveletBaseNr=") +  
-		juce::String(waveletBaseNr) + ",coeffSize=" + juce::String(mDWT_filter_G.pcoef_size));
+    DBG("AbstractWaveletTransformation::setWaveletBase done with waveletBaseNr=" +
+        std::string(WaveletParameters::WaveletBaseNames::map.at(newWaveletBase)) + ",coeffSize=" + std::to_string(mDwtFilterG.pcoef_size));
 
-	ready = true;
+    setReady(true);
 }
 
 //--------------------------------------------------------------------//
@@ -163,192 +158,224 @@ void AbstractWaveletTransformation::setWaveletBase(int waveletBaseNr) {
 
 //Copying every single sample from input-queue to wavelet input-array
 void AbstractWaveletTransformation::fillDWTInput() {
-	if (!mDWT_Input) {
-		DBG(T("AbstractWaveletTransformation::fillDWTInput: mDWT_Input = null !"));
-		return;
-	}
-	for (long i = 0; i < mResolution; i++) {
-		double nextSample = mInputQueue->front();
-		(*mDWT_Input)[i] = nextSample * mWindowFunction->getFactor(i); 
-		mInputQueue->pop();			
-	}
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation fillDWTInput");
+    auto *windowFunction = getWindowFunction();
+    for (unsigned int i = 0; i < getResolution(); i++) {
+        auto nextSample = getInputQueue().front();
+        dwtInput[i] = nextSample * windowFunction->getFactor(i);
+        getInputQueue().pop();
+    }
 }
 
-// sorts the tree by descending scale (ascending frequency)
-void AbstractWaveletTransformation::sortDWPTTreeByScaleDescending(const ArrayTreePer &tree) {
-	if (!tree.origin)	return;
+void AbstractWaveletTransformation::sortWaveletFilterTreeByScaleDescending(const ArrayTreePer &tree) {
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation sortWaveletFilterTreeByScaleDescending");
+    if (tree.origin == nullptr) {
+        return;
+    }
+    assert(tree.dim > 0);
+    for (unsigned int level = 1; level <= (tree.maxlevel - 1); level++) {
+        auto blockLength = tree.block_length(level);
+        assert(blockLength > 0);
+        auto blocksCount = tree.dim / blockLength;
 
-	for (int level = 1; level <= (tree.maxlevel - 1); level++) {
-		int	blocksCount	= tree.dim / tree.block_length(level);
-
-		for (int block = 1; block < blocksCount; block+=2) {
-			//process only the odd elements (=right elemet, =results from G wavelet hipass filter)
-			swapDWPTTreeChilds(tree, level, block);
-		}
-	}
+        for (unsigned int block = 1; block < blocksCount; block += 2) {
+            //process only the odd elements (=right element, =results from G wavelet hipass filter)
+            swapWaveletFilterTreeChilds(tree, level, block);
+        }
+    }
 }
 
-// swaps the right and the left child of a wavelet packet transform tree node ("block")
-void AbstractWaveletTransformation::swapDWPTTreeChilds(const ArrayTreePer &tree, const integer &L, const integer &B) {
-	assert( 0<=L && L<tree.maxlevel && 0<=B && B<(1<<L) );
+void AbstractWaveletTransformation::swapWaveletFilterTreeChilds(const ArrayTreePer &tree, const WaveletLevelType &level, const unsigned int &block) {
+    assert(0 <= level);
+    assert(level < tree.maxlevel);
+    assert(0 <= block);
+    assert(block < (1U << level));
 
-	real_DWT*	leftChild	= tree.left_child(L, B);
-	real_DWT*	rightChild	= tree.right_child(L, B);
+    assert(tree.dim > 0);
+    auto treeDimension = static_cast<unsigned long>(tree.dim);
 
-	real_DWT helper;
-	integer blocklength = tree.block_length(L+1);
+    assert(tree.block_length(level + 1) > 0);
+    auto blocklength = static_cast<unsigned long>(tree.block_length(level + 1));
 
-	//swap child elements and underlying sublevel-elements
-	for (int sublevel = 0; sublevel < tree.maxlevel - L; sublevel++) {
-		for (int element = 0; element < blocklength; element++) {
-			int index = element + sublevel*tree.dim;
-			helper				= *(leftChild+index);
-			*(leftChild+index)	= *(rightChild+index);
-			*(rightChild+index)	= helper;
-		}
-	}
+    auto maxSubLevel = static_cast<unsigned long>(tree.maxlevel - level);
+    auto maxIndex = static_cast<unsigned long>(blocklength + maxSubLevel * treeDimension);
+
+    auto *leftChild = tree.left_child(level, block);
+    auto *rightChild = tree.right_child(level, block);
+    auto leftChildSpan = tcb::span<real_number>(leftChild, maxIndex);
+    auto rightChildSpan = tcb::span<real_number>(rightChild, maxIndex);
+
+    //swap child elements and underlying sublevel-elements
+    for (unsigned long sublevel = 0; sublevel < maxSubLevel; sublevel++) {
+        for (unsigned long element = 0; element < blocklength; element++) {
+            auto index = element + sublevel * treeDimension;
+            std::swap(leftChildSpan[index], rightChildSpan[index]);
+        }
+    }
 }
 
-void AbstractWaveletTransformation::extractSpectrum(const Interval &out_DWT) {
-	assert(&out_DWT);
-	assert(out_DWT.length > 0);
-	extractSpectrum(TRANSFORM_RESULT_CLASS_INTERVAL, out_DWT.origin, *mDWTLevelsHedge);
+void AbstractWaveletTransformation::analyse(ArrayTreePer &analysisResult) const {
+    Analysis(getDwtInput(), analysisResult, mDwtFilterH, mDwtFilterG, ConvDecPer);
 }
 
-void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &out_DWPT, const HedgePer &levelsHedge) {
-	assert(&out_DWPT);
-	assert(out_DWPT.maxlevel > 0);
-	extractSpectrum(TRANSFORM_RESULT_CLASS_ARRAYTREE, out_DWPT.origin, levelsHedge);
+void AbstractWaveletTransformation::analyse(Interval &analysisResult) const {
+    WaveTrans(getDwtInput(), analysisResult, mDwtFilterH, mDwtFilterG, ConvDecPer);
 }
 
-void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, real_DWT* origin, const HedgePer &levelsHedge) {
-	PerformanceManager::getSingletonInstance()->start(T("waveletExtract"));
+void AbstractWaveletTransformation::extractSpectrum(const Interval &outDWT) {
+    assert(outDWT.length > 0);
+    assert(outDWT.origin != nullptr);
+    auto waveletTransformOutput = tcb::span<real_number>(outDWT.origin, static_cast<unsigned long>(outDWT.length));
+    extractSpectrum(TRANSFORM_RESULT_CLASS_INTERVAL, waveletTransformOutput, *dWTLevelsHedge);
+}
 
-	SpectralDataBuffer::ItemType spectrum;
+void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &outWaveletPacketTree) {
+    extractSpectrum(outWaveletPacketTree, *constantLevelsHedge);
+}
 
-	int		blocksize					= 0;
-	int		blockpos						= 0;
-	int		blockpos_end				= 0;
-	int		blocknr						= 0;
-	int		basisPos						= 0;
-	int		freqDuplicats				= 0;
-	int		minBestBasisLevel			= getMinLevel(levelsHedge);
-	long		timeResolution				= (long)1<<(mDWT_maxLevel - minBestBasisLevel);
-	int		timeStepSize				= timeResolution / TIME_RESOLUTION_LIMIT;
-	float		value							= 0.0;
-	float		realToFullResolution		= (float)mFrequencyResolution / (float)mResolution;
+void AbstractWaveletTransformation::extractSpectrum(const ArrayTreePer &outWaveletPacketTree, const HedgePer &levelsHedge) {
+    assert(outWaveletPacketTree.maxlevel > 0);
+    assert(outWaveletPacketTree.dim > 0);
+    assert(outWaveletPacketTree.origin != nullptr);
+    auto dataLength = outWaveletPacketTree.dim * (outWaveletPacketTree.maxlevel + 1);
+    auto waveletTransformOutput = tcb::span<real_number>(outWaveletPacketTree.origin, static_cast<unsigned long>(dataLength));
+    extractSpectrum(TRANSFORM_RESULT_CLASS_ARRAYTREE, waveletTransformOutput, levelsHedge);
+}
 
-	for(int time = 0; time < timeResolution; time++) {
-		basisPos	= 0;
-		spectrum.clear();
+void AbstractWaveletTransformation::extractSpectrum(int transformResultClass, tcb::span<real_number> origin, const HedgePer &levelsHedge) {
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation extractSpectrum");
 
-		for(int levelNr = 0; levelNr < levelsHedge.num_of_levels; levelNr++) {
-			int level		= levelsHedge.levels[levelNr];
-			blocksize		= 1<<(mDWT_maxLevel - level); 
-			blockpos			= (int)((float)blocksize / (float)timeResolution * (float)time);
-			blockpos_end	= (int)((float)blocksize / (float)timeResolution  * (float)(time + timeStepSize));
-			blocknr			= basisPos / blocksize ;
-			freqDuplicats	= (int)(realToFullResolution * (float)blocksize);
+    SpectralDataBuffer::ItemType spectrum;
 
-			//value = getValue(transformResultClass, origin, level, blocknr, blockpos);
-			value = getAvgValue(transformResultClass, origin, level, blocknr, blockpos, blockpos_end);
+    unsigned int blockSize = 0;
+    unsigned long blockPosition = 0;
+    unsigned long blockPositionEnd = 0;
+    unsigned long blockNumber = 0;
+    long basisPosition = 0;
+    long freqDuplicates = 0;
+    
+    WaveletLevelType minBestBasisLevel = getMinLevel(levelsHedge);
+    auto timeResolution = 1U << (waveletFilterTreeMaxLevel - minBestBasisLevel);
+    auto timeStepSize = timeResolution / TIME_RESOLUTION_LIMIT;
+    auto frequencyResolution = getSpectralDataInfo().getFrequencyResolution();
+    auto realToFullResolution = static_cast<double>(frequencyResolution) / static_cast<double>(getResolution());
+    auto levels = tcb::span(levelsHedge.levels, static_cast<unsigned long>(levelsHedge.num_of_levels));
 
-			for(int freqDuplicateNr = 0; freqDuplicateNr < freqDuplicats; freqDuplicateNr++) {				
-				spectrum.push_back(value*value);
-			}
+    double value = 0.0;
+    double timeResolutionPerSample = 0.0;
+    for (unsigned int time = 0; time < timeResolution; time++) {
+        basisPosition = 0;
+        spectrum.clear();
 
-			basisPos += blocksize;
-		}
-		getSpectralDataBuffer()->write(spectrum);
-		
-		//DBG(T("AbstractWaveletTransformation::extractSpectrum spectrum-size=",(int)spectrum.size());
-		//(*1) since the full time resolution causes serious performance problems
-		//and is to big for the display,  
-		//it must be currently limited for high settings.
-		if (timeResolution > TIME_RESOLUTION_LIMIT) time+=timeStepSize - 1;
-	}
+        for (auto level : levels) {
+            assert(waveletFilterTreeMaxLevel >= level);
+            assert(level > 0);
+            blockSize = 1U << static_cast<unsigned int>(waveletFilterTreeMaxLevel - level);
+            timeResolutionPerSample = static_cast<double>(blockSize) / static_cast<double>(timeResolution);
+            blockPosition = static_cast<unsigned long>(lrint(timeResolutionPerSample * static_cast<double>(time)));
+            blockPositionEnd = static_cast<unsigned long>(lrint(timeResolutionPerSample * static_cast<double>(time + timeStepSize)));
+            blockNumber = static_cast<unsigned long>(lrint(static_cast<double>(basisPosition) / static_cast<double>(blockSize)));
 
-	PerformanceManager::getSingletonInstance()->stop(T("waveletExtract"));
+            value = getAvgValue(transformResultClass, origin, static_cast<WaveletLevelType>(level), blockNumber, blockPosition, blockPositionEnd);
+
+            freqDuplicates = lrint(realToFullResolution * static_cast<double>(blockSize));
+            for (int freqDuplicateNr = 0; freqDuplicateNr < freqDuplicates; freqDuplicateNr++) {
+                spectrum.push_back(static_cast<SpectralDataBuffer::ValueType>(value * value));
+            }
+
+            basisPosition += blockSize;
+        }
+        getSpectralDataBuffer()->write(spectrum);
+
+        //(*1) since the full time resolution causes serious performance problems
+        //and is too big for the display,
+        //it must be currently limited for high settings.
+        if (timeResolution > TIME_RESOLUTION_LIMIT) {
+            time += timeStepSize - 1;
+        }
+    }
 }
 
 //returns the average value of the specified result tree positions
-float AbstractWaveletTransformation::getAvgValue(
-	int transformResultClass, 
-	real_DWT* origin, 
-	int level, 
-	int blocknr, 
-	int blockpos_start, 
-	int blockpos_end)
-{
-	if (!origin) return 0.0f;
+auto AbstractWaveletTransformation::getAvgValue(
+        int transformResultClass,
+        tcb::span<real_number> origin,
+        WaveletLevelType level,
+        unsigned long blockNumber,
+        unsigned long blockposStart,
+        unsigned long blockposEnd) const -> double {
 
-	int stepSize = 2;	//skips every nth value. no mathematically exact averaging, but necessary for performance
-	int count = 0;
-	double averageValue = 0.0;
-	real_DWT* values = NULL;
-	
-	if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
-		values = origin + (level * mResolution + blocknr * ( (mResolution) >> (level) ));
-	}
-	if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
-		values = origin + (1<<(mDWT_maxLevel - level)) + (blocknr - 1);
-	}
-	if ((blockpos_start + stepSize - 1) >= blockpos_end) return *(values + blockpos_start);
+    LOG_PERFORMANCE_OF_SCOPE("AbstractWaveletTransformation getAvgValue");
+    
+    auto count = 0;
+    auto averageValue = 0.0;
+    tcb::span<real_number> values;
 
-	for (int blockpos = blockpos_start; blockpos < blockpos_end; blockpos+=stepSize) {
-		averageValue += abs(*(values + blockpos));
-		count++;
-	}
-	return (float)(averageValue / count);
+    if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
+        auto resolution = getResolution();
+        auto offset = (level * resolution + blockNumber * (resolution >> level));
+        values = origin.subspan(offset);
+    }
+    if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
+        auto offset = (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1);
+        values = origin.subspan(offset);
+    }
+    if (blockposEnd >= values.size()) {
+        blockposEnd = values.size() - 1;
+    }
+    if (blockposStart >= blockposEnd) {
+        return values[blockposEnd];
+    }
+    for (auto blockpos = blockposStart; blockpos < blockposEnd; blockpos++) {
+        averageValue += abs(values[blockpos]);
+        count++;
+    }
+    return averageValue / count;
 }
 
 //returns the value of the specified result tree position
-float AbstractWaveletTransformation::getValue(int transformResultClass, real_DWT* origin, int level, int blocknr, int blockpos) {
-	if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
-		return (origin)? *(origin + (level * mResolution + blocknr * ( (mResolution) >> (level) )) + blockpos) : 0.0f;
-	}
-	if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
-		return (origin)? *(origin + (1<<(mDWT_maxLevel - level)) + (blocknr - 1) + blockpos) : 0.0f;
-	}
-	DBG(T("AbstractWaveletTransformation::getValue(..): Unkown transformResultClass"));
-	return 0.0;
+auto AbstractWaveletTransformation::getValue(int transformResultClass, tcb::span<real_number> origin, WaveletLevelType level, unsigned long blockNumber, unsigned long blockPosition) const -> double {
+    if (transformResultClass == TRANSFORM_RESULT_CLASS_ARRAYTREE) {
+        auto resolution = getResolution();
+        auto offset = (level * resolution + blockNumber * (resolution >> level)) + blockPosition;
+        return origin[offset];
+    }
+    if (transformResultClass == TRANSFORM_RESULT_CLASS_INTERVAL) {
+        auto offset = (1U << (waveletFilterTreeMaxLevel - level)) + (blockNumber - 1) + blockPosition;
+        return origin[offset];
+    }
+    DBG("AbstractWaveletTransformation::getValue(..): Unkown transformResultClass");
+    return 0.0;
 }
 
-//Updates the member "mConstantLevelsHedge" for a given level (e.g. 4,4,4,4)
-void AbstractWaveletTransformation::updateConstantLevelsHedge(int level) {
-	assert(level > 0);
-	assert(level <= mDWT_maxLevel);
+void AbstractWaveletTransformation::updateConstantLevelsHedge(WaveletLevelType level) {
+    assert(level > 0);
+    assert(level <= waveletFilterTreeMaxLevel);
 
-	long levelCount = (long)1<<(level);	
+    auto levelCount = 1U << level;
 
-	integer *levels = new integer [levelCount];
-	for (int i = 0; i < levelCount; i++) {
-		levels[i] = level;
-	}
+    auto levels = std::vector<integer_number>(levelCount);
+    for (unsigned int i = 0; i < levelCount; i++) {
+        levels[i] = level;
+    }
 
-	if (mConstantLevelsHedge) delete (mConstantLevelsHedge);
-	mConstantLevelsHedge = new HedgePer(mResolution, levelCount, levels);
-	assert(mConstantLevelsHedge);
+    constantLevelsHedge = std::make_unique<HedgePer>(getResolution(), levelCount, levels.data());
 
-	delete [] (levels);
-
-	DBG(T("AbstractWaveletTransformation::updateConstantLevelsHedge done with level=") +
-		juce::String(level) + ",count=" + juce::String(levelCount));
+    DBG("AbstractWaveletTransformation::updateConstantLevelsHedge done with level=" +
+        juce::String(level) + ",count=" + juce::String(levelCount));
 }
 
-//Updates/fills the member "mDWTLevelsHedge" with the levels, that are in use when a DWT is applied
-void AbstractWaveletTransformation::updateDWTLevelsHedge(void) {
-	integer* levels = new integer [mDWT_maxLevel + 1];
+void AbstractWaveletTransformation::updateDWTLevelsHedge() {
+    assert(waveletFilterTreeMaxLevel > 0);
 
-	levels[0] = mDWT_maxLevel;
-	for (int i = 0; i < mDWT_maxLevel; i++) {
-		levels[i+1] = mDWT_maxLevel - i;
-	}
+    auto levels = std::vector<integer_number>(waveletFilterTreeMaxLevel + 1);
+    levels[0] = waveletFilterTreeMaxLevel;
 
-	if (mDWTLevelsHedge) delete (mDWTLevelsHedge);
-	mDWTLevelsHedge = new HedgePer(mResolution, mDWT_maxLevel + 1, levels);
-	assert(mDWTLevelsHedge);
+    for (unsigned int i = 0; i < static_cast<unsigned int>(waveletFilterTreeMaxLevel); i++) {
+        levels[i + 1] = waveletFilterTreeMaxLevel - i;
+    }
 
-	delete [] (levels);
-	DBG(T("AbstractWaveletTransformation::updateDWTLevelsHedge done with count" + juce::String(mDWT_maxLevel)));
+    dWTLevelsHedge = std::make_unique<HedgePer>(getResolution(), waveletFilterTreeMaxLevel + 1, levels.data());
+
+    DBG("AbstractWaveletTransformation::updateDWTLevelsHedge done with mDwtMaxLevel " + juce::String(waveletFilterTreeMaxLevel));
 }

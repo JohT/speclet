@@ -15,55 +15,45 @@
 */
 #pragma once
 
-#include <list>
-#include "../../libs/juce/JuceLibraryCode/JuceHeader.h"
 #include "../data/SpectralDataInfo.h"
+#include <list>
 #include <vector>
-#include "assert.h"
 
 class SpectralDataBuffer {
 public:
-	static const long CAPACITY					= 5000;	//50000
-	static const int	MAXHISTORYELEMENTS	= 50;
-	static const int	SIZECHECKCOUNT			= 500;
+    static const long CAPACITY = 5000;//50000
+    static const int MAXHISTORYELEMENTS = 50;
+    static const int SIZECHECKCOUNT = 500;
 
-	typedef std::vector<float>					ItemType;
-	typedef std::vector<float>::size_type	ItemSizeType;
-	typedef std::vector<float>::iterator	ItemIteratorType;
+    using ValueType = float;
+    using ItemType = std::vector<ValueType>;
+    using ItemSizeType = std::vector<ValueType>::size_type;
 
-	//types for per spectrum statistic
-	typedef struct {
-		float min;
-		float max;
-		float avg;
-	} ItemStatisticsType;
+    //types for per spectrum statistic
+    struct ItemStatisticsType {
+        ValueType min = 0.0;
+        ValueType max = 0.0;
+        ValueType avg = 0.0;
 
-public:
-	SpectralDataBuffer();
-	~SpectralDataBuffer();
+        ItemStatisticsType(ItemType &item);
+    };
 
-	void						write(ItemType item);
-	void						read(ItemType* pItem);	
+    SpectralDataBuffer();
+    ~SpectralDataBuffer();
+    SpectralDataBuffer(const SpectralDataBuffer &) = delete;                    //No copy contructor
+    SpectralDataBuffer(SpectralDataBuffer &&) = delete;                         //No move contructor
+    auto operator=(const SpectralDataBuffer &) -> SpectralDataBuffer & = delete;//No copy assignment
+    auto operator=(SpectralDataBuffer &&) -> SpectralDataBuffer & = delete;     //No move assignment
 
-	ItemSizeType			size(void);
-	ItemSizeType			unread(void);
+    void write(const ItemType &item);
+    void read(ItemType *pItem);
 
-	ItemStatisticsType	getStatistics(ItemType* pItem);
+    auto size() -> ItemSizeType;
+    auto unread() -> ItemSizeType;
 
 private:
-	SpectralDataBuffer(const SpectralDataBuffer&);					// no copy constructor
-	SpectralDataBuffer& operator = (const SpectralDataBuffer&); // no assign operator
+    std::list<ItemType> *buffer;
 
-	#if __USE_BOOST
-		Bounded_Buffer<ItemType>*	buffer;
-	#else
-		std::list<ItemType>*		buffer;
-		//CriticalSection			criticalSection;
-	#endif
-	
-	ItemSizeType					mItemSize;
-	bool								mWriteAccess;
-	int								sizeCheckCounter;
+    bool mWriteAccess;
+    int sizeCheckCounter;
 };
-
-

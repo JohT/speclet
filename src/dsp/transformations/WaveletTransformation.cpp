@@ -1,41 +1,39 @@
-#pragma once
 #include "WaveletTransformation.h"
-#include "../../utilities/PerformanceManager.h"
+#include "../../utilities/PerformanceLogger.h"
+#include "TransformationParameters.h"
+#include <limits>
+
 
 WaveletTransformation::WaveletTransformation(
-	double samplingRate, 
-	long resolution, 
-	int windowFunctionNr,
-	int waveletBaseTypeNr) 
-	: AbstractWaveletTransformation(samplingRate, resolution, windowFunctionNr, waveletBaseTypeNr) 
-{
-	mFrequencyResolution		= resolution;
-	mTimeResolution			= resolution / 2;	
-	mSpectralDataInfo			= new SpectralDataInfo(samplingRate, resolution, mFrequencyResolution, mTimeResolution);
+        double newSamplingRate,
+        ResolutionType newResolution,
+        WindowParameters::WindowFunction newWindowFunction,
+        WaveletParameters::WaveletBase newWaveletBase)
+    : AbstractWaveletTransformation(newSamplingRate, newResolution, TransformationParameters::Type::FAST_WAVELET_TRANSFORM, newWindowFunction, newWaveletBase),
+      spectralDataInfo(SpectralDataInfo(newSamplingRate, newResolution, newResolution, newResolution / 2)) {
 
-	DBG(T("WaveletTransformation::initialize done with fs=")	+ 
-								  juce::String(mSamplingRate)			+
-		T(",res=")			+ juce::String(mResolution)	
-	);
-
-	ready			= true;
-	calculated	= true;
-};
+    DBG("WaveletTransformation::initialize done with fs=" + juce::String(newSamplingRate) + ",res=" + juce::String(newResolution));
+    assert(newResolution <= std::numeric_limits<long>::max());//wave++ Interval requires the resolution to be a long
+    setReady();
+    setCalculated();
+}
 
 WaveletTransformation::~WaveletTransformation() {
-	ready	= false;
-	DBG(T("WaveletTransformation destructed"));
+    setReady(false);
+    DBG("WaveletTransformation destructed");
 }
 
 void WaveletTransformation::calculate() {
-	//fills the mDWT_Input with data from the inputQueue
-	fillDWTInput();
-	//output data container to hold the result of the wavelet transformation ("coefficients")
-	Interval outDWT(0, mResolution-1);
-	//fast wavelet transform
-	PerformanceManager::getSingletonInstance()->start(T("fwt"));
-	WaveTrans(*mDWT_Input, outDWT, mDWT_filter_H, mDWT_filter_G, ConvDecPer);
-	PerformanceManager::getSingletonInstance()->stop(T("fwt"));
-	//fills the outputQueue with the spectral data (in a ready to draw order)
-	extractSpectrum(outDWT);
+    //fills the mDWT_Input with data from the inputQueue
+    fillDWTInput();
+
+    //output data container to hold the result of the wavelet transformation ("coefficients")
+    Interval outDWT(0, static_cast<integer_number>(getResolution() - 1));
+    //fast wavelet transform
+    {
+        LOG_PERFORMANCE_OF_SCOPE("WaveletTransformation analyse");
+        analyse(outDWT);
+    }
+    //fills the outputQueue with the spectral data (in a ready to draw order)
+    extractSpectrum(outDWT);
 }

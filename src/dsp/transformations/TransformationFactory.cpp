@@ -1,106 +1,104 @@
 #include "TransformationFactory.h"
+#include "AbstractWaveletTransformation.h"
+#include "FourierTransformation.h"
+#include "Transformation.h"
+#include "TransformationParameters.h"
+#include "WaveletPacketBestBasisTransformation.h"
+#include "WaveletPacketTransformation.h"
+#include "WaveletTransformation.h"
+#include <cstddef>
+#include <string>
 
 #ifndef __LOGGER__
-	#include "../../libs/juce/JuceLibraryCode/JuceHeader.h"
-	#define LOGGER CLogger::getSingletonInstance()
+#include "juce_core/juce_core.h"
+#define LOGGER CLogger::getSingletonInstance()
 #endif
 
-// Singleton instance variable (only one instance of this class) 
-TransformationFactory* TransformationFactory::singletonInstance = 0;
-
-TransformationFactory::TransformationFactory() {
-	transformation											= NULL;
-	listenerToHandOverToEveryNewTransformation	= NULL;
-	transformationType									= SpectronParameters::TRANSFORM_OFF;
-	DBG(T("TransformationFactory constructed"));
+auto TransformationFactory::getSingletonInstance() -> TransformationFactory & {
+    static TransformationFactory singletonInstance;// Guaranteed to be destroyed. Instantiated on first use.
+    return singletonInstance;
 }
 
-TransformationFactory::~TransformationFactory(void) {
-	deleteTransformation();
-	transformation											= NULL;
-	listenerToHandOverToEveryNewTransformation	= NULL;
-	DBG(T("TransformationFactory deconstructed"));
+TransformationFactory::TransformationFactory() {
+    DBG("TransformationFactory constructed");
+}
+
+TransformationFactory::~TransformationFactory() {
+    deleteTransformation();
+    currentTransformation = nullptr;
+    listenerToHandOverToEveryNewTransformation = nullptr;
+    DBG("TransformationFactory deconstructed");
 }
 
 void TransformationFactory::destruct() {
-	if (!singletonInstance) return;
-
-	listenerToHandOverToEveryNewTransformation = 0;
-	singletonInstance->deleteTransformation();
-	
-	delete(singletonInstance);
-	singletonInstance = 0;
+    listenerToHandOverToEveryNewTransformation = nullptr;
 }
 
-TransformationFactory* TransformationFactory::getSingletonInstance() {
-// Method to get the single instance of this class (Singleton)
-	if (TransformationFactory::singletonInstance == 0) {
-		TransformationFactory::singletonInstance = new TransformationFactory();
-	}
-	return TransformationFactory::singletonInstance;
+auto TransformationFactory::createTransformation(
+        TransformationParameters::Type newTransformationType,
+        double samplingRate,
+        Transformation::ResolutionType resolution,
+        WindowParameters::WindowFunction newWindowFunction,
+        WaveletParameters::WaveletBase waveletBase,
+        WaveletParameters::ResolutionRatioOption resolutionRatio) -> Transformation * {
+
+    auto newTransformationTypeName = std::string(TransformationParameters::TypeNames::map.find(newTransformationType)->second);
+    DBG("TransformationFactory::createTransformation started. transformationType=" +  newTransformationTypeName +
+        ", old transformation=" + (currentTransformation != nullptr ? currentTransformation->getName() : "does not exist"));
+
+    deleteTransformation();
+
+    switch (newTransformationType) {
+        case TransformationParameters::Type::FAST_FOURIER_TRANSFORM: {
+            currentTransformation = new FourierTransformation(samplingRate, resolution, newWindowFunction);
+            assert(currentTransformation);
+            break;
+        }
+        case TransformationParameters::Type::FAST_WAVELET_TRANSFORM: {
+            currentTransformation = new WaveletTransformation(samplingRate, resolution, newWindowFunction, waveletBase);
+            assert(currentTransformation);
+            break;
+        }
+        case TransformationParameters::Type::FAST_WAVELET_PACKET_TRANSFORM: {
+            currentTransformation = new WaveletPacketTransformation(samplingRate, resolution, newWindowFunction, waveletBase, resolutionRatio);
+            assert(currentTransformation);
+            break;
+        }
+        case TransformationParameters::Type::FAST_WAVELET_PACKET_BEST_BASIS_TRANSFORM: {
+            currentTransformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, newWindowFunction, waveletBase);
+            assert(currentTransformation);
+            break;
+        }
+        case TransformationParameters::Type::BYPASS: {
+            break;
+        }
+        case TransformationParameters::Type::NUMBER_OF_OPTIONS:
+        default: {
+            bool transformationUnknownError = false;
+            assert(transformationUnknownError);
+        }
+    }
+
+    if (currentTransformation != nullptr) {
+        currentTransformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
+    }
+    transformationType = newTransformationType;
+
+    DBG("TransformationFactory::createTransformation done. transformationType=" + newTransformationTypeName +
+        ", current transformation="  + (currentTransformation != nullptr ? currentTransformation->getName() : "does not exist"));
+
+    return currentTransformation;
 }
 
-Transformation* TransformationFactory::createTransformation(
-	int transformationTypeNr, 
-	double samplingRate, 
-	long resolution, 
-	int windowFunction,
-	int waveletBaseTypeNr,
-	int resolutionRatioDWPT) 
-{
-	DBG(T("TransformationFactory::createTransformation started. transformationNr=")	+ 
-						  juce::String(transformationTypeNr)	+
-		T(",ptr=")	+ juce::String((int)transformation)
-	);
-
-	deleteTransformation();
-	
-	switch (transformationTypeNr) {
-	case SpectronParameters::TRANSFORM_FFT	: {
-			transformation = new FourierTransformation(samplingRate, resolution, windowFunction);	
-			assert(transformation);
-			break;
-										  }	
-		case SpectronParameters::TRANSFORM_FWT	: {
-			transformation = new WaveletTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr);	
-			assert(transformation);
-			break;
-										  }													  
-		case SpectronParameters::TRANSFORM_FWPT : {
-			transformation = new WaveletPacketTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr, resolutionRatioDWPT);	
-			assert(transformation);
-			break;
-											}
-		case SpectronParameters::TRANSFORM_FWPT_BB : {
-			transformation = new WaveletPacketBestBasisTransformation(samplingRate, resolution, windowFunction, waveletBaseTypeNr);	
-			assert(transformation);
-			break;
-														}
-		case SpectronParameters::TRANSFORM_OFF	: {
-			break;
-										  }
-		default : {
-			bool transformation_unknown_error = false; 
-			assert(transformation_unknown_error);
-					 }
-	}
-
-	if (transformation) {
-		transformation->setTransformationNr(transformationTypeNr);	
-		transformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
-	}
-	transformationType	= transformationTypeNr;
-
-	DBG(T("TransformationFactory::createTransformation done. transformationNr=")	+ 
-						  juce::String(transformationTypeNr)	+
-		T(",ptr=")	+ juce::String((int)transformation)
-	);
-
-	return transformation;
+void TransformationFactory::registerForTransformationResults(TransformationListener *value) {
+    listenerToHandOverToEveryNewTransformation = value;
+    if (currentTransformation != nullptr) {
+        currentTransformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
+    }
 }
 
-void TransformationFactory::deleteTransformation(void) {
-	if (transformation) delete transformation;
-	transformation	= 0;
-	transformationType = SpectronParameters::TRANSFORM_OFF;
+void TransformationFactory::deleteTransformation() {
+    delete currentTransformation;
+    currentTransformation = nullptr;
+    transformationType = TransformationParameters::Type::BYPASS;
 }

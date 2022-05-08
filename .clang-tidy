@@ -1,31 +1,28 @@
 ---
+# cppcoreguidelines-avoid-magic-numbers are deactivated since it is an alias of readability-magic-numbers 
 Checks: >
-  -*,
-  clang-diagnostic-*,
-  clang-analyzer-*,
-  cppcoreguidelines-*,
-  cert-*,
-  bugprone-*,
-  google-*,
-  misc-*,
-  modernize-*,
-  performance-*,
-  portability-*,
-  readability-*,
+  *,
+  -abseil-*,
+  -altera-*,
+  -android-*,
+  -fuchsia-*,
+  -linuxkernel-*,
   -google-readability-namespace-comments,
   -google-runtime-int,
   -google-runtime-references,
+  -llvmlibc-*,
+  -hicpp-no-array-decay,
+  -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
+  -cppcoreguidelines-avoid-magic-numbers
 FormatStyle: 'file'
 HeaderFilterRegex: '**/*\.(hpp|h)'
 CheckOptions:
     - { key: bugprone-argument-comment.StrictMode, value: true }
     - { key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic, value: true }
-    - { key: readability-magic-numbers.IgnoredIntegerValues, value: 0;1;2;3;4;5;6;7;8;9;10 }
-    - { key: cppcoreguidelines-avoid-magic-numbers.IgnoredIntegerValues, value: "0;1;2;3;4;5;6;7;8;9;10;100" }
+    - { key: readability-magic-numbers.IgnoredIntegerValues, value: 0;1;2;3;4;5;6;7;8;9;10;100;1000 }
     - { key: readability-magic-numbers.IgnorePowersOf2IntegerValues, value: true }
-    - { key: readability-magic-numbers.IgnoredFloatingPointValues, value: 0.0;0.33;0.5;0.75;1.0;2.0;10.0;25.0;20.0;50.0;100.0;360.0;20000.0 }
-    - { key: cppcoreguidelines-avoid-magic-numbers.IgnoredFloatingPointValues, value: "0.0;0.33;0.5;0.75;1.0;2.0;10.0;25.0;20.0;50.0;100.0;360.0;20000.0" }
-    - { key: readability-identifier-naming.NamespaceCase,          value: lower_case }
+    - { key: readability-magic-numbers.IgnoredFloatingPointValues, value: 0.0;0.33;0.5;0.75;1.0;2.0;10.0;25.0;20.0;50.0;100.0;360.0;1000.0,20000.0 }
+    - { key: readability-identifier-naming.NamespaceCase,          value: CamelCase }
     - { key: readability-identifier-naming.ClassCase,              value: CamelCase  }
     - { key: readability-identifier-naming.StructCase,             value: CamelCase  }
     - { key: readability-identifier-naming.UnionCase,              value: CamelCase  }
@@ -33,11 +30,11 @@ CheckOptions:
     - { key: readability-identifier-naming.FunctionCase,           value: camelBack  }
     - { key: readability-identifier-naming.MemberCase,             value: camelBack  }
     - { key: readability-identifier-naming.ParameterCase,          value: camelBack  }
-    - { key: readability-identifier-naming.VariableCase,           value: camelBack  }
+    - { key: readability-identifier-naming.VariableCase,           value: camel_Snake_Case  }
     - { key: readability-identifier-naming.MacroDefinitionCase,    value: UPPER_CASE }
     - { key: readability-identifier-naming.EnumConstantCase,       value: Camel_Snake_Case }
-    - { key: readability-identifier-naming.ConstexprVariableCase,  value: CamelCase  }
-    - { key: readability-identifier-naming.GlobalConstantCase,     value: CamelCase  }
+    - { key: readability-identifier-naming.ConstexprVariableCase,  value: UPPER_CASE }
+    - { key: readability-identifier-naming.GlobalConstantCase,     value: UPPER_CASE  }
     - { key: readability-identifier-naming.MemberConstantCase,     value: CamelCase  }
     - { key: readability-identifier-naming.StaticConstantCase,     value: CamelCase  }
 ...

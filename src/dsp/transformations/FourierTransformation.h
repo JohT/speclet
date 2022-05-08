@@ -14,24 +14,37 @@
   ==============================================================================
 */
 #pragma once
+#include "../../parameter/SpecletParameters.h"
+#include "../windowing/WindowParameters.h"
+#include "Transformation.h"
 #include "TransformationFactory.h"
-#include "..\..\plugin\SpectronParameters.h"
 #include "fftw3.h"
+
 
 class FourierTransformation : public Transformation {
 public:
-	FourierTransformation(
-		double samplingRate, 
-		long resolution, 
-		int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT
-	);
-	virtual ~FourierTransformation(void);
+    FourierTransformation(
+            double newSamplingRate,
+            ResolutionType newResolution,
+            WindowParameters::WindowFunction newWindowFunction = WindowParameters::WindowFunction::DEFAULT);
+    ~FourierTransformation() override;
+    FourierTransformation(FourierTransformation &) = delete;                     //No copy contructor
+    FourierTransformation(FourierTransformation &&) = delete;                    //No move contructor
+    auto operator=(FourierTransformation &) -> FourierTransformation & = delete; //No copy assignment
+    auto operator=(FourierTransformation &&) -> FourierTransformation & = delete;//No move assignment
+
+    auto getName() -> const char * override { return "Fast Fourier Transformation"; }
 
 protected:
-	virtual void	calculate();		
+    void calculate() override;
+    auto getSpectralDataInfo() -> const SpectralDataInfo & override {
+        return spectralDataInfo;
+    }
 
 private:
-	fftw_plan		plan;			//Plan holds prepared (optimized) fft
-	double			*in;			//Pointer to input data
-	fftw_complex	*out;			//Pointer to output data
+    fftw_plan plan;   //Plan holds prepared (optimized) fft
+    double *in;       //Pointer to input data
+    fftw_complex *out;//Pointer to output data
+
+    SpectralDataInfo spectralDataInfo;
 };

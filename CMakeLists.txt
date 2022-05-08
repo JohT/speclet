@@ -14,45 +14,40 @@ cmake_minimum_required(VERSION 3.15)
 # `project()` command. `project()` sets up some helpful variables that describe source/binary
 # directories, and the current project version. This is a standard CMake command.
 
-project(speclet VERSION 0.0.1 LANGUAGES CXX)
+# Set message log level to VERBOSE to see more details about what CMake is doing.
+#set(CMAKE_MESSAGE_LOG_LEVEL VERBOSE)
 
-# Fix behavior of CMAKE_CXX_STANDARD when targeting macOS.
-if (POLICY CMP0025)
-    cmake_policy(SET CMP0025 NEW)
-endif ()
+# Name of the project and the plugin. Avoid spaces and special characters.
+set(PROJECT_NAME "Speclet")
+set(CURRENT_VERSION "1.0.0")
 
-# Set C++ Language Standard to C++17
-set (CMAKE_CXX_STANDARD 17)
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 
-# Generates a JSON file containing compile info like include paths, defines, etc.
-# Reference: https://stackoverflow.com/questions/39455090/clang-tidy-cant-find-my-header-files
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-# Enable diagnostic colors in CMake output
-if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-  add_compile_options(-fdiagnostics-color=always)
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-  add_compile_options(-fcolor-diagnostics)
+set(PRODUCT_NAME_POSTFIX "")
+string(TOUPPER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE_UPPERCASE)
+if (NOT "${CMAKE_BUILD_TYPE_UPPERCASE}" STREQUAL "RELEASE")
+    set(PRODUCT_NAME_POSTFIX "-${CMAKE_BUILD_TYPE}")
+    message(STATUS "PRODUCT_NAME_POSTFIX: ${PRODUCT_NAME_POSTFIX}")
 endif()
 
-# Download "cpm", the setup-free CMake dependency management 
-# https://github.com/cpm-cmake/CPM.cmake
-set(CPM_DOWNLOAD_VERSION 0.35.0) 
-set(CPM_DOWNLOAD_LOCATION "${CMAKE_BINARY_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
-if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
-    message(STATUS "Downloading CPM.cmake")
-    file(DOWNLOAD https://github.com/TheLartians/CPM.cmake/releases/download/v${CPM_DOWNLOAD_VERSION}/CPM.cmake ${CPM_DOWNLOAD_LOCATION})
-endif()
-include(${CPM_DOWNLOAD_LOCATION})
+# For simplilicity, the name of the project is also the name of the targe.
+project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
+
+include(Environment.cmake)
+
+# Build Options
+option(JUCE_BUILD_EXTRAS "Build JUCE Extras" OFF)
+option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF) # needed for fftw to not depend on dll
 
 # Import dependencies
-CPMAddPackage("gh:juce-framework/JUCE#6.1.5")
-#CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") #Online not available anymore
+#CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
+CPMAddPackage("gh:juce-framework/JUCE#6.1.6")
 CPMAddPackage("https://www.fftw.org/fftw-3.3.10.tar.gz#MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c")
 CPMAddPackage("gh:dmoulding/vld#v1.9h")
+CPMAddPackage("gh:tcbrindle/span#117fbada0f888e1535e3db20c7c9ddd86db129e2")
+# CPMAddPackage("gh:Neargye/magic_enum#v0.7.3") # simplifies enum handling, not yet needed
 
-# Import test dependencies
-CPMAddPackage("gh:catchorg/Catch2@2.13.8")
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
 # target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've
 # included JUCE directly in your source tree (perhaps as a submodule), you'll need to tell CMake to
@@ -73,23 +68,26 @@ CPMAddPackage("gh:catchorg/Catch2@2.13.8")
 # up by default. As well as this shared code static library, this function adds targets for each of
 # the formats specified by the FORMATS arguments. This function accepts many optional arguments.
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
+juce_add_plugin("${PROJECT_NAME}"
+    PRODUCT_NAME "${PROJECT_NAME}${PRODUCT_NAME_POSTFIX}" # The name of the final executable, which can differ from the target name
+    COMPANY_NAME "Johannes Troppacher"          # Specify the name of the plugin's author
+    DESCRIPTION "Audio Spectrum Analyzer using Fourier- and Wavelet-Transformation (v${CURRENT_VERSION})" # A short description of the plugin
+    # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
+    FORMATS VST3 AU Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
 
-juce_add_plugin(Speclet
-    # VERSION ...                               # Set this if the plugin version is different to the project version
-    # ICON_BIG ...                              # ICON_* arguments specify a path to an image file to use as an icon for the Standalone
-    # ICON_SMALL ...
-    # COMPANY_NAME ...                          # Specify the name of the plugin's author
-    # IS_SYNTH TRUE/FALSE                       # Is this a synth or an effect?
-    # NEEDS_MIDI_INPUT TRUE/FALSE               # Does the plugin need midi input?
-    # NEEDS_MIDI_OUTPUT TRUE/FALSE              # Does the plugin need midi output?
-    # IS_MIDI_EFFECT TRUE/FALSE                 # Is this plugin a MIDI effect?
-    # EDITOR_WANTS_KEYBOARD_FOCUS TRUE/FALSE    # Does the editor need keyboard focus?
-    # COPY_PLUGIN_AFTER_BUILD TRUE/FALSE        # Should the plugin be installed to a default location after building?
-    PLUGIN_MANUFACTURER_CODE JohT               # A four-character manufacturer id with at least one upper-case character
-    PLUGIN_CODE JTSL                            # A unique four-character plugin id with exactly one upper-case character
+    PLUGIN_MANUFACTURER_CODE "JohT"             # A four-character manufacturer id with at least one upper-case character
+    PLUGIN_CODE "SpcJ"                          # A unique four-character plugin id with exactly one upper-case character
                                                 # GarageBand 10.3 requires the first letter to be upper-case, and the remaining letters to be lower-case
-    FORMATS VST3 Standalone                     # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
-    PRODUCT_NAME "Speclet")          # The name of the final executable, which can differ from the target name
+    # ICON_SMALL ...
+    ICON_BIG "${CMAKE_CURRENT_SOURCE_DIR}/image/SpecletBlueIcon.png"
+    IS_SYNTH FALSE                              # Is this a synth or an effect?
+    NEEDS_MIDI_INPUT FALSE                      # Does the plugin need midi input?
+    NEEDS_MIDI_OUTPUT FALSE                     # Does the plugin need midi output?
+    IS_MIDI_EFFECT FALSE                        # Is this plugin a MIDI effect?
+    EDITOR_WANTS_KEYBOARD_FOCUS FALSE           # Does the editor need keyboard focus?
+    # COPY_PLUGIN_AFTER_BUILD TRUE                # Should the plugin be installed to a default location after building?
+    VST3_CATEGORIES "Analyzer"                  # VST3 Plugin Category
+)
 
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. This should be included with `#include <JuceHeader.h>`. The include path for
@@ -97,17 +95,52 @@ juce_add_plugin(Speclet
 # include all your JUCE module headers; if you're happy to include module headers directly, you
 # probably don't need to call this.
 
-juce_generate_juce_header(Speclet)
+juce_generate_juce_header("${PROJECT_NAME}")
+
+# Compile Project with C++20 Standard
+target_compile_features("${PROJECT_NAME}" PRIVATE cxx_std_20)
+message(VERBOSE "C++ Language Standard set to C++20 for Target ${PROJECT_NAME}")
+
+# Get all source files in the src directory and store them in the project_sources variable.
+# GLOB_RECURSE is not recommended but used here for simplicity: https://cmake.org/cmake/help/latest/command/file.html?highlight=CONFIGURE_DEPENDS#filesystem
+FILE(GLOB_RECURSE project_sources CONFIGURE_DEPENDS "src/*.cpp")
+message(VERBOSE "Sources in ${CMAKE_CURRENT_SOURCE_DIR}/src:")
+foreach(source ${project_sources})
+   message(VERBOSE "'${source}'")
+endforeach()
 
 # `target_sources` adds source files to a target. We pass the target that needs the sources as the
 # first argument, then a visibility parameter for the sources which should normally be PRIVATE.
 # Finally, we supply a list of source files that will be built into the target. This is a standard
 # CMake command.
+target_sources("${PROJECT_NAME}" PRIVATE ${project_sources})
 
-target_sources(Speclet
-    PRIVATE
-        src/PluginEditor.cpp
-        src/PluginProcessor.cpp)
+# Import fftw3 api headers to include with #include "fftw3.h"
+if (fftw_ADDED)
+    include_directories("${PROJECT_NAME}" PRIVATE "${fftw_SOURCE_DIR}/api")	 
+    message(VERBOSE "FFTW api (headers) directory included for all targets: ${fftw_SOURCE_DIR}/api")
+    # Get all include directories for the target.
+    get_target_property(PROJECT_INCLUDES "${PROJECT_NAME}" INCLUDE_DIRECTORIES)
+    foreach(dir ${PROJECT_INCLUDES})
+        message(VERBOSE "Project_include_dir='${dir}'")
+    endforeach()
+endif()
+
+# Import span header to include with #include "tcb/span.hpp"
+if (span_ADDED)
+    include_directories("${PROJECT_NAME}" PRIVATE "${span_SOURCE_DIR}/include")
+    message(VERBOSE "tcb span headers directory included for all targets: ${span_SOURCE_DIR}/include")
+endif()
+
+# Import magic_enum header to include with #include "magic_enum.hpp"
+#if (magic_enum_ADDED)
+#    include_directories("${PROJECT_NAME}" PRIVATE "${magic_enum_SOURCE_DIR}/include")
+#    message(VERBOSE "magic_enum headers directory included for all targets: ${magic_enum_SOURCE_DIR}/include")
+#endif()
+
+# Add libraries to the target that needed to be included inside the repository:
+add_subdirectory(lib/wave++)
+include_directories("${PROJECT_NAME}" PRIVATE "lib/wave++/source")
 
 # `target_compile_definitions` adds some preprocessor definitions to our target. In a Projucer
 # project, these might be passed in the 'Preprocessor Definitions' field. JUCE modules also make use
@@ -115,13 +148,38 @@ target_sources(Speclet
 # need that's not on by default, check the module header for the correct flag to set here. These
 # definitions will be visible both to your code, and also the JUCE module code, so for new
 # definitions, pick unique names that are unlikely to collide! This is a standard CMake command.
-
-target_compile_definitions(Speclet
+target_compile_definitions("${PROJECT_NAME}"
     PUBLIC
         # JUCE_WEB_BROWSER and JUCE_USE_CURL would be on by default, but you might not need them.
+        JUCE_DISPLAY_SPLASH_SCREEN=0 #  Plugins with GPL3 License can disable splash screen
+        JUCE_REPORT_APP_USAGE=0
         JUCE_WEB_BROWSER=0  # If you remove this, add `NEEDS_WEB_BROWSER TRUE` to the `juce_add_plugin` call
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
-        JUCE_VST3_CAN_REPLACE_VST2=0)
+        JUCE_VST3_CAN_REPLACE_VST2=0
+        $<$<CONFIG:Debug>:LOG_PERFORMANCE> # Create performancelog.json in Debug build for google chrome tracing 
+        _USE_MATH_DEFINES
+)
+
+# Sets compile options for the target:
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    # Using GNU or Clang compiler
+    set(GNUCLANG_COMPILE_OPTIONS "-m64;-fPIC")
+    set(GNUCLANG_COMPILE_DEBUG_OPTIONS "${GNUCLANG_COMPILE_OPTIONS};-g;-O0")
+    set(GNUCLANG_COMPILE_RELEASE_OPTIONS "${GNUCLANG_COMPILE_OPTIONS};-O3")
+    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Debug>:${GNUCLANG_COMPILE_DEBUG_OPTIONS}>")
+    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Release>:${GNUCLANG_COMPILE_RELEASE_OPTIONS}>")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # Using Visual Studio C++
+    set(MSVC_COMPILE_OPTIONS "/MP;/Gy;/nologo;/EHsc")
+    set(MSVC_COMPILE_DEBUG_OPTIONS "${MSVC_COMPILE_OPTIONS};/Od")
+    set(MSVC_COMPILE_RELEASE_OPTIONS "${MSVC_COMPILE_OPTIONS};/O2")
+    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Debug>:${MSVC_COMPILE_DEBUG_OPTIONS}>")
+    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Release>:${MSVC_COMPILE_RELEASE_OPTIONS}>")
+endif()
+
+# Displays the chosen target's compile options:
+get_target_property(MAIN_TARGET_COMPILE_OPTIONS "${PROJECT_NAME}" COMPILE_OPTIONS)
+message(STATUS "Compiler definitions added to target ${PROJECT_NAME} for compiler ${CMAKE_CXX_COMPILER_ID} and build type ${CMAKE_BUILD_TYPE}: ${MAIN_TARGET_COMPILE_OPTIONS}")
 
 # If your target needs extra binary assets, you can add them here. The first argument is the name of
 # a new static library target that will include all the binary resources. There is an optional
@@ -138,12 +196,19 @@ target_compile_definitions(Speclet
 # linked automatically. If we'd generated a binary data target above, we would need to link to it
 # here too. This is a standard CMake command.
 
-target_link_libraries(Speclet
+target_link_libraries("${PROJECT_NAME}"
     PRIVATE
         # AudioPluginData           # If we'd created a binary data target, we'd link to it here
+        juce::juce_core
         juce::juce_dsp
         juce::juce_audio_utils
+        juce::juce_gui_basics
+        fftw3
+        wave++
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)
+
+# Add tests
+add_subdirectory(test)

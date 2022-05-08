@@ -15,67 +15,129 @@
 */
 #pragma once
 
-#include <assert.h>
-#include <queue>
-#include <vector>
+#include "../../data/SpectralDataBuffer.h"
 #include "../../data/SpectralDataInfo.h"
-#include "../../data/SpectralDataBuffer.h" 
-#include "../WindowFunctions.h"
-#include "../../plugin/SpectronParameters.h"
+#include "../windowing/WindowParameters.h"
+#include "../windowing/WindowFunctions.h"
+#include "TransformationParameters.h"
+#include "juce_core/juce_core.h"
+#include "juce_dsp/juce_dsp.h"
+#include <memory>
+#include <queue>
 
 class TransformationListener;
-
-class Transformation abstract {
-friend class TransformationFactory;
+class TransformationResult {
 public:
-	static enum Constants {
-		TIME_RESOLUTION_LIMIT = 8
-	};
-	Transformation(double samplingRate, long resolution, int windowFunctionNr = SpectronParameters::WINDOWING_DEFAULT);
-	virtual ~Transformation(void);
-
-	void						setWindowFunction		(int windowFunctionNr);
-	void						setNextInputSample	(double sample);
-	bool						isOutputAvailable		(void);	
-	SpectralDataBuffer*	getSpectralDataBuffer(void);
-	SpectralDataInfo*		getSpectralDataInfo	(void) {return mSpectralDataInfo;};
-	int						getTransformationNr	(void) {return mTransformTypeNr;};
-	void						setTransformationNr	(int transformTypeNr) {mTransformTypeNr = transformTypeNr;};
-	void						setTransformResultListener	(TransformationListener* value);
-
-	void getNextSpectrum (SpectralDataBuffer::ItemType* item);
-	SpectralDataBuffer::ItemStatisticsType	getSpectrumStatistics (SpectralDataBuffer::ItemType* item);
-
-private:
-	void	informListenersAboutTransformResults();
-	void	calculationFrame();
-
-	Transformation(void);					//No default contructor
-	Transformation(Transformation &);	//No copy contructor
-	TransformationListener*	mTransformResultsListener;
-	juce::CriticalSection	criticalSection;
-	juce::WaitableEvent*		waitForDestruction;
-
-protected:
-	virtual void calculate()= 0;			//abstract: must be implemented by inherited class!
-
-	long			mResolution;
-	long			mFrequencyResolution;
-	long			mTimeResolution;
-	double		mSamplingRate;
-	int			mTransformTypeNr;
-
-	bool			ready;				//Signalizes internally "ready for new calculation"
-	bool			calculated;			//Signalizes internally "calculation finished"
-	
-	std::queue<double>*		mInputQueue;
-	SpectralDataBuffer*		mOutputBuffer;
-	SpectralDataInfo*			mSpectralDataInfo;
-	WindowFunction*			mWindowFunction; //Windowfunction-Interface for hanning, hamming, kaiser,...
+    virtual ~TransformationResult() = default;
+    virtual auto isOutputAvailable() -> bool = 0;
+    virtual auto getSpectralDataBuffer() -> SpectralDataBuffer * = 0;
+    virtual void getNextSpectrum(SpectralDataBuffer::ItemType *item) = 0;
+    /**
+     * @brief Get the spectral data info that contains amongst others details about the time and frequency resolution.
+     * 
+     * @return const SpectralDataInfo& 
+     */
+    virtual auto getSpectralDataInfo() -> const SpectralDataInfo & = 0;
 };
 
-class TransformationListener abstract
-{
+class Transformation : public TransformationResult {
 public:
-	virtual void onTransformationEvent(Transformation* value) = 0;	//abstract
+    enum Constants {
+        TIME_RESOLUTION_LIMIT = 8,
+        WAIT_FOR_DESTRUCTION_TIMEOUT = 3000
+    };
+
+    using ResolutionType = unsigned long;
+
+    Transformation() = delete;                                     //No default contructor
+    Transformation(Transformation &) = delete;                     //No copy contructor
+    Transformation(Transformation &&) = delete;                    //No move contructor
+    auto operator=(Transformation &) -> Transformation & = delete; //No copy assignment
+    auto operator=(Transformation &&) -> Transformation & = delete;//No move assignment
+
+    Transformation(
+            double newSamplingRate,
+            ResolutionType newResolution,
+            TransformationParameters::Type newTransformationType,
+            WindowParameters::WindowFunction newWindowFunction = WindowParameters::WindowFunction::DEFAULT);
+    virtual ~Transformation();
+
+    auto getWindowFunction() const -> WindowFunction *;
+
+    /**
+     * @brief Loads or replaces the window function with the given number (see class WindowFunctionsFactory)
+     * 
+     * @param newWindowFunction 
+     */
+    void setWindowFunction(const WindowParameters::WindowFunction& newWindowFunction);
+
+    /**
+     * @brief Get the input queue containing the next samples to be transformed
+     * 
+     * @return const std::queue<double>& 
+     */
+    auto getInputQueue() -> std::queue<double> &;
+
+    /**
+     * @brief Gathers the next input sample
+     * 
+     * @param sample 
+     */
+    void setNextInputSample(const double &sample);
+    auto isOutputAvailable() -> bool;
+    auto getSpectralDataBuffer() -> SpectralDataBuffer *;
+    auto getTransformationType() const -> auto { return transformationType; }
+    void setTransformResultListener(TransformationListener *value);
+    void getNextSpectrum(SpectralDataBuffer::ItemType *item);
+
+    /**
+     * @brief Gets the name of the transformation
+     * 
+     * @return const char* 
+     */
+    virtual auto getName() -> const char * = 0;
+
+protected:
+    /**
+     * @brief applies the transformation to the samples in the input queue and stores the result in the output queue
+     */
+    virtual void calculate() = 0;//abstract: must be implemented by inherited class!
+
+    auto getResolution() const -> ResolutionType {
+        return resolution;
+    }
+
+    void setReady(bool value = true) { ready = value; }
+    void setCalculated(bool value = true) { calculated = value; }
+
+private:
+    TransformationParameters::Type transformationType;
+    std::shared_ptr<WindowFunction> windowFunction;//Windowfunction-Interface for hanning, hamming, kaiser,...
+
+    ResolutionType resolution;
+
+    std::queue<double> inputQueue;
+    SpectralDataBuffer outputBuffer;
+
+    bool ready = false;     //Signalizes internally "ready for new calculation"
+    bool calculated = false;//Signalizes internally "calculation finished"
+
+    TransformationListener *transformResultsListener = nullptr;
+    juce::CriticalSection criticalSection;
+    juce::WaitableEvent waitForDestruction{true};
+
+    void informListenersAboutTransformResults();
+
+    /**
+     * @brief Meant to be called on every new sample to be transformed.
+     * Contains the sequence of actions associated with the calculation, 
+     * e.g.: enough data? - ready? - calculate - informListeners,...
+     */
+    void calculationFrame();
+};
+
+class TransformationListener {
+public:
+    virtual ~TransformationListener() = default;
+    virtual void onTransformationEvent(TransformationResult *result) = 0;
 };

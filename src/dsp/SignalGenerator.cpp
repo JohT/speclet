@@ -1,114 +1,109 @@
 #include "SignalGenerator.h"
-#include "ranlib.h"
+#include "SignalGeneratorParameters.h"
+#include <cfloat>
+#include <random>
 
-#include <math.h>
-#include <assert.h>
-#define PIx2	6.2831853071795865
-
-SignalGenerator::SignalGenerator(short signalType, double signalFrequency, double samplingFrequency) {
-	mSignalType						= signalType;
-	mSignalFrequency				= signalFrequency;
-	mSamplingFrequency				= samplingFrequency;
-	mLastSignalGeneratorArgument	= 0.0;
-	mLastSignalGeneratorSample		= 0.0;
-
-	if (signalType == SpectronParameters::GENERATOR_NOISE) {
-		long iseed1 =333;
-		long iseed2 = (long) (.987654321 * (double)iseed1);
-		setall(iseed1,(long) iseed2);
-	}
+SignalGenerator::SignalGenerator(double newSamplingFrequency, SignalGeneratorParameters::Waveform newWaveform, double newSignalFrequency)
+    : waveform(newWaveform),
+      signalFrequency(newSignalFrequency),
+      samplingFrequency(newSamplingFrequency),
+      randomMersenneTwisterEngine(std::random_device{}()),
+      randomDistribution(std::uniform_real_distribution<double>(-1.0, std::nextafter(1.0, DBL_MAX))) {
 }
 
-SignalGenerator::~SignalGenerator(void){
+auto SignalGenerator::getNextSample() -> double {
+    switch (waveform) {
+        case SignalGeneratorParameters::Waveform::SINE:
+            return generateSine();
+        case SignalGeneratorParameters::Waveform::TRIANGLE:
+            return generateTriangle();
+        case SignalGeneratorParameters::Waveform::RAMP:
+            return generateRamp();
+        case SignalGeneratorParameters::Waveform::SQUARE:
+            return generateSquare();
+        case SignalGeneratorParameters::Waveform::NOISE:
+            return generateNoise();
+        case SignalGeneratorParameters::Waveform::NUMBER_OF_OPTIONS:
+        default: {
+            //ignore if wrong: use sine as default
+            return generateSine();
+        }
+    }
 }
 
-double SignalGenerator::getNextSample(void) {
-	switch (mSignalType) {
-		case SpectronParameters::GENERATOR_SINE: 		return generateSine();
-		case SpectronParameters::GENERATOR_TRANGLE: 	return generateTriangle();
-		case SpectronParameters::GENERATOR_RAMP: 		return generateRamp();
-		case SpectronParameters::GENERATOR_SQUARE: 	return generateSquare();
-		case SpectronParameters::GENERATOR_NOISE: 	return generateNoise();
-		default: {
-		//ignore if wrong: use sine as default
-			return generateSine();
-		}
-	}
+auto SignalGenerator::generateSine() -> double {
+    double value = sin(lastSignalGeneratorArgument);
+    lastSignalGeneratorSample = value;
+
+    lastSignalGeneratorArgument = lastSignalGeneratorArgument + (PI_TIMES_2 / samplingFrequency * signalFrequency);
+    if (lastSignalGeneratorArgument > PI_TIMES_2) {
+        lastSignalGeneratorArgument -= PI_TIMES_2;
+    }
+
+    return value;
 }
 
-double	SignalGenerator::generateSine (void) {
-	double value = sin(mLastSignalGeneratorArgument);
-	mLastSignalGeneratorSample = value;
-	
-	mLastSignalGeneratorArgument = mLastSignalGeneratorArgument + (PIx2 / mSamplingFrequency * mSignalFrequency);
-	if (mLastSignalGeneratorArgument > PIx2) mLastSignalGeneratorArgument-=PIx2;
-		
-	return value;
+auto SignalGenerator::generateTriangle() -> double {
+    if (lastSignalGeneratorArgument == 0.0) {
+        //first call - short cut
+        lastSignalGeneratorArgument = 4.0 * signalFrequency / samplingFrequency;
+        lastSignalGeneratorSample = 0.0;
+        return 0.0;
+    }
+
+    double value = lastSignalGeneratorSample + lastSignalGeneratorArgument;
+
+    if ((lastSignalGeneratorArgument >= 0.0) && (value > 1.0)) {
+        lastSignalGeneratorArgument *= -1.0;
+        value = lastSignalGeneratorSample + lastSignalGeneratorArgument;
+    }
+    if ((lastSignalGeneratorArgument < 0.0) && (value < -1.0)) {
+        lastSignalGeneratorArgument *= -1.0;
+        value = lastSignalGeneratorSample + lastSignalGeneratorArgument;
+    }
+
+    lastSignalGeneratorSample = value;
+    return value;
 }
 
-double	SignalGenerator::generateTriangle (void) {
-	if (mLastSignalGeneratorArgument == 0.0) {
-	//first call - short cut
-		mLastSignalGeneratorArgument = 4.0*mSignalFrequency/mSamplingFrequency; 
-		mLastSignalGeneratorSample = 0.0;
-		return 0.0;
-	}
+auto SignalGenerator::generateRamp() -> double {
+    if (lastSignalGeneratorArgument == 0.0) {
+        //first call - short cut
+        lastSignalGeneratorArgument = 2.0 * signalFrequency / samplingFrequency;
+        lastSignalGeneratorSample = -1.0;
+        return -1.0;
+    }
 
-	double value = mLastSignalGeneratorSample + mLastSignalGeneratorArgument;
-	
-	if ((mLastSignalGeneratorArgument >= 0.0)
-	&&  (value > 1.0)) {
-		mLastSignalGeneratorArgument*=-1.0;
-		value = mLastSignalGeneratorSample + mLastSignalGeneratorArgument;
-	}
-	if ((mLastSignalGeneratorArgument < 0.0)
-	&&  (value < -1.0)) {
-		mLastSignalGeneratorArgument*=-1.0;
-		value = mLastSignalGeneratorSample + mLastSignalGeneratorArgument;
-	}
+    double value = lastSignalGeneratorSample + lastSignalGeneratorArgument;
 
-	mLastSignalGeneratorSample = value;
-	return value;
+    if (value > 1.0) {
+        value = -1.0;
+    }
+
+    lastSignalGeneratorSample = value;
+    return value;
 }
 
-double	SignalGenerator::generateRamp (void) {
-	if (mLastSignalGeneratorArgument == 0.0) {
-	//first call - short cut
-		mLastSignalGeneratorArgument = 2.0*mSignalFrequency/mSamplingFrequency; 
-		mLastSignalGeneratorSample = -1.0;
-		return -1.0;
-	}
+auto SignalGenerator::generateSquare() -> double {
+    double value = 0.0;
 
-	double value = mLastSignalGeneratorSample + mLastSignalGeneratorArgument;
+    if (lastSignalGeneratorArgument <= (0.5 / signalFrequency)) {
+        value = 1.0;
+        lastSignalGeneratorArgument = lastSignalGeneratorArgument + 1.0 / samplingFrequency;
+    } else {
+        if (lastSignalGeneratorArgument < (1.0 / signalFrequency)) {
+            value = -1.0;
+            lastSignalGeneratorArgument = lastSignalGeneratorArgument + 1.0 / samplingFrequency;
+        } else {
+            value = 1.0;
+            lastSignalGeneratorArgument = 0.0;
+        }
+    }
 
-	if (value > 1.0) {
-		value = -1.0;
-	}
-
-	mLastSignalGeneratorSample = value;
-	return value;
+    lastSignalGeneratorSample = value;
+    return value;
 }
 
-double	SignalGenerator::generateSquare (void) {
-	double value = 0.0;
-
-	if (mLastSignalGeneratorArgument <= (0.5 / mSignalFrequency)) {
-		value = 1.0;
-		mLastSignalGeneratorArgument = mLastSignalGeneratorArgument + 1.0 / mSamplingFrequency;
-	} else {
-		if (mLastSignalGeneratorArgument < (1.0 / mSignalFrequency)) {
-			value = -1.0;
-			mLastSignalGeneratorArgument = mLastSignalGeneratorArgument + 1.0 / mSamplingFrequency;
-		} else {
-			value = 1.0;
-			mLastSignalGeneratorArgument = 0.0;
-		}
-	}
-
-	mLastSignalGeneratorSample = value;
-	return value;
-}
-
-double SignalGenerator::generateNoise (void) {
-	return (double)gennor(0,1);
+auto SignalGenerator::generateNoise() -> double {
+    return randomDistribution(randomMersenneTwisterEngine);
 }

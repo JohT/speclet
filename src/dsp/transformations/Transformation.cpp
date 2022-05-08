@@ -1,146 +1,127 @@
 #include "Transformation.h"
-#include "../../libs/juce/JuceLibraryCode/JuceHeader.h"
-#include "../../source/utilities/PerformanceManager.h"
+#include "../windowing/WindowFunctionFactory.h"
+#include "TransformationParameters.h"
+#include "juce_core/juce_core.h"
+#include "../../utilities/PerformanceLogger.h"
+#include <assert.h>
+#include <cmath>
 
-using namespace std;
-#ifndef __WINDOW_FACTORY__
-	#define WINDOW_FACTORY WindowFunctionsFactory::getSingletonInstance()
-#endif
+Transformation::Transformation(double newSamplingRate, ResolutionType newResolution, TransformationParameters::Type newTransformationType, WindowParameters::WindowFunction newWindowFunction)
+    : transformationType(newTransformationType),
+      resolution(newResolution) {
+    assert(newResolution >= 256);
+    waitForDestruction.signal();
 
-Transformation::Transformation(double samplingRate, long resolution, int windowFunctionNr) 
-	:	mInputQueue(0),
-		mOutputBuffer(0),
-		mSpectralDataInfo(0),
-		mWindowFunction(0),
-		mTransformResultsListener(0)
-{
-	ready					= false;
-	calculated			= false;
+    setWindowFunction(newWindowFunction);
 
-	mSamplingRate		= samplingRate;	
-	mResolution			= resolution;	
-	mInputQueue			= new queue<double>();
-	mOutputBuffer		= new SpectralDataBuffer();
-	waitForDestruction= new juce::WaitableEvent(true);
-	waitForDestruction->signal();
-	mTransformTypeNr	= 0;
-
-	setWindowFunction(windowFunctionNr);
-
-	DBG(T("Transformation::initialize done with fs=")	+ 
-						  juce::String(mSamplingRate)			+
-		T(",res=")	+ juce::String(mResolution)			+
-		T(",fres=")	+ juce::String(mFrequencyResolution)
-	);
+    DBG("Transformation::initialize done with sampling rate=" + juce::String(newSamplingRate) + ", resolution/blockSize=" + juce::String(newResolution));
 }
 
-//destructor: waits, until a possibly within another thread currently running 
+//Destructor waits until a possibly within another thread currently running
 //calculation ends and deletes then all allocated objects
 Transformation::~Transformation() {
-	PerformanceManager::getSingletonInstance()->start(T("waitForDestruction"));
-	bool timeoutDuringWait = waitForDestruction->wait(3000);
-	PerformanceManager::getSingletonInstance()->stop(T("waitForDestruction"));
-	if (!timeoutDuringWait) DBG(T("Transformation destruction: Timeout during wait!"));
-	
-	ready = false;
-	waitForDestruction->signal();
-
-	if (mInputQueue)			delete(mInputQueue);
-	if (mOutputBuffer)		delete(mOutputBuffer);
-	if (mSpectralDataInfo)	delete(mSpectralDataInfo);
-	if (waitForDestruction) delete(waitForDestruction);
-
-	mInputQueue = 0;
-	mOutputBuffer = 0;
-	mSpectralDataInfo = 0;
-	waitForDestruction = 0;
-
-	DBG(T("Transform destructed"));
+    {
+        LOG_PERFORMANCE_OF_SCOPE("Transformation waitForDestruction");
+        bool timeoutDuringWait = waitForDestruction.wait(WAIT_FOR_DESTRUCTION_TIMEOUT);
+        if (!timeoutDuringWait) {
+            DBG("Transformation destruction: Timeout during wait!");
+        }
+    }
+    ready = false;
+    waitForDestruction.signal();
+    DBG("Transform destructed");
 }
 
-//loads or replaces the window function with the given number (see class WindowFunctionsFactory)
-void Transformation::setWindowFunction(int windowFunctionNr) {
-	ready = false;
-
-	mWindowFunction = WINDOW_FACTORY->createWindowFunction(windowFunctionNr, mResolution);
-	assert(mWindowFunction);
-	DBG(T("Transformation::setWindowFunction done with windowFunctionNr=") + juce::String(windowFunctionNr));
-
-	ready = true;
+auto Transformation::getWindowFunction() const -> WindowFunction * {
+    return windowFunction.get();
 }
 
-//reads the next input sample
-void Transformation::setNextInputSample(double sample) {
-	if (!ready)					return;
-	if (!mInputQueue) return; 
-	mInputQueue->push(sample);
-
-	if (!mWindowFunction)	return;
-	if (!calculated)			return;
-
-	calculationFrame();
+void Transformation::setWindowFunction(const WindowParameters::WindowFunction& newWindowFunction) {
+    setReady(false);
+    windowFunction = WindowFunctionFactory::getSingletonInstance().getWindow(newWindowFunction, resolution);
+    assert(windowFunction);
+    auto windowFunctionName = std::string(WindowParameters::WindowFunctionNames::map.find(newWindowFunction)->second);
+    DBG("Transformation::setWindowFunction done with windowFunctionNr=" + windowFunctionName);
+    setReady(true);
 }
 
-//this method is called on every new input sample and 
-//contains the sequence of actions associated with the calculation, e.g.:
-//enough data? - ready? - calculate - informListeners,...
+auto Transformation::getInputQueue() -> std::queue<double> & {
+    return inputQueue;
+}
+
+void Transformation::setNextInputSample(const double &sample) {
+    if (!ready) {
+        return;
+    }
+    if (std::isinf(sample) || std::isnan(sample)) {
+        return;
+    }
+    inputQueue.push(sample);
+
+    if (windowFunction == nullptr) {
+        return;
+    }
+    if (!calculated) {
+        return;
+    }
+
+    calculationFrame();
+}
+
 void Transformation::calculationFrame() {
-	calculated = false;
+    calculated = false;
+    if (inputQueue.size() < resolution) {
+        //Calculation only with at least N samples possible
+        calculated = true;
+        return;
+    }
+    if (!ready) {
+        return;
+    }
 
-	assert(mResolution > 0);
-	if (mInputQueue->size() < mResolution) {
-	//Calculation only with at least N samples possible
-		calculated = true;
-		return;
-	}
-	if (!ready) return;
+    {
+        //begin of critical section: only one thread per time ------------------------------
+        LOG_PERFORMANCE_OF_SCOPE("Transformation calculationFrameTimer");
+        const juce::ScopedLock myScopedLock(criticalSection);
+        waitForDestruction.reset();
 
-	{
-		//begin of critical section: only one thread per time ------------------------------
-		PerformanceManager::getSingletonInstance()->start(T("calculationFrame"));
-		const ScopedLock myScopedLock (criticalSection);
-		waitForDestruction->reset();
+        calculate();
+        if (isOutputAvailable()) {
+            informListenersAboutTransformResults();
+        }
 
-		calculate();
-		if (isOutputAvailable()) informListenersAboutTransformResults();
-
-		calculated = true;
-		waitForDestruction->signal();
-		PerformanceManager::getSingletonInstance()->stop(T("calculationFrame"));
-		//end of critical section                          ---------------------------------
-	}
+        calculated = true;
+        waitForDestruction.signal();
+        //end of critical section                          ---------------------------------
+    }
 }
 
 //returns true, if spectral data is available
-bool Transformation::isOutputAvailable() {
-	if (!ready) return false;
-	if (!mOutputBuffer) return false;
-	return (getSpectralDataBuffer()->unread() > 0);
+auto Transformation::isOutputAvailable() -> bool {
+    return ready && (outputBuffer.unread() > 0);
 }
 
-SpectralDataBuffer* Transformation::getSpectralDataBuffer(void) {
-	return mOutputBuffer;
-};
-
-void Transformation::getNextSpectrum (SpectralDataBuffer::ItemType* item) {
-	getSpectralDataBuffer()->read(item);
+auto Transformation::getSpectralDataBuffer() -> SpectralDataBuffer * {
+    return &outputBuffer;
 }
 
-SpectralDataBuffer::ItemStatisticsType	Transformation::getSpectrumStatistics (SpectralDataBuffer::ItemType* item) {
-	return getSpectralDataBuffer()->getStatistics(item);
+void Transformation::getNextSpectrum(SpectralDataBuffer::ItemType *item) {
+    outputBuffer.read(item);
 }
 
 //simple single-listener, could be extend using arrays...
-void Transformation::setTransformResultListener(TransformationListener* value) {
-	mTransformResultsListener = value;
+void Transformation::setTransformResultListener(TransformationListener *value) {
+    transformResultsListener = value;
 }
 
 //since there is just one listener, only one call has to be done
 void Transformation::informListenersAboutTransformResults() {
-	PerformanceManager::getSingletonInstance()->start(T("informListeners"));
+    LOG_PERFORMANCE_OF_SCOPE("Transformation informListenersAboutTransformResults");
 
-	if (!ready) return;
-	if (mTransformResultsListener) mTransformResultsListener->onTransformationEvent(this);
-
-	PerformanceManager::getSingletonInstance()->stop(T("informListeners"));
+    if (!ready) {
+        return;
+    }
+    if (transformResultsListener != nullptr) {
+        transformResultsListener->onTransformationEvent(this);
+    }
 }
