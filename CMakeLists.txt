@@ -33,7 +33,8 @@ endif()
 # For simplilicity, the name of the project is also the name of the targe.
 project(${PROJECT_NAME} VERSION ${CURRENT_VERSION})
 
-include(Environment.cmake)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+include(Environment)
 
 # Build Options
 option(JUCE_BUILD_EXTRAS "Build JUCE Extras" OFF)
@@ -46,7 +47,7 @@ CPMAddPackage("gh:juce-framework/JUCE#6.1.6")
 CPMAddPackage("https://www.fftw.org/fftw-3.3.10.tar.gz#MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c")
 CPMAddPackage("gh:dmoulding/vld#v1.9h")
 CPMAddPackage("gh:tcbrindle/span#117fbada0f888e1535e3db20c7c9ddd86db129e2")
-# CPMAddPackage("gh:Neargye/magic_enum#v0.7.3") # simplifies enum handling, not yet needed
+# CPMAddPackage("gh:Neargye/magic_enum#v0.8.0") # simplifies enum handling, not yet needed
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
 # target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've
@@ -71,6 +72,8 @@ CPMAddPackage("gh:tcbrindle/span#117fbada0f888e1535e3db20c7c9ddd86db129e2")
 juce_add_plugin("${PROJECT_NAME}"
     PRODUCT_NAME "${PROJECT_NAME}${PRODUCT_NAME_POSTFIX}" # The name of the final executable, which can differ from the target name
     COMPANY_NAME "Johannes Troppacher"          # Specify the name of the plugin's author
+    COMPANY_COPYRIGHT "(c)2011 by Johannes Troppacher" # Specify the copyright notice for the plugin
+    COMPANY_WEBSITE "https://github.com/JohT/speclet" # Specify the website for the plugin
     DESCRIPTION "Audio Spectrum Analyzer using Fourier- and Wavelet-Transformation (v${CURRENT_VERSION})" # A short description of the plugin
     # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
     FORMATS VST3 AU Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
@@ -119,11 +122,11 @@ target_sources("${PROJECT_NAME}" PRIVATE ${project_sources})
 if (fftw_ADDED)
     include_directories("${PROJECT_NAME}" PRIVATE "${fftw_SOURCE_DIR}/api")	 
     message(VERBOSE "FFTW api (headers) directory included for all targets: ${fftw_SOURCE_DIR}/api")
-    # Get all include directories for the target.
-    get_target_property(PROJECT_INCLUDES "${PROJECT_NAME}" INCLUDE_DIRECTORIES)
-    foreach(dir ${PROJECT_INCLUDES})
-        message(VERBOSE "Project_include_dir='${dir}'")
-    endforeach()
+
+    if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
+        # Using GNU or Clang compiler
+        target_compile_options(fftw3 PRIVATE "-m64;-fPIC;")
+    endif()
 endif()
 
 # Import span header to include with #include "tcb/span.hpp"
@@ -137,6 +140,12 @@ endif()
 #    include_directories("${PROJECT_NAME}" PRIVATE "${magic_enum_SOURCE_DIR}/include")
 #    message(VERBOSE "magic_enum headers directory included for all targets: ${magic_enum_SOURCE_DIR}/include")
 #endif()
+
+# List all include directories for the target.
+get_target_property(PROJECT_INCLUDES "${PROJECT_NAME}" INCLUDE_DIRECTORIES)
+foreach(dir ${PROJECT_INCLUDES})
+    message(VERBOSE "Project_include_dir='${dir}'")
+endforeach()
 
 # Add libraries to the target that needed to be included inside the repository:
 add_subdirectory(lib/wave++)
@@ -161,25 +170,7 @@ target_compile_definitions("${PROJECT_NAME}"
 )
 
 # Sets compile options for the target:
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    # Using GNU or Clang compiler
-    set(GNUCLANG_COMPILE_OPTIONS "-m64;-fPIC")
-    set(GNUCLANG_COMPILE_DEBUG_OPTIONS "${GNUCLANG_COMPILE_OPTIONS};-g;-O0")
-    set(GNUCLANG_COMPILE_RELEASE_OPTIONS "${GNUCLANG_COMPILE_OPTIONS};-O3")
-    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Debug>:${GNUCLANG_COMPILE_DEBUG_OPTIONS}>")
-    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Release>:${GNUCLANG_COMPILE_RELEASE_OPTIONS}>")
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    # Using Visual Studio C++
-    set(MSVC_COMPILE_OPTIONS "/MP;/Gy;/nologo;/EHsc")
-    set(MSVC_COMPILE_DEBUG_OPTIONS "${MSVC_COMPILE_OPTIONS};/Od")
-    set(MSVC_COMPILE_RELEASE_OPTIONS "${MSVC_COMPILE_OPTIONS};/O2")
-    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Debug>:${MSVC_COMPILE_DEBUG_OPTIONS}>")
-    target_compile_options("${PROJECT_NAME}" PUBLIC "$<$<CONFIG:Release>:${MSVC_COMPILE_RELEASE_OPTIONS}>")
-endif()
-
-# Displays the chosen target's compile options:
-get_target_property(MAIN_TARGET_COMPILE_OPTIONS "${PROJECT_NAME}" COMPILE_OPTIONS)
-message(STATUS "Compiler definitions added to target ${PROJECT_NAME} for compiler ${CMAKE_CXX_COMPILER_ID} and build type ${CMAKE_BUILD_TYPE}: ${MAIN_TARGET_COMPILE_OPTIONS}")
+include(CompilerOptions)
 
 # If your target needs extra binary assets, you can add them here. The first argument is the name of
 # a new static library target that will include all the binary resources. There is an optional
@@ -206,6 +197,7 @@ target_link_libraries("${PROJECT_NAME}"
         fftw3
         wave++
     PUBLIC
+        Speclet::CompilerOptions
         juce::juce_recommended_config_flags
         juce::juce_recommended_lto_flags
         juce::juce_recommended_warning_flags)

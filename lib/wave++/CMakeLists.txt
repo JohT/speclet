@@ -26,20 +26,33 @@ foreach(source ${library_sources})
 endforeach()
 
 # Sets compile options for the target
-if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "AppleClang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    # Using GNU or Clang compiler
-    set(GNUCLANG_COMPILE_OPTIONS "-m64;-fPIC")
-    set(GNUCLANG_COMPILE_DEBUG_OPTIONS "${GNUCLANG_COMPILE_OPTIONS};-g;-O0")
-    set(GNUCLANG_COMPILE_RELEASE_OPTIONS "${GNUCLANG_COMPILE_OPTIONS};-O3")
-    target_compile_options("${wavelet_library_target_name}" PRIVATE "$<$<CONFIG:Debug>:${GNUCLANG_COMPILE_DEBUG_OPTIONS}>")
-    target_compile_options("${wavelet_library_target_name}" PRIVATE "$<$<CONFIG:Release>:${GNUCLANG_COMPILE_RELEASE_OPTIONS}>")
-elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    # Using Visual Studio C++
-    set(MSVC_COMPILE_OPTIONS "/MP;/Gy;/nologo;/EHsc")
-    set(MSVC_COMPILE_DEBUG_OPTIONS "${MSVC_COMPILE_OPTIONS};/Od")
-    set(MSVC_COMPILE_RELEASE_OPTIONS "${MSVC_COMPILE_OPTIONS};/O2")
-    target_compile_options("${wavelet_library_target_name}" PRIVATE "$<$<CONFIG:Debug>:${MSVC_COMPILE_DEBUG_OPTIONS}>")
-    target_compile_options("${wavelet_library_target_name}" PRIVATE "$<$<CONFIG:Release>:${MSVC_COMPILE_RELEASE_OPTIONS}>")
+#f (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+#    #set(CMAKE_VERBOSE_MAKEFILE 1)
+#    set_target_properties("${wavelet_library_target_name}" PROPERTIES COMPILE_DEFINITIONS "Bits64_;UNIX;_BOOL;LINUX;FUNCPROTO;_GNU_SOURCE;LINUX_64;REQUIRE_IOSTREAM")
+#endif()
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang") # Using GNU or Clang compiler
+    # -fPIC: is needed for position-indipendent code to overcome the following error while linking:
+    # "relocation R_X86_64_32S against symbol `stdout@@GLIBC_2.2.5' can not be used when making a shared object; recompile with -fPIC"
+    target_compile_options("${wavelet_library_target_name}" PRIVATE "-fPIC")
+
+    # -g (Debug Mode): Generate debug information. [https://clang.llvm.org/docs/CommandGuide/clang.html]
+    # -O0 (Debug Mode): no optimization [https://clang.llvm.org/docs/CommandGuide/clang.html]
+    target_compile_options("${wavelet_library_target_name}" PRIVATE "$<$<CONFIG:Debug>:-g;-O0>")
+   
+    # -O3 (Release Mode): enables most optimizations [https://clang.llvm.org/docs/CommandGuide/clang.html]
+    target_compile_options("${wavelet_library_target_name}" PRIVATE "$<$<CONFIG:Release>:-O3>")
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC") # Using Visual Studio C++
+   # /Gy: Allows the compiler to package individual functions in the form of packaged functions (COMDATs). [Microsoft Docs]
+   #      The main advantage of this is that if you have identical functions the linker can collapse them all down into one actual piece of code ("COMDAT folding"). [StackOverflow]
+   # /nologo: Suppresses the display of the copyright banner when the compiler starts up and display of informational messages during compiling. [Microsoft Docs]
+   # /permissive-: Specify standards conformance mode to the compiler. Use this option to help you identify and fix conformance issues in your code, to make it both more correct and more portable. [Microsoft Docs]
+   target_compile_options("${wavelet_library_target_name}" PRIVATE "/MP;/Gy;/nologo;/EHsc")
+
+   # /Od (Debug Mode): Turns off all optimizations in the program and speeds compilation. [Microsoft Docs] 
+   target_compile_options("${wavelet_library_target_name}" PRIVATE "$<$<CONFIG:Debug>:/Od>")
+   
+   # /O2 (Release Mode): Optimization option to maximize speed. [Microsoft Docs] 
+   target_compile_options("${wavelet_library_target_name}" PRIVATE "$<$<CONFIG:Release>:/O2>")
 endif()
 
 # Displays the chosen target's compile options
