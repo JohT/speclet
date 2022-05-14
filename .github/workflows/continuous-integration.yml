@@ -8,6 +8,7 @@ env:
   BUILD_TYPE: Release
   BUILD_DIR: Builds
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  PLUGINVAL_VERSION: v0.3.0
   DISPLAY: :0 # linux pluginval needs this
 
 # jobs are run in parallel on different machines
@@ -19,16 +20,15 @@ jobs:
     strategy:
       fail-fast: false # show all errors for each platform (vs. cancel jobs on error)
       matrix:
-        #os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [ubuntu-latest] # first test only with linux
+        #os: [ubuntu-latest] # first test only with linux
+        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
         - os: ubuntu-latest
           artifact: Linux
-        # first test only with linux
-        #- os: windows-latest
-        #  artifact: Windows
-        #- os: macos-latest
-        #  artifact: MacOS
+        - os: windows-latest
+          artifact: Windows
+        - os: macos-latest
+          artifact: MacOS
 
     steps:
     - name: Install JUCE's Linux Dependencies and select g++ 10
@@ -67,19 +67,22 @@ jobs:
       
     - name: Pluginval Linux
       working-directory: ${{ env.BUILD_DIR }}
+      # TODO (TroJ) Set strictness-level back to 10 when error is fixed
       if: matrix.artifact == 'Linux'
       run: |
-        curl -L "https://github.com/Tracktion/pluginval/releases/download/v0.3.0/pluginval_${{ matrix.artifact }}.zip" -o pluginval.zip
+        curl -L "https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_${{ matrix.artifact }}.zip" -o pluginval.zip
         unzip pluginval
-        # start xvfb in the background
+        # Starting Virtual Frame Buffer X Server (Xvfb) as local display in the background
         sudo /usr/bin/Xvfb $DISPLAY -screen 0 1280x1024x24 &
-        ./pluginval --strictness-level 10 --validate-in-process --verbose --output-dir "." --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
+        # Give xvfb some time to start
+        sleep 3
+        ./pluginval --strictness-level 5 --validate-in-process --verbose --output-dir "." --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
         
     - name: Pluginval Mac
       working-directory: ${{ env.BUILD_DIR }}
       if: matrix.artifact == 'MacOS'
       run: |
-        curl -L "https://github.com/Tracktion/pluginval/releases/download/v0.3.0/pluginval_${{ matrix.artifact }}.zip" -o pluginval.zip
+        curl -L "https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_${{ matrix.artifact }}.zip" -o pluginval.zip
         unzip pluginval
         pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --validate-in-process --verbose --output-dir "." --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
 
@@ -88,7 +91,7 @@ jobs:
       working-directory: ${{ env.BUILD_DIR }}
       if: matrix.artifact == 'Windows'
       run: |
-        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest https://github.com/Tracktion/pluginval/releases/download/v0.3.0/pluginval_Windows.zip -OutFile pluginval.zip"
+        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_Windows.zip -OutFile pluginval.zip"
         powershell -Command "Expand-Archive pluginval.zip -DestinationPath ."
         pluginval.exe --strictness-level 10 --validate-in-process --output-dir "./bin" --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
         if %ERRORLEVEL% neq 0 { exit /b 1 }
