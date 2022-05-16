@@ -113,11 +113,6 @@ any changes that have been made.  Use for commercial applications is only
 allowed by permission of the copyright holders.
 "
 
-- Visual Leak Detector (VLD)   
-(c) 2005-2011 Dan Moulding, Arkadiy Shapkin, Laurent Lessieux   
-https://github.com/dmoulding/vld   
-GNU Lesser General Public License v2.1
-
 - Implementation of C++20's std::span for older compilers
 (c) 2019 by Tristan Brindle
 https://github.com/tcbrindle/span
