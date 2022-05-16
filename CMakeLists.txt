@@ -19,7 +19,7 @@ cmake_minimum_required(VERSION 3.15)
 
 # Name of the project and the plugin. Avoid spaces and special characters.
 set(PROJECT_NAME "Speclet")
-set(CURRENT_VERSION "1.0.0")
+set(CURRENT_VERSION "1.0.1")
 
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 
