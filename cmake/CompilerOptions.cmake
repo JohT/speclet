@@ -36,10 +36,11 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
     list(APPEND SANITIZERS "thread")
 endif()
 
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|AppleClang")
-    # Memory Sanatizer
-    list(APPEND SANITIZERS "memory")
-endif()
+# The Memory Sanatizer is only supported by Clang for Linux. 
+# Since GNU C++ is used for Linux, it will never be used.
+#if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+#    list(APPEND SANITIZERS "memory")
+#endif()
 
 list(JOIN SANITIZERS ";-fsanitize=" LIST_OF_SANITIZERS)
 if((LIST_OF_SANITIZERS) AND (NOT "${LIST_OF_SANITIZERS}" STREQUAL ""))
