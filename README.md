@@ -144,6 +144,7 @@ Boost Software License 1.0
 - [CLAP CLever Audio Plugin](https://github.com/free-audio/clap)
 - [Integration of Catch, CMake and CMake CodeCoverage](https://github.com/fkromer/catch_cmake_coverage)
 - [The Stochas Sequencer](https://github.com/surge-synthesizer/stochas)
+- [JUCE 6 Preview - Demo Project](https://github.com/tobanteAudio/juce-6-demo)
 
 ### Performance Tracing/Logging (Profiling, Instrumentation)
 - [Google Chrome Browser Trace Log Viewer](chrome://tracing/)
