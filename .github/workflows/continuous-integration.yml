@@ -127,13 +127,14 @@ jobs:
       run: echo ::set-output name=RELEASE_VERSION::${GITHUB_REF/refs\/tags\//}
 
     - name: Download All Artifacts
+      id: download_artifacts
       uses: actions/download-artifact@v3
   
     - name: Add version name to the files that will be published
       run: |
-        mv ./${{ env.PROJECT_NAME }}-Windows.zip ./${{ env.PROJECT_NAME }}-${{ steps.get_release_version.outputs.RELEASE_VERSION }}-Windows.zip
-        mv ./${{ env.PROJECT_NAME }}-Linux.zip ./${{ env.PROJECT_NAME }}-${{ steps.get_release_version.outputs.RELEASE_VERSION }}-Linux.zip
-        mv ./${{ env.PROJECT_NAME }}-MacOS.zip ./${{ env.PROJECT_NAME }}-${{ steps.get_release_version.outputs.RELEASE_VERSION }}-MacOS.zip
+        mv ${{ steps.download_artifacts.outputs.download-path }}/${{ env.PROJECT_NAME }}-Windows.zip ./${{ env.PROJECT_NAME }}-${{ steps.get_release_version.outputs.RELEASE_VERSION }}-Windows.zip
+        mv ${{ steps.download_artifacts.outputs.download-path }}/${{ env.PROJECT_NAME }}-Linux.zip ./${{ env.PROJECT_NAME }}-${{ steps.get_release_version.outputs.RELEASE_VERSION }}-Linux.zip
+        mv ${{ steps.download_artifacts.outputs.download-path }}/${{ env.PROJECT_NAME }}-MacOS.zip ./${{ env.PROJECT_NAME }}-${{ steps.get_release_version.outputs.RELEASE_VERSION }}-MacOS.zip
 
     - name: Release
       id: create_release
