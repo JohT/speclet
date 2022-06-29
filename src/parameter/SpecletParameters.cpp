@@ -84,9 +84,10 @@ static void add(juce::AudioProcessorValueTreeState::ParameterLayout &group, std:
     group.add(std::move(param));
 }
 
-template<typename Param, typename Group, typename... Ts>
-static Param &addToLayout(Group &layout, Ts &&...ts) {
-    auto param = std::make_unique<Param>(std::forward<Ts>(ts)...);
+template<typename Param, typename Group, typename Id, typename... Ts>
+static Param &addToLayout(Group &layout, Id &&idString, Ts &&...ts) {
+    auto parameterId = juce::ParameterID(std::forward<Id>(idString), SpecletParameters::Constants::VERSION_1);
+    auto param = std::make_unique<Param>(parameterId, std::forward<Ts>(ts)...);
     auto &ref = *param;
     add(layout, std::move(param));
     return ref;
@@ -95,6 +96,8 @@ static Param &addToLayout(Group &layout, Ts &&...ts) {
 auto SpecletParameters::createParameterLayout() -> juce::AudioProcessorValueTreeState::ParameterLayout {
     juce::AudioProcessorValueTreeState::ParameterLayout layout;
 
+    //TODO Routing Parameter for special Audio Unit parameter index?
+    auto routingParameter = juce::ParameterID(PARAMETER_ROUTING, 1);
     auto routingOptions = {"Mid", "Side", "Left", "Right", "Oscillator"};
     addToLayout<juce::AudioParameterChoice>(layout, PARAMETER_ROUTING, PARAMETER_ROUTING, routingOptions, 0, "Audio Source");
 

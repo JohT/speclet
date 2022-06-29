@@ -28,7 +28,8 @@ public:
     //---------------------------------------------------------------------------
 
     enum Constants {
-        TIMEOUT_WAIT_BEFORE_SET = 5000
+        TIMEOUT_WAIT_BEFORE_SET = 5000,
+        VERSION_1 = 1
     };
     enum Parameters {
         //Has to start with index=0. TOTAL_NUMBER_OF_PARAMS needs to be the last parameter.

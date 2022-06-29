@@ -67,7 +67,7 @@ private :
         SIZE_X = 528,
         SIZE_Y = 360,
         TIMER = 20,
-        WAIT_FOR_DESTRUCTION_TIMEOUT = 3000
+        WAIT_FOR_FINISHED_SPECTRUM_TIMEOUT = 3000,
     };
     void updateFrequencyAxisImage();
     void updateTimeAxisImage(double timeresolution);
@@ -83,8 +83,9 @@ private :
     int currentCursorXPos = 0;
     juce::Image spectrumImage = {juce::Image::RGB, sizeX, sizeY, true};
     juce::Image axisImage = {juce::Image::PixelFormat::ARGB, sizeX, sizeY, true};
-    juce::CriticalSection criticalSection = {};
-    juce::WaitableEvent waitForDestruction{true};
+    juce::CriticalSection criticalSectionForParameterChanges = {};
+    juce::CriticalSection criticalSectionForSpectrumUpdate = {};
+    juce::WaitableEvent waitForFinishedSpectrum{true};
     bool ready = false;
 
     //[/UserVariables]

@@ -55,7 +55,7 @@ SpecletDrawer::SpecletDrawer(bool logFrequency, bool logMagnitude, const juce::C
     startTimer(TIMER);
     updateFrequencyAxisImage();
     ready = true;
-    waitForDestruction.signal();
+    waitForFinishedSpectrum.signal();
     //[/Constructor]
 }
 
@@ -64,7 +64,7 @@ SpecletDrawer::~SpecletDrawer() {
     ready = false;
     {
         LOG_PERFORMANCE_OF_SCOPE("SpecletDrawer waitForDestruction");
-        bool timeoutDuringWait = waitForDestruction.wait(WAIT_FOR_DESTRUCTION_TIMEOUT);
+        bool timeoutDuringWait = waitForFinishedSpectrum.wait(WAIT_FOR_FINISHED_SPECTRUM_TIMEOUT);
         if (!timeoutDuringWait) {
             DBG("SpecletDrawer destruction: Timeout during wait!");
         }
@@ -73,7 +73,7 @@ SpecletDrawer::~SpecletDrawer() {
 
     //[Destructor]. You can add your own custom destruction code here..
     TransformationFactory::getSingletonInstance().registerForTransformationResults(nullptr);
-    waitForDestruction.signal();
+    waitForFinishedSpectrum.signal();
     DBG("SpecletDrawer removed as parameter and transformation results listener and finally destructed");
     //[/Destructor]
 }
@@ -90,17 +90,21 @@ void SpecletDrawer::paint(juce::Graphics &g) {
     //draw spectrum ----------------
     {
         LOG_PERFORMANCE_OF_SCOPE("SpecletDrawer paint draw spectrum");
+        const juce::ScopedLock lockSpectrumUpdate(criticalSectionForSpectrumUpdate);
+        if (!waitForFinishedSpectrum.wait(WAIT_FOR_FINISHED_SPECTRUM_TIMEOUT)) {
+            DBG("SpecletDrawer paint: Timeout while waiting for an updated spectrum!");
+        }
         g.drawImageAt(spectrumImage, 0, 0);
     }
-
     //draw red position cursor ----------------
     g.setColour(juce::Colours::red);
-    float cursorX = static_cast<float>(currentCursorXPos);
+    auto cursorX = static_cast<float>(currentCursorXPos);
     g.drawLine(cursorX, 0, cursorX, static_cast<float>(sizeY), 1.0);
 
     //draw frequency and time axis ----------------
     {
         LOG_PERFORMANCE_OF_SCOPE("SpecletDrawer paint draw axis");
+        const juce::ScopedLock lockAxisUpdate(criticalSectionForParameterChanges);
         g.drawImageAt(axisImage, 0, 0);
     }
 
@@ -127,9 +131,9 @@ void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
     //as far as it had been successfully been registered as a listener by "SpecletJuceMainUI"
     int watchDog = 200;
     while (result->isOutputAvailable()) {
-        waitForDestruction.reset();
+        waitForFinishedSpectrum.reset();
         appendSpectralImage(result);
-        waitForDestruction.signal();
+        waitForFinishedSpectrum.signal();
         if (!ready) {
             DBG("SpecletDrawer: Transformation result received, but not ready to draw.");
             return;
@@ -141,7 +145,7 @@ void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
             break;
         }
     }
-    //if effective timeresolution didn't change, the timeresolution-axis needn't to be redrawn
+    //if effective time resolution didn't change, the time resolution axis needn't to be redrawn
     auto const& spectralDataInfo = result->getSpectralDataInfo();
     auto timeResolution = spectralDataInfo.getTimeResolutionMs();
     if (timeResolution != currentTimeResolution) {
@@ -152,7 +156,7 @@ void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
 
 //This method is called when a parameter changes (listener)
 void SpecletDrawer::parameterChanged(const juce::String& parameterID, float newValue) {
-    const juce::ScopedLock myScopedLock(criticalSection);
+    const juce::ScopedLock myScopedLock(criticalSectionForParameterChanges);
     auto newIndex = static_cast<int>(newValue) + 1; //+1 because 0 is not a valid combo box selection id
 
     if (parameterID.equalsIgnoreCase(SpecletParameters::PARAMETER_LOGFREQUENCY)) {
