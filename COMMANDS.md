@@ -1,6 +1,6 @@
-# vst3-first-steps 
-This document lists the steps and commands that were executed to set up the project.
-It also contains the commands that are used to build it.
+# Speclet Commands
+This document lists the steps and commands that were executed to set up the project or that can be 
+used to build and test the project.
 
 ## Install Tools
 
