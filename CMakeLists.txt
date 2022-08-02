@@ -43,10 +43,9 @@ option(BUILD_SHARED_LIBS "Build shared libraries" OFF) # needed for fftw to not 
 
 # Import dependencies
 #CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
-CPMAddPackage("gh:juce-framework/JUCE#7.0.0")
-CPMAddPackage("https://www.fftw.org/fftw-3.3.10.tar.gz#MD5=8ccbf6a5ea78a16dbc3e1306e234cc5c")
-CPMAddPackage("gh:tcbrindle/span#117fbada0f888e1535e3db20c7c9ddd86db129e2")
-# CPMAddPackage("gh:Neargye/magic_enum#v0.8.0") # simplifies enum handling, not yet needed
+CPMGetPackage(JUCE)
+CPMGetPackage(fftw)
+CPMGetPackage(span)
 
 # If you've installed JUCE somehow (via a package manager, or directly using the CMake install
 # target), you'll need to tell this project that it depends on the installed copy of JUCE. If you've

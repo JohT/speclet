@@ -21,6 +21,7 @@ if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
     file(DOWNLOAD https://github.com/cpm-cmake/CPM.cmake/releases/download/v${CPM_DOWNLOAD_VERSION}/CPM.cmake ${CPM_DOWNLOAD_LOCATION})
 endif()
 include(${CPM_DOWNLOAD_LOCATION})
+CPMUsePackageLock(package-lock.cmake)
 
 #Minimum MacOS target, set globally
 set(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING "Minimum OS X deployment version" FORCE)
