@@ -1,7 +1,20 @@
 name: Build with CMake
 # Based on https://github.com/sudara/pamplejuce
 
-on: [push]
+on:
+  push:
+    # Ignore changes in documentation
+    paths-ignore: 
+      - '**/LICENSE'
+      - '**.md'
+      - '**.svg'
+      - '**.png'
+      - '**.pdf'
+      - '**.code-workspace'
+      - '.clang-format'
+      - '.clang-tidy'
+      - '.gitignore'
+      - 'renovate.json'
 
 env:
   PROJECT_NAME: Speclet # Must match the JUCE project name from juce_add_plugin
