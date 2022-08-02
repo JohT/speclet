@@ -1,5 +1,7 @@
 {
   "extends": [
-    "config:base"
-  ]
+    "config:base",
+    "schedule:earlyMondays"
+  ],
+  "baseBranches": ["main", "feature/renovate-for-cpm"]
 }
