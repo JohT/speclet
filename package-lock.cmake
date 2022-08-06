@@ -13,7 +13,7 @@ CPMDeclarePackage(fftw
 )
 # span (unversioned)(commits need to be updated manually on version updates)
 CPMDeclarePackage(span
- GIT_TAG 117fbada0f888e1535e3db20c7c9ddd86db129e2
+ GIT_TAG 836dc6a0efd9849cb194e88e4aa2387436bb079b
  GITHUB_REPOSITORY tcbrindle/span
  EXCLUDE_FROM_ALL YES
 )
