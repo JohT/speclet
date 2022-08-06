@@ -10,9 +10,17 @@
     {
       "fileMatch": ["(^|/)package-lock\\.cmake$"],
       "matchStrings": [
-        "CPMDeclarePackage\\(\\w+\\s+GIT_TAG\\s+(?<currentValue>.*?)\\s+GITHUB_REPOSITORY\\s+\"?(?<depName>.*?)\"?\\s+"
+        "CPMDeclarePackage\\(\\w+\\s+GIT_TAG\\s+(?<currentValue>.*?[^0-9a-f\\s]+.*?)\\s+GITHUB_REPOSITORY\\s+\"?(?<depName>.*?)\"?\\s+"
       ],
       "datasourceTemplate": "github-releases"
+    },
+    {
+      "fileMatch": ["(^|/)package-lock\\.cmake$"],
+      "matchStrings": [
+        "CPMDeclarePackage\\(\\w+\\s+GIT_TAG\\s+(?<currentValue>[0-9a-f]{5,40}?)\\s+GITHUB_REPOSITORY\\s+?\"?(?<depName>.*?)\"?\\s+"
+      ],
+      "datasourceTemplate": "git-refs",
+      "depNameTemplate": "https://github.com/{{{depName}}}.git"
     },
     {
       "fileMatch": ["(^|/)package-lock\\.cmake$"],
