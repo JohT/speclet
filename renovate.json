@@ -17,10 +17,11 @@
     {
       "fileMatch": ["(^|/)package-lock\\.cmake$"],
       "matchStrings": [
-        "CPMDeclarePackage\\(\\w+\\s+GIT_TAG\\s+(?<currentValue>[0-9a-f]{5,40}?)\\s+GITHUB_REPOSITORY\\s+?\"?(?<depName>.*?)\"?\\s+"
+        "CPMDeclarePackage\\(\\w+\\s+GIT_TAG\\s+(?<currentDigest>[0-9a-f]{5,40}?)\\s+GITHUB_REPOSITORY\\s+?\"?(?<depName>.*?)\"?\\s+"
       ],
       "datasourceTemplate": "git-refs",
-      "depNameTemplate": "https://github.com/{{{depName}}}.git"
+      "depNameTemplate": "https://github.com/{{{depName}}}.git",
+      "currentValueTemplate": "master"
     },
     {
       "fileMatch": ["(^|/)package-lock\\.cmake$"],
