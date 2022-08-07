@@ -44,7 +44,7 @@
     {
       "fileMatch": ["(^|/)\\w+\\.cmake$", "(^|/)CMakeLists\\.cmake$"],
       "matchStrings": [
-        "#.*?https:\\/\\/github\\.com\\/(?<depName>.*?)\\s+.*VERSION\\w*\\s+(?<currentValue>[^{}]*?)\\s*\\)"
+        "set\\s*\\(\\s*\\w+VERSION\\s+\"?(?<currentValue>[^v$][^${}]*?)\"?\\s*\\)[\\S\\s]*https:\\/\\/github.com\\/(?<depName>.*?)\\/releases\\/download\\/v\\$\\{\\w+VERSION\\}"
       ],
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v?(?<version>.*?)$"
