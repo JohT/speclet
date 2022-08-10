@@ -48,6 +48,14 @@
       ],
       "datasourceTemplate": "github-releases",
       "extractVersionTemplate": "^v?(?<version>.*?)$"
+    },
+    {
+      "fileMatch": ["^(workflow-templates|\\.github\\/workflows)\\/[^/]+\\.ya?ml$(^|\\/)action\\.ya?ml$"],
+      "matchStrings": [
+        "PLUGINVAL_VERSION:\\s+(?<currentValue>.*?)\\s+"
+      ],
+      "datasourceTemplate": "github-releases",
+      "depNameTemplate": "Tracktion/pluginval"
     }
   ]
 }
