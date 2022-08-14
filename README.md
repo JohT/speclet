@@ -1,4 +1,4 @@
-# Speclet
+# <img src="./image/SpecletBlueIcon.png" width="40"> Speclet
 
 VST Audio Spectrum Analyzer Plugin using Fourier- and Wavelet-Transformation.
 
@@ -8,14 +8,14 @@ VST Audio Spectrum Analyzer Plugin using Fourier- and Wavelet-Transformation.
 - License: [GNU GENERAL PUBLIC LICENSE v3](./LICENSE)
 - For prototyping and experimentation without programming visit [JoWa Wavelet Library in Native Instruments Reaktor User Library](https://www.native-instruments.com/en/reaktor-community/reaktor-user-library/entry/show/11541)
 
-## User Interface
+## 🖥 User Interface
 
 <img src="./doc/image/Speclet-WaveletPacketBestBasisTransform.png" width="600">
 
-## User Guide
+## 📖 User Guide
 Have a look at the [User Guide](./USERGUIDE.md) for further screenshots and to get started using the analyzer.
 
-## Build the Project
+## 🏗 Build the Project
 
 ### Prerequisites
 - [Installing GIT](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -46,7 +46,7 @@ See [COMMANDS.md](./COMMANDS.md) if you prefer to use the command line.
 - Select the kit that fits your machine (e.g. amd64) (`STRG+SHIFT+P`, Type "CMAKE kit").
 Successfully tested with "Visual Studio Build Tools 2022 Release - amd64".
 
-## Testing
+## 🩺 Testing
 
 ### Run Unit Tests within your command line interface (CLI):
 ```shell
@@ -62,7 +62,7 @@ under "Testing" (left "activity bar", below extensions button).
 cmake.exe --build build --config Debug --target AudioPluginHost
 ```
 
-## Used Tools
+## 🛠 Used Tools
 
 Modernized 2022 using the following tools:
 
@@ -77,7 +77,7 @@ It contains the code from back then, that doesn't compile any more.
 It also contains the plugin made with the tutorial [Learn Modern C++ by Building an Audio Plugin (w/ JUCE Framework) - Full Course YouTube](https://www.youtube.com/watch?v=i_Iq4_Kd7Rc&list=PLi4rQ_T_X31Gd4pyUbvPltTVSyw8v_yYT&index=5&t=1051s)
 as a template to start the modernization.
 
-## Used Libraries
+## 📚 Used Libraries
 
 This plugin was made in 2011 (modernized 2022) using the following frameworks and libraries:
 
@@ -122,7 +122,7 @@ Boost Software License 1.0
 
 - Steinberg is a registered trademarks of Steinberg Media Technologies GmbH.
 
-## References
+## 🔎 References
 
 ### Digital Signal Processing
 - [&#11088; Window Functions and Their Applications in Signal Processing (PDF)](https://library.oapen.org/handle/20.500.12657/41686)
