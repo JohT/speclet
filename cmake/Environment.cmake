@@ -14,7 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Download "cpm", the setup-free CMake dependency management 
 # https://github.com/cpm-cmake/CPM.cmake
-set(CPM_DOWNLOAD_VERSION 0.37.0)
+set(CPM_DOWNLOAD_VERSION 0.38.0)
 set(CPM_DOWNLOAD_LOCATION "${CMAKE_BINARY_DIR}/cmake/CPM_${CPM_DOWNLOAD_VERSION}.cmake")
 if(NOT (EXISTS ${CPM_DOWNLOAD_LOCATION}))
     message(STATUS "Downloading CPM.cmake")
