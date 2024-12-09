@@ -21,7 +21,7 @@ env:
   BUILD_TYPE: Release
   BUILD_DIR: Builds
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  PLUGINVAL_VERSION: v1.0.3
+  PLUGINVAL_VERSION: v1.0.4
   DISPLAY: :0 # linux pluginval needs this
 
 # jobs are run in parallel on different machines
