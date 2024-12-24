@@ -51,7 +51,7 @@ jobs:
       # Added further dependencies from https://github.com/Tracktion/pluginval/blob/develop/.github/workflows/build.yaml
       run: |
         sudo apt-get update
-        sudo apt install -y g++-${{ env.GNU_COMPILER_VERSION }} gcc-${{ env.GNU_COMPILER_VERSION }} libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.0-dev libglu1-mesa-dev ccache xvfb
+        sudo apt install -y g++-${{ env.GNU_COMPILER_VERSION }} gcc-${{ env.GNU_COMPILER_VERSION }} libasound2-dev libx11-dev libxinerama-dev libxext-dev libfreetype6-dev libwebkit2gtk-4.1-dev libglu1-mesa-dev ccache xvfb
         sudo add-apt-repository ppa:ubuntu-toolchain-r/test
         sudo apt-get install -y freeglut3-dev g++ libcurl4-openssl-dev libjack-jackd2-dev libxcomposite-dev libxcursor-dev libxrandr-dev mesa-common-dev ladspa-sdk libgtk-3-dev
         # Starting Virtual Frame Buffer X Server (Xvfb) as local display in the background
