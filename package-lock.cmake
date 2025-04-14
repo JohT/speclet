@@ -23,7 +23,7 @@ CPMDeclarePackage(span
 
 # Catch2
 CPMDeclarePackage(Catch2
-  VERSION 3.8.0
+  VERSION 3.8.1
   GITHUB_REPOSITORY catchorg/Catch2
   EXCLUDE_FROM_ALL YES
 )
