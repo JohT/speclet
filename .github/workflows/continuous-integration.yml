@@ -134,7 +134,7 @@ jobs:
       run: cmake -E tar cfv ${{ env.PROJECT_NAME }}-${{ matrix.artifact }}.zip --format=zip ${{ env.PROJECT_NAME }}-${{ matrix.artifact }}
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         path: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.PROJECT_NAME }}-${{ matrix.artifact }}.zip
         name: ${{ env.PROJECT_NAME }}-${{ matrix.artifact }}
@@ -151,7 +151,7 @@ jobs:
 
     - name: Download All Artifacts
       id: download_artifacts
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@v6
   
     - name: Add version name to the files that will be published
       run: |
