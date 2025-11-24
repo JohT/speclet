@@ -71,7 +71,7 @@ jobs:
       uses: lukka/get-cmake@v4.1.1
 
     - name: Checkout code
-      uses: actions/checkout@v5
+      uses: actions/checkout@v6
       with:
         submodules: true # Gotta get JUCE populated
 
