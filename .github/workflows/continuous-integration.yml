@@ -29,20 +29,18 @@ env:
 # all steps run in series
 jobs:
   build_and_test:
-    name: ${{ matrix.artifact }}
+    name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false # show all errors for each platform (vs. cancel jobs on error)
       matrix:
-        #os: [ubuntu-latest] # first test only with linux
-        os: [ubuntu-latest, windows-latest, macos-latest]
         include:
         - os: ubuntu-latest
-          artifact: Linux
+          pluginval-binary: ./pluginval
         - os: windows-latest
-          artifact: Windows
+          pluginval-binary: ./pluginval.exe
         - os: macos-latest
-          artifact: MacOS
+          pluginval-binary: pluginval.app/Contents/MacOS/pluginval
 
     steps:
     - name: Install JUCE's Linux Dependencies and select g++ ${{ env.GNU_COMPILER_VERSION }}
@@ -76,10 +74,10 @@ jobs:
         submodules: true # Gotta get JUCE populated
 
     - name: ccache
-      if: matrix.os != 'windows-latest'
+      if: runner.os != 'Windows'
       uses: hendrikmuhs/ccache-action@v1
       with:
-        key: ${{ matrix.os }}-${{ matrix.type }}
+        key: ${{ runner.os }}
   
     - name: Configure
       shell: bash
@@ -92,32 +90,14 @@ jobs:
     - name: Test
       working-directory: ${{ env.BUILD_DIR }}
       run: ctest
-      
-    - name: Pluginval Linux
-      working-directory: ${{ env.BUILD_DIR }}
-      if: matrix.artifact == 'Linux'
-      run: |
-        curl -L "https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_${{ matrix.artifact }}.zip" -o pluginval.zip
-        unzip pluginval
-        ./pluginval --strictness-level 10 --validate-in-process --verbose --output-dir "." --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
-        
-    - name: Pluginval Mac
-      working-directory: ${{ env.BUILD_DIR }}
-      if: matrix.artifact == 'MacOS'
-      run: |
-        curl -L "https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_${{ matrix.artifact }}.zip" -o pluginval.zip
-        unzip pluginval
-        pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --validate-in-process --verbose --output-dir "." --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
 
-    - name: Pluginval Windows
-      shell: cmd
-      working-directory: ${{ env.BUILD_DIR }}
-      if: matrix.artifact == 'Windows'
+    - name: Pluginval
+      env: 
+        VST3_PATH: "${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
       run: |
-        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_Windows.zip -OutFile pluginval.zip"
-        powershell -Command "Expand-Archive pluginval.zip -DestinationPath ."
-        pluginval.exe --strictness-level 10 --validate-in-process --output-dir "./bin" --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
-        if %ERRORLEVEL% neq 0 { exit /b 1 }
+        curl -LO "https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_${{ runner.os }}.zip"
+        7z x pluginval_${{ runner.os }}.zip
+        ${{ matrix.pluginval-binary }} --strictness-level 10 --validate-in-process --verbose --output-dir "." --validate "${{ env.VST3_PATH }}"
     
     - name: Remove shared lib before zip packaging
       working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}
@@ -127,17 +107,17 @@ jobs:
     - name: Rename folder to ${{ env.PROJECT_NAME }} before zip packaging
       working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts
       run: |
-        cmake -E rename ${{ env.BUILD_TYPE }} ${{ env.PROJECT_NAME }}-${{ matrix.artifact }}
+        cmake -E rename ${{ env.BUILD_TYPE }} ${{ env.PROJECT_NAME }}-${{ runner.os }}
 
     - name: Zip
       working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts
-      run: cmake -E tar cfv ${{ env.PROJECT_NAME }}-${{ matrix.artifact }}.zip --format=zip ${{ env.PROJECT_NAME }}-${{ matrix.artifact }}
+      run: cmake -E tar cfv ${{ env.PROJECT_NAME }}-${{ runner.os }}.zip --format=zip ${{ env.PROJECT_NAME }}-${{ runner.os }}
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v6
       with:
-        path: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.PROJECT_NAME }}-${{ matrix.artifact }}.zip
-        name: ${{ env.PROJECT_NAME }}-${{ matrix.artifact }}
+        path: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.PROJECT_NAME }}-${{ runner.os }}.zip
+        name: ${{ env.PROJECT_NAME }}-${{ runner.os }}
 
   release:
     if: startsWith(github.ref, 'refs/tags/')
