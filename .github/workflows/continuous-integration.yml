@@ -39,10 +39,13 @@ jobs:
         include:
         - os: ubuntu-latest
           artifact: Linux
+          pluginval-binary: ./pluginval
         - os: windows-latest
           artifact: Windows
+          pluginval-binary: ./pluginval.exe
         - os: macos-latest
           artifact: MacOS
+          pluginval-binary: pluginval.app/Contents/MacOS/pluginval
 
     steps:
     - name: Install JUCE's Linux Dependencies and select g++ ${{ env.GNU_COMPILER_VERSION }}
@@ -92,32 +95,14 @@ jobs:
     - name: Test
       working-directory: ${{ env.BUILD_DIR }}
       run: ctest
-      
-    - name: Pluginval Linux
-      working-directory: ${{ env.BUILD_DIR }}
-      if: matrix.artifact == 'Linux'
-      run: |
-        curl -L "https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_${{ matrix.artifact }}.zip" -o pluginval.zip
-        unzip pluginval
-        ./pluginval --strictness-level 10 --validate-in-process --verbose --output-dir "." --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
-        
-    - name: Pluginval Mac
-      working-directory: ${{ env.BUILD_DIR }}
-      if: matrix.artifact == 'MacOS'
-      run: |
-        curl -L "https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_${{ matrix.artifact }}.zip" -o pluginval.zip
-        unzip pluginval
-        pluginval.app/Contents/MacOS/pluginval --strictness-level 10 --validate-in-process --verbose --output-dir "." --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
 
-    - name: Pluginval Windows
-      shell: cmd
-      working-directory: ${{ env.BUILD_DIR }}
-      if: matrix.artifact == 'Windows'
+    - name: Pluginval
+      env: 
+        VST3_PATH: "${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
       run: |
-        powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; Invoke-WebRequest https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_Windows.zip -OutFile pluginval.zip"
-        powershell -Command "Expand-Archive pluginval.zip -DestinationPath ."
-        pluginval.exe --strictness-level 10 --validate-in-process --output-dir "./bin" --validate "${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}/VST3/${{ env.PROJECT_NAME }}.vst3"
-        if %ERRORLEVEL% neq 0 { exit /b 1 }
+        curl -LO "https://github.com/Tracktion/pluginval/releases/download/${{env.PLUGINVAL_VERSION}}/pluginval_${{ runner.os }}.zip"
+        7z x pluginval_${{ runner.os }}.zip
+        ${{ matrix.pluginval-binary }} --strictness-level 10 --validate-in-process --verbose --output-dir "." --validate "${{ env.VST3_PATH }}"
     
     - name: Remove shared lib before zip packaging
       working-directory: ${{ env.BUILD_DIR }}/${{ env.PROJECT_NAME }}_artefacts/${{ env.BUILD_TYPE }}
