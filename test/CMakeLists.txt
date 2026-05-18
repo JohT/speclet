@@ -8,10 +8,6 @@ set(TEST_PROJECT_NAME "${PROJECT_NAME}Tests")
 # Needs CPM which comes from "Environment.cmake" in the root directory of this repository
 CPMGetPackage(Catch2)
 
-# Enable testing with Catch2
-enable_testing()
-add_test("${TEST_PROJECT_NAME}" "${TEST_PROJECT_NAME}")
-
 # find test sources
 # GLOB_RECURSE is not recommended but used here for simplicity: https://cmake.org/cmake/help/latest/command/file.html?highlight=CONFIGURE_DEPENDS#filesystem
 FILE(GLOB_RECURSE test_sources CONFIGURE_DEPENDS "*.h" "*Test.cpp")

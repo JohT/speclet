@@ -41,6 +41,9 @@ option(JUCE_BUILD_EXTRAS "Build JUCE Extras" OFF)
 option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF) # needed for fftw to not depend on dll
 
+# Enable testing
+enable_testing()
+
 # Import dependencies
 #CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
 CPMGetPackage(JUCE)

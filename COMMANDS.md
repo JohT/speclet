@@ -1,6 +1,6 @@
 # Speclet Commands
-This document lists the steps and commands that were executed to set up the project or that can be 
-used to build and test the project.
+
+This document lists the steps and commands that were executed to set up the project or that can be used to build and test the project.
 
 ## Install Tools
 
@@ -18,7 +18,7 @@ cmake -Bbuild -DJUCE_BUILD_EXTRAS=ON -DJUCE_BUILD_EXAMPLES=OFF -DCMAKE_BUILD_TYP
 cmake --build build
 ```
 
-## Build AudioPluginHost to test the plugin:
+## Build AudioPluginHost to test the plugin
 
 ```shell
 cmake.exe --build build --config Debug --target AudioPluginHost
@@ -26,13 +26,19 @@ cmake.exe --build build --config Debug --target AudioPluginHost
 
 ## Run Unit-Tests
 
-From this directory start the unit test with the following command. 
+This project uses [Catch2](https://github.com/catchorg/Catch2) for unit testing and [CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html) for test execution.
+
+In case needed, the unit tests can be built with the following command.
+
+```shell
+cmake.exe --build build --config Debug --target SpecletTests
+```
+
+From the root directory, start the unit test with the following command.
 
 ```shell
 ctest --test-dir build/test
 ```
-
-[CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html)
 
 ### Create and update package-lock.cmake
 
