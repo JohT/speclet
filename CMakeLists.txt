@@ -76,6 +76,7 @@ juce_add_plugin("${PROJECT_NAME}"
     COMPANY_COPYRIGHT "(c)2011 by Johannes Troppacher" # Specify the copyright notice for the plugin
     COMPANY_WEBSITE "https://github.com/JohT/speclet" # Specify the website for the plugin
     DESCRIPTION "Audio Spectrum Analyzer using Fourier- and Wavelet-Transformation (v${CURRENT_VERSION})" # A short description of the plugin
+    BUNDLE_ID "com.johannestroppacher.speclet" # Bundle ID without spaces, following reverse domain notation
     # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
     FORMATS VST3 AU Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
 
