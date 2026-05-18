@@ -40,6 +40,44 @@ From the root directory, start the unit test with the following command.
 ctest --test-dir build/test
 ```
 
+## Code Quality Analysis with clang-tidy
+
+This project uses [clang-tidy](https://clang.llvm.org/extra/clang-tidy/) for static code analysis.
+
+### Local clang-tidy analysis
+
+First, ensure clang-tools is installed on your system:
+
+**macOS:**
+
+```shell
+brew install llvm
+```
+
+**Linux (Ubuntu/Debian):**
+
+```shell
+sudo apt-get install clang-tools
+```
+
+Then run clang-tidy on all project source files:
+
+```shell
+cd build
+find ../src -type f \( -name '*.cpp' -o -name '*.h' \) -print0 | xargs -0 clang-tidy -p .
+```
+
+Or analyze specific files:
+
+```shell
+cd build
+clang-tidy -p . ../src/SpecletPluginProcessor.cpp
+```
+
+### Continuous Integration
+
+clang-tidy is automatically run on Linux and macOS in the GitHub Actions CI/CD pipeline. Results are displayed in the build logs.
+
 ### Create and update package-lock.cmake
 
 As described in [CPM Package-lock](https://github.com/cpm-cmake/CPM.cmake/wiki/Package-lock), `package-lock.cmake` can be created and updated using the following commands:
