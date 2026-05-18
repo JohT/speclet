@@ -15,12 +15,13 @@
 */
 #pragma once
 
+#include "dsp/DspThread.h"
 #include "dsp/SignalGenerator.h"
-#include "dsp/transformations/TransformationFactory.h"
 #include "parameter/SpecletParameters.h"
-#include <array>
+#include <atomic>
 #include <juce_core/juce_core.h>
-#include <type_traits>
+#include <memory>
+#include <vector>
 
 
 
@@ -82,13 +83,14 @@ public:
 private:
     SpecletParameters parameters;
 
-    //Some parameter need to be kept local (as copy),
-    //since they are called in critical sections
-    //e.g. during Audioprocessing on every sample
-    int parameterRouting;
-    Transformation *currentTransformation = nullptr;
+    std::atomic<int> parameterRouting;
+    std::atomic<int> droppedInputSamples{0};
     SignalGenerator signalGenerator = SignalGenerator();
-    juce::CriticalSection criticalSection;
+
+    juce::AbstractFifo inputFifo{0};
+    std::vector<float> inputCircularBuffer;
+    std::unique_ptr<DspThread> dspThread;
+
     //==============================================================================
     auto getSampleFromRouting(const float *inL, const float *inR) -> float;
 

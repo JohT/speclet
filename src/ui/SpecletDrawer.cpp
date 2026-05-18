@@ -55,25 +55,24 @@ SpecletDrawer::SpecletDrawer(bool logFrequency, bool logMagnitude, const juce::C
     startTimer(TIMER);
     updateFrequencyAxisImage();
     ready = true;
-    waitForFinishedSpectrum.signal();
     //[/Constructor]
 }
 
 SpecletDrawer::~SpecletDrawer() {
     //[Destructor_pre]. You can add your own custom destruction code here..
     ready = false;
+    stopTimer();
     {
-        LOG_PERFORMANCE_OF_SCOPE("SpecletDrawer waitForDestruction");
-        bool timeoutDuringWait = waitForFinishedSpectrum.wait(WAIT_FOR_FINISHED_SPECTRUM_TIMEOUT);
-        if (!timeoutDuringWait) {
-            DBG("SpecletDrawer destruction: Timeout during wait!");
-        }
+        // Unregister so no *new* onTransformationEvent calls will be dispatched after this point.
+        // Note: this does not prevent a use-after-free if a DSP-thread call has already loaded
+        // the listener pointer and is mid-execution. Stopping the DSP thread before destroying
+        // this drawer is required for full safety.
+        const juce::ScopedLock lock(stagingLock);
+        TransformationFactory::getSingletonInstance().registerForTransformationResults(nullptr);
     }
     //[/Destructor_pre]
 
     //[Destructor]. You can add your own custom destruction code here..
-    TransformationFactory::getSingletonInstance().registerForTransformationResults(nullptr);
-    waitForFinishedSpectrum.signal();
     DBG("SpecletDrawer removed as parameter and transformation results listener and finally destructed");
     //[/Destructor]
 }
@@ -90,10 +89,6 @@ void SpecletDrawer::paint(juce::Graphics &g) {
     //draw spectrum ----------------
     {
         LOG_PERFORMANCE_OF_SCOPE("SpecletDrawer paint draw spectrum");
-        const juce::ScopedLock lockSpectrumUpdate(criticalSectionForSpectrumUpdate);
-        if (!waitForFinishedSpectrum.wait(WAIT_FOR_FINISHED_SPECTRUM_TIMEOUT)) {
-            DBG("SpecletDrawer paint: Timeout while waiting for an updated spectrum!");
-        }
         g.drawImageAt(spectrumImage, 0, 0);
     }
     //draw red position cursor ----------------
@@ -122,36 +117,46 @@ void SpecletDrawer::timerCallback() {
     if (!ready) {
         return;
     }
+    // Swap the staging buffer under the lock so the DSP thread is not blocked
+    // during the per-pixel rendering that follows.
+    std::list<StagedSpectrum> localBatch;
+    {
+        const juce::ScopedLock lock(stagingLock);
+        localBatch.swap(stagingBuffer);
+    }
+    for (auto &entry : localBatch) {
+        auto timeResolution = entry.info.getTimeResolutionMs();
+        if (timeResolution != currentTimeResolution) {
+            currentTimeResolution = timeResolution;
+            updateTimeAxisImage(timeResolution);
+        }
+        currentSamplingFrequency = entry.info.getSamplingFrequency();
+        appendSpectralImage(entry.data, entry.info);
+    }
     repaint();
     startTimer(TIMER);
 }
 
 void SpecletDrawer::onTransformationEvent(TransformationResult *result) {
-    //This method is automatically called, when there are new transformation results available,
-    //as far as it had been successfully been registered as a listener by "SpecletJuceMainUI"
+    // Called on the DSP thread — drain available spectra and stage for rendering on the message thread.
+    // The lock is held only for the brief push_back, so the timer callback is not blocked for long.
     int watchDog = 200;
     while (result->isOutputAvailable()) {
-        waitForFinishedSpectrum.reset();
-        appendSpectralImage(result);
-        waitForFinishedSpectrum.signal();
-        if (!ready) {
-            DBG("SpecletDrawer: Transformation result received, but not ready to draw.");
-            return;
+        StagedSpectrum entry{SpectralDataBuffer::ItemType{}, result->getSpectralDataInfo()};
+        result->getNextSpectrum(&entry.data);
+        if (!entry.data.empty()) {
+            const juce::ScopedLock lock(stagingLock);
+            if (stagingBuffer.size() >= STAGING_BUFFER_MAX_SIZE) {
+                stagingBuffer.pop_front(); // drop oldest frame to bound memory under message-thread lag
+            }
+            stagingBuffer.push_back(std::move(entry));
         }
         watchDog--;
         if (watchDog <= 0) {
-            //prevents endless loop
-            DBG("SpecletDrawer::onTransformationEvent watchDog canceled drawing!");
+            DBG("SpecletDrawer::onTransformationEvent watchDog canceled staging!");
             break;
         }
     }
-    //if effective time resolution didn't change, the time resolution axis needn't to be redrawn
-    auto const& spectralDataInfo = result->getSpectralDataInfo();
-    auto timeResolution = spectralDataInfo.getTimeResolutionMs();
-    if (timeResolution != currentTimeResolution) {
-        updateTimeAxisImage(timeResolution);
-    }
-    currentSamplingFrequency = spectralDataInfo.getSamplingFrequency();
 }
 
 //This method is called when a parameter changes (listener)
@@ -174,11 +179,7 @@ void SpecletDrawer::parameterChanged(const juce::String& parameterID, float newV
     }
 }
 
-void SpecletDrawer::appendSpectralImage(TransformationResult *result) {
-    if (result == nullptr) {
-        DBG("SpecletDrawer::appendSpectralImage(..) no result parameter");
-        return;
-    }
+void SpecletDrawer::appendSpectralImage(SpectralDataBuffer::ItemType &data, const SpectralDataInfo &info) {
     if (currentCursorXPos > (sizeX - 1)) {
         currentCursorXPos = 0;
     }
@@ -187,7 +188,8 @@ void SpecletDrawer::appendSpectralImage(TransformationResult *result) {
     }
 
     renderingHelper.renderVerticalPoints(
-            result,
+            data,
+            info,
             settings,
             currentCursorXPos,
             &spectrumImage);

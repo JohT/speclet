@@ -21,10 +21,14 @@
 #pragma once
 
 //[Headers]     -- You can add your own extra header files here --
+#include "../data/SpectralDataBuffer.h"
+#include "../data/SpectralDataInfo.h"
 #include "../dsp/transformations/Transformation.h"
 #include "../utilities/RenderingHelper.h"
 #include "ColourGradients.h"
 #include "juce_core/juce_core.h"
+#include <list>
+#include <utility>
 
 //[/Headers]
 
@@ -67,11 +71,10 @@ private :
         SIZE_X = 528,
         SIZE_Y = 360,
         TIMER = 20,
-        WAIT_FOR_FINISHED_SPECTRUM_TIMEOUT = 3000,
     };
     void updateFrequencyAxisImage();
     void updateTimeAxisImage(double timeresolution);
-    void appendSpectralImage(TransformationResult *result);
+    void appendSpectralImage(SpectralDataBuffer::ItemType &data, const SpectralDataInfo &info);
     juce::Viewport *getParentViewPort() const { return static_cast<juce::Viewport *>(getParentComponent()); }
 
     int sizeX = Constants::SIZE_X;
@@ -84,8 +87,16 @@ private :
     juce::Image spectrumImage = {juce::Image::RGB, sizeX, sizeY, true};
     juce::Image axisImage = {juce::Image::PixelFormat::ARGB, sizeX, sizeY, true};
     juce::CriticalSection criticalSectionForParameterChanges = {};
-    juce::CriticalSection criticalSectionForSpectrumUpdate = {};
-    juce::WaitableEvent waitForFinishedSpectrum{true};
+
+    struct StagedSpectrum {
+        SpectralDataBuffer::ItemType data;
+        SpectralDataInfo info;
+    };
+    // Maximum number of staged frames; oldest is dropped when exceeded, bounding DSP-thread allocations.
+    static constexpr int STAGING_BUFFER_MAX_SIZE = 200;
+    std::list<StagedSpectrum> stagingBuffer;
+    juce::CriticalSection stagingLock;
+
     bool ready = false;
 
     //[/UserVariables]

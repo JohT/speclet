@@ -56,7 +56,7 @@ void RenderingHelper::renderVerticalPoints(
     auto amplitudeColorIndex = 0.0;
     auto magnitude = 0.0;
 
-    for (auto i = 0; i <= height; i++) {
+    for (auto i = 0; i < height; i++) {
         spectralLineIndexOfPixel = pixelToIndex(i, height, spectralDataInfo, settings.logFrequency);
         magnitude = spectrum[spectralLineIndexOfPixel];
         amplitudeColorIndex = getColorAmount(magnitude, statistics.min, statistics.max, settings.logMagnitude);
@@ -133,4 +133,37 @@ auto RenderingHelper::assureBorders(const juce::String & /*paramName*/, double v
         return max;
     }
     return value;
+}
+
+void RenderingHelper::renderVerticalPoints(
+        SpectralDataBuffer::ItemType &spectrum,
+        const SpectralDataInfo &spectralDataInfo,
+        TAnalyzerSettings settings,
+        int currentXPos,
+        juce::Image *spectralImage) const {
+
+    LOG_PERFORMANCE_OF_SCOPE("RenderingHelper renderVerticalPoints (staged)");
+
+    assert(spectralImage);
+    if (spectrum.empty()) {
+        DBG("RenderingHelper::renderVerticalPoints (staged): spectrum empty!");
+        return;
+    }
+    if (spectrum.size() != spectralDataInfo.getFrequencyResolution()) {
+        DBG("RenderingHelper::renderVerticalPoints (staged): spectrum.size()=" +
+            juce::String(spectrum.size()) +
+            " != frequency resolution=" + juce::String(spectralDataInfo.getFrequencyResolution()));
+        return;
+    }
+
+    auto statistics = SpectralDataBuffer::ItemStatisticsType(spectrum);
+    auto height = spectralImage->getHeight();
+
+    for (auto i = 0; i < height; i++) {
+        auto spectralLineIndexOfPixel = pixelToIndex(i, height, spectralDataInfo, settings.logFrequency);
+        auto magnitude = spectrum[spectralLineIndexOfPixel];
+        auto amplitudeColorIndex = getColorAmount(magnitude, statistics.min, statistics.max, settings.logMagnitude);
+        juce::Colour colour = colourGradient.getColourAtPosition(amplitudeColorIndex);
+        spectralImage->setPixelAt(currentXPos, (height - i), colour);
+    }
 }

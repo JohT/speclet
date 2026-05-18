@@ -1,15 +1,13 @@
 #include "SpecletPluginProcessor.h"
+#include "dsp/DspThread.h"
 #include "dsp/SignalGenerator.h"
-#include "dsp/transformations/AbstractWaveletTransformation.h"
 #include "dsp/transformations/TransformationFactory.h"
 #include "juce_core/system/juce_PlatformDefs.h"
 #include "parameter/SpecletParameters.h"
-#include "ui/ColourGradients.h"
 #include "ui/SpecletMainUI.h"
 #include "utilities/PerformanceLogger.h"
 #include <memory>
 #include <string>
-#include <type_traits>
 
 
 #define DEFAULT_SAMPLINGRATE 44100
@@ -40,7 +38,11 @@ SpecletAudioProcessor::SpecletAudioProcessor()
 SpecletAudioProcessor::~SpecletAudioProcessor() {
     parameters.removeListener(this);
     DBG("SpecletAudioProcessor as parameter listener removed");
-    currentTransformation = nullptr;
+
+    if (dspThread != nullptr) {
+        dspThread->stopThread(3000);
+        dspThread.reset();
+    }
 
     TransformationFactory::getSingletonInstance().destruct();
 
@@ -106,7 +108,7 @@ void SpecletAudioProcessor::changeProgramName(int index, const juce::String &new
 }
 
 void SpecletAudioProcessor::parameterChanged(const juce::String& parameterID, float newValue) {
-    const juce::ScopedLock myScopedLock(criticalSection);
+    juce::ignoreUnused(newValue);
     DBG("SpecletAudioProcessor::parameterChanged: " + parameterID);
 
     if (SpecletParameters::isTransformationParameter(parameterID)) {
@@ -122,12 +124,29 @@ void SpecletAudioProcessor::parameterChanged(const juce::String& parameterID, fl
 }
 
 //==============================================================================
-void SpecletAudioProcessor::prepareToPlay(double sampleRate, int /*samplesPerBlock*/) {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
-    if (currentTransformation == nullptr) {
-        updateTransformation();
+void SpecletAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
+    // Stop any existing DSP thread before resizing shared buffers
+    if (dspThread != nullptr) {
+        dspThread->stopThread(3000);
+        dspThread.reset();
     }
+
+    // Report input samples that were dropped during the previous session (FIFO full)
+    const int dropped = droppedInputSamples.exchange(0, std::memory_order_relaxed);
+    if (dropped > 0) {
+        DBG("SpecletAudioProcessor: " + juce::String(dropped) + " input samples dropped (FIFO full) in last session");
+    }
+
+    // Allocate lock-free FIFO (capacity: larger of 16 blocks or 8192 samples)
+    const int fifoSize = std::max(samplesPerBlock * 16, 8192);
+    inputFifo.setTotalSize(fifoSize);
+    inputCircularBuffer.resize(static_cast<std::size_t>(fifoSize));
+
+    // Create and start the background DSP thread
+    dspThread = std::make_unique<DspThread>(inputFifo, inputCircularBuffer);
+    updateTransformation();
+    dspThread->startThread();
+
     if (signalGenerator.getSamplingRate() != sampleRate) {
         signalGenerator = SignalGenerator(sampleRate, static_cast<SignalGeneratorParameters::Waveform>(parameters.getGenerator()), parameters.getGeneratorFrequency());
     }
@@ -170,18 +189,13 @@ void SpecletAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
     auto totalNumInputChannels = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) {
         buffer.clear(i, 0, buffer.getNumSamples());
     }
 
-    const juce::ScopedLock myScopedLock(criticalSection);
-    parameters.blockParameterChanges();
+    if (dspThread == nullptr) {
+        return;
+    }
 
     const int numSamples = buffer.getNumSamples();
     const int numChannels = totalNumInputChannels;
@@ -201,19 +215,21 @@ void SpecletAudioProcessor::processBlock(juce::AudioBuffer<float> &buffer,
         inL = buffer.getReadPointer(1);
     }
 
-    for (int s = 0; s < numSamples; ++s, ++inL, ++inR) {
-        if (currentTransformation != nullptr) {
-            currentTransformation->setNextInputSample(getSampleFromRouting(inL, inR));
-        }
+    // Write samples into the lock-free FIFO; drop silently if full
+    int start1, size1, start2, size2;
+    inputFifo.prepareToWrite(numSamples, start1, size1, start2, size2);
+    for (int i = 0; i < size1; ++i) {
+        inputCircularBuffer[static_cast<std::size_t>(start1 + i)] = getSampleFromRouting(inL + i, inR + i);
     }
-    // In case we have more outputs than inputs, we'll clear any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    for (int i = numChannels; i < numChannels; ++i) {
-        buffer.clear(i, 0, numSamples);
+    for (int i = 0; i < size2; ++i) {
+        inputCircularBuffer[static_cast<std::size_t>(start2 + i)] = getSampleFromRouting(inL + size1 + i, inR + size1 + i);
+    }
+    inputFifo.finishedWrite(size1 + size2);
+    if (size1 + size2 < numSamples) {
+        droppedInputSamples.fetch_add(numSamples - size1 - size2, std::memory_order_relaxed);
     }
 
-    parameters.unblockParameterChanges();
+    dspThread->notifyNewData();
 }
 
 //==============================================================================
@@ -235,11 +251,9 @@ void SpecletAudioProcessor::getStateInformation(juce::MemoryBlock &destData) {
 }
 
 void SpecletAudioProcessor::setStateInformation(const void *data, int sizeInBytes) {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
     auto tree = juce::ValueTree::readFromData(data, static_cast<size_t>(sizeInBytes));
     parameters.setStateInformation(tree);
-    if (tree.isValid() && (currentTransformation == nullptr)) {
+    if (tree.isValid()) {
         updateTransformation();
     }
 }
@@ -247,22 +261,21 @@ void SpecletAudioProcessor::setStateInformation(const void *data, int sizeInByte
 //==============================================================================
 
 void SpecletAudioProcessor::updateTransformation() {
-    const juce::ScopedLock myScopedLock(criticalSection);
+    if (dspThread == nullptr) {
+        return;
+    }
     DBG("SpecletAudioProcessor::updateTransformation()");
-    parameters.blockParameterChanges();
-
-    currentTransformation = nullptr;
     double sampleRate = (getSampleRate() <= 100) ? DEFAULT_SAMPLINGRATE : getSampleRate();
 
-    currentTransformation = TransformationFactory::getSingletonInstance().createTransformation(
-            static_cast<TransformationParameters::Type>(parameters.getTransformation()),
-            sampleRate,
-            parameters.getResolution(),
-            static_cast<WindowParameters::WindowFunction>(parameters.getWindowing()),
-            static_cast<WaveletParameters::WaveletBase>(parameters.getWavelet()),
-            static_cast<WaveletParameters::ResolutionRatioOption>(parameters.getWaveletPacketBasis()));
+    TransformationRebuildParams params;
+    params.sampleRate = sampleRate;
+    params.transformationType = static_cast<TransformationParameters::Type>(parameters.getTransformation());
+    params.resolution = parameters.getResolution();
+    params.windowFunction = static_cast<WindowParameters::WindowFunction>(parameters.getWindowing());
+    params.waveletBase = static_cast<WaveletParameters::WaveletBase>(parameters.getWavelet());
+    params.waveletPacketBasis = static_cast<WaveletParameters::ResolutionRatioOption>(parameters.getWaveletPacketBasis());
 
-    parameters.unblockParameterChanges();
+    dspThread->requestTransformationRebuild(params);
 }
 
 void SpecletAudioProcessor::updateSignalGenerator() {
@@ -271,7 +284,7 @@ void SpecletAudioProcessor::updateSignalGenerator() {
 }
 
 auto SpecletAudioProcessor::getSampleFromRouting(const float *inL, const float *inR) -> float {
-    switch (parameterRouting) {
+    switch (parameterRouting.load()) {
         case SpecletParameters::ROUTING_SIDE:
             return *inL - *inR;
         case SpecletParameters::ROUTING_MID:

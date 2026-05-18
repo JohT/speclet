@@ -16,6 +16,7 @@
 #pragma once
 
 #include "../data/SpectralDataInfo.h"
+#include "juce_core/juce_core.h"
 #include <list>
 #include <vector>
 
@@ -54,6 +55,6 @@ public:
 private:
     std::list<ItemType> *buffer;
 
-    bool mWriteAccess;
+    juce::CriticalSection mCriticalSection;
     int sizeCheckCounter;
 };
