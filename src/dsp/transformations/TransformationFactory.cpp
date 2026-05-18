@@ -31,6 +31,7 @@ TransformationFactory::~TransformationFactory() {
 }
 
 void TransformationFactory::destruct() {
+    deleteTransformation();
     listenerToHandOverToEveryNewTransformation = nullptr;
 }
 
@@ -42,6 +43,7 @@ auto TransformationFactory::createTransformation(
         WaveletParameters::WaveletBase waveletBase,
         WaveletParameters::ResolutionRatioOption resolutionRatio) -> Transformation * {
 
+    const juce::ScopedLock lock(factoryLock);
     auto newTransformationTypeName = std::string(TransformationParameters::TypeNames::map.find(newTransformationType)->second);
     DBG("TransformationFactory::createTransformation started. transformationType=" +  newTransformationTypeName +
         ", old transformation=" + (currentTransformation != nullptr ? currentTransformation->getName() : "does not exist"));
@@ -91,6 +93,7 @@ auto TransformationFactory::createTransformation(
 }
 
 void TransformationFactory::registerForTransformationResults(TransformationListener *value) {
+    const juce::ScopedLock lock(factoryLock);
     listenerToHandOverToEveryNewTransformation = value;
     if (currentTransformation != nullptr) {
         currentTransformation->setTransformResultListener(listenerToHandOverToEveryNewTransformation);
