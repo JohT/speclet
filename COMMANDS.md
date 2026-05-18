@@ -35,7 +35,8 @@ ctest --test-dir build/test
 [CTest](https://cmake.org/cmake/help/latest/manual/ctest.1.html)
 
 ### Create and update package-lock.cmake
-As described in [CPM Package-lock](https://github.com/cpm-cmake/CPM.cmake/wiki/Package-lock), `package-lock.cmake` can be created and updated using the following commands. 
+
+As described in [CPM Package-lock](https://github.com/cpm-cmake/CPM.cmake/wiki/Package-lock), `package-lock.cmake` can be created and updated using the following commands:
 
 ```shell
 cmake -H. -Bbuild
