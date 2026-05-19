@@ -132,7 +132,7 @@ if (fftw_ADDED)
 endif()
 
 # Import span header to include with #include "tcb/span.hpp"
-if (span_ADDED)
+if (span_SOURCE_DIR)
     include_directories("${PROJECT_NAME}" PRIVATE "${span_SOURCE_DIR}/include")
     message(VERBOSE "tcb span headers directory included for all targets: ${span_SOURCE_DIR}/include")
 endif()
