@@ -16,6 +16,12 @@ VST Audio Spectrum Analyzer Plugin using Fourier- and Wavelet-Transformation.
 
 Have a look at the [User Guide](./USERGUIDE.md) for further screenshots and to get started using the analyzer.
 
+## 🏛️ Architecture
+
+<img src="./doc/architecture/architecture.svg" alt="Speclet Architecture Diagram" width="800">
+
+See [Architecture Documentation](./doc/architecture/ARCHITECTURE.md) for detailed explanations of components, threading model, and data flow.
+
 ## 🏗 Build the Project
 
 ### Prerequisites
