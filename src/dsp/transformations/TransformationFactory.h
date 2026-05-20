@@ -52,6 +52,7 @@ private:
     Transformation *currentTransformation = nullptr;
     TransformationListener *listenerToHandOverToEveryNewTransformation = nullptr;
     TransformationParameters::Type transformationType = TransformationParameters::Type::BYPASS;
+    juce::CriticalSection factoryLock;
 
     void deleteTransformation();
 };

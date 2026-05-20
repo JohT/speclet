@@ -15,10 +15,14 @@ CPMDeclarePackage(fftw
   PATCHES "fftw-update-min-cmake.patch"
 )
 # span (unversioned)(commits need to be updated manually on version updates)
+# DOWNLOAD_ONLY prevents span's CMakeLists.txt from being processed, which avoids
+# registering span's own tests (test_span, test_contract_checking) in CTest.
+# The span header is included directly via span_SOURCE_DIR/include.
 CPMDeclarePackage(span
  GIT_TAG 836dc6a0efd9849cb194e88e4aa2387436bb079b
  GITHUB_REPOSITORY tcbrindle/span
  EXCLUDE_FROM_ALL YES
+ DOWNLOAD_ONLY YES
 )
 
 # Catch2

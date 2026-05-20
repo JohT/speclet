@@ -1,5 +1,10 @@
 ---
-# cppcoreguidelines-avoid-magic-numbers are deactivated since it is an alias of readability-magic-numbers 
+# cppcoreguidelines-avoid-magic-numbers are deactivated since it is an alias of readability-magic-numbers
+# Noisy rules disabled due to JUCE architecture and conventions:
+# - misc-include-cleaner: JUCE uses umbrella headers (juce_*.h)
+# - portability-avoid-pragma-once + llvm-header-guard: JUCE uses #pragma once everywhere
+# - modernize-use-trailing-return-type: JUCE doesn't use trailing return syntax
+# - cppcoreguidelines-avoid-do-while: JUCE macros expand to do { } while (false) patterns
 Checks: >
   *,
   -abseil-*,
@@ -13,15 +18,27 @@ Checks: >
   -llvmlibc-*,
   -hicpp-no-array-decay,
   -cppcoreguidelines-pro-bounds-array-to-pointer-decay,
-  -cppcoreguidelines-avoid-magic-numbers
+  -cppcoreguidelines-avoid-magic-numbers,
+  -misc-include-cleaner,
+  -portability-avoid-pragma-once,
+  -llvm-header-guard,
+  -modernize-use-trailing-return-type,
+  -cppcoreguidelines-avoid-do-while
 FormatStyle: 'file'
 HeaderFilterRegex: '**/*\.(hpp|h)'
 CheckOptions:
+    # Bugprone checks
     - { key: bugprone-argument-comment.StrictMode, value: true }
+    
+    # Misc checks
     - { key: misc-non-private-member-variables-in-classes.IgnoreClassesWithAllMemberVariablesBeingPublic, value: true }
+    
+    # Readability checks - magic numbers
     - { key: readability-magic-numbers.IgnoredIntegerValues, value: 0;1;2;3;4;5;6;7;8;9;10;100;1000 }
     - { key: readability-magic-numbers.IgnorePowersOf2IntegerValues, value: true }
-    - { key: readability-magic-numbers.IgnoredFloatingPointValues, value: 0.0;0.33;0.5;0.75;1.0;2.0;10.0;25.0;20.0;50.0;100.0;360.0;1000.0,20000.0 }
+    - { key: readability-magic-numbers.IgnoredFloatingPointValues, value: 0.0;0.33;0.5;0.75;1.0;2.0;10.0;25.0;20.0;50.0;100.0;360.0;1000.0;20000.0 }
+    
+    # Readability checks - identifier naming
     - { key: readability-identifier-naming.NamespaceCase,          value: CamelCase }
     - { key: readability-identifier-naming.ClassCase,              value: CamelCase  }
     - { key: readability-identifier-naming.StructCase,             value: CamelCase  }
@@ -30,11 +47,22 @@ CheckOptions:
     - { key: readability-identifier-naming.FunctionCase,           value: camelBack  }
     - { key: readability-identifier-naming.MemberCase,             value: camelBack  }
     - { key: readability-identifier-naming.ParameterCase,          value: camelBack  }
-    - { key: readability-identifier-naming.VariableCase,           value: camel_Snake_Case  }
+    - { key: readability-identifier-naming.VariableCase,           value: camelBack  }
     - { key: readability-identifier-naming.MacroDefinitionCase,    value: UPPER_CASE }
     - { key: readability-identifier-naming.EnumConstantCase,       value: Camel_Snake_Case }
     - { key: readability-identifier-naming.ConstexprVariableCase,  value: UPPER_CASE }
     - { key: readability-identifier-naming.GlobalConstantCase,     value: UPPER_CASE  }
     - { key: readability-identifier-naming.MemberConstantCase,     value: CamelCase  }
     - { key: readability-identifier-naming.StaticConstantCase,     value: CamelCase  }
+    
+    # Readability checks - identifier length (JUCE idioms)
+    - { key: readability-identifier-length.IgnoredVariableNames, value: g }
+    - { key: readability-identifier-length.IgnoredParameterNames, value: g }
+    - { key: readability-identifier-length.MinimumLoopCounterNameLength, value: 1 }
+    
+    # Readability checks - function complexity (DSP algorithms are inherently complex)
+    - { key: readability-function-cognitive-complexity.Threshold, value: 30 }
+    
+    # Performance checks - catch implicit copies in DSP loops
+    - { key: performance-for-range-copy.WarnOnAllAutoCopies, value: true }
 ...

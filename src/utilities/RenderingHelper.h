@@ -38,6 +38,13 @@ public:
             int currentXPos,
             juce::Image *spectralImage) const;
 
+    void renderVerticalPoints(
+            SpectralDataBuffer::ItemType &spectrum,
+            const SpectralDataInfo &spectralDataInfo,
+            TAnalyzerSettings settings,
+            int currentXPos,
+            juce::Image *spectralImage) const;
+
     //Normally, this method would be defined as "private".
     //But since it is directly addressed in a unit-test, it remains
     //(until the test gets deprecated) "public"

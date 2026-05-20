@@ -41,6 +41,9 @@ option(JUCE_BUILD_EXTRAS "Build JUCE Extras" OFF)
 option(JUCE_BUILD_EXAMPLES "Build JUCE Examples" OFF)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF) # needed for fftw to not depend on dll
 
+# Enable testing
+enable_testing()
+
 # Import dependencies
 #CPMAddPackage("https://math.ryerson.ca/~lkolasa/xxx.tar.gz") # Not online anymore (2022). Now directly included in this repository.
 CPMGetPackage(JUCE)
@@ -73,6 +76,7 @@ juce_add_plugin("${PROJECT_NAME}"
     COMPANY_COPYRIGHT "(c)2011 by Johannes Troppacher" # Specify the copyright notice for the plugin
     COMPANY_WEBSITE "https://github.com/JohT/speclet" # Specify the website for the plugin
     DESCRIPTION "Audio Spectrum Analyzer using Fourier- and Wavelet-Transformation (v${CURRENT_VERSION})" # A short description of the plugin
+    BUNDLE_ID "com.johannestroppacher.speclet" # Bundle ID without spaces, following reverse domain notation
     # VERSION 0.9.0                             # Set this if the plugin version is different to the project version
     FORMATS VST3 AU Standalone                  # The formats to build. Other valid formats are: AAX Unity VST AU AUv3
 
@@ -128,7 +132,7 @@ if (fftw_ADDED)
 endif()
 
 # Import span header to include with #include "tcb/span.hpp"
-if (span_ADDED)
+if (span_SOURCE_DIR)
     include_directories("${PROJECT_NAME}" PRIVATE "${span_SOURCE_DIR}/include")
     message(VERBOSE "tcb span headers directory included for all targets: ${span_SOURCE_DIR}/include")
 endif()

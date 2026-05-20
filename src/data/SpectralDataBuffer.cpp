@@ -4,7 +4,7 @@
 #include <assert.h>
 
 SpectralDataBuffer::SpectralDataBuffer()
-    : buffer(new std::list<ItemType>()), mWriteAccess(false), sizeCheckCounter(0) {
+    : buffer(new std::list<ItemType>()), sizeCheckCounter(0) {
 }
 
 SpectralDataBuffer::~SpectralDataBuffer() {
@@ -13,9 +13,8 @@ SpectralDataBuffer::~SpectralDataBuffer() {
 }
 
 void SpectralDataBuffer::write(const ItemType &item) {
-    //	const ScopedLock myScopedLock (criticalSection);
     LOG_PERFORMANCE_OF_SCOPE("SpectralDataBuffer write");
-    mWriteAccess = true;
+    const juce::ScopedLock lock(mCriticalSection);
 
     //if there are too many buffer entries,
     //delete the old ones to avoid memory problems
@@ -34,31 +33,26 @@ void SpectralDataBuffer::write(const ItemType &item) {
     if (buffer != nullptr) {
         buffer->push_back(item);
     }
-    mWriteAccess = false;
 }
 
 void SpectralDataBuffer::read(ItemType *pItem) {
     LOG_PERFORMANCE_OF_SCOPE("SpectralDataBuffer read");
 
     assert(pItem);
-    if (mWriteAccess) {
+    const juce::ScopedLock lock(mCriticalSection);
+    if (buffer == nullptr || buffer->empty()) {
         return;
     }
-    if (buffer == nullptr) {
-        return;
-    }
-
     pItem->assign(buffer->front().begin(), buffer->front().end());
-    if (!buffer->empty()) {
-        buffer->pop_front();
-    }
-    //TODO(JohT) faster buffer? threadsafe? use juce framework solution?
+    buffer->pop_front();
+    //TODO(JohT) faster buffer? use lock-free queue (e.g. juce::AbstractFifo-backed)?
 }
 
 auto SpectralDataBuffer::size() -> SpectralDataBuffer::ItemSizeType {
     if (buffer == nullptr) {
         return 0;
     }
+    const juce::ScopedLock lock(mCriticalSection);
     return buffer->size();
 }
 
@@ -66,6 +60,7 @@ auto SpectralDataBuffer::unread() -> SpectralDataBuffer::ItemSizeType {
     if (buffer == nullptr) {
         return 0;
     }
+    const juce::ScopedLock lock(mCriticalSection);
     return buffer->size();
 }
 
