@@ -10,6 +10,7 @@ on:
       - '**.svg'
       - '**.png'
       - '**.pdf'
+      - '**.gv'
       - '**.code-workspace'
       - '.clang-format'
       - '.clang-tidy'

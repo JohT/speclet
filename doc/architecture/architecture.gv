@@ -1,0 +1,374 @@
+/**
+ * Speclet — Audio Spectrum Analyzer Plugin  (VST3 / AU / Standalone)
+ * Architecture Overview
+ *
+ * This diagram shows how the plugin components are structured and
+ * how audio flows from the host through the DSP pipeline to the display.
+ *
+ * Nodes are grouped into five layers:
+ *   [HOST]        — the DAW / plugin host
+ *   [PLUGIN]      — top-level JUCE AudioProcessor
+ *   [DSP]         — background DSP thread and transformations
+ *   [DATA]        — shared data containers
+ *   [UI]          — editor and visualisation components
+ *
+ * External libraries used:
+ *   JUCE   — plugin framework, threading, GUI, ValueTree parameters
+ *   FFTW3  — high-performance FFT (used by FourierTransformation)
+ *   wave++ — discrete wavelet / wavelet-packet transforms (bundled in lib/)
+ *   span   — tcb::span header-only utility (C++20 span back-port)
+ */
+
+digraph speclet_architecture {
+
+    // ── Global graph style ───────────────────────────────────────────────────
+    graph [
+        label       = "Speclet – Audio Spectrum Analyzer\nArchitecture Overview"
+        labelloc    = "t"
+        fontname    = "Helvetica"
+        fontsize    = 18
+        bgcolor     = "#f8f9fa"
+        rankdir     = TB
+        splines     = polyline
+        nodesep     = 0.5
+        ranksep     = 0.8
+        pad         = 0.4
+    ]
+    node [fontname="Helvetica" fontsize=11 style="filled,rounded" shape=box]
+    edge [fontname="Helvetica" fontsize=9 color="#555555"]
+
+    // ── External libraries (top) ─────────────────────────────────────────────
+    subgraph cluster_libs {
+        label       = "External Libraries"
+        style       = "filled,rounded"
+        color       = "#adb5bd"
+        fillcolor   = "#e9ecef"
+        fontname    = "Helvetica-Bold"
+        fontsize    = 12
+
+        JUCE [
+            label       = "JUCE\n(juce_audio_processors,\njuce_audio_utils,\njuce_dsp, juce_core,\njuce_gui_basics)"
+            fillcolor   = "#d0e8ff"
+            color       = "#3a86ff"
+        ]
+        FFTW [
+            label       = "FFTW3\n(Fast Fourier Transform)"
+            fillcolor   = "#d6f5d6"
+            color       = "#2dc653"
+        ]
+        WavePP [
+            label       = "wave++\n(Discrete Wavelet\n& Wavelet-Packet\nTransforms)"
+            fillcolor   = "#d6f5d6"
+            color       = "#2dc653"
+        ]
+        Span [
+            label       = "tcb::span\n(header-only\nC++20 span back-port)"
+            fillcolor   = "#fff3cd"
+            color       = "#e09f3e"
+        ]
+    }
+
+    // ── Host ─────────────────────────────────────────────────────────────────
+    subgraph cluster_host {
+        label       = "Host (DAW / Standalone)"
+        style       = "dashed"
+        color       = "#6c757d"
+        fontname    = "Helvetica-Bold"
+        fontsize    = 12
+
+        AudioHost [
+            label       = "Audio Host\n(DAW / AudioPluginHost)"
+            shape       = parallelogram
+            fillcolor   = "#dee2e6"
+            color       = "#495057"
+        ]
+    }
+
+    // ── Plugin layer ─────────────────────────────────────────────────────────
+    subgraph cluster_plugin {
+        label       = "Plugin Core  (src/)"
+        style       = "filled,rounded"
+        color       = "#3a86ff"
+        fillcolor   = "#eaf3ff"
+        fontname    = "Helvetica-Bold"
+        fontsize    = 12
+
+        Processor [
+            label       = "SpecletAudioProcessor\n(juce::AudioProcessor)\n─────────────────\n• processBlock()  ← audio thread\n• prepareToPlay() / releaseResources()\n• parameterChanged()\n• createEditor()"
+            fillcolor   = "#c7dcff"
+            color       = "#3a86ff"
+        ]
+        Parameters [
+            label       = "SpecletParameters\n(juce::AudioProcessorValueTreeState)\n─────────────────\n• Routing, Transformation, Resolution\n• Windowing, Wavelet, Generator…\n• State save / restore"
+            fillcolor   = "#dce8ff"
+            color       = "#3a86ff"
+        ]
+        LockFreeFifo [
+            label       = "Lock-Free FIFO\n(juce::AbstractFifo\n + circular buffer)\n─────────────────\nAudio thread writes →\nDSP thread reads"
+            shape       = cylinder
+            fillcolor   = "#ffd6d6"
+            color       = "#e63946"
+        ]
+        SignalGen [
+            label       = "SignalGenerator\n─────────────────\nSine · Triangle · Ramp\nSquare · White Noise\n(test / demo signals)"
+            fillcolor   = "#dce8ff"
+            color       = "#3a86ff"
+        ]
+    }
+
+    // ── DSP layer ─────────────────────────────────────────────────────────────
+    subgraph cluster_dsp {
+        label       = "DSP Layer  (src/dsp/)"
+        style       = "filled,rounded"
+        color       = "#2dc653"
+        fillcolor   = "#edfaed"
+        fontname    = "Helvetica-Bold"
+        fontsize    = 12
+
+        DspThread [
+            label       = "DspThread\n(juce::Thread)\n─────────────────\n• Drains FIFO\n• Feeds samples to Transformation\n• Handles rebuild requests\n  from parameter changes"
+            fillcolor   = "#b7f0c0"
+            color       = "#2dc653"
+        ]
+
+        subgraph cluster_transforms {
+            label       = "Transformations  (src/dsp/transformations/)"
+            style       = "filled,rounded"
+            color       = "#57cc80"
+            fillcolor   = "#f0fdf4"
+            fontname    = "Helvetica"
+            fontsize    = 11
+
+            TransFactory [
+                label       = "TransformationFactory\n(Singleton)\n─────────────────\nCreates & owns the\nactive Transformation"
+                fillcolor   = "#ccf5d6"
+                color       = "#2dc653"
+            ]
+            Transformation [
+                label       = "«abstract»\nTransformation\n─────────────────\n• Input sample queue\n• Output SpectralDataBuffer\n• Window function\n• Listener notification"
+                shape       = box
+                fillcolor   = "#e6faea"
+                color       = "#57cc80"
+                style       = "filled,rounded,dashed"
+            ]
+            FourierT [
+                label       = "FourierTransformation\n─────────────────\nFFT via FFTW3\nfftw_plan + complex output"
+                fillcolor   = "#d6f5d6"
+                color       = "#2dc653"
+            ]
+            AbstractWavelet [
+                label       = "«abstract»\nAbstractWaveletTransformation\n─────────────────\nDWT/DWPT input prep\ntcb::span + wave++ Interval"
+                fillcolor   = "#e6faea"
+                color       = "#57cc80"
+                style       = "filled,rounded,dashed"
+            ]
+            WaveletT [
+                label       = "WaveletTransformation\n─────────────────\nDyadic DWT\n(wave++ Interval)"
+                fillcolor   = "#d6f5d6"
+                color       = "#2dc653"
+            ]
+            WaveletPktT [
+                label       = "WaveletPacketTransformation\n─────────────────\nDiscrete Wavelet Packet\n(wave++ ArrayTreePer)"
+                fillcolor   = "#d6f5d6"
+                color       = "#2dc653"
+            ]
+            WaveletPktBest [
+                label       = "WaveletPacketBestBasis\nTransformation\n─────────────────\nBest-basis DWPT\n(wave++ HedgePer)"
+                fillcolor   = "#d6f5d6"
+                color       = "#2dc653"
+            ]
+        }
+
+        subgraph cluster_windowing {
+            label       = "Windowing  (src/dsp/windowing/)"
+            style       = "filled,rounded"
+            color       = "#57cc80"
+            fillcolor   = "#f0fdf4"
+            fontname    = "Helvetica"
+            fontsize    = 11
+
+            WinFactory [
+                label       = "WindowFunctionFactory\n(Singleton + cache)\n─────────────────\nCreates & caches\nWindowFunction objects"
+                fillcolor   = "#ccf5d6"
+                color       = "#2dc653"
+            ]
+            WinFunctions [
+                label       = "WindowFunctions\n─────────────────\nRectangular · Hann · Hamming\nBlackman · Welch · Parzen\n(applied before transform)"
+                fillcolor   = "#d6f5d6"
+                color       = "#2dc653"
+            ]
+        }
+    }
+
+    // ── Data layer ────────────────────────────────────────────────────────────
+    subgraph cluster_data {
+        label       = "Shared Data  (src/data/)"
+        style       = "filled,rounded"
+        color       = "#e63946"
+        fillcolor   = "#fff5f5"
+        fontname    = "Helvetica-Bold"
+        fontsize    = 12
+
+        SpectralBuf [
+            label       = "SpectralDataBuffer\n─────────────────\nThread-safe ring buffer\nof spectral snapshots\n(std::list + CriticalSection)"
+            shape       = cylinder
+            fillcolor   = "#ffd6d6"
+            color       = "#e63946"
+        ]
+        SpectralInfo [
+            label       = "SpectralDataInfo\n─────────────────\nTime resolution\nFrequency resolution\nSampling rate"
+            fillcolor   = "#ffe8e8"
+            color       = "#e63946"
+        ]
+    }
+
+    // ── Utilities ─────────────────────────────────────────────────────────────
+    subgraph cluster_utilities {
+        label       = "Utilities  (src/utilities/)"
+        style       = "filled,rounded"
+        color       = "#adb5bd"
+        fillcolor   = "#f8f9fa"
+        fontname    = "Helvetica-Bold"
+        fontsize    = 11
+
+        RenderHelper [
+            label       = "RenderingHelper\n─────────────────\nMaps spectral data to\npixel colours\n(log/lin frequency & magnitude)"
+            fillcolor   = "#e9ecef"
+            color       = "#6c757d"
+        ]
+    }
+
+    // ── UI layer ──────────────────────────────────────────────────────────────
+    subgraph cluster_ui {
+        label       = "UI Layer  (src/ui/)"
+        style       = "filled,rounded"
+        color       = "#ff6b35"
+        fillcolor   = "#fff8f5"
+        fontname    = "Helvetica-Bold"
+        fontsize    = 12
+
+        MainUI [
+            label       = "SpecletMainUI\n(juce::AudioProcessorEditor)\n─────────────────\nTop-level editor window\n800 × 360 px"
+            fillcolor   = "#ffd6c0"
+            color       = "#ff6b35"
+        ]
+        AnalyzerComp [
+            label       = "SpecletAnalyzerComponent\n(juce::Component + Listener)\n─────────────────\nAll UI controls:\nComboBoxes · Sliders · Labels\nTooltips · Popup menu"
+            fillcolor   = "#ffe5d6"
+            color       = "#ff6b35"
+        ]
+        Drawer [
+            label       = "SpecletDrawer\n(TransformationListener\n + juce::Timer)\n─────────────────\nScrolling spectrogram\nimage (juce::Image)\n20 ms repaint timer"
+            fillcolor   = "#ffd6c0"
+            color       = "#ff6b35"
+        ]
+        Gradients [
+            label       = "ColourGradients\n─────────────────\nPredefined colour\nschemes (Blue, Fire…)"
+            fillcolor   = "#ffe5d6"
+            color       = "#ff6b35"
+        ]
+    }
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // EDGES — control & data flow
+    // ═══════════════════════════════════════════════════════════════════════
+
+    // Host ↔ Processor
+    AudioHost -> Processor [label="audio blocks\n(processBlock)" style=bold color="#e63946"]
+    AudioHost -> Processor [label="parameter events\n(host automation)" color="#3a86ff" style=dashed dir=both]
+    Processor -> AudioHost [label="audio pass-through\n(plugin is analyzer only)" style=dashed color="#adb5bd"]
+
+    // Processor internals
+    Processor -> LockFreeFifo [label="write samples\n(audio thread)" style=bold color="#e63946"]
+    Processor -> SignalGen    [label="optional: replace\naudio with test signal" color="#adb5bd" style=dashed]
+    SignalGen  -> LockFreeFifo [label="generated\nsamples" color="#adb5bd" style=dashed]
+    Processor -> Parameters   [label="owns / listens" style=dashed color="#3a86ff"]
+    Processor -> DspThread    [label="start/stop\nnotifyNewData()" color="#2dc653"]
+    Processor -> DspThread    [label="requestTransformation\nRebuild()" style=dashed color="#2dc653"]
+
+    // DSP thread pipeline
+    LockFreeFifo -> DspThread  [label="drain FIFO\n(DSP thread)" style=bold color="#e63946"]
+    DspThread    -> TransFactory [label="createTransformation()\non param change" color="#2dc653" style=dashed]
+    TransFactory -> Transformation [label="creates & owns\nactive instance" style=dashed color="#2dc653"]
+    DspThread    -> Transformation [label="setNextInputSample()\nper sample" style=bold color="#e63946"]
+
+    // Transformation hierarchy (inheritance)
+    Transformation -> FourierT       [label="extends" arrowhead=empty style=dashed color="#888888"]
+    Transformation -> AbstractWavelet [label="extends" arrowhead=empty style=dashed color="#888888"]
+    AbstractWavelet -> WaveletT       [label="extends" arrowhead=empty style=dashed color="#888888"]
+    AbstractWavelet -> WaveletPktT    [label="extends" arrowhead=empty style=dashed color="#888888"]
+    AbstractWavelet -> WaveletPktBest [label="extends" arrowhead=empty style=dashed color="#888888"]
+
+    // Library usage
+    FourierT       -> FFTW   [label="fftw_plan\nfft execution" color="#2dc653" style=dashed]
+    WaveletT       -> WavePP [label="Interval DWT" color="#2dc653" style=dashed]
+    WaveletPktT    -> WavePP [label="ArrayTreePer DWPT" color="#2dc653" style=dashed]
+    WaveletPktBest -> WavePP [label="HedgePer best-basis" color="#2dc653" style=dashed]
+    AbstractWavelet -> Span  [label="tcb::span\nfor safe array views" color="#e09f3e" style=dashed]
+    Processor      -> JUCE   [label="AudioProcessor\nValueTreeState\nThreading" color="#3a86ff" style=dashed]
+    DspThread      -> JUCE   [label="juce::Thread\nWaitableEvent\nCriticalSection" color="#3a86ff" style=dashed]
+    MainUI         -> JUCE   [label="AudioProcessorEditor\nGraphics / Components" color="#3a86ff" style=dashed]
+
+    // Windowing
+    Transformation -> WinFactory  [label="getWindow()" color="#2dc653" style=dashed]
+    WinFactory     -> WinFunctions [label="creates" color="#2dc653" style=dashed]
+
+    // Spectral output
+    Transformation -> SpectralBuf  [label="write() spectral\nsnapshots" style=bold color="#e63946"]
+    Transformation -> SpectralInfo [label="provides metadata\n(freq/time resolution)" style=dashed color="#e63946"]
+
+    // UI connections
+    Processor -> MainUI        [label="createEditor()" color="#ff6b35" style=dashed]
+    MainUI    -> AnalyzerComp  [label="contains" color="#ff6b35"]
+    AnalyzerComp -> Drawer     [label="contains\n(inside Viewport)" color="#ff6b35"]
+    AnalyzerComp -> Gradients  [label="uses colour\nschemes" style=dashed color="#ff6b35"]
+    AnalyzerComp -> Parameters [label="reads & listens\nto param changes" style=dashed color="#3a86ff"]
+    Drawer       -> Parameters [label="listens to\ndisplay params\n(log, colour)" style=dashed color="#3a86ff"]
+
+    // Drawer reads spectral results
+    TransFactory -> Drawer     [label="registerForTransformation\nResults() → listener callback" color="#ff6b35" style=bold]
+    SpectralBuf  -> Drawer     [label="getNextSpectrum()\npoll on 20 ms timer" style=bold color="#e63946"]
+    SpectralInfo -> Drawer     [label="axis metadata" style=dashed color="#e63946"]
+    Drawer       -> RenderHelper [label="renderVerticalPoints()" color="#adb5bd"]
+    RenderHelper -> SpectralBuf  [label="reads spectra" style=dashed color="#adb5bd"]
+    RenderHelper -> SpectralInfo [label="reads metadata" style=dashed color="#adb5bd"]
+
+    // Layout flows top-to-bottom via edge directions; no explicit rank hints needed
+    // (rank hints conflict with cluster membership in dot — clusters drive grouping)
+
+    // ── Legend ─────────────────────────────────────────────────────────────────
+    subgraph cluster_legend {
+        label       = "Arrow Types"
+        style       = "rounded,filled"
+        fillcolor   = "#fafafa"
+        color       = "#999999"
+        fontname    = "Helvetica-Bold"
+        fontsize    = 10
+
+        // Invisible anchor nodes — only the arrows and their labels are visible
+        node [shape=point width=0.01 style=invis label=""]
+
+        LA1; LA2; LB1; LB2; LC1; LC2; LD1; LD2
+
+        LA1 -> LA2 [
+            style=bold penwidth=2.5 color="#e63946"
+            label="thick red\nreal-time data" minlen=1
+            fontsize=8 fontname="Helvetica"
+        ]
+        LB1 -> LB2 [
+            style=dashed penwidth=1.2 color="#3a86ff"
+            label="dashed coloured\nevents / params" minlen=1
+            fontsize=8 fontname="Helvetica"
+        ]
+        LC1 -> LC2 [
+            style=dashed penwidth=1.2 color="#adb5bd"
+            label="dashed grey\noptional path" minlen=1
+            fontsize=8 fontname="Helvetica"
+        ]
+        LD1 -> LD2 [
+            style=dashed penwidth=1.2 color="#888888" arrowhead=empty
+            label="dashed + open tip\ninherits from" minlen=1
+            fontsize=8 fontname="Helvetica"
+        ]
+    }
+}
