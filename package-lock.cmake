@@ -3,7 +3,7 @@
 
 # JUCE
 CPMDeclarePackage(JUCE
-  GIT_TAG 8.0.13
+  GIT_TAG 8.0.14
   GITHUB_REPOSITORY juce-framework/JUCE
   EXCLUDE_FROM_ALL YES
 )
