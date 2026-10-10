@@ -206,3 +206,13 @@ target_link_libraries("${PROJECT_NAME}"
 
 # Add tests
 add_subdirectory(test)
+# Disable ThreadSanitizer for tests and standalone
+if(TARGET SpecletTests)
+  target_compile_options(SpecletTests PRIVATE -fno-sanitize=thread)
+  target_link_options(SpecletTests PRIVATE -fno-sanitize=thread)
+endif()
+
+if(TARGET Speclet_Standalone)
+  target_compile_options(Speclet_Standalone PRIVATE -fno-sanitize=thread)
+  target_link_options(Speclet_Standalone PRIVATE -fno-sanitize=thread)
+endif()
